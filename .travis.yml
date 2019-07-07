@@ -1,4 +1,6 @@
 language: python
 python:
   - "3.6"
-script: make deps info test
+scripts:
+  - sudo rm -f /etc/boto.cfg
+  - make deps info test
