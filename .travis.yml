@@ -1,8 +1,8 @@
 language: python
 install:
+  - sudo rm -f /etc/boto.cfg
   - pip install -q -r src/python/requirements.txt
 python:
   - "3.6"
 scripts:
-  - sudo rm -f /etc/boto.cfg
   - make info test
