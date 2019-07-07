@@ -4,5 +4,4 @@ install:
   - pip install -q -r src/python/requirements.txt
 python:
   - "3.6"
-scripts:
-  - make info test
+script: make info test
