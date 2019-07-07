@@ -1,6 +1,8 @@
 language: python
+install:
+  - pip install -q -r src/python/requirements.txt
 python:
   - "3.6"
 scripts:
   - sudo rm -f /etc/boto.cfg
-  - make deps info test
+  - make info test
