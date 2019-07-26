@@ -10,7 +10,7 @@ def test():
     inst = ClassImporter('test_nlparse.TestParse').instance()
     #logging.getLogger('zensols.nlp').setLevel(level=logging.DEBUG)
     inst.setUp()
-    inst.test_disable()
+    inst.test_filter_features()
     inst.tearDown()
 
 

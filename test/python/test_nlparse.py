@@ -95,3 +95,17 @@ class TestParse(unittest.TestCase):
         doc_dis = dis_lr.parse('Dan throws the ball.')
         no_tags = tuple(map(lambda t: t.tag_, doc_dis))
         self.assertEqual(('', '', '', '', ''), no_tags)
+
+    def test_filter_features(self):
+        lr = self.lr
+        doc = self.lr.parse('I am a citizen of the United States of America.')
+        tnfac = TokenNormalizerFactory(self.config)
+        feats = lr.features(doc, tnfac.instance('feature_no_filter'))
+        self.assertEqual(('I', 'am', 'a', 'citizen', 'of', 'the United States of America', '.'),
+                         tuple(map(lambda f: f.norm, feats)))
+        feats = lr.features(doc, tnfac.instance('feature_default_filter'))
+        self.assertEqual(('I', 'am', 'citizen', 'of', 'the United States of America'),
+                         tuple(map(lambda f: f.norm, feats)))
+        feats = lr.features(doc, tnfac.instance('feature_stop_filter'))
+        self.assertEqual(('citizen', 'the United States of America'),
+                         tuple(map(lambda f: f.norm, feats)))

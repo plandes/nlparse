@@ -165,11 +165,13 @@ class FilterTokenMapper(TokenMapper):
     """Filter tokens based on token (Spacy) attributes.
 
     """
-    def __init__(self, remove_stop=False, remove_pronouns=False,
-                 *args, **kwargs):
+    def __init__(self, *args, remove_stop=False, remove_pronouns=False,
+                 remove_punctuation=True, remove_determiners=True, **kwargs):
         super(FilterTokenMapper, self).__init__(*args, **kwargs)
         self.remove_stop = remove_stop
         self.remove_pronouns = remove_pronouns
+        self.remove_punctuation = remove_punctuation
+        self.remove_determiners = remove_determiners
 
     def _filter(self, tok_or_ent_tup):
         tok_or_ent = tok_or_ent_tup[0]
@@ -180,8 +182,8 @@ class FilterTokenMapper(TokenMapper):
             logger.debug(f'token {t}: l={len(t)}, s={t.is_stop}, p={t.is_punct}')
             if (not self.remove_stop or not t.is_stop) and \
                (not self.remove_pronouns or not t.lemma_ == '-PRON-') and \
-               not t.is_punct and \
-               not t.tag_ == 'DT' and \
+               (not self.remove_punctuation or not t.is_punct) and \
+               (not self.remove_determiners or not t.tag_ == 'DT') and \
                len(t) > 0:
                 keep = True
         else:
