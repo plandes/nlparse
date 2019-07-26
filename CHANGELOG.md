@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.2] - 2019-07-25
 ### Added
 - Feature to disable SpaCy pipeline components.
+- Add configuration for removing punctuation and determiners.
 
 ### Changed
 - Skip textacy for document creation since it wasn't used.  This is more efficient.
