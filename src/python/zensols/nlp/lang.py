@@ -80,7 +80,7 @@ class LanguageResource(object):
 
     """
     def __init__(self, config: Config, model_name: str, lang: str = 'en',
-                 components: list = None):
+                 components: list = None, disable_components: list = None):
         """Initialize the language resource.
 
         :param config: the application configuration used to create the Spacy
@@ -95,16 +95,21 @@ class LanguageResource(object):
         if components is not None:
             for comp in components:
                 comp.add_to_pipeline(nlp)
+        self.disable_components = disable_components
         self.model = nlp
 
     def parse(self, text: str) -> Doc:
         """Parse ``text`` in to a Spacy document.
 
         """
-        logger.debug(f'creating document with model: {self.model_name}')
+        logger.debug(f'creating document with model: {self.model_name}, ' +
+                     f'disable components: {self.disable_components}')
         text = self.normalize(text)
-        doc = textacy.doc.Doc(text, lang=self.model_name)
-        return doc.spacy_doc
+        if self.disable_components is None:
+            doc = self.model(text)
+        else:
+            doc = self.model(text, disable=self.disable_components)
+        return doc
 
     def features(self, doc: Doc, tn: TokenNormalizer) -> iter:
         """Generate an iterator of ``TokenFeatures`` instances with features on a per

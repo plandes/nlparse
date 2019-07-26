@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Feature to disable SpaCy pipeline components.
+
+### Changed
+- Skip textacy for document creation since it wasn't used.  This is more efficient.
+
 
 ## [0.0.1] - 2019-07-06
 ### Added

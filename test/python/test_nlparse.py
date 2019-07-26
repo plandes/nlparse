@@ -84,3 +84,14 @@ class TestParse(unittest.TestCase):
         self.assertEqual(('citizen', 'the_united_states_of_america'),
                          tuple(self.lr.normalized_tokens(
                              doc, tnfac.instance('map_filter_subs'))))
+
+    def test_disable(self):
+        lr = self.lr
+        dis_lr = self.fac.instance('disable_tagger')
+        doc = lr.parse('Dan throws the ball.')
+        tags = tuple(map(lambda t: t.tag_, doc))
+        self.assertEqual(('NNP', 'VBZ', 'DT', 'NN', '.'), tags)
+        self.assertEqual('tagger parser'.split(), dis_lr.disable_components)
+        doc_dis = dis_lr.parse('Dan throws the ball.')
+        no_tags = tuple(map(lambda t: t.tag_, doc_dis))
+        self.assertEqual(('', '', '', '', ''), no_tags)
