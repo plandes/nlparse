@@ -129,7 +129,7 @@ class LanguageResource(object):
 
         """
         if self.lang == 'en':
-            tokenizer = English().Defaults.create_tokenizer(self.model_name)
+            tokenizer = English().Defaults.create_tokenizer(self.model)
         else:
             raise ValueError(f'no such language: {self.lang}')
         return tokenizer(text)
