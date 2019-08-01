@@ -11,6 +11,8 @@ from spacy.lang.en import English
 from zensols.actioncli import (
     SingleClassConfigManager,
     Config,
+    DelegateStash,
+    StashFactory,
 )
 from zensols.nlp import (
     TokenFeatures,
@@ -80,7 +82,8 @@ class LanguageResource(object):
 
     """
     def __init__(self, config: Config, model_name: str, lang: str = 'en',
-                 components: list = None, disable_components: list = None):
+                 components: list = None, disable_components: list = None,
+                 token_normalizer: TokenNormalizer = None):
         """Initialize the language resource.
 
         :param config: the application configuration used to create the Spacy
@@ -88,6 +91,8 @@ class LanguageResource(object):
         :param model_name: the Spacy model name (i.e. ``en_core_web_sm``)
         :param lang: the natural language the identify the model
         :param components: additional Spacy components to add to the pipeline
+        :param tn: the token normalizer for methods that use it, i.e. ``features``
+
         """
         self.model_name = model_name
         self.lang = lang
@@ -97,6 +102,7 @@ class LanguageResource(object):
                 comp.add_to_pipeline(nlp)
         self.disable_components = disable_components
         self.model = nlp
+        self.token_normalizer = token_normalizer
 
     def parse(self, text: str) -> Doc:
         """Parse ``text`` in to a Spacy document.
@@ -111,11 +117,13 @@ class LanguageResource(object):
             doc = self.model(text, disable=self.disable_components)
         return doc
 
-    def features(self, doc: Doc, tn: TokenNormalizer) -> iter:
+    def features(self, doc: Doc,
+                 token_normalizer: TokenNormalizer = None) -> iter:
         """Generate an iterator of ``TokenFeatures`` instances with features on a per
         token level.
 
         """
+        tn = self.token_normalizer if token_normalizer is None else token_normalizer
         return map(lambda t: TokenFeatures(doc, *t), tn.normalize(doc))
 
     def normalized_tokens(self, doc: Doc, tn: TokenNormalizer) -> iter:
@@ -143,6 +151,40 @@ class LanguageResource(object):
 
     def __repr__(self):
         return self.__str__()
+
+
+class DocStash(DelegateStash):
+    """A stash that transforms loaded items in to a SpaCy document.
+
+    All items returned from the delegate must have a ``text`` attribute or
+    override ``item_to_text``.
+
+    """
+    def __init__(self, delegate, lang_res: LanguageResource):
+        """Initialize.
+
+        :param delegate: the delegate to use objects that have the ``text``
+                         attribute
+        :param lang_res: used to parse and create the SpaCy documents.
+
+        """
+        super(DocStash, self).__init__(delegate)
+        self.lang_res = lang_res
+
+    def item_to_text(self, item: object) -> str:
+        """Return the text of the item that is loaded with ``load``.  This default
+        method uses the ``text`` attribute from ``item``.
+
+        """
+        return item.text
+
+    def load(self, name: str):
+        item = super(DocStash, self).load(name)
+        text = self.item_to_text(item)
+        return self.lang_res.parse(text)
+
+
+StashFactory.register(DocStash)
 
 
 class LanguageResourceFactory(SingleClassConfigManager):
