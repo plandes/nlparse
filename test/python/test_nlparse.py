@@ -54,6 +54,7 @@ class TestParse(unittest.TestCase):
 
     def test_feature(self):
         lr = self.lr
+        self.maxDiff = 999999
         doc = lr.parse('Dan throws the ball.')
         tnfac = TokenNormalizerFactory(self.config)
         tn = tnfac.instance()

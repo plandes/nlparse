@@ -104,27 +104,31 @@ class LanguageResource(object):
         self.model = nlp
         self.token_normalizer = token_normalizer
 
-    def parse(self, text: str) -> Doc:
+    def parse(self, text: str, normalize=True) -> Doc:
         """Parse ``text`` in to a Spacy document.
 
         """
         logger.debug(f'creating document with model: {self.model_name}, ' +
                      f'disable components: {self.disable_components}')
-        text = self.normalize(text)
+        if normalize:
+            text = self.normalize(text)
         if self.disable_components is None:
             doc = self.model(text)
         else:
             doc = self.model(text, disable=self.disable_components)
         return doc
 
-    def features(self, doc: Doc,
-                 token_normalizer: TokenNormalizer = None) -> iter:
+    def features(self, doc: Doc, token_normalizer: TokenNormalizer = None):
         """Generate an iterator of ``TokenFeatures`` instances with features on a per
         token level.
 
+        :return: an iterable of ``TokenFeatures`` objects
+
         """
-        tn = self.token_normalizer if token_normalizer is None else token_normalizer
-        return map(lambda t: TokenFeatures(doc, *t), tn.normalize(doc))
+        if token_normalizer is None:
+            token_normalizer = self.token_normalizer
+        return map(lambda t: TokenFeatures(doc, *t),
+                   token_normalizer.normalize(doc))
 
     def normalized_tokens(self, doc: Doc, tn: TokenNormalizer) -> iter:
         """Return an iterator of the normalized text of each token.
@@ -144,6 +148,7 @@ class LanguageResource(object):
 
     @staticmethod
     def normalize(text):
+        text = text.replace('\n', ' ')
         return textacy.preprocess.normalize_whitespace(text)
 
     def __str__(self):
