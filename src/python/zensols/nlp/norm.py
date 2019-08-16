@@ -165,22 +165,31 @@ class FilterTokenMapper(TokenMapper):
     """Filter tokens based on token (Spacy) attributes.
 
     """
-    def __init__(self, *args, remove_stop=False, remove_pronouns=False,
-                 remove_punctuation=True, remove_determiners=True, **kwargs):
+    def __init__(self, *args, remove_stop=False, remove_space=False,
+                 remove_pronouns=False, remove_punctuation=False,
+                 remove_determiners=False, **kwargs):
         super(FilterTokenMapper, self).__init__(*args, **kwargs)
         self.remove_stop = remove_stop
+        self.remove_space = remove_space
         self.remove_pronouns = remove_pronouns
         self.remove_punctuation = remove_punctuation
         self.remove_determiners = remove_determiners
+        logger.debug(f'created {self.__class__}: ' +
+                     f'remove_stop: {remove_stop}, ' +
+                     f'remove_space: {remove_space}, ' +
+                     f'remove_pronouns: {remove_pronouns}, ' +
+                     f'remove_punctuation: {remove_punctuation}, ' +
+                     f'remove_determiners: {remove_determiners}')
 
     def _filter(self, tok_or_ent_tup):
         tok_or_ent = tok_or_ent_tup[0]
-        logger.debug(f'{tok_or_ent} ({type(tok_or_ent)})')
+        logger.debug(f'filter: {tok_or_ent} ({type(tok_or_ent)})')
         keep = False
         if isinstance(tok_or_ent, Token):
             t = tok_or_ent
             logger.debug(f'token {t}: l={len(t)}, s={t.is_stop}, p={t.is_punct}')
             if (not self.remove_stop or not t.is_stop) and \
+               (not self.remove_space or not t.is_space) and \
                (not self.remove_pronouns or not t.lemma_ == '-PRON-') and \
                (not self.remove_punctuation or not t.is_punct) and \
                (not self.remove_determiners or not t.tag_ == 'DT') and \
@@ -188,6 +197,7 @@ class FilterTokenMapper(TokenMapper):
                 keep = True
         else:
             keep = True
+        logger.debug(f'filter: keeping={keep}')
         return keep
 
     def map_tokens(self, token_tups):

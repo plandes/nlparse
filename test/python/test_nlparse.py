@@ -110,3 +110,16 @@ class TestParse(unittest.TestCase):
         feats = lr.features(doc, tnfac.instance('feature_stop_filter'))
         self.assertEqual(('citizen', 'the United States of America'),
                          tuple(map(lambda f: f.norm, feats)))
+
+    def test_space(self):
+        lr = self.lr
+        self.maxDiff = 999999
+        doc = lr.parse('''Dan throws
+the ball.''', normalize=False)
+        tnfac = TokenNormalizerFactory(self.config)
+        tn = tnfac.instance('nonorm')
+        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        self.assertEqual(('Dan', 'throws', '\n', 'the', 'ball', '.'), res)
+        tn = tnfac.instance('map_filter_space')
+        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
