@@ -104,8 +104,11 @@ class LanguageResource(object):
         self.model = nlp
         self.token_normalizer = token_normalizer
 
-    def parse(self, text: str, normalize=True) -> Doc:
+    def parse(self, text: str, normalize=False) -> Doc:
         """Parse ``text`` in to a Spacy document.
+
+        :param normalize: if ``True`` use the text normalization method
+                          ``normalize`` before parsing
 
         """
         logger.debug(f'creating document with model: {self.model_name}, ' +

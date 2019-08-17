@@ -123,3 +123,17 @@ the ball.''', normalize=False)
         tn = tnfac.instance('map_filter_space')
         res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
+
+    def test_tok_boundaries(self):
+        lr = self.lr
+        tnfac = TokenNormalizerFactory(self.config)
+        tn = tnfac.instance('nonorm')
+        doc = lr.parse('id:1234')
+        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        self.assertEqual(('id:1234',), res)
+        doc = lr.parse('id-1234')
+        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        self.assertEqual(('id-1234',), res)
+        doc = lr.parse('an identifier: id-1234')
+        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        self.assertEqual(('an', 'identifier', ':', 'id-1234',), res)
