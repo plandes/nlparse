@@ -1,5 +1,6 @@
 import logging
 import unittest
+import json
 from zensols.actioncli import ExtendedInterpolationConfig
 from zensols.nlp import (
     LanguageResourceFactory,
@@ -39,6 +40,7 @@ class AppConfig(ExtendedInterpolationConfig):
 
 class TestParse(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = 999999
         self.config = AppConfig()
         self.fac = LanguageResourceFactory(self.config)
         self.lr = self.fac.instance()
@@ -54,7 +56,6 @@ class TestParse(unittest.TestCase):
 
     def test_feature(self):
         lr = self.lr
-        self.maxDiff = 999999
         doc = lr.parse('Dan throws the ball.')
         tnfac = TokenNormalizerFactory(self.config)
         tn = tnfac.instance()
@@ -113,7 +114,6 @@ class TestParse(unittest.TestCase):
 
     def test_space(self):
         lr = self.lr
-        self.maxDiff = 999999
         doc = lr.parse('''Dan throws
 the ball.''', normalize=False)
         tnfac = TokenNormalizerFactory(self.config)
@@ -137,3 +137,20 @@ the ball.''', normalize=False)
         doc = lr.parse('an identifier: id-1234')
         res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
         self.assertEqual(('an', 'identifier', ':', 'id-1234',), res)
+
+    def test_detached_features(self):
+        json_path = 'test-resources/detatch.json'
+        lr = self.lr
+        doc = self.lr.parse('I am a citizen of the United States of America.')
+        tnfac = TokenNormalizerFactory(self.config)
+        feats = lr.features(doc, tnfac.instance('feature_no_filter'))
+        objs = []
+        for f in feats:
+            objs.append(f.detach().to_dict())
+        if 0:
+            with open(json_path, 'w') as f:
+                json.dump(objs, f, indent=4)
+        else:
+            with open(json_path, 'r') as f:
+                comps = json.load(f)
+            self.assertEqual(comps, objs)

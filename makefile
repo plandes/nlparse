@@ -16,4 +16,4 @@ nlpdeps:	pydeps
 
 .PHONY:		testtmp
 testtmp:
-		make PY_SRC_TEST_PKGS=test_nlparse.TestParse.test_space test
+		make PY_SRC_TEST_PKGS=test_nlparse.TestParse.test_detached_features test
