@@ -3,4 +3,4 @@ spacy>=2.1.8
 msgpack>=0.5.6
 msgpack-numpy>=0.4.3.2
 gensim>=3.6.0
-zensols.actioncli>=1.0.17
+zensols.actioncli>=1.1.1

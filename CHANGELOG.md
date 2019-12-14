@@ -8,7 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.6] - 2019-12-14
+### Changed
+- Fix travis.
+
+
 ## [0.0.5] - 2019-12-14
+Data classes are now used so Python 3.7 is now a requirement.
+
 ### Added
 - Feature normalizers were added for neural networks.
 - Implemented a better strategy for using language resources with token
@@ -40,7 +47,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/plandes/nlparse/compare/v0.0.6...v0.0.7
+[0.0.6]: https://github.com/plandes/nlparse/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/plandes/nlparse/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/plandes/nlparse/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/plandes/nlparse/compare/v0.0.2...v0.0.3
