@@ -55,17 +55,21 @@ class TestParse(unittest.TestCase):
         self.assertEqual(rec_sort(c), rec_sort(res))
 
     def test_feature(self):
-        lr = self.lr
-        doc = lr.parse('Dan throws the ball.')
+        #lr = self.lr
         tnfac = TokenNormalizerFactory(self.config)
         tn = tnfac.instance()
+        lr = self.fac.instance(token_normalizer=tn)
+        doc = lr.parse('Dan throws the ball.')
         self.assertEqual('TokenNormalizer: embed=True, normalize: True remove first stop: False', str(tn))
-        res = tuple(map(lambda x: x.string_features, lr.features(doc, tn)))
+
+        res = tuple(map(lambda x: x.string_features, lr.features(doc)))
         with open(self.config.feature_path) as f:
             c = eval(f.read())
         self.assertEqual(rec_sort(c), rec_sort(res))
+
         tn = tnfac.instance('nonorm')
-        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        lr = self.fac.instance(token_normalizer=tn)
+        res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
 
     def test_map(self):
@@ -99,51 +103,61 @@ class TestParse(unittest.TestCase):
         self.assertEqual(('', '', '', '', ''), no_tags)
 
     def test_filter_features(self):
-        lr = self.lr
-        doc = self.lr.parse('I am a citizen of the United States of America.')
         tnfac = TokenNormalizerFactory(self.config)
-        feats = lr.features(doc, tnfac.instance('feature_no_filter'))
+        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_no_filter'))
+        doc = self.lr.parse('I am a citizen of the United States of America.')
+        feats = lr.features(doc)
         self.assertEqual(('I', 'am', 'a', 'citizen', 'of', 'the United States of America', '.'),
                          tuple(map(lambda f: f.norm, feats)))
-        feats = lr.features(doc, tnfac.instance('feature_default_filter'))
+
+        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_default_filter'))
+        doc = self.lr.parse('I am a citizen of the United States of America.')
+        feats = lr.features(doc)
         self.assertEqual(('I', 'am', 'citizen', 'of', 'the United States of America'),
                          tuple(map(lambda f: f.norm, feats)))
-        feats = lr.features(doc, tnfac.instance('feature_stop_filter'))
+
+        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_stop_filter'))
+        doc = self.lr.parse('I am a citizen of the United States of America.')
+        feats = lr.features(doc)
         self.assertEqual(('citizen', 'the United States of America'),
                          tuple(map(lambda f: f.norm, feats)))
 
     def test_space(self):
-        lr = self.lr
-        doc = lr.parse('''Dan throws
-the ball.''', normalize=False)
         tnfac = TokenNormalizerFactory(self.config)
         tn = tnfac.instance('nonorm')
-        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        lr = self.fac.instance(token_normalizer=tn)
+        doc = lr.parse('''Dan throws
+the ball.''', normalize=False)
+        res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', '\n', 'the', 'ball', '.'), res)
+
         tn = tnfac.instance('map_filter_space')
-        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        lr = self.fac.instance(token_normalizer=tn)
+        doc = lr.parse('''Dan throws
+the ball.''', normalize=False)
+        res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
 
     def test_tok_boundaries(self):
-        lr = self.lr
         tnfac = TokenNormalizerFactory(self.config)
         tn = tnfac.instance('nonorm')
+        lr = self.fac.instance(token_normalizer=tn)
         doc = lr.parse('id:1234')
-        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('id:1234',), res)
         doc = lr.parse('id-1234')
-        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('id-1234',), res)
         doc = lr.parse('an identifier: id-1234')
-        res = tuple(map(lambda x: x.norm, lr.features(doc, tn)))
+        res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('an', 'identifier', ':', 'id-1234',), res)
 
     def test_detached_features(self):
         json_path = 'test-resources/detatch.json'
-        lr = self.lr
-        doc = self.lr.parse('I am a citizen of the United States of America.')
         tnfac = TokenNormalizerFactory(self.config)
-        feats = lr.features(doc, tnfac.instance('feature_no_filter'))
+        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_no_filter'))
+        doc = self.lr.parse('I am a citizen of the United States of America.')
+        feats = lr.features(doc)
         objs = []
         for f in feats:
             objs.append(f.detach().to_dict())

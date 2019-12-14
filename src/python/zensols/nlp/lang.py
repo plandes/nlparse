@@ -5,6 +5,7 @@ __author__ = 'Paul Landes'
 
 import logging
 import sys
+from typing import List
 import textacy
 from spacy.tokens.doc import Doc
 from spacy.lang.en import English
@@ -17,6 +18,10 @@ from zensols.actioncli import (
 from zensols.nlp import (
     TokenFeatures,
     TokenNormalizer,
+    SpacyFeatureNormalizer,
+    NamedEntityRecognitionFeatureNormalizer,
+    DependencyFeatureNormalizer,
+    PartOfSpeechFeatureNormalizer,
 )
 
 logger = logging.getLogger(__name__)
@@ -102,7 +107,10 @@ class LanguageResource(object):
                 comp.add_to_pipeline(nlp)
         self.disable_components = disable_components
         self.model = nlp
-        self.token_normalizer = token_normalizer
+        if token_normalizer is None:
+            self.token_normalizer = TokenNormalizer()
+        else:
+            self.token_normalizer = token_normalizer
 
     def parse(self, text: str, normalize=False) -> Doc:
         """Parse ``text`` in to a Spacy document.
@@ -121,23 +129,49 @@ class LanguageResource(object):
             doc = self.model(text, disable=self.disable_components)
         return doc
 
-    def features(self, doc: Doc, token_normalizer: TokenNormalizer = None):
+    def parse_tokens(self, tokens: List[str]) -> Doc:
+        """Just like ``parse`` but process a stream of (already) tokenized
+        words/tokens.
+
+        """
+        doc = Doc(self.model.vocab, words=tokens)
+        for pipe in map(lambda n: self.model.get_pipe(n),
+                        self.model.pipe_names):
+            pipe(doc)
+        return doc
+
+    def features(self, doc: Doc):
         """Generate an iterator of ``TokenFeatures`` instances with features on a per
         token level.
 
         :return: an iterable of ``TokenFeatures`` objects
 
         """
-        if token_normalizer is None:
-            token_normalizer = self.token_normalizer
         return map(lambda t: TokenFeatures(doc, *t),
-                   token_normalizer.normalize(doc))
+                   self.token_normalizer.normalize(doc))
 
     def normalized_tokens(self, doc: Doc, tn: TokenNormalizer) -> iter:
         """Return an iterator of the normalized text of each token.
 
         """
         return map(lambda t: t[1], tn.normalize(doc))
+
+    def feature_normalizer(self, feature_type: str) -> SpacyFeatureNormalizer:
+        """Return a feature normalizer.
+
+        :param feature_type: a string identifying the type of feature that will
+                             be normalized, which is one of:
+                             ``ent``: named entity
+                             ``pos``: part of speech tag
+                             ``dep``: dependency
+        :return: the feature normalizer or ``None`` if the key did not match.
+
+        """
+        cls = {'ent': NamedEntityRecognitionFeatureNormalizer,
+               'dep': DependencyFeatureNormalizer,
+               'tag': PartOfSpeechFeatureNormalizer}.get(feature_type)
+        if cls is not None:
+            return cls(self.model.vocab)
 
     def tokenizer(self, text: str):
         """Create a simple Spacy tokenizer.  Currently only English is supported.
