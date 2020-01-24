@@ -1,7 +1,7 @@
 import logging
 import unittest
 import json
-from zensols.actioncli import ExtendedInterpolationConfig
+from config import AppConfig
 from zensols.nlp import (
     LanguageResourceFactory,
     LanguageResource,
@@ -22,22 +22,6 @@ def rec_sort(x):
     return x
 
 
-class AppConfig(ExtendedInterpolationConfig):
-    SECTION = 'test'
-
-    def __init__(self):
-        super(AppConfig, self).__init__(
-            config_file='test-resources/nlparse.conf', default_expect=True)
-
-    @property
-    def parse_path(self):
-        return self.get_option_path('parse_test', self.SECTION)
-
-    @property
-    def feature_path(self):
-        return self.get_option_path('feature_test', self.SECTION)
-
-
 class TestParse(unittest.TestCase):
     def setUp(self):
         self.maxDiff = 999999
@@ -55,7 +39,6 @@ class TestParse(unittest.TestCase):
         self.assertEqual(rec_sort(c), rec_sort(res))
 
     def test_feature(self):
-        #lr = self.lr
         tnfac = TokenNormalizerFactory(self.config)
         tn = tnfac.instance()
         lr = self.fac.instance(token_normalizer=tn)
