@@ -258,7 +258,6 @@ class MapTokenNormalizer(TokenNormalizer):
 
     def __init__(self, config, munger_class_list, *args, **kwargs):
         super(MapTokenNormalizer, self).__init__(*args, **kwargs)
-        te = TokenNormalizerFactory(config)
         ta = TokenMapperFactory(config)
         self.mungers = tuple(map(ta.instance, munger_class_list))
 

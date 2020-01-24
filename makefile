@@ -17,3 +17,7 @@ nlpdeps:	pydeps
 .PHONY:		testtmp
 testtmp:
 		make PY_SRC_TEST_PKGS=test_nlparse.TestParse.test_detached_features test
+
+.PHONY:		testthird
+testthird:
+		make PY_SRC_TEST_PKGS=test_thirdparty.TestThirdParty test
