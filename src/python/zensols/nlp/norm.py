@@ -1,4 +1,4 @@
-"""Normalize text and munge Spacy documents.
+"""Normalize text and map Spacy documents.
 
 """
 __author__ = 'Paul Landes'
@@ -141,7 +141,7 @@ class TokenMapperFactory(ConfigFactory):
 
     def __init__(self, config):
         super(TokenMapperFactory, self).__init__(
-            config, '{name}_token_munger')
+            config, '{name}_token_mapper')
 
 
 class SplitTokenMapper(TokenMapper):
@@ -256,15 +256,15 @@ class MapTokenNormalizer(TokenNormalizer):
 
     """
 
-    def __init__(self, config, munger_class_list, *args, **kwargs):
+    def __init__(self, config, mapper_class_list, *args, **kwargs):
         super(MapTokenNormalizer, self).__init__(*args, **kwargs)
         ta = TokenMapperFactory(config)
-        self.mungers = tuple(map(ta.instance, munger_class_list))
+        self.mappers = tuple(map(ta.instance, mapper_class_list))
 
     def _map_tokens(self, token_tups):
-        for munger in self.mungers:
-            logger.debug(f'munging token_tups with {munger}')
-            token_tups = it.chain(*munger.map_tokens(token_tups))
+        for mapper in self.mappers:
+            logger.debug(f'mapping token_tups with {mapper}')
+            token_tups = it.chain(*mapper.map_tokens(token_tups))
         return token_tups
 
 
