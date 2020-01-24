@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Added the Porter stemmer from the [NTLK].
+### Changed
+- Better class naming for token mapper.
+
 
 ## [0.0.6] - 2019-12-14
 ### Changed
-- Fix travis.
+- Fix Travis.
 
 
 ## [0.0.5] - 2019-12-14
@@ -55,3 +60,5 @@ Data classes are now used so Python 3.7 is now a requirement.
 [0.0.3]: https://github.com/plandes/nlparse/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/plandes/nlparse/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/plandes/nlparse/compare/v0.0.0...v0.0.1
+
+[NLTK]: https://www.nltk.org
