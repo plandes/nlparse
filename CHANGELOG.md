@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added the Porter stemmer from the [NTLK].
 ### Changed
 - Better class naming for token mapper.
+- Features debugging bug fix.
 
 
 ## [0.0.6] - 2019-12-14
