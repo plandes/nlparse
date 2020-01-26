@@ -20,7 +20,8 @@
         "shape": 101,
         "shape_": "X",
         "tag": 13656873538139661788,
-        "tag_": "PRP"
+        "tag_": "PRP",
+	"text": "I"
     },
     {
         "children": [
@@ -47,7 +48,8 @@
         "shape": 4370460163704169311,
         "shape_": "xx",
         "tag": 9188597074677201817,
-        "tag_": "VBP"
+        "tag_": "VBP",
+	"text": "am"
     },
     {
         "children": [],
@@ -70,7 +72,8 @@
         "shape": 11123243248953317070,
         "shape_": "x",
         "tag": 15267657372422890137,
-        "tag_": "DT"
+        "tag_": "DT",
+	"text": "a"
     },
     {
         "children": [
@@ -96,7 +99,8 @@
         "shape": 13110060611322374290,
         "shape_": "xxxx",
         "tag": 15308085513773655218,
-        "tag_": "NN"
+        "tag_": "NN",
+	"text": "citizen"
     },
     {
         "children": [
@@ -121,7 +125,8 @@
         "shape": 4370460163704169311,
         "shape_": "xx",
         "tag": 1292078113972184607,
-        "tag_": "IN"
+        "tag_": "IN",
+	"text": "of"
     },
     {
         "children": [],
@@ -144,7 +149,8 @@
         "shape": 4088098365541558500,
         "shape_": "xxx",
         "tag": 15267657372422890137,
-        "tag_": "DT"
+        "tag_": "DT",
+	"text": "the United States of America"
     },
     {
         "children": [],
@@ -167,6 +173,7 @@
         "shape": 12646065887601541794,
         "shape_": ".",
         "tag": 12646065887601541794,
-        "tag_": "."
+        "tag_": ".",
+	"text": "."
     }
 ]
