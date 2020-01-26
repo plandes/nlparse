@@ -3,6 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
+from typing import Dict
 import logging
 import sys
 import inspect
@@ -25,11 +26,11 @@ class TokenAttributes(object):
         return self.__dict__
 
     @property
-    def string_features(self) -> (dict, (str, str)):
+    def string_features(self) -> Dict[str, str]:
         """The features of the token as strings (both keys and values).
 
         """
-        params = {'text': self.tok_or_ent.text,
+        params = {'text': self.text,
                   'norm': self.norm,
                   'lemma': self.lemma,
                   'is_wh': self.is_wh,
@@ -49,7 +50,7 @@ class TokenAttributes(object):
         return params
 
     @property
-    def features(self) -> (dict, (str, int)):
+    def features(self) -> Dict[str, str]:
         """Return the features as numeric values.
 
         """
@@ -87,7 +88,11 @@ class TokenAttributes(object):
         writer.write('    num: {}\n'.format(self.features))
 
     def __str__(self):
-        return '{} ({})'.format(self.tok_or_ent, self.norm)
+        if hasattr(self, 'tok_or_ent'):
+            tokstr = self.tok_or_ent
+        else:
+            tokstr = self.norm
+        return '{} ({})'.format(tokstr, self.norm)
 
     def __repr__(self):
         return self.__str__()
@@ -135,6 +140,13 @@ class TokenFeatures(TokenAttributes):
 
     def to_dict(self):
         return self.detach().to_dict()
+
+    @property
+    def text(self) -> str:
+        """Return the unmodified parsed tokenized text.
+
+        """
+        return self.tok_or_ent.text
 
     @property
     def norm(self) -> str:
