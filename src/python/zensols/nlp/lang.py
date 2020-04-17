@@ -101,7 +101,7 @@ class LanguageResource(object):
         """
         self.model_name = model_name
         self.lang = lang
-        nlp = textacy.cache.load_spacy(model_name)
+        nlp = textacy.load_spacy_lang(model_name)
         if components is not None:
             for comp in components:
                 comp.add_to_pipeline(nlp)

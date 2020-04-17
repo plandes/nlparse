@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.8] - 2020-04-14
+### Changed
+- Upgrade to `spaCy` 2.2.4 and `textacy` 0.10.0
+
+
 ## [0.0.7] - 2020-01-24
 ### Added
 - Added the Porter stemmer from the [NTLK].
@@ -55,7 +60,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.7...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/plandes/nlparse/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/plandes/nlparse/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/plandes/nlparse/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/plandes/nlparse/compare/v0.0.4...v0.0.5
