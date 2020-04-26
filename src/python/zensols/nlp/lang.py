@@ -9,11 +9,10 @@ from typing import List
 import textacy
 from spacy.tokens.doc import Doc
 from spacy.lang.en import English
-from zensols.actioncli import (
+from zensols.config import Config
+from zensols.persist import (
     SingleClassConfigManager,
-    Config,
     DelegateStash,
-    StashFactory,
 )
 from zensols.nlp import (
     TokenFeatures,
@@ -224,9 +223,6 @@ class DocStash(DelegateStash):
         item = super(DocStash, self).load(name)
         text = self.item_to_text(item)
         return self.lang_res.parse(text)
-
-
-StashFactory.register(DocStash)
 
 
 class LanguageResourceFactory(SingleClassConfigManager):

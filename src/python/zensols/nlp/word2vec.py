@@ -9,7 +9,7 @@ from time import time
 from pathlib import Path
 from abc import abstractmethod
 import numpy as np
-from zensols.actioncli import (
+from zensols.persist import (
     persisted,
     ConfigFactory
 )

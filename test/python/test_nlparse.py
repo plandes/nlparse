@@ -1,13 +1,13 @@
 import logging
 import unittest
 import json
-from config import AppConfig
+from zensols.config import ImportConfigFactory
 from zensols.nlp import (
     LanguageResourceFactory,
     LanguageResource,
     DocUtil,
-    TokenNormalizerFactory,
 )
+from config import AppConfig
 
 logger = logging.getLogger(__name__)
 
@@ -39,8 +39,8 @@ class TestParse(unittest.TestCase):
         self.assertEqual(rec_sort(c), rec_sort(res))
 
     def test_feature(self):
-        tnfac = TokenNormalizerFactory(self.config)
-        tn = tnfac.instance()
+        tnfac = ImportConfigFactory(self.config)
+        tn = tnfac.instance('default_token_normalizer')
         lr = self.fac.instance(token_normalizer=tn)
         doc = lr.parse('Dan throws the ball.')
         self.assertEqual('TokenNormalizer: embed=True, normalize: True remove first stop: False', str(tn))
@@ -50,29 +50,29 @@ class TestParse(unittest.TestCase):
             c = eval(f.read())
         self.assertEqual(rec_sort(c), rec_sort(res))
 
-        tn = tnfac.instance('nonorm')
+        tn = tnfac.instance('nonorm_token_normalizer')
         lr = self.fac.instance(token_normalizer=tn)
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
 
     def test_map(self):
-        tnfac = TokenNormalizerFactory(self.config)
+        tnfac = ImportConfigFactory(self.config)
         doc = self.lr.parse('I am a citizen of the United States of America.')
         self.assertEqual(('citizen', 'the United States of America'),
                          tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_filter'))))
+                             doc, tnfac.instance('map_filter_token_normalizer'))))
         self.assertEqual(('am', 'citizen', 'of', 'the United States of America'),
                          tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_filter_pron'))))
+                             doc, tnfac.instance('map_filter_pron_token_normalizer'))))
         self.assertEqual(('i', 'am', 'a', 'citizen', 'of', 'the united states of america', '.'),
                          tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_lower'))))
+                             doc, tnfac.instance('map_lower_token_normalizer'))))
         self.assertEqual(('citizen', 'United', 'States', 'America'),
                          tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_embed'))))
+                             doc, tnfac.instance('map_embed_token_normalizer'))))
         self.assertEqual(('citizen', 'the_united_states_of_america'),
                          tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_filter_subs'))))
+                             doc, tnfac.instance('map_filter_subs_token_normalizer'))))
 
     def test_disable(self):
         lr = self.lr
@@ -86,35 +86,35 @@ class TestParse(unittest.TestCase):
         self.assertEqual(('', '', '', '', ''), no_tags)
 
     def test_filter_features(self):
-        tnfac = TokenNormalizerFactory(self.config)
-        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_no_filter'))
+        tnfac = ImportConfigFactory(self.config)
+        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
         doc = self.lr.parse('I am a citizen of the United States of America.')
         feats = lr.features(doc)
         self.assertEqual(('I', 'am', 'a', 'citizen', 'of', 'the United States of America', '.'),
                          tuple(map(lambda f: f.norm, feats)))
 
-        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_default_filter'))
+        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_default_filter_token_normalizer'))
         doc = self.lr.parse('I am a citizen of the United States of America.')
         feats = lr.features(doc)
         self.assertEqual(('I', 'am', 'citizen', 'of', 'the United States of America'),
                          tuple(map(lambda f: f.norm, feats)))
 
-        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_stop_filter'))
+        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_stop_filter_token_normalizer'))
         doc = self.lr.parse('I am a citizen of the United States of America.')
         feats = lr.features(doc)
         self.assertEqual(('citizen', 'the United States of America'),
                          tuple(map(lambda f: f.norm, feats)))
 
     def test_space(self):
-        tnfac = TokenNormalizerFactory(self.config)
-        tn = tnfac.instance('nonorm')
+        tnfac = ImportConfigFactory(self.config)
+        tn = tnfac.instance('nonorm_token_normalizer')
         lr = self.fac.instance(token_normalizer=tn)
         doc = lr.parse('''Dan throws
 the ball.''', normalize=False)
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', '\n', 'the', 'ball', '.'), res)
 
-        tn = tnfac.instance('map_filter_space')
+        tn = tnfac.instance('map_filter_space_token_normalizer')
         lr = self.fac.instance(token_normalizer=tn)
         doc = lr.parse('''Dan throws
 the ball.''', normalize=False)
@@ -122,8 +122,8 @@ the ball.''', normalize=False)
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
 
     def test_tok_boundaries(self):
-        tnfac = TokenNormalizerFactory(self.config)
-        tn = tnfac.instance('nonorm')
+        tnfac = ImportConfigFactory(self.config)
+        tn = tnfac.instance('nonorm_token_normalizer')
         lr = self.fac.instance(token_normalizer=tn)
         doc = lr.parse('id:1234')
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
@@ -137,8 +137,8 @@ the ball.''', normalize=False)
 
     def test_detached_features(self):
         json_path = 'test-resources/detatch.json'
-        tnfac = TokenNormalizerFactory(self.config)
-        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_no_filter'))
+        tnfac = ImportConfigFactory(self.config)
+        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
         doc = self.lr.parse('I am a citizen of the United States of America.')
         feats = lr.features(doc)
         objs = []

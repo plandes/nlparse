@@ -1,10 +1,8 @@
 import logging
 import unittest
 from config import AppConfig
-from zensols.nlp import (
-    LanguageResourceFactory,
-    TokenNormalizerFactory,
-)
+from zensols.config import ImportConfigFactory
+from zensols.nlp import LanguageResourceFactory
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +13,9 @@ class TestThirdParty(unittest.TestCase):
         self.fac = LanguageResourceFactory(self.config)
 
     def test_stemmer(self):
-        tnfac = TokenNormalizerFactory(self.config)
+        tnfac = ImportConfigFactory(self.config)
         sent = 'Bobby is fast and runs with dogs, armies, and sheep from the police.'
-        lr = self.fac.instance(token_normalizer=tnfac.instance('nonorm'))
+        lr = self.fac.instance(token_normalizer=tnfac.instance('nonorm_token_normalizer'))
         doc = lr.parse(sent)
         feats = tuple(lr.features(doc))
         self.assertEqual(('Bobby', 'is', 'fast', 'and', 'runs', 'with',
@@ -28,7 +26,7 @@ class TestThirdParty(unittest.TestCase):
                           ',', 'army', ',', 'and', 'sheep', 'from', 'the',
                           'police', '.'),
                          tuple(map(lambda f: f.lemma, feats)))
-        lr = self.fac.instance(token_normalizer=tnfac.instance('stemmer'))
+        lr = self.fac.instance(token_normalizer=tnfac.instance('stemmer_token_normalizer'))
         feats = tuple(lr.features(doc))
         self.assertEqual(('bobbi', 'is', 'fast', 'and', 'run', 'with', 'dog',
                           ',', 'armi', ',', 'and', 'sheep', 'from', 'the',

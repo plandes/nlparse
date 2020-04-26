@@ -14,9 +14,9 @@ nlpdeps:	pydeps
 			$(PYTHON_BIN) -m spacy download en_core_web_$${i} ; \
 		done
 
-.PHONY:		testtmp
-testtmp:
-		make PY_SRC_TEST_PKGS=test_nlparse.TestParse.test_detached_features test
+.PHONY:		testparse
+testparse:
+		make PY_SRC_TEST_PKGS=test_nlparse.TestParse test
 
 .PHONY:		testthird
 testthird:

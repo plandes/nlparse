@@ -5,7 +5,7 @@ __author__ = 'Paul Landes'
 
 import logging
 from nltk.stem import PorterStemmer
-from zensols.nlp import TokenMapper, TokenMapperFactory
+from zensols.nlp import TokenMapper
 
 logger = logging.getLogger(__name__)
 
@@ -23,4 +23,4 @@ class PorterStemmerTokenMapper(TokenMapper):
                     token_tups),)
 
 
-TokenMapperFactory.register(PorterStemmerTokenMapper)
+#TokenMapperFactory.register(PorterStemmerTokenMapper)
