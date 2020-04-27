@@ -21,25 +21,6 @@ from gensim.models import (
 logger = logging.getLogger(__name__)
 
 
-class Word2VecModelFactory(ConfigFactory):
-    """Creates instances of ``Word2VecModel``.
-
-    An entry for the Google pretrained vectors look something like:
-
-    [gensim_google_word_vector]
-    class_name = GensimWord2VecModel
-    path = /path/to/GoogleNews-vectors-negative300.bin
-    model_type = keyed
-    size = 300
-
-    """
-    INSTANCE_CLASSES = {}
-
-    def __init__(self, config):
-        super(Word2VecModelFactory, self).__init__(
-            config, '{name}_word_vector')
-
-
 class Word2VecModel(object):
     """Abstract class for word vector/embedding models.
 
@@ -65,8 +46,6 @@ class GensimWord2VecModel(Word2VecModel):
     """Load keyed or non-keyed Gensim models.
 
     Don't instantiate these directly.
-
-    :see Word2VecModelFactory:
 
     """
     def __init__(self, name, size, model_type, path):
@@ -130,6 +109,3 @@ class GensimWord2VecModel(Word2VecModel):
     def _words_to_vectors(self, words):
         wv = self.model.wv
         return map(lambda t: wv[t], filter(lambda t: t in wv, words))
-
-
-Word2VecModelFactory.register(GensimWord2VecModel)

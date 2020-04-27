@@ -21,6 +21,3 @@ class PorterStemmerTokenMapper(TokenMapper):
     def map_tokens(self, token_tups):
         return (map(lambda t: (t[0], self.stemmer.stem(t[1])),
                     token_tups),)
-
-
-#TokenMapperFactory.register(PorterStemmerTokenMapper)

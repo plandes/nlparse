@@ -8,7 +8,6 @@ import re
 import itertools as it
 from abc import abstractmethod
 from spacy.tokens.token import Token
-from zensols.config import ConfigFactory
 from zensols.config import ImportConfigFactory
 
 logger = logging.getLogger(__name__)
@@ -113,17 +112,6 @@ class TokenNormalizer(object):
         return self.__str__()
 
 
-# class TokenNormalizerFactory(ConfigFactory):
-#     INSTANCE_CLASSES = {}
-
-#     def __init__(self, config):
-#         super(TokenNormalizerFactory, self).__init__(
-#             config, '{name}_token_normalizer')
-
-
-# TokenNormalizerFactory.register(TokenNormalizer)
-
-
 class TokenMapper(object):
     """Abstract class used to transform token tuples generated from
     ``TokenNormalizer.normalize``.
@@ -135,14 +123,6 @@ class TokenMapper(object):
 
         """
         pass
-
-
-# class TokenMapperFactory(ConfigFactory):
-#     INSTANCE_CLASSES = {}
-
-#     def __init__(self, config):
-#         super(TokenMapperFactory, self).__init__(
-#             config, '{name}_token_mapper')
 
 
 class SplitTokenMapper(TokenMapper):
@@ -157,9 +137,6 @@ class SplitTokenMapper(TokenMapper):
         rg = self.regex
         return map(lambda t: map(lambda s: (t[0], s), re.split(rg, t[1])),
                    token_tups)
-
-
-# TokenMapperFactory.register(SplitTokenMapper)
 
 
 class FilterTokenMapper(TokenMapper):
@@ -205,9 +182,6 @@ class FilterTokenMapper(TokenMapper):
         return (filter(self._filter, token_tups),)
 
 
-#TokenMapperFactory.register(FilterTokenMapper)
-
-
 class SubstituteTokenMapper(TokenMapper):
     """Replace a string in normalized token text.
 
@@ -220,9 +194,6 @@ class SubstituteTokenMapper(TokenMapper):
     def map_tokens(self, token_tups):
         return (map(lambda x: (x[0], re.sub(self.regex, self.replace_char, x[1])),
                     token_tups),)
-
-
-#TokenMapperFactory.register(SubstituteTokenMapper)
 
 
 class LambdaTokenMapper(TokenMapper):
@@ -248,9 +219,6 @@ class LambdaTokenMapper(TokenMapper):
         return (map(self.map_lambda, terms),)
 
 
-#TokenMapperFactory.register(LambdaTokenMapper)
-
-
 class MapTokenNormalizer(TokenNormalizer):
     """A normalizer that applies a sequence of ``TokenMappers`` to transform
     the normalized token text.
@@ -259,7 +227,6 @@ class MapTokenNormalizer(TokenNormalizer):
 
     def __init__(self, config, mapper_class_list, *args, **kwargs):
         super(MapTokenNormalizer, self).__init__(*args, **kwargs)
-        #ta = TokenMapperFactory(config)
         ta = ImportConfigFactory(config)
         self.mappers = tuple(map(ta.instance, mapper_class_list))
 
@@ -268,6 +235,3 @@ class MapTokenNormalizer(TokenNormalizer):
             logger.debug(f'mapping token_tups with {mapper}')
             token_tups = it.chain(*mapper.map_tokens(token_tups))
         return token_tups
-
-
-#TokenNormalizerFactory.register(MapTokenNormalizer)
