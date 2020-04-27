@@ -10,10 +10,7 @@ import textacy
 from spacy.tokens.doc import Doc
 from spacy.lang.en import English
 from zensols.config import Config
-from zensols.persist import (
-    SingleClassConfigManager,
-    DelegateStash,
-)
+from zensols.persist import DelegateStash
 from zensols.nlp import (
     TokenFeatures,
     TokenNormalizer,
@@ -223,19 +220,3 @@ class DocStash(DelegateStash):
         item = super(DocStash, self).load(name)
         text = self.item_to_text(item)
         return self.lang_res.parse(text)
-
-
-class LanguageResourceFactory(SingleClassConfigManager):
-    """Creates instances of ``LanguageResource`` from application context
-    configuration.  See that class for details.
-
-    """
-    INSTANCE_CLASSES = {}
-
-    def __init__(self, config, *args, **kwargs):
-        super(LanguageResourceFactory, self).__init__(
-            config,
-            cls=LanguageResource,
-            pattern='{name}_langres',
-            stash=None,
-            *args, **kwargs)

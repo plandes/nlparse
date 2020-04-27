@@ -3,7 +3,6 @@ import unittest
 import json
 from zensols.config import ImportConfigFactory
 from zensols.nlp import (
-    LanguageResourceFactory,
     LanguageResource,
     DocUtil,
 )
@@ -26,8 +25,8 @@ class TestParse(unittest.TestCase):
     def setUp(self):
         self.maxDiff = 999999
         self.config = AppConfig()
-        self.fac = LanguageResourceFactory(self.config)
-        self.lr = self.fac.instance()
+        self.fac = ImportConfigFactory(self.config)
+        self.lr = self.fac.instance('default_langres')
 
     def test_parse(self):
         lr = self.lr
@@ -41,7 +40,7 @@ class TestParse(unittest.TestCase):
     def test_feature(self):
         tnfac = ImportConfigFactory(self.config)
         tn = tnfac.instance('default_token_normalizer')
-        lr = self.fac.instance(token_normalizer=tn)
+        lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('Dan throws the ball.')
         self.assertEqual('TokenNormalizer: embed=True, normalize: True remove first stop: False', str(tn))
 
@@ -51,7 +50,7 @@ class TestParse(unittest.TestCase):
         self.assertEqual(rec_sort(c), rec_sort(res))
 
         tn = tnfac.instance('nonorm_token_normalizer')
-        lr = self.fac.instance(token_normalizer=tn)
+        lr = self.fac.instance('default_langres', token_normalizer=tn)
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
 
@@ -76,7 +75,7 @@ class TestParse(unittest.TestCase):
 
     def test_disable(self):
         lr = self.lr
-        dis_lr = self.fac.instance('disable_tagger')
+        dis_lr = self.fac.instance('disable_tagger_langres')
         doc = lr.parse('Dan throws the ball.')
         tags = tuple(map(lambda t: t.tag_, doc))
         self.assertEqual(('NNP', 'VBZ', 'DT', 'NN', '.'), tags)
@@ -87,19 +86,19 @@ class TestParse(unittest.TestCase):
 
     def test_filter_features(self):
         tnfac = ImportConfigFactory(self.config)
-        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
+        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
         doc = self.lr.parse('I am a citizen of the United States of America.')
         feats = lr.features(doc)
         self.assertEqual(('I', 'am', 'a', 'citizen', 'of', 'the United States of America', '.'),
                          tuple(map(lambda f: f.norm, feats)))
 
-        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_default_filter_token_normalizer'))
+        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('feature_default_filter_token_normalizer'))
         doc = self.lr.parse('I am a citizen of the United States of America.')
         feats = lr.features(doc)
         self.assertEqual(('I', 'am', 'citizen', 'of', 'the United States of America'),
                          tuple(map(lambda f: f.norm, feats)))
 
-        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_stop_filter_token_normalizer'))
+        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('feature_stop_filter_token_normalizer'))
         doc = self.lr.parse('I am a citizen of the United States of America.')
         feats = lr.features(doc)
         self.assertEqual(('citizen', 'the United States of America'),
@@ -108,14 +107,14 @@ class TestParse(unittest.TestCase):
     def test_space(self):
         tnfac = ImportConfigFactory(self.config)
         tn = tnfac.instance('nonorm_token_normalizer')
-        lr = self.fac.instance(token_normalizer=tn)
+        lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('''Dan throws
 the ball.''', normalize=False)
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', '\n', 'the', 'ball', '.'), res)
 
         tn = tnfac.instance('map_filter_space_token_normalizer')
-        lr = self.fac.instance(token_normalizer=tn)
+        lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('''Dan throws
 the ball.''', normalize=False)
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
@@ -124,7 +123,7 @@ the ball.''', normalize=False)
     def test_tok_boundaries(self):
         tnfac = ImportConfigFactory(self.config)
         tn = tnfac.instance('nonorm_token_normalizer')
-        lr = self.fac.instance(token_normalizer=tn)
+        lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('id:1234')
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('id:1234',), res)
@@ -138,7 +137,7 @@ the ball.''', normalize=False)
     def test_detached_features(self):
         json_path = 'test-resources/detatch.json'
         tnfac = ImportConfigFactory(self.config)
-        lr = self.fac.instance(token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
+        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
         doc = self.lr.parse('I am a citizen of the United States of America.')
         feats = lr.features(doc)
         objs = []

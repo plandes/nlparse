@@ -4,4 +4,4 @@ msgpack>=0.5.6
 msgpack-numpy>=0.4.3.2
 gensim>=3.6.0
 nltk>=3.4.5
-zensols.util>=1.2.0
+zensols.util>=1.2.1
