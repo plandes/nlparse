@@ -8,7 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-### 
+### Changed
+- Home/master move lemmatizing out of default token normalizer.
+- Update super method calls to modern (at least) Python 3.7.
+- Fix annoying can't find smart_open.gcs bogus warning.
+- Remove language resource factory.
+- Upgrade to zensols.util 1.2.0 and get rid of custom factories.
 
 
 ## [0.0.8] - 2020-04-14
