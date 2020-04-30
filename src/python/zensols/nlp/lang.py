@@ -8,6 +8,8 @@ import sys
 from dataclasses import dataclass, field
 from typing import List
 import textacy
+from spacy.symbols import ORTH, LEMMA, POS, DEP
+#from spacy.symbols import ORTH
 from spacy.tokens.doc import Doc
 from spacy.lang.en import English
 from zensols.config import Config
@@ -91,28 +93,35 @@ class LanguageResource(object):
     :param components: additional Spacy components to add to the pipeline
     :param token_normalizer: the token normalizer for methods that use it,
                              i.e. ``features``
+    :param special_case_tokens: tokens that will be parsed as one token,
+                                i.e. ``</s>``
 
     """
     config: Config
     lang: str = field(default='en')
     model_name: str = field(default=None)
-    components: list = field(default=None)
-    disable_components: list = field(default=None)
+    components: List = field(default=None)
+    disable_components: List = field(default=None)
     token_normalizer: TokenNormalizer = field(default=None)
+    special_case_tokens: List = field(default_factory=list)
 
     def __post_init__(self):
         if self.model_name is None:
             self.model_name = f'{self.lang}_core_web_sm'
-        else:
-            self.model_name = self.model_name
         nlp = textacy.load_spacy_lang(self.model_name)
         if self.components is not None:
             for comp in self.components:
+                logger.debug(f'adding {comp} to the pipeline')
                 comp.add_to_pipeline(nlp)
         self.disable_components = self.disable_components
         self.model = nlp
         if self.token_normalizer is None:
+            logger.debug('adding default tokenizer')
             self.token_normalizer = TokenNormalizer()
+        for stok in self.special_case_tokens:
+            rule = [{ORTH: stok}]
+            logger.debug(f'adding special token: {stok} with rule: {rule}')
+            self.model.tokenizer.add_special_case(stok, rule)
 
     def parse(self, text: str, normalize=False) -> Doc:
         """Parse ``text`` in to a Spacy document.
@@ -152,10 +161,11 @@ class LanguageResource(object):
         return map(lambda t: TokenFeatures(doc, *t),
                    self.token_normalizer.normalize(doc))
 
-    def normalized_tokens(self, doc: Doc, tn: TokenNormalizer) -> iter:
+    def normalized_tokens(self, doc: Doc, tn: TokenNormalizer = None) -> iter:
         """Return an iterator of the normalized text of each token.
 
         """
+        tn = self.token_normalizer if tn is None else tn
         return map(lambda t: t[1], tn.normalize(doc))
 
     def feature_normalizer(self, feature_type: str) -> SpacyFeatureNormalizer:

@@ -150,3 +150,17 @@ the ball.''', normalize=False)
             with open(json_path, 'r') as f:
                 comps = json.load(f)
             self.assertEqual(comps, objs)
+
+    def test_special_tok(self):
+        tnfac = ImportConfigFactory(self.config)
+        txt = '<s> I am a citizen of the United States of America. </s>'
+        doc = self.lr.parse(txt)
+        self.assertEqual(('<', 's', '>', 'I', 'am', 'a', 'citizen', 'of',
+                          'the United States of America', '.', '<', '/s', '>'),
+                         tuple(self.lr.normalized_tokens(
+                             doc, tnfac.instance('nonorm_token_normalizer'))))
+        lr = self.fac.instance('special_langres')
+        doc = lr.parse(txt)
+        self.assertEqual(('<s>', 'I', 'am', 'a', 'citizen', 'of',
+                          'the United States of America', '.', '</s>'),
+                         tuple(lr.normalized_tokens(doc)))

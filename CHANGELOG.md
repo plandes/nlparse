@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Remove language resource factory.
 - Upgrade to zensols.util 1.2.0 and get rid of custom factories.
 
+### Added
+- Feature to parse whole special tokens.
+
 
 ## [0.0.8] - 2020-04-14
 ### Changed
