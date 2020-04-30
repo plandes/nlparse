@@ -8,8 +8,7 @@ import sys
 from dataclasses import dataclass, field
 from typing import List
 import textacy
-from spacy.symbols import ORTH, LEMMA, POS, DEP
-#from spacy.symbols import ORTH
+from spacy.symbols import ORTH
 from spacy.tokens.doc import Doc
 from spacy.lang.en import English
 from zensols.config import Config
