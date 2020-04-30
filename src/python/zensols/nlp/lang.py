@@ -5,6 +5,7 @@ __author__ = 'Paul Landes'
 
 import logging
 import sys
+from dataclasses import dataclass, field
 from typing import List
 import textacy
 from spacy.tokens.doc import Doc
@@ -68,6 +69,7 @@ class DocUtil(object):
                 'ents': [(str(e), e.label_,) for e in doc.ents]}
 
 
+@dataclass
 class LanguageResource(object):
     """This langauge resource parses text in to Spacy documents.  It also uses the
     textacy library to normalize text white sapce to generate better Spacy
@@ -81,38 +83,36 @@ class LanguageResource(object):
     lang = en
     model_name = ${lang}_core_web_sm
 
+    :param config: the application configuration used to create the Spacy
+                   model
+    :param model_name: the Spacy model name (defualts to
+                       ``en_core_web_sm``)
+    :param lang: the natural language the identify the model
+    :param components: additional Spacy components to add to the pipeline
+    :param token_normalizer: the token normalizer for methods that use it,
+                             i.e. ``features``
+
     """
-    def __init__(self, config: Config, model_name: str = None,
-                 lang: str = 'en', components: list = None,
-                 disable_components: list = None,
-                 token_normalizer: TokenNormalizer = None):
-        """Initialize the language resource.
+    config: Config
+    lang: str = field(default='en')
+    model_name: str = field(default=None)
+    components: list = field(default=None)
+    disable_components: list = field(default=None)
+    token_normalizer: TokenNormalizer = field(default=None)
 
-        :param config: the application configuration used to create the Spacy
-                       model
-        :param model_name: the Spacy model name (defualts to
-                           ``en_core_web_sm``)
-        :param lang: the natural language the identify the model
-        :param components: additional Spacy components to add to the pipeline
-        :param token_normalizer: the token normalizer for methods that use it,
-                                 i.e. ``features``
-
-        """
-        if model_name is None:
-            self.model_name = f'{lang}_core_web_sm'
+    def __post_init__(self):
+        if self.model_name is None:
+            self.model_name = f'{self.lang}_core_web_sm'
         else:
-            self.model_name = model_name
-        self.lang = lang
+            self.model_name = self.model_name
         nlp = textacy.load_spacy_lang(self.model_name)
-        if components is not None:
-            for comp in components:
+        if self.components is not None:
+            for comp in self.components:
                 comp.add_to_pipeline(nlp)
-        self.disable_components = disable_components
+        self.disable_components = self.disable_components
         self.model = nlp
-        if token_normalizer is None:
+        if self.token_normalizer is None:
             self.token_normalizer = TokenNormalizer()
-        else:
-            self.token_normalizer = token_normalizer
 
     def parse(self, text: str, normalize=False) -> Doc:
         """Parse ``text`` in to a Spacy document.
@@ -197,23 +197,17 @@ class LanguageResource(object):
         return self.__str__()
 
 
+@dataclass
 class DocStash(DelegateStash):
     """A stash that transforms loaded items in to a SpaCy document.
 
     All items returned from the delegate must have a ``text`` attribute or
     override ``item_to_text``.
 
+    :param lang_res: used to parse and create the SpaCy documents.
+
     """
-    def __init__(self, delegate, lang_res: LanguageResource):
-        """Initialize.
-
-        :param delegate: the delegate to use objects that have the ``text``
-                         attribute
-        :param lang_res: used to parse and create the SpaCy documents.
-
-        """
-        super().__init__(delegate)
-        self.lang_res = lang_res
+    langres: LanguageResource
 
     def item_to_text(self, item: object) -> str:
         """Return the text of the item that is loaded with ``load``.  This default
@@ -225,4 +219,4 @@ class DocStash(DelegateStash):
     def load(self, name: str):
         item = super().load(name)
         text = self.item_to_text(item)
-        return self.lang_res.parse(text)
+        return self.langres.parse(text)
