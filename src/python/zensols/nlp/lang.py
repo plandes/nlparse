@@ -82,22 +82,28 @@ class LanguageResource(object):
     model_name = ${lang}_core_web_sm
 
     """
-    def __init__(self, config: Config, model_name: str, lang: str = 'en',
-                 components: list = None, disable_components: list = None,
+    def __init__(self, config: Config, model_name: str = None,
+                 lang: str = 'en', components: list = None,
+                 disable_components: list = None,
                  token_normalizer: TokenNormalizer = None):
         """Initialize the language resource.
 
         :param config: the application configuration used to create the Spacy
                        model
-        :param model_name: the Spacy model name (i.e. ``en_core_web_sm``)
+        :param model_name: the Spacy model name (defualts to
+                           ``en_core_web_sm``)
         :param lang: the natural language the identify the model
         :param components: additional Spacy components to add to the pipeline
-        :param tn: the token normalizer for methods that use it, i.e. ``features``
+        :param token_normalizer: the token normalizer for methods that use it,
+                                 i.e. ``features``
 
         """
-        self.model_name = model_name
+        if model_name is None:
+            self.model_name = f'{lang}_core_web_sm'
+        else:
+            self.model_name = model_name
         self.lang = lang
-        nlp = textacy.load_spacy_lang(model_name)
+        nlp = textacy.load_spacy_lang(self.model_name)
         if components is not None:
             for comp in components:
                 comp.add_to_pipeline(nlp)
@@ -206,7 +212,7 @@ class DocStash(DelegateStash):
         :param lang_res: used to parse and create the SpaCy documents.
 
         """
-        super(DocStash, self).__init__(delegate)
+        super().__init__(delegate)
         self.lang_res = lang_res
 
     def item_to_text(self, item: object) -> str:
@@ -217,6 +223,6 @@ class DocStash(DelegateStash):
         return item.text
 
     def load(self, name: str):
-        item = super(DocStash, self).load(name)
+        item = super().load(name)
         text = self.item_to_text(item)
         return self.lang_res.parse(text)

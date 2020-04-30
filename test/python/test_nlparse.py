@@ -42,7 +42,7 @@ class TestParse(unittest.TestCase):
         tn = tnfac.instance('default_token_normalizer')
         lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('Dan throws the ball.')
-        self.assertEqual('TokenNormalizer: embed=True, normalize: True remove first stop: False', str(tn))
+        self.assertEqual('MapTokenNormalizer: embed=True', str(tn))
 
         res = tuple(map(lambda x: x.string_features, lr.features(doc)))
         with open(self.config.feature_path) as f:

@@ -9,10 +9,7 @@ from time import time
 from pathlib import Path
 from abc import abstractmethod
 import numpy as np
-from zensols.persist import (
-    persisted,
-    ConfigFactory
-)
+from zensols.persist import persisted
 from gensim.models import (
     KeyedVectors,
     Word2Vec,
@@ -49,7 +46,7 @@ class GensimWord2VecModel(Word2VecModel):
 
     """
     def __init__(self, name, size, model_type, path):
-        super(GensimWord2VecModel, self).__init__(size)
+        super().__init__(size)
         self.name = name
         self.model_type = model_type
         self.path = Path(path).expanduser()

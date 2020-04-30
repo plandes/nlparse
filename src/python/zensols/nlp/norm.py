@@ -3,39 +3,36 @@
 """
 __author__ = 'Paul Landes'
 
+from dataclasses import dataclass, field
+from typing import List, Iterable, Tuple
 import logging
 import re
 import itertools as it
 from abc import abstractmethod
 from spacy.tokens.token import Token
-from zensols.config import ImportConfigFactory
+from spacy.tokens.doc import Doc
+from zensols.config import (
+    Configurable,
+    ImportConfigFactory,
+)
 
 logger = logging.getLogger(__name__)
 
 
+@dataclass
 class TokenNormalizer(object):
     """Base token extractor returns tuples of tokens and their normalized version.
 
+    :param embed_entities: whether or not to replace tokens with their
+                      respective named entity version
+    :param remove_first_stop: whether to remove the first top word in named
+                              entities when ``embed_entities`` is ``True``
+
     """
-    def __init__(self, normalize=True, embed_entities=True,
-                 remove_first_stop=False, limit=None):
-        """Initialize the normalizer.
+    embed_entities: bool = field(default=True)
+    limit: int = field(default=None)
 
-        :param normalize: whether or not to normalize the text (useful since
-                          this class has other functionality.
-        :param embed_entities: whether or not to replace tokens with their
-                          respective named entity version
-        :param remove_first_stop: whether to remove the first top word in named
-                                  entities when ``embed_entities`` is ``True``
-
-        """
-        logger.debug(f'init embedding entities: {embed_entities}')
-        self._normalize = normalize
-        self.embed_entities = embed_entities
-        self.remove_first_stop = remove_first_stop
-        self.limit = limit
-
-    def __embed_entities(self, doc):
+    def __embed_entities(self, doc: Doc):
         """For each token, return the named entity form if it exists.
 
         :param doc: the spacy document to iterate over
@@ -60,40 +57,27 @@ class TokenNormalizer(object):
                 yield tok
                 i += 1
 
-    def __norm_to_tok_tups(self, doc):
+    def _to_token_tuple(self, doc: Doc) -> Iterable[Tuple[Token, str]]:
         "Normalize the document in to (token, normal text) tuples."
-        def norm(tok_or_ent):
-            if isinstance(tok_or_ent, Token):
-                stok = tok_or_ent.lemma_
-            else:
-                if self.remove_first_stop and tok_or_ent[0].is_stop:
-                    tok_or_ent = tok_or_ent[1:]
-                stok = tok_or_ent.text.lower()
-            return (tok_or_ent, stok)
-
         logger.debug(f'embedding entities: {self.embed_entities}')
         if self.embed_entities:
             toks = self.__embed_entities(doc)
         else:
             toks = doc
-
-        if self._normalize:
-            toks = map(norm, toks)
-        else:
-            toks = map(lambda t: (t, t.orth_,), toks)
+        toks = map(lambda t: (t, t.orth_,), toks)
         return toks
 
-    def _map_tokens(self, token_tups):
+    def _map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
         """Map token tuples in sub classes.
 
-        :param token_tups: tuples generated from ``__norm_to_tok_tups``
+        :param token_tups: tuples generated from ``_to_token_tuple``
         """
         return None
 
-    def normalize(self, doc):
+    def normalize(self, doc) -> Iterable[Tuple[Token, str]]:
         """Normalize Spacey document ``doc`` in to (token, normal text) tuples.
         """
-        tlist = self.__norm_to_tok_tups(doc)
+        tlist = self._to_token_tuple(doc)
         maps = self._map_tokens(tlist)
         if maps is not None:
             tlist = tuple(maps)
@@ -104,60 +88,89 @@ class TokenNormalizer(object):
             name = self.name
         else:
             name = type(self).__name__
-        return (f'{name}: embed={self.embed_entities}, ' +
-                f'normalize: {self._normalize} ' +
-                f'remove first stop: {self.remove_first_stop}')
+        return f'{name}: embed={self.embed_entities}'
 
     def __repr__(self):
         return self.__str__()
 
 
+@dataclass
 class TokenMapper(object):
     """Abstract class used to transform token tuples generated from
     ``TokenNormalizer.normalize``.
 
     """
     @abstractmethod
-    def map_tokens(self, token_tups):
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
         """Transform token tuples.
 
         """
         pass
 
 
+@dataclass
 class SplitTokenMapper(TokenMapper):
     """Splits the normalized text on a per token basis with a regular expression.
 
     """
-    def __init__(self, regex, *args, **kwargs):
-        super(SplitTokenMapper, self).__init__(*args, **kwargs)
-        self.regex = re.compile(eval(regex))
+    regex: str = field(default='')
 
-    def map_tokens(self, token_tups):
+    def __post_init__(self):
+        self.regex = re.compile(eval(self.regex))
+
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
         rg = self.regex
         return map(lambda t: map(lambda s: (t[0], s), re.split(rg, t[1])),
                    token_tups)
 
 
+@dataclass
+class LemmatizeTokenMapper(TokenMapper):
+    """Lemmatize tokens and optional remove entity stop words.
+
+    *Important:* This completely ignores the normalized input token string and
+    essentially just replaces it with the lemma found in the token instance.
+
+    :param lemmatize: lemmatize if ``True``; this is an option to allow (only)
+                      the removal of the first top word in named entities
+    :param remove_first_stop: whether to remove the first top word in named
+                              entities when ``embed_entities`` is ``True``
+
+    """
+    lemmatize: bool = field(default=True)
+    remove_first_stop: bool = field(default=False)
+
+    def _lemmatize(self, tok_or_ent):
+        if isinstance(tok_or_ent, Token):
+            stok = tok_or_ent.lemma_
+        else:
+            if self.remove_first_stop and tok_or_ent[0].is_stop:
+                tok_or_ent = tok_or_ent[1:]
+            stok = tok_or_ent.text.lower()
+        return stok
+
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+        return (map(lambda x: (x[0], self._lemmatize(x[0])), token_tups),)
+
+
+@dataclass
 class FilterTokenMapper(TokenMapper):
     """Filter tokens based on token (Spacy) attributes.
 
     """
-    def __init__(self, *args, remove_stop=False, remove_space=False,
-                 remove_pronouns=False, remove_punctuation=False,
-                 remove_determiners=False, **kwargs):
-        super(FilterTokenMapper, self).__init__(*args, **kwargs)
-        self.remove_stop = remove_stop
-        self.remove_space = remove_space
-        self.remove_pronouns = remove_pronouns
-        self.remove_punctuation = remove_punctuation
-        self.remove_determiners = remove_determiners
+    remove_stop: bool = field(default=False)
+    remove_space: bool = field(default=False)
+    remove_pronouns: bool = field(default=False)
+    remove_punctuation: bool = field(default=False)
+    remove_determiners: bool = field(default=False)
+
+    def __post_init__(self):
         logger.debug(f'created {self.__class__}: ' +
-                     f'remove_stop: {remove_stop}, ' +
-                     f'remove_space: {remove_space}, ' +
-                     f'remove_pronouns: {remove_pronouns}, ' +
-                     f'remove_punctuation: {remove_punctuation}, ' +
-                     f'remove_determiners: {remove_determiners}')
+                     f'remove_stop: {self.remove_stop}, ' +
+                     f'remove_space: {self.remove_space}, ' +
+                     f'remove_pronouns: {self.remove_pronouns}, ' +
+                     f'remove_punctuation: {self.remove_punctuation}, ' +
+                     f'remove_determiners: {self.remove_determiners}')
 
     def _filter(self, tok_or_ent_tup):
         tok_or_ent = tok_or_ent_tup[0]
@@ -178,24 +191,27 @@ class FilterTokenMapper(TokenMapper):
         logger.debug(f'filter: keeping={keep}')
         return keep
 
-    def map_tokens(self, token_tups):
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
         return (filter(self._filter, token_tups),)
 
 
+@dataclass
 class SubstituteTokenMapper(TokenMapper):
     """Replace a string in normalized token text.
 
     """
-    def __init__(self, regex, replace_char, *args, **kwargs):
-        super(SubstituteTokenMapper, self).__init__(*args, **kwargs)
-        self.regex = re.compile(eval(regex))
-        self.replace_char = replace_char
+    regex: str = field(default='')
+    replace_char: str = field(default='')
 
-    def map_tokens(self, token_tups):
+    def __post_init__(self):
+        self.regex = re.compile(eval(self.regex))
+
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
         return (map(lambda x: (x[0], re.sub(self.regex, self.replace_char, x[1])),
                     token_tups),)
 
 
+@dataclass
 class LambdaTokenMapper(TokenMapper):
     """Use a lambda expression to map a token tuple.
 
@@ -203,34 +219,45 @@ class LambdaTokenMapper(TokenMapper):
     configuration file.
 
     """
-    def __init__(self, add_lambda=None, map_lambda=None,
-                 *args, **kwargs):
-        super(LambdaTokenMapper, self).__init__(*args, **kwargs)
-        if add_lambda is None:
+    add_lambda: str = field(default=None)
+    map_lambda: str = field(default=None)
+
+    def __post_init__(self):
+        if self.add_lambda is None:
             self.add_lambda = lambda x: ()
         else:
-            self.add_lambda = eval(add_lambda)
-        if map_lambda is None:
+            self.add_lambda = eval(self.add_lambda)
+        if self.map_lambda is None:
             self.map_lambda = lambda x: x
         else:
-            self.map_lambda = eval(map_lambda)
+            self.map_lambda = eval(self.map_lambda)
 
-    def map_tokens(self, terms):
-        return (map(self.map_lambda, terms),)
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+        return (map(self.map_lambda, token_tups),)
 
 
+@dataclass
 class MapTokenNormalizer(TokenNormalizer):
     """A normalizer that applies a sequence of ``TokenMappers`` to transform
     the normalized token text.
 
+    :param config: the application context
+    :param mapper_class_list: the configuration names to create with
+                              ``ImportConfigFactory``
+    :param reload: whether or not to reload the module when creating the
+                   instance, which is useful while prototyping
+
+
     """
+    config: Configurable = field(default=None)
+    mapper_class_list: List[str] = field(default_factory=list)
+    reload: bool = field(default=False)
 
-    def __init__(self, config, mapper_class_list, *args, **kwargs):
-        super(MapTokenNormalizer, self).__init__(*args, **kwargs)
-        ta = ImportConfigFactory(config)
-        self.mappers = tuple(map(ta.instance, mapper_class_list))
+    def __post_init__(self):
+        ta = ImportConfigFactory(self.config, reload=self.reload)
+        self.mappers = tuple(map(ta.instance, self.mapper_class_list))
 
-    def _map_tokens(self, token_tups):
+    def _map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
         for mapper in self.mappers:
             logger.debug(f'mapping token_tups with {mapper}')
             token_tups = it.chain(*mapper.map_tokens(token_tups))
