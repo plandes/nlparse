@@ -7,7 +7,7 @@ import logging
 import sys
 from dataclasses import dataclass, field
 from typing import List, Iterable
-import textacy
+import spacy
 from spacy.symbols import ORTH
 from spacy.tokens.doc import Doc
 from spacy.lang.en import English
@@ -65,9 +65,7 @@ class DocUtil(object):
 
 @dataclass
 class LanguageResource(object):
-    """This langauge resource parses text in to Spacy documents.  It also uses the
-    textacy library to normalize text white sapce to generate better Spacy
-    document parses.
+    """This langauge resource parses text in to Spacy documents.
 
     Don't create instances of this directly.  Instead use
     ``LanguageResourceFactory`` created with application contexts with entries
@@ -89,6 +87,8 @@ class LanguageResource(object):
                                 i.e. ``</s>``
 
     """
+    MODELS = {}
+
     config: Config
     lang: str = field(default='en')
     model_name: str = field(default=None)
@@ -100,7 +100,11 @@ class LanguageResource(object):
     def __post_init__(self):
         if self.model_name is None:
             self.model_name = f'{self.lang}_core_web_sm'
-        nlp = textacy.load_spacy_lang(self.model_name)
+        # cache model in class space
+        nlp = self.MODELS.get(self.model_name)
+        if nlp is None:
+            nlp = spacy.load("en_core_web_sm")
+            self.MODELS[self.model_name] = nlp
         if self.components is not None:
             for comp in self.components:
                 logger.debug(f'adding {comp} to the pipeline')
@@ -167,11 +171,6 @@ class LanguageResource(object):
         else:
             raise ValueError(f'no such language: {self.lang}')
         return tokenizer(text)
-
-    @staticmethod
-    def normalize(text):
-        text = text.replace('\n', ' ')
-        return textacy.preprocess.normalize_whitespace(text)
 
     def __str__(self):
         return f'model_name: {self.model_name}, lang: {self.lang}'

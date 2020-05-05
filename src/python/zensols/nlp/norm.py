@@ -192,6 +192,7 @@ class FilterTokenMapper(TokenMapper):
         return keep
 
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+        logger.debug('filter mapper: map_tokens')
         return (filter(self._filter, token_tups),)
 
 
