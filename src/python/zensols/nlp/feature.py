@@ -102,6 +102,9 @@ class TokenFeatures(TokenAttributes):
     """Convenience class to create features from text.  The features are derived
     from parsed Spacy artifacts.
 
+    The attributes of this class, such as ``norm`` and ``is_wh`` are referred
+    to as *feature types*.
+
     """
     NONE = '<none>'
     PROP_REGEX = re.compile(r'^[a-z][a-z_-]*')
@@ -119,12 +122,12 @@ class TokenFeatures(TokenAttributes):
         self.is_ent = not isinstance(tok_or_ent, Token)
         self._norm = norm
 
-    def detach(self, keeps=None) -> TokenAttributes:
+    def detach(self, feature_types=None) -> TokenAttributes:
         """Return a new instance of the object detached from SpaCy C data structures.
         This is useful for pickling of the object.
 
-        :param keeps: the names of attributes to populate in the returned
-                      instance; defaults to all
+        :param feature_types: the names of attributes to populate in the
+                              returned instance; defaults to all
 
         """
         attrs = {}
@@ -132,7 +135,7 @@ class TokenFeatures(TokenAttributes):
         for p, v in inspect.getmembers(self, lambda x: not callable(x)):
             if self.PROP_REGEX.match(p) and \
                p not in skips and \
-               (keeps is None or p in keeps):
+               (feature_types is None or p in feature_types):
                 attrs[p] = v
         ta = TokenAttributes()
         ta.__dict__.update(attrs)

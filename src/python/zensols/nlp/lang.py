@@ -6,21 +6,14 @@ __author__ = 'Paul Landes'
 import logging
 import sys
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Iterable
 import textacy
 from spacy.symbols import ORTH
 from spacy.tokens.doc import Doc
 from spacy.lang.en import English
 from zensols.config import Config
 from zensols.persist import DelegateStash
-from zensols.nlp import (
-    TokenFeatures,
-    TokenNormalizer,
-    SpacyFeatureNormalizer,
-    NamedEntityRecognitionFeatureNormalizer,
-    DependencyFeatureNormalizer,
-    PartOfSpeechFeatureNormalizer,
-)
+from zensols.nlp import TokenFeatures, TokenNormalizer
 
 logger = logging.getLogger(__name__)
 
@@ -150,11 +143,9 @@ class LanguageResource(object):
             pipe(doc)
         return doc
 
-    def features(self, doc: Doc):
+    def features(self, doc: Doc) -> Iterable[TokenFeatures]:
         """Generate an iterator of ``TokenFeatures`` instances with features on a per
         token level.
-
-        :return: an iterable of ``TokenFeatures`` objects
 
         """
         return map(lambda t: TokenFeatures(doc, *t),
@@ -166,23 +157,6 @@ class LanguageResource(object):
         """
         tn = self.token_normalizer if tn is None else tn
         return map(lambda t: t[1], tn.normalize(doc))
-
-    def feature_normalizer(self, feature_type: str) -> SpacyFeatureNormalizer:
-        """Return a feature normalizer.
-
-        :param feature_type: a string identifying the type of feature that will
-                             be normalized, which is one of:
-                             ``ent``: named entity
-                             ``pos``: part of speech tag
-                             ``dep``: dependency
-        :return: the feature normalizer or ``None`` if the key did not match.
-
-        """
-        cls = {'ent': NamedEntityRecognitionFeatureNormalizer,
-               'dep': DependencyFeatureNormalizer,
-               'tag': PartOfSpeechFeatureNormalizer}.get(feature_type)
-        if cls is not None:
-            return cls(self.model.vocab)
 
     def tokenizer(self, text: str):
         """Create a simple Spacy tokenizer.  Currently only English is supported.
