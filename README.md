@@ -9,7 +9,7 @@ A utility library to assist in parsing natural language text.
 
 ## Documentation
 
-See the [full documentation](https://plandes.github.io/zensols.nlp/index.html).
+See the [full documentation](https://plandes.github.io/nlparse/index.html).
 
 
 ## Obtaining
