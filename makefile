@@ -2,6 +2,7 @@
 
 # type of project
 PROJ_TYPE=	python
+PROJ_MODULES=	git python-doc
 
 SPACY_MODELS +=	sm
 
