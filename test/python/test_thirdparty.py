@@ -2,7 +2,6 @@ import logging
 import unittest
 from config import AppConfig
 from zensols.config import ImportConfigFactory
-import zensols.nlp
 
 logger = logging.getLogger(__name__)
 
@@ -10,7 +9,7 @@ logger = logging.getLogger(__name__)
 class TestThirdParty(unittest.TestCase):
     def setUp(self):
         self.config = AppConfig('stemmer')
-        self.fac = ImportConfigFactory(self.config)
+        self.fac = ImportConfigFactory(self.config, shared=False)
 
     def test_stemmer(self):
         tnfac = ImportConfigFactory(self.config)

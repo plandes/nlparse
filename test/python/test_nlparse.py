@@ -25,7 +25,7 @@ class TestParse(unittest.TestCase):
     def setUp(self):
         self.maxDiff = 999999
         self.config = AppConfig()
-        self.fac = ImportConfigFactory(self.config)
+        self.fac = ImportConfigFactory(self.config, shared=False)
         self.lr = self.fac.instance('default_langres')
 
     def test_parse(self):
@@ -38,7 +38,7 @@ class TestParse(unittest.TestCase):
         self.assertEqual(rec_sort(c), rec_sort(res))
 
     def test_feature(self):
-        tnfac = ImportConfigFactory(self.config)
+        tnfac = ImportConfigFactory(self.config, shared=False)
         tn = tnfac.instance('default_token_normalizer')
         lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('Dan throws the ball.')
