@@ -103,7 +103,7 @@ class TokenFeatures(TokenAttributes):
     from parsed Spacy artifacts.
 
     The attributes of this class, such as ``norm`` and ``is_wh`` are referred
-    to as *feature types*.
+    to as *feature ids*.
 
     """
     NONE = '<none>'
@@ -122,11 +122,11 @@ class TokenFeatures(TokenAttributes):
         self.is_ent = not isinstance(tok_or_ent, Token)
         self._norm = norm
 
-    def detach(self, feature_types=None) -> TokenAttributes:
+    def detach(self, feature_ids=None) -> TokenAttributes:
         """Return a new instance of the object detached from SpaCy C data structures.
         This is useful for pickling of the object.
 
-        :param feature_types: the names of attributes to populate in the
+        :param feature_ids: the names of attributes to populate in the
                               returned instance; defaults to all
 
         """
@@ -135,7 +135,7 @@ class TokenFeatures(TokenAttributes):
         for p, v in inspect.getmembers(self, lambda x: not callable(x)):
             if self.PROP_REGEX.match(p) and \
                p not in skips and \
-               (feature_types is None or p in feature_types):
+               (feature_ids is None or p in feature_ids):
                 attrs[p] = v
         ta = TokenAttributes()
         ta.__dict__.update(attrs)
