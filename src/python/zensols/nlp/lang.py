@@ -11,7 +11,7 @@ import spacy
 from spacy.symbols import ORTH
 from spacy.tokens.doc import Doc
 from spacy.lang.en import English
-from zensols.config import Config
+from zensols.config import Configurable
 from zensols.persist import DelegateStash
 from zensols.nlp import TokenFeatures, TokenNormalizer
 
@@ -89,7 +89,7 @@ class LanguageResource(object):
     """
     MODELS = {}
 
-    config: Config
+    config: Configurable
     lang: str = field(default='en')
     model_name: str = field(default=None)
     components: List = field(default=None)
