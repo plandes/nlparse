@@ -8,16 +8,30 @@ import logging
 import sys
 import inspect
 import re
+from itertools import chain
+from functools import reduce
+from io import TextIOBase
 from spacy.tokens.token import Token
+from zensols.config import Writable
 
 logger = logging.getLogger(__name__)
 
 
-class TokenAttributes(object):
+class TokenAttributes(Writable):
     """Contains token properties and a few utility methods.
 
     """
-    FIELDS = 'text norm i tag is_wh entity dep children'.split()
+    WRITABLE_FIELD_IDS = tuple('text norm i tag is_wh entity dep children'.split())
+    FIELD_IDS_BY_TYPE = {
+        'bool': frozenset('is_space is_stop is_ent is_wh is_contraction is_superlative is_pronoun'.split()),
+        'int': frozenset('i idx is_punctuation tag ent dep index shape'.split()),
+        'str': frozenset('norm lemma tag_ ent_ dep_ shape_'.split()),
+        'list': frozenset('children'.split())}
+    TYPES_BY_FIELD_ID = dict(chain.from_iterable(
+        map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
+            FIELD_IDS_BY_TYPE.items())))
+    FIELD_IDS = frozenset(
+        reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
 
     def to_dict(self):
         """Return the token attributes as a dictionary representation.
@@ -72,7 +86,7 @@ class TokenAttributes(object):
                            'dep': self.dep}
         return self._feats
 
-    def write(self, writer=sys.stdout, level=0):
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         """Write the features in a human readable format.
 
         :param writer: where to output, defaults to standard out
@@ -80,12 +94,11 @@ class TokenAttributes(object):
 
         """
         params = self.string_features
-        sp = ' ' * level * 2
-        fmt = '\n'.join(map(lambda x: '{}{}: {{{}}}'.format(sp, x, x),
-                            self.FIELDS))
-        fmt += '\n'
-        writer.write(fmt.format(**params))
-        writer.write('    num: {}\n'.format(self.features))
+        for k in self.WRITABLE_FIELD_IDS:
+            self._write_line(f'{k}: {params[k]}', depth, writer)
+        nfeats = self.features
+        if nfeats is not None:
+            self._write_line(f'numerics: {nfeats}', depth, writer)
 
     def __str__(self):
         if hasattr(self, 'tok_or_ent'):
@@ -98,29 +111,9 @@ class TokenAttributes(object):
         return self.__str__()
 
 
-class TokenFeatures(TokenAttributes):
-    """Convenience class to create features from text.  The features are derived
-    from parsed Spacy artifacts.
-
-    The attributes of this class, such as ``norm`` and ``is_wh`` are referred
-    to as *feature ids*.
-
-    """
+class DetatchableTokenFeatures(TokenAttributes):
     NONE = '<none>'
     PROP_REGEX = re.compile(r'^[a-z][a-z_-]*')
-
-    def __init__(self, doc, tok_or_ent, norm):
-        """Initialize a features instance.
-
-        :param doc: the spacy document
-        :tok_or_ent: either a token or entity parsed from ``doc``
-        :norm: the normalized text of the token (i.e. lemmatized version)
-
-        """
-        self.doc = doc
-        self.tok_or_ent = tok_or_ent
-        self.is_ent = not isinstance(tok_or_ent, Token)
-        self._norm = norm
 
     def detach(self, feature_ids=None) -> TokenAttributes:
         """Return a new instance of the object detached from SpaCy C data structures.
@@ -140,6 +133,53 @@ class TokenFeatures(TokenAttributes):
         ta = TokenAttributes()
         ta.__dict__.update(attrs)
         return ta
+
+
+class BasicTokenFeatures(DetatchableTokenFeatures):
+    """A token feature set meant to be extended for cases where tokens are not
+    parsed with SpaCy using :class:`.LanguageResources` and
+    :class:`.TokenNormalizer`.
+
+    """
+    def __init__(self, text: str):
+        self.text = text
+
+    @property
+    def norm(self) -> str:
+        return self.text
+
+    def __getattr__(self, attr):
+        if attr in self.FIELD_SET:
+            return super().__getattribute__(attr)
+        ftype = self.TYPES_BY_FIELD_ID.get(attr)
+        if ftype is not None:
+            return {'bool': False,
+                    'str': self.NONE,
+                    'int': -1,
+                    'list': ()}[ftype]
+        return super().__getattribute__(attr)
+
+
+class TokenFeatures(DetatchableTokenFeatures):
+    """Convenience class to create features from text.  The features are derived
+    from parsed Spacy artifacts.
+
+    The attributes of this class, such as ``norm`` and ``is_wh`` are referred
+    to as *feature ids*.
+
+    """
+    def __init__(self, doc, tok_or_ent, norm):
+        """Initialize a features instance.
+
+        :param doc: the spacy document
+        :tok_or_ent: either a token or entity parsed from ``doc``
+        :norm: the normalized text of the token (i.e. lemmatized version)
+
+        """
+        self.doc = doc
+        self.tok_or_ent = tok_or_ent
+        self.is_ent = not isinstance(tok_or_ent, Token)
+        self._norm = norm
 
     def to_dict(self):
         return self.detach().to_dict()

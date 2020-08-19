@@ -68,21 +68,27 @@ class LanguageResource(object):
     """This langauge resource parses text in to Spacy documents.
 
     Don't create instances of this directly.  Instead use
-    ``LanguageResourceFactory`` created with application contexts with entries
-    like this:
+    ``LanguageResourceFactory`` created with application contexts with entries.
 
-    [default_langres]
-    lang = en
-    model_name = ${lang}_core_web_sm
+    Configuration example::
+
+        [default_langres]
+        lang = en
+        model_name = ${lang}_core_web_sm
 
     :param config: the application configuration used to create the Spacy
                    model
+
     :param model_name: the Spacy model name (defualts to
                        ``en_core_web_sm``)
+
     :param lang: the natural language the identify the model
+
     :param components: additional Spacy components to add to the pipeline
+
     :param token_normalizer: the token normalizer for methods that use it,
                              i.e. ``features``
+
     :param special_case_tokens: tokens that will be parsed as one token,
                                 i.e. ``</s>``
 
