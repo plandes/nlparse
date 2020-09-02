@@ -4,12 +4,16 @@
 [![PyPI][pypi-badge]][pypi-link]
 [![Python 3.7][python37-badge]][python37-link]
 
-A utility library to assist in parsing natural language text.
-
-
-## Documentation
-
-See the [full documentation](https://plandes.github.io/nlparse/index.html).
+This framework wraps the [SpaCy] framework and creates features.  The
+motivation is to generate features from the parsed text in an object oriented
+fashion that is fast and easy to pickle.  Other features include:
+* [Token normalization](doc/parse.md) as a stream of strings by lemmatization,
+  stop word and/or punctuation filters, up/down casing, porter stemming and
+  [others](doc/normalizers.md).
+* [Detached features](doc/parse.md) that are safe and easy to pickle to disk.
+* Configuration drive parsing and token normalization using [configuration
+  factories].
+* Pretty print functionality for easy natural language feature selection.
 
 
 ## Obtaining
@@ -20,6 +24,13 @@ pip3 install zensols.nlp
 ```
 
 Binaries are also available on [pypi].
+
+
+## Documentation
+
+* [Framework documentation](https://plandes.github.io/nlparse/)
+* [Natural Language Parsing](doc/parse.md)
+* [List Token Normalizers and Mappers](doc/normalizers.md)
 
 
 ## Changelog
@@ -42,3 +53,6 @@ Copyright (c) 2020 Paul Landes
 [pypi-badge]: https://img.shields.io/pypi/v/zensols.nlp.svg
 [python37-badge]: https://img.shields.io/badge/python-3.7-blue.svg
 [python37-link]: https://www.python.org/downloads/release/python-370
+
+[SpaCy]: https://spacy.io
+[configuration factories]: https://plandes.github.io/util/doc/config.html#configuration-factory

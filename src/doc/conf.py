@@ -95,7 +95,7 @@ pygments_style = 'sphinx'
 # look like 'heading' rather than 'path/to/file:heading'
 autosectionlabel_prefix_document = True
 
-github_doc_root = 'https://github.com/plandes/util/tree/master/doc'
+github_doc_root = 'https://github.com/plandes/nlparse/tree/master/doc'
 
 
 def setup(app):

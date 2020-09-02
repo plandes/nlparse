@@ -3,10 +3,10 @@
 """
 __author__ = 'Paul Landes'
 
+from typing import List, Iterable
+from dataclasses import dataclass, field
 import logging
 import sys
-from dataclasses import dataclass, field
-from typing import List, Iterable
 import spacy
 from spacy.symbols import ORTH
 from spacy.tokens.doc import Doc
@@ -125,17 +125,12 @@ class LanguageResource(object):
             logger.debug(f'adding special token: {stok} with rule: {rule}')
             self.model.tokenizer.add_special_case(stok, rule)
 
-    def parse(self, text: str, normalize=False) -> Doc:
+    def parse(self, text: str) -> Doc:
         """Parse ``text`` in to a Spacy document.
-
-        :param normalize: if ``True`` use the text normalization method
-                          ``normalize`` before parsing
 
         """
         logger.debug(f'creating document with model: {self.model_name}, ' +
                      f'disable components: {self.disable_components}')
-        if normalize:
-            text = self.normalize(text)
         if self.disable_components is None:
             doc = self.model(text)
         else:
@@ -161,7 +156,8 @@ class LanguageResource(object):
         return map(lambda t: TokenFeatures(doc, *t),
                    self.token_normalizer.normalize(doc))
 
-    def normalized_tokens(self, doc: Doc, tn: TokenNormalizer = None) -> iter:
+    def normalized_tokens(self, doc: Doc, tn: TokenNormalizer = None) -> \
+            Iterable[str]:
         """Return an iterator of the normalized text of each token.
 
         """

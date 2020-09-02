@@ -1,9 +1,10 @@
-"""Generate features from text.
+"""Domain container classes that can generate numeric and string features from
+SpaCy artifacts.
 
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict
+from typing import Dict, Set
 import logging
 import sys
 import inspect
@@ -112,15 +113,19 @@ class TokenAttributes(Writable):
 
 
 class DetatchableTokenFeatures(TokenAttributes):
+    """Subclasses that can detach features from SpaCy artifacts enabling clean
+    pickling.
+
+    """
     NONE = '<none>'
     PROP_REGEX = re.compile(r'^[a-z][a-z_-]*')
 
-    def detach(self, feature_ids=None) -> TokenAttributes:
+    def detach(self, feature_ids: Set[str] = None) -> TokenAttributes:
         """Return a new instance of the object detached from SpaCy C data structures.
         This is useful for pickling of the object.
 
         :param feature_ids: the names of attributes to populate in the
-                              returned instance; defaults to all
+                            returned instance; defaults to all
 
         """
         attrs = {}

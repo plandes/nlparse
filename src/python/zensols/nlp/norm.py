@@ -5,10 +5,10 @@ __author__ = 'Paul Landes'
 
 from dataclasses import dataclass, field
 from typing import List, Iterable, Tuple
+from abc import abstractmethod, ABC
 import logging
 import re
 import itertools as it
-from abc import abstractmethod
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
 from zensols.config import (
@@ -24,9 +24,16 @@ class TokenNormalizer(object):
     """Base token extractor returns tuples of tokens and their normalized version.
 
     :param embed_entities: whether or not to replace tokens with their
-                      respective named entity version
+                           respective named entity version
+
     :param remove_first_stop: whether to remove the first top word in named
                               entities when ``embed_entities`` is ``True``
+
+    Configuration example::
+
+        [default_token_normalizer]
+        class_name = zensols.nlp.TokenNormalizer
+        embed_entities = False
 
     """
     embed_entities: bool = field(default=True)
@@ -95,13 +102,14 @@ class TokenNormalizer(object):
 
 
 @dataclass
-class TokenMapper(object):
+class TokenMapper(ABC):
     """Abstract class used to transform token tuples generated from
-    ``TokenNormalizer.normalize``.
+    :meth:`.TokenNormalizer.normalize`.
 
     """
     @abstractmethod
-    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
         """Transform token tuples.
 
         """
@@ -112,13 +120,20 @@ class TokenMapper(object):
 class SplitTokenMapper(TokenMapper):
     """Splits the normalized text on a per token basis with a regular expression.
 
+    Configuration example::
+
+        [lemma_token_mapper]
+        class_name = zensols.nlp.SplitTokenMapper
+        regex = r'[ \\t]'
+
     """
     regex: str = field(default='')
 
     def __post_init__(self):
         self.regex = re.compile(eval(self.regex))
 
-    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
         rg = self.regex
         return map(lambda t: map(lambda s: (t[0], s), re.split(rg, t[1])),
                    token_tups)
@@ -128,11 +143,18 @@ class SplitTokenMapper(TokenMapper):
 class LemmatizeTokenMapper(TokenMapper):
     """Lemmatize tokens and optional remove entity stop words.
 
-    *Important:* This completely ignores the normalized input token string and
-    essentially just replaces it with the lemma found in the token instance.
+    **Important:** This completely ignores the normalized input token string
+    and essentially just replaces it with the lemma found in the token
+    instance.
+
+    Configuration example::
+
+        [lemma_token_mapper]
+        class_name = zensols.nlp.LemmatizeTokenMapper
 
     :param lemmatize: lemmatize if ``True``; this is an option to allow (only)
                       the removal of the first top word in named entities
+
     :param remove_first_stop: whether to remove the first top word in named
                               entities when ``embed_entities`` is ``True``
 
@@ -149,13 +171,21 @@ class LemmatizeTokenMapper(TokenMapper):
             stok = tok_or_ent.text.lower()
         return stok
 
-    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
         return (map(lambda x: (x[0], self._lemmatize(x[0])), token_tups),)
 
 
 @dataclass
 class FilterTokenMapper(TokenMapper):
     """Filter tokens based on token (Spacy) attributes.
+
+    Configuration example::
+
+        [filter_token_mapper]
+        class_name = zensols.nlp.FilterTokenMapper
+        remove_stop = True
+        remove_punctuation = True
 
     """
     remove_stop: bool = field(default=False)
@@ -191,14 +221,22 @@ class FilterTokenMapper(TokenMapper):
         logger.debug(f'filter: keeping={keep}')
         return keep
 
-    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
         logger.debug('filter mapper: map_tokens')
         return (filter(self._filter, token_tups),)
 
 
 @dataclass
 class SubstituteTokenMapper(TokenMapper):
-    """Replace a string in normalized token text.
+    """Replace a regular expression in normalized token text.
+
+    Configuration example::
+
+        [subs_token_mapper]
+        class_name = zensols.nlp.SubstituteTokenMapper
+        regex = r'[ \\t]'
+        replace_char = _
 
     """
     regex: str = field(default='')
@@ -207,7 +245,8 @@ class SubstituteTokenMapper(TokenMapper):
     def __post_init__(self):
         self.regex = re.compile(eval(self.regex))
 
-    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
         return (map(lambda x: (x[0], re.sub(self.regex, self.replace_char, x[1])),
                     token_tups),)
 
@@ -218,6 +257,12 @@ class LambdaTokenMapper(TokenMapper):
 
     This is handy for specialized behavior that can be added directly to a
     configuration file.
+
+    Configuration example::
+
+        [lc_lambda_token_mapper]
+        class_name = zensols.nlp.LambdaTokenMapper
+        map_lambda = lambda x: (x[0], f'<{x[1].lower()}>')
 
     """
     add_lambda: str = field(default=None)
@@ -233,21 +278,29 @@ class LambdaTokenMapper(TokenMapper):
         else:
             self.map_lambda = eval(self.map_lambda)
 
-    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
         return (map(self.map_lambda, token_tups),)
 
 
 @dataclass
 class MapTokenNormalizer(TokenNormalizer):
-    """A normalizer that applies a sequence of ``TokenMappers`` to transform
-    the normalized token text.
+    """A normalizer that applies a sequence of :class:`.TokenMapper` instances to
+    transform the normalized token text.
+
+    Configuration example::
+
+        [map_filter_token_normalizer]
+        class_name = zensols.nlp.MapTokenNormalizer
+        mapper_class_list = eval: 'filter_token_mapper'.split()
 
     :param config: the application context
+
     :param mapper_class_list: the configuration names to create with
                               ``ImportConfigFactory``
+
     :param reload: whether or not to reload the module when creating the
                    instance, which is useful while prototyping
-
 
     """
     config: Configurable = field(default=None)
@@ -258,7 +311,8 @@ class MapTokenNormalizer(TokenNormalizer):
         ta = ImportConfigFactory(self.config, reload=self.reload)
         self.mappers = tuple(map(ta.instance, self.mapper_class_list))
 
-    def _map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+    def _map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
         for mapper in self.mappers:
             logger.debug(f'mapping token_tups with {mapper}')
             token_tups = it.chain(*mapper.map_tokens(token_tups))

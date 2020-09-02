@@ -109,14 +109,14 @@ class TestParse(unittest.TestCase):
         tn = tnfac.instance('nonorm_token_normalizer')
         lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('''Dan throws
-the ball.''', normalize=False)
+the ball.''')
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', '\n', 'the', 'ball', '.'), res)
 
         tn = tnfac.instance('map_filter_space_token_normalizer')
         lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('''Dan throws
-the ball.''', normalize=False)
+the ball.''')
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
 
