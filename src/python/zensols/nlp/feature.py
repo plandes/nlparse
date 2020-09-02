@@ -4,7 +4,7 @@ SpaCy artifacts.
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Set
+from typing import Dict, Set, Any
 import logging
 import sys
 import inspect
@@ -13,12 +13,12 @@ from itertools import chain
 from functools import reduce
 from io import TextIOBase
 from spacy.tokens.token import Token
-from zensols.config import Writable
+from zensols.config import Dictable
 
 logger = logging.getLogger(__name__)
 
 
-class TokenAttributes(Writable):
+class TokenAttributes(Dictable):
     """Contains token properties and a few utility methods.
 
     """
@@ -34,7 +34,8 @@ class TokenAttributes(Writable):
     FIELD_IDS = frozenset(
         reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
 
-    def to_dict(self):
+    def asdict(self, recurse: bool = True, readable: bool = True,
+               class_name_param: str = None) -> Dict[str, Any]:
         """Return the token attributes as a dictionary representation.
 
         """
@@ -186,8 +187,9 @@ class TokenFeatures(DetatchableTokenFeatures):
         self.is_ent = not isinstance(tok_or_ent, Token)
         self._norm = norm
 
-    def to_dict(self):
-        return self.detach().to_dict()
+    def asdict(self, recurse: bool = True, readable: bool = True,
+               class_name_param: str = None) -> Dict[str, Any]:
+        return self.detach().asdict(recurse, readable, class_name_param)
 
     @property
     def text(self) -> str:

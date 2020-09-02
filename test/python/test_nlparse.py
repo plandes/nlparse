@@ -142,7 +142,7 @@ the ball.''')
         feats = lr.features(doc)
         objs = []
         for f in feats:
-            objs.append(f.detach().to_dict())
+            objs.append(f.detach().asdict())
         if 0:
             with open(json_path, 'w') as f:
                 json.dump(objs, f, indent=4)
