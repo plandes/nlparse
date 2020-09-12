@@ -166,6 +166,12 @@ vectorizing from either strings or numeric data:
 ```
 
 
+## Complete Examples
+
+See the [examples](../example) directory the complete code used to create the
+examples in this documentation.
+
+
 <!-- links -->
 [SpaCy]: https://spacy.io
 [configuration factories]: https://plandes.github.io/util/doc/config.html#configuration-factory
