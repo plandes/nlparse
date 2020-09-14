@@ -1,4 +1,4 @@
-# Natural language processing parsing and tool library
+# Zensols Natural Language Processing
 
 [![Travis CI Build Status][travis-badge]][travis-link]
 [![PyPI][pypi-badge]][pypi-link]
@@ -16,6 +16,13 @@ fashion that is fast and easy to pickle.  Other features include:
 * Pretty print functionality for easy natural language feature selection.
 
 
+## Documentation
+
+* [Framework documentation](https://plandes.github.io/nlparse/)
+* [Natural Language Parsing](doc/parse.md)
+* [List Token Normalizers and Mappers](doc/normalizers.md)
+
+
 ## Obtaining
 
 The easist way to install the command line program is via the `pip` installer:
@@ -24,13 +31,6 @@ pip3 install zensols.nlp
 ```
 
 Binaries are also available on [pypi].
-
-
-## Documentation
-
-* [Framework documentation](https://plandes.github.io/nlparse/)
-* [Natural Language Parsing](doc/parse.md)
-* [List Token Normalizers and Mappers](doc/normalizers.md)
 
 
 ## Changelog
@@ -55,4 +55,5 @@ Copyright (c) 2020 Paul Landes
 [python37-link]: https://www.python.org/downloads/release/python-370
 
 [SpaCy]: https://spacy.io
+
 [configuration factories]: https://plandes.github.io/util/doc/config.html#configuration-factory
