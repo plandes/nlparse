@@ -147,8 +147,8 @@ class LanguageResource(object):
         return doc
 
     def features(self, doc: Doc) -> Iterable[TokenFeatures]:
-        """Generate an iterator of ``TokenFeatures`` instances with features on a per
-        token level.
+        """Generate an iterator of :class:`.TokenFeatures` instances with features on a
+        per token level.
 
         """
         return map(lambda t: TokenFeatures(doc, *t),

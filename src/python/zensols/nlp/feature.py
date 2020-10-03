@@ -4,7 +4,7 @@ SpaCy artifacts.
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Set, Any
+from typing import Dict, Set, Any, Union, Type
 import logging
 import sys
 import inspect
@@ -13,6 +13,7 @@ from itertools import chain
 from functools import reduce
 from io import TextIOBase
 from spacy.tokens.token import Token
+from spacy.tokens.doc import Doc
 from zensols.config import Dictable
 
 logger = logging.getLogger(__name__)
@@ -121,7 +122,9 @@ class DetatchableTokenFeatures(TokenAttributes):
     NONE = '<none>'
     PROP_REGEX = re.compile(r'^[a-z][a-z_-]*')
 
-    def detach(self, feature_ids: Set[str] = None) -> TokenAttributes:
+    def detach(self, feature_ids: Set[str] = None,
+               ta_class: Type[TokenAttributes] = TokenAttributes) -> \
+            TokenAttributes:
         """Return a new instance of the object detached from SpaCy C data structures.
         This is useful for pickling of the object.
 
@@ -136,7 +139,7 @@ class DetatchableTokenFeatures(TokenAttributes):
                p not in skips and \
                (feature_ids is None or p in feature_ids):
                 attrs[p] = v
-        ta = TokenAttributes()
+        ta = ta_class()
         ta.__dict__.update(attrs)
         return ta
 
@@ -174,11 +177,13 @@ class TokenFeatures(DetatchableTokenFeatures):
     to as *feature ids*.
 
     """
-    def __init__(self, doc, tok_or_ent, norm):
+    def __init__(self, doc: Doc, tok_or_ent: Union[Token, str], norm):
         """Initialize a features instance.
 
         :param doc: the spacy document
+
         :tok_or_ent: either a token or entity parsed from ``doc``
+
         :norm: the normalized text of the token (i.e. lemmatized version)
 
         """
@@ -208,7 +213,9 @@ class TokenFeatures(DetatchableTokenFeatures):
 
     @property
     def token(self) -> Token:
-        "Return the SpaCy token."
+        """Return the SpaCy token.
+
+        """
         tok = self.tok_or_ent
         if self.is_ent:
             tok = self.doc[tok.start]
