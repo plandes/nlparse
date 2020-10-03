@@ -67,9 +67,6 @@ class DocUtil(object):
 class LanguageResource(object):
     """This langauge resource parses text in to Spacy documents.
 
-    Don't create instances of this directly.  Instead use
-    ``LanguageResourceFactory`` created with application contexts with entries.
-
     Configuration example::
 
         [default_langres]
