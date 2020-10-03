@@ -1,4 +1,4 @@
-# Zensols Natural Language Processing
+# Zensols Natural Language Parsing
 
 [![Travis CI Build Status][travis-badge]][travis-link]
 [![PyPI][pypi-badge]][pypi-link]

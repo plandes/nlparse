@@ -73,6 +73,7 @@ class LanguageResource(object):
     Configuration example::
 
         [default_langres]
+        class_name = zensols.nlp.LanguageResource
         lang = en
         model_name = ${lang}_core_web_sm
 
