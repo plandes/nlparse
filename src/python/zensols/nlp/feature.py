@@ -14,6 +14,7 @@ from functools import reduce
 from io import TextIOBase
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
+from spacy.tokens.span import Span
 from zensols.config import Dictable
 
 logger = logging.getLogger(__name__)
@@ -123,13 +124,17 @@ class DetatchableTokenFeatures(TokenAttributes):
     PROP_REGEX = re.compile(r'^[a-z][a-z_-]*')
 
     def detach(self, feature_ids: Set[str] = None,
-               ta_class: Type[TokenAttributes] = TokenAttributes) -> \
+               inst: Type[TokenAttributes] = TokenAttributes) -> \
             TokenAttributes:
         """Return a new instance of the object detached from SpaCy C data structures.
         This is useful for pickling of the object.
 
         :param feature_ids: the names of attributes to populate in the
                             returned instance; defaults to all
+
+        :param inst: a class or object instance that extends
+                     :class:`.TokenAttributes`; if a class, it is instantiated
+                     by passing no arguments
 
         """
         attrs = {}
@@ -139,7 +144,10 @@ class DetatchableTokenFeatures(TokenAttributes):
                p not in skips and \
                (feature_ids is None or p in feature_ids):
                 attrs[p] = v
-        ta = ta_class()
+        if isinstance(inst, type):
+            ta = inst()
+        else:
+            ta = inst
         ta.__dict__.update(attrs)
         return ta
 
@@ -177,7 +185,7 @@ class TokenFeatures(DetatchableTokenFeatures):
     to as *feature ids*.
 
     """
-    def __init__(self, doc: Doc, tok_or_ent: Union[Token, str], norm):
+    def __init__(self, doc: Doc, tok_or_ent: Union[Token, Span], norm: str):
         """Initialize a features instance.
 
         :param doc: the spacy document
