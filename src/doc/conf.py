@@ -1,4 +1,3 @@
-#set($package = $namespace.substring(0, $namespace.indexOf(".")))
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
