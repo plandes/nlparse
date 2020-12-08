@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Feature to parse whole special tokens.
+- Added porter stemmer from [nltk].
 
 ### Removed
 - Moved word2vec embedding (`word2vec.py`) to [zensols.deepnlp] library.
@@ -89,5 +90,5 @@ Data classes are now used so Python 3.7 is now a requirement.
 [0.0.2]: https://github.com/plandes/nlparse/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/plandes/nlparse/compare/v0.0.0...v0.0.1
 
-[NLTK]: https://www.nltk.org
+[nltk]: https://www.nltk.org
 [zensols.deepnlp]: https://github.com/plandes/deepnlp
