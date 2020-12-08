@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Sphinx documentation, which includes API docs.
 
+### Changed
+- Settable detached `TokenAttributes` instances.
+
 
 ## [0.0.9] - 2020-05-10
 ### Changed
