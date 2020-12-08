@@ -11,10 +11,7 @@ import re
 import itertools as it
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
-from zensols.config import (
-    Configurable,
-    ImportConfigFactory,
-)
+from zensols.config import Configurable, ImportConfigFactory
 
 logger = logging.getLogger(__name__)
 
