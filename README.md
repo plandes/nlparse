@@ -1,8 +1,8 @@
 # Zensols Natural Language Parsing
 
-[![Travis CI Build Status][travis-badge]][travis-link]
 [![PyPI][pypi-badge]][pypi-link]
 [![Python 3.7][python37-badge]][python37-link]
+[![Python 3.8][python38-badge]][python38-link]
 
 This framework wraps the [spaCy] framework and creates features.  The
 motivation is to generate features from the parsed text in an object oriented
@@ -54,13 +54,15 @@ Copyright (c) 2020 Paul Landes
 
 
 <!-- links -->
-[travis-link]: https://travis-ci.org/plandes/nlparse
-[travis-badge]: https://travis-ci.org/plandes/nlparse.svg?branch=master
 [pypi]: https://pypi.org/project/zensols.nlp/
 [pypi-link]: https://pypi.python.org/pypi/zensols.nlp
 [pypi-badge]: https://img.shields.io/pypi/v/zensols.nlp.svg
 [python37-badge]: https://img.shields.io/badge/python-3.7-blue.svg
+[python38-badge]: https://img.shields.io/badge/python-3.8-blue.svg
 [python37-link]: https://www.python.org/downloads/release/python-370
+[python38-link]: https://www.python.org/downloads/release/python-380
+[build-badge]: https://github.com/plandes/nlparse/workflows/CI/badge.svg
+[build-link]: https://github.com/plandes/nlparse/actions
 
 [spaCy]: https://spacy.io
 [nltk]: https://www.nltk.org

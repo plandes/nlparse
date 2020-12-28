@@ -1,8 +1,0 @@
-language: python
-install:
-  - sudo rm -f /etc/boto.cfg
-  - pip install -q -r src/python/requirements.txt
-  - make nlpdeps
-python:
-  - "3.7"
-script: make info test

@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changed
+- Upgraded [zenbuild].
+- Switched from Travis to GitHub workflows.
+
+
 ## [0.0.10] - 2020-12-09
 ### Added
 - Sphinx documentation, which includes API docs.
@@ -99,3 +104,4 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 [nltk]: https://www.nltk.org
 [zensols.deepnlp]: https://github.com/plandes/deepnlp
+[zenbuild]: https://github.com/plandes/zenbuild
