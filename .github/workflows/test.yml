@@ -31,7 +31,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
 
       - name: Prepare tests
-        run: 'make info deps'
+        run: 'make info nlpdeps'
 
       - name: Run tests
         run: 'make test'
