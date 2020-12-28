@@ -3,6 +3,7 @@
 [![PyPI][pypi-badge]][pypi-link]
 [![Python 3.7][python37-badge]][python37-link]
 [![Python 3.8][python38-badge]][python38-link]
+[![Build Status][build-badge]][build-link]
 
 This framework wraps the [spaCy] framework and creates features.  The
 motivation is to generate features from the parsed text in an object oriented
