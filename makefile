@@ -14,11 +14,3 @@ nlpdeps:
 			for i in $(SPACY_MODELS) ; do \
 				$(PYTHON_BIN) -m spacy download en_core_web_$${i} ; \
 			done
-
-.PHONY:			testparse
-testparse:
-			make PY_SRC_TEST_PKGS=test_nlparse.TestParse test
-
-.PHONY:			testthird
-testthird:
-			make PY_SRC_TEST_PKGS=test_thirdparty.TestThirdParty test
