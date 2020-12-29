@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.13] - 2020-12-29
+Maintenance release.
+### Changed
+- Updated dependencies and tested across Python 3.7, 3.8, 3.9.
+
+
 ## [0.0.12] - 2020-12-29
 ### Changed
 - Upgraded [zenbuild].
@@ -100,7 +106,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.12...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.13...HEAD
+[0.0.13]: https://github.com/plandes/nlparse/compare/v0.0.12...v0.0.13
 [0.0.12]: https://github.com/plandes/nlparse/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/plandes/nlparse/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/plandes/nlparse/compare/v0.0.9...v0.0.10
