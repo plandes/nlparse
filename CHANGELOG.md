@@ -8,12 +8,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-## [0.0.13] - 2020-12-29
-Maintenance release.
-### Changed
-- Updated dependencies and tested across Python 3.7, 3.8, 3.9.
-
-
 ## [0.0.12] - 2020-12-29
 ### Changed
 - Upgraded [zenbuild].
