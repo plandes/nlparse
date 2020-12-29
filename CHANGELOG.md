@@ -8,10 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.12] - 2020-12-29
 ### Changed
 - Upgraded [zenbuild].
 - Switched from Travis to GitHub workflows.
 - Tested with Python 3.9.1.
+
+
+## [0.0.11] - 2020-12-09
+### Changed
+- Add basic token features for non-spacy parse use cases.
+- Rename feature type to feature id.
+- `TokeFeatures` is now a dictable with to_dict -> asdict.
 
 
 ## [0.0.10] - 2020-12-09
@@ -20,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Settable detached `TokenAttributes` instances.
+- Make `dataclasses`, and therefore, needs >= Python 3.7.
 
 
 ## [0.0.9] - 2020-05-10
@@ -91,7 +100,9 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.10...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.12...HEAD
+[0.0.12]: https://github.com/plandes/nlparse/compare/v0.0.11...v0.0.12
+[0.0.11]: https://github.com/plandes/nlparse/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/plandes/nlparse/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/plandes/nlparse/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/plandes/nlparse/compare/v0.0.7...v0.0.8
