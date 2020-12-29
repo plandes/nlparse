@@ -1,24 +1,24 @@
 ## makefile automates the build and deployment for python projects
 
 # type of project
-PROJ_TYPE =	python
-PROJ_MODULES =	git python-doc python-doc-deploy
-PY_DEP_DEPS +=	nlpdeps
-SPACY_MODELS +=	sm
+PROJ_TYPE =		python
+PROJ_MODULES =		git python-doc python-doc-deploy
+PY_DEP_POST_DEPS +=	nlpdeps
+SPACY_MODELS +=		sm
 
 include ./zenbuild/main.mk
 
 # https://spacy.io/models/en
-.PHONY:		nlpdeps
+.PHONY:			nlpdeps
 nlpdeps:
-		for i in $(SPACY_MODELS) ; do \
-			$(PYTHON_BIN) -m spacy download en_core_web_$${i} ; \
-		done
+			for i in $(SPACY_MODELS) ; do \
+				$(PYTHON_BIN) -m spacy download en_core_web_$${i} ; \
+			done
 
-.PHONY:		testparse
+.PHONY:			testparse
 testparse:
-		make PY_SRC_TEST_PKGS=test_nlparse.TestParse test
+			make PY_SRC_TEST_PKGS=test_nlparse.TestParse test
 
-.PHONY:		testthird
+.PHONY:			testthird
 testthird:
-		make PY_SRC_TEST_PKGS=test_thirdparty.TestThirdParty test
+			make PY_SRC_TEST_PKGS=test_thirdparty.TestThirdParty test

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Upgraded [zenbuild].
 - Switched from Travis to GitHub workflows.
+- Tested with Python 3.9.1.
 
 
 ## [0.0.10] - 2020-12-09
