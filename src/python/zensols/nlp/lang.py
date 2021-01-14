@@ -10,6 +10,7 @@ import sys
 import spacy
 from spacy.symbols import ORTH
 from spacy.tokens.doc import Doc
+from spacy.language import Language
 from spacy.lang.en import English
 from zensols.config import Configurable
 from zensols.persist import DelegateStash
@@ -77,8 +78,11 @@ class LanguageResource(object):
     :param config: the application configuration used to create the Spacy
                    model
 
-    :param model_name: the Spacy model name (defualts to
-                       ``en_core_web_sm``)
+    :param model: the spaCy model, or ``None`` (the default) to create a new
+                  one using ``model_name``
+
+    :param model_name: the Spacy model name (defualts to ``en_core_web_sm``);
+                       this is ignored if ``model`` is not ``None``
 
     :param lang: the natural language the identify the model
 
@@ -95,6 +99,7 @@ class LanguageResource(object):
 
     config: Configurable
     lang: str = field(default='en')
+    model: Language = field(default=None)
     model_name: str = field(default=None)
     components: List = field(default=None)
     disable_components: List = field(default=None)
@@ -104,11 +109,12 @@ class LanguageResource(object):
     def __post_init__(self):
         if self.model_name is None:
             self.model_name = f'{self.lang}_core_web_sm'
-        # cache model in class space
-        nlp = self.MODELS.get(self.model_name)
-        if nlp is None:
-            nlp = spacy.load("en_core_web_sm")
-            self.MODELS[self.model_name] = nlp
+        if self.model is None:
+            # cache model in class space
+            nlp = self.MODELS.get(self.model_name)
+            if nlp is None:
+                nlp = spacy.load("en_core_web_sm")
+                self.MODELS[self.model_name] = nlp
         if self.components is not None:
             for comp in self.components:
                 logger.debug(f'adding {comp} to the pipeline')
