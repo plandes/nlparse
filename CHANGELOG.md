@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.14] - 2021-01-14
+### Changes
+- Fix component adds for spacy > 2.0.
+- Add langres model to API documentation.
+
+
 ## [0.0.12] - 2020-12-29
 ### Changed
 - Upgraded [zenbuild].
@@ -100,7 +106,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.13...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.14...HEAD
+[0.0.14]: https://github.com/plandes/nlparse/compare/v0.0.13...v0.0.14
 [0.0.13]: https://github.com/plandes/nlparse/compare/v0.0.12...v0.0.13
 [0.0.12]: https://github.com/plandes/nlparse/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/plandes/nlparse/compare/v0.0.10...v0.0.11
