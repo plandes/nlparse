@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Natural Language Parsing &mdash; Zensols Natural Language Parsing 0.0.13 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api.html" />
+    <link rel="prev" title="Token Normalizers and Mappers List" href="normalizers.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../top.html" class="icon icon-home" alt="Documentation Home"> Zensols Natural Language Parsing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.13
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="normalizers.html">Token Normalizers and Mappers List</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Natural Language Parsing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-token-normalizers-and-mappers">Configuring Token Normalizers and Mappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detached-features">Detached Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#complete-examples">Complete Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../top.html">Zensols Natural Language Parsing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../top.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Natural Language Parsing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc/parse.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="natural-language-parsing">
+<h1>Natural Language Parsing<a class="headerlink" href="#natural-language-parsing" title="Permalink to this headline">¶</a></h1>
+<p>This framework wraps the <a class="reference external" href="https://spacy.io">SpaCy</a> framework and creates features.  The
+motivation is to generate features from the parsed text in an object oriented
+fashion that is fast and easy to pickle as many SpaCy objects are C data
+structures.</p>
+<p>A secondary use of this package provides a simple, yet robust way to generate a
+string stream of tokens using a <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer">TokenNormalizer</a>.  This allows for
+configuration driven way of generating tokens used for downstream feature
+vectorization such as word vectors, text classification, information
+retrieval/search, latent semantic indexing or any task that uses a single
+string token.</p>
+<p>Token streams can be transformed using <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.TokenMapper">TokenMapper</a> instances.  These take the
+output of a tokenizer, and then modify them in various ways.  Finally, the
+<a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.MapTokenNormalizer">MapTokenNormalizer</a> is a normalizer that uses a list of <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.TokenMapper">TokenMapper</a>s to
+first create the token stream and then transform them.  See the <a class="reference external" href="../api/zensols.nlp.html#module-zensols.nlp.norm">norm package</a>
+for token normalizers and mappers.</p>
+<div class="section" id="configuring-token-normalizers-and-mappers">
+<h2>Configuring Token Normalizers and Mappers<a class="headerlink" href="#configuring-token-normalizers-and-mappers" title="Permalink to this headline">¶</a></h2>
+<p>First lets configure a <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer">TokenNormalizer</a> that removes stop words and
+punctuation in a configuration file <code class="docutils literal notranslate"><span class="pre">parser.conf</span></code>:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[filter_token_mapper]</span>
+<span class="na">class_name</span> <span class="o">=</span> <span class="s">zensols.nlp.FilterTokenMapper</span>
+<span class="na">remove_stop</span> <span class="o">=</span> <span class="s">True</span>
+<span class="na">remove_punctuation</span> <span class="o">=</span> <span class="s">True</span>
+
+<span class="k">[map_filter_token_normalizer]</span>
+<span class="na">class_name</span> <span class="o">=</span> <span class="s">zensols.nlp.MapTokenNormalizer</span>
+<span class="na">mapper_class_list</span> <span class="o">=</span> <span class="s">eval: &#39;filter_token_mapper&#39;.split()</span>
+</pre></div>
+</div>
+<p>Now we create a <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.lang.LanguageResource">LanguageResource</a>, which will be used to parse text in to
+<a class="reference external" href="https://spacy.io">SpaCy</a> documents:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[langres]</span>
+<span class="na">class_name</span> <span class="o">=</span> <span class="s">zensols.nlp.LanguageResource</span>
+<span class="na">lang</span> <span class="o">=</span> <span class="s">en</span>
+<span class="na">model_name</span> <span class="o">=</span> <span class="s">${lang}_core_web_sm</span>
+<span class="na">token_normalizer</span> <span class="o">=</span> <span class="s">instance: map_filter_token_normalizer</span>
+</pre></div>
+</div>
+<p>which defines a language resource for English that uses our previously defined
+token normalizer.  Note that the API provides for these two tasks (parsing and
+token normalization) separately as we’ll see later.</p>
+<p>Next, let’s parse some text with our configuration.  If you’re new to the
+configuration API, please read how <a class="reference external" href="https://plandes.github.io/util/doc/config.html#configuration-factory">configuration factories</a> are used.  First
+create the factory:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">zensols.config</span> <span class="kn">import</span> <span class="n">ExtendedInterpolationEnvConfig</span><span class="p">,</span> <span class="n">ImportConfigFactory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conf</span> <span class="o">=</span> <span class="n">ExtendedInterpolationEnvConfig</span><span class="p">(</span><span class="s1">&#39;parser.conf&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span> <span class="o">=</span> <span class="n">ImportConfigFactory</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span> <span class="o">=</span> <span class="n">fac</span><span class="p">(</span><span class="s1">&#39;langres&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span>
+<span class="go">model_name: en_core_web_sm, lang: en</span>
+</pre></div>
+</div>
+<p>Now we can use the <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.lang.LanguageResource">LanguageResource</a> to parse:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sent</span> <span class="o">=</span> <span class="s1">&#39;California is part of the United States.&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span>
+<span class="go">California is part of the United States.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+<span class="go">&lt;class &#39;spacy.tokens.doc.Doc&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">tag_</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">is_stop</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">California NNP False</span>
+<span class="go">is VBZ True</span>
+<span class="go">part NN True</span>
+<span class="go">of IN True</span>
+<span class="go">the DT True</span>
+<span class="go">United NNP False</span>
+<span class="go">States NNP False</span>
+<span class="go">. . False</span>
+</pre></div>
+</div>
+<p>So far, we’ve only parsed the text in to a <a class="reference external" href="https://spacy.io">SpaCy</a> document.  Now let’s use the
+token normalizer to get the string token stream:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">normalized_tokens</span><span class="p">(</span><span class="n">doc</span><span class="p">))</span>
+<span class="go">&#39;California, the United States&#39;</span>
+</pre></div>
+</div>
+<p>Let’s create a new language resource with a token mapper that down cases and adds
+a little syntactic sugar:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[lc_lambda_token_mapper]</span>
+<span class="na">class_name</span> <span class="o">=</span> <span class="s">zensols.nlp.LambdaTokenMapper</span>
+<span class="na">map_lambda</span> <span class="o">=</span> <span class="s">lambda x: (x[0], f&#39;&lt;{x[1].lower()}&gt;&#39;)</span>
+
+<span class="k">[lc_token_mapper]</span>
+<span class="na">class_name</span> <span class="o">=</span> <span class="s">zensols.nlp.MapTokenNormalizer</span>
+<span class="na">mapper_class_list</span> <span class="o">=</span> <span class="s">eval: &#39;filter_token_mapper lc_lambda_token_mapper&#39;.split()</span>
+
+<span class="k">[lc_langres]</span>
+<span class="na">class_name</span> <span class="o">=</span> <span class="s">zensols.nlp.LanguageResource</span>
+<span class="na">lang</span> <span class="o">=</span> <span class="s">en</span>
+<span class="na">model_name</span> <span class="o">=</span> <span class="s">${lang}_core_web_sm</span>
+<span class="na">token_normalizer</span> <span class="o">=</span> <span class="s">instance: lc_token_mapper</span>
+</pre></div>
+</div>
+<p>In this configuration, we create a tokenizer that first filters (as we did
+previously), and then lowers the token and surrounds the string with <code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code>s.
+Note the <code class="docutils literal notranslate"><span class="pre">lambda</span></code> takes a tuple, which is the <a class="reference external" href="https://spacy.io">SpaCy</a> token and the string
+version of it, which in this case is the <a class="reference external" href="https://spacy.io">SpaCy</a> <code class="docutils literal notranslate"><span class="pre">Token.orth_</span></code> attribute.</p>
+<p>Next we’ll create the normalized tokens using this new configuration:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span> <span class="o">=</span> <span class="n">fac</span><span class="p">(</span><span class="s1">&#39;lc_langres&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">normalized_tokens</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sent</span><span class="p">)))</span>
+<span class="go">&#39;&lt;california&gt;, &lt;the united states&gt;&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="detached-features">
+<h2>Detached Features<a class="headerlink" href="#detached-features" title="Permalink to this headline">¶</a></h2>
+<p>Many times you’ll want to parse many features and save them off to disk for
+feature selection later.  Creating a feature set that is separate in memory
+space from <a class="reference external" href="https://spacy.io">SpaCy</a> data structures is called <em>detaching</em>, which can be done as
+follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">feats</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">lr</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">feat</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">feat</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="n">feat</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">California (&lt;california&gt;) &lt;class &#39;zensols.nlp.feature.TokenFeatures&#39;&gt;</span>
+<span class="go">    text: California</span>
+<span class="go">    norm: &lt;california&gt;</span>
+<span class="go">    i: 0</span>
+<span class="go">    tag: NNP</span>
+<span class="go">    is_wh: False</span>
+<span class="go">    entity: GPE</span>
+<span class="go">    dep: nsubj</span>
+<span class="go">    children: 0</span>
+<span class="go">    numerics: {&#39;tag&#39;: 15794550382381185553, &#39;is_wh&#39;: False, &#39;is_stop&#39;: False, &#39;is_pronoun&#39;: False, &#39;index&#39;: 0, &#39;i&#39;: 0, &#39;is_space&#39;: False, &#39;is_punctuation&#39;: False, &#39;is_contraction&#39;: False, &#39;entity&#39;: 384, &#39;is_entity&#39;: True, &#39;shape&#39;: 16072095006890171862, &#39;is_superlative&#39;: False, &#39;children&#39;: 0, &#39;dep&#39;: 429}</span>
+<span class="go">the United States (&lt;the united states&gt;) &lt;class &#39;zensols.nlp.feature.TokenFeatures&#39;&gt;</span>
+<span class="go">    text: the United States</span>
+<span class="go">    norm: &lt;the united states&gt;</span>
+<span class="go">    i: 4</span>
+<span class="go">    tag: DT</span>
+<span class="go">    is_wh: False</span>
+<span class="go">    entity: GPE</span>
+<span class="go">    dep: det</span>
+<span class="go">    children: 0</span>
+<span class="go">    numerics: {&#39;tag&#39;: 15267657372422890137, &#39;is_wh&#39;: False, &#39;is_stop&#39;: False, &#39;is_pronoun&#39;: False, &#39;index&#39;: 22, &#39;i&#39;: 4, &#39;is_space&#39;: False, &#39;is_punctuation&#39;: False, &#39;is_contraction&#39;: False, &#39;entity&#39;: 384, &#39;is_entity&#39;: True, &#39;shape&#39;: 4088098365541558500, &#39;is_superlative&#39;: False, &#39;children&#39;: 0, &#39;dep&#39;: 415}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">write</span></code> method prints each of the features to standard output.  The <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.feature.DetatchableTokenFeatures.detach">detach
+method</a> parsed from the API provides an instance of <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.feature.TokenFeatures">TokenFeatures</a> that is
+safe to pickle to the file system.  If you only want to keep specific features
+(to increase speed and reduce feature footprint) This method accepts a <code class="docutils literal notranslate"><span class="pre">set</span></code> of
+those features you want to keep.</p>
+<p>The <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.feature.TokenFeatures">TokenFeatures</a> instance has properties that provide easy ways of
+vectorizing from either strings or numeric data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">feats</span><span class="p">)</span><span class="o">.</span><span class="n">string_features</span>
+<span class="go">{&#39;text&#39;: &#39;California&#39;, &#39;norm&#39;: &#39;&lt;california&gt;&#39;, &#39;lemma&#39;: &#39;California&#39;, &#39;is_wh&#39;: False, &#39;is_stop&#39;: False, &#39;is_space&#39;: False, &#39;is_punctuation&#39;: False, &#39;is_contraction&#39;: False, &#39;i&#39;: 0, &#39;index&#39;: 0, &#39;tag&#39;: &#39;NNP&#39;, &#39;entity&#39;: &#39;GPE&#39;, &#39;is_entity&#39;: True, &#39;shape&#39;: &#39;Xxxxx&#39;, &#39;children&#39;: 0, &#39;superlative&#39;: False, &#39;dep&#39;: &#39;nsubj&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">feats</span><span class="p">)</span><span class="o">.</span><span class="n">features</span>
+<span class="go">{&#39;tag&#39;: 15267657372422890137, &#39;is_wh&#39;: False, &#39;is_stop&#39;: False, &#39;is_pronoun&#39;: False, &#39;index&#39;: 22, &#39;i&#39;: 4, &#39;is_space&#39;: False, &#39;is_punctuation&#39;: False, &#39;is_contraction&#39;: False, &#39;entity&#39;: 384, &#39;is_entity&#39;: True, &#39;shape&#39;: 4088098365541558500, &#39;is_superlative&#39;: False, &#39;children&#39;: 0, &#39;dep&#39;: 415}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="complete-examples">
+<h2>Complete Examples<a class="headerlink" href="#complete-examples" title="Permalink to this headline">¶</a></h2>
+<p>See the <a class="reference external" href="https://github.com/plandes/nlparse/tree/master/example">examples</a> directory the complete code used to create the
+examples in this documentation.</p>
+<!-- links --></div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="normalizers.html" class="btn btn-neutral float-left" title="Token Normalizers and Mappers List" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, Paul Landes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

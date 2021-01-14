@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>zensols.nlp.lang &mdash; Zensols Natural Language Parsing 0.0.13 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../top.html" class="icon icon-home" alt="Documentation Home"> Zensols Natural Language Parsing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.13
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/normalizers.html">Token Normalizers and Mappers List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/parse.html">Natural Language Parsing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../top.html">Zensols Natural Language Parsing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../top.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>zensols.nlp.lang</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for zensols.nlp.lang</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Spacy and textacy convenience classes.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Paul Landes&#39;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">spacy</span>
+<span class="kn">from</span> <span class="nn">spacy.symbols</span> <span class="kn">import</span> <span class="n">ORTH</span>
+<span class="kn">from</span> <span class="nn">spacy.tokens.doc</span> <span class="kn">import</span> <span class="n">Doc</span>
+<span class="kn">from</span> <span class="nn">spacy.language</span> <span class="kn">import</span> <span class="n">Language</span>
+<span class="kn">from</span> <span class="nn">spacy.lang.en</span> <span class="kn">import</span> <span class="n">English</span>
+<span class="kn">from</span> <span class="nn">zensols.config</span> <span class="kn">import</span> <span class="n">Configurable</span>
+<span class="kn">from</span> <span class="nn">zensols.persist</span> <span class="kn">import</span> <span class="n">DelegateStash</span>
+<span class="kn">from</span> <span class="nn">zensols.nlp</span> <span class="kn">import</span> <span class="n">TokenFeatures</span><span class="p">,</span> <span class="n">TokenNormalizer</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DocUtil"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.DocUtil">[docs]</a><span class="k">class</span> <span class="nc">DocUtil</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Utility class to pretty print and serialize Spacy documents.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DocUtil.write"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.DocUtil.write">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">writer</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pretty print ``doc`` using ``writer``, which defauls to standard out.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;text: </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;tokens:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">: tag=</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">tag_</span><span class="si">}</span><span class="s1">, pos=</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">pos_</span><span class="si">}</span><span class="s1">, &#39;</span> <span class="o">+</span>
+                         <span class="sa">f</span><span class="s1">&#39;stop=</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">is_stop</span><span class="si">}</span><span class="s1">, lemma=</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">lemma_</span><span class="si">}</span><span class="s1">, dep=</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">dep_</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;entities:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">ent</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">ent</span><span class="o">.</span><span class="n">label_</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DocUtil.to_json"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.DocUtil.to_json">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert ``doc`` to a JSON Python object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sents</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">)</span>
+        <span class="n">em</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="n">e</span><span class="o">.</span><span class="n">end</span><span class="p">]:</span>
+                <span class="n">em</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">label_</span>
+
+        <span class="k">def</span> <span class="nf">tok_json</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">tag_</span><span class="p">,</span> <span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">pos_</span><span class="p">,</span>
+                    <span class="s1">&#39;is_stop&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">is_stop</span><span class="p">,</span> <span class="s1">&#39;lemma&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">lemma_</span><span class="p">,</span> <span class="s1">&#39;dep&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">dep_</span><span class="p">,</span>
+                    <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;idx&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">idx</span><span class="p">,</span>
+                    <span class="s1">&#39;ent&#39;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">em</span> <span class="k">else</span> <span class="n">em</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s1">&#39;childs&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">children</span><span class="p">))}</span>
+
+        <span class="k">def</span> <span class="nf">sent_json</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">sents</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">i</span><span class="p">:</span> <span class="n">tok_json</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">end</span><span class="p">]}</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                <span class="s1">&#39;sents&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">sent_json</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sents</span><span class="p">))},</span>
+                <span class="s1">&#39;ents&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">e</span><span class="o">.</span><span class="n">label_</span><span class="p">,)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">]}</span></div></div>
+
+
+<div class="viewcode-block" id="LanguageResource"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.LanguageResource">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">LanguageResource</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This langauge resource parses text in to Spacy documents.</span>
+
+<span class="sd">    Configuration example::</span>
+
+<span class="sd">        [default_langres]</span>
+<span class="sd">        class_name = zensols.nlp.LanguageResource</span>
+<span class="sd">        lang = en</span>
+<span class="sd">        model_name = ${lang}_core_web_sm</span>
+
+<span class="sd">    :param config: the application configuration used to create the Spacy</span>
+<span class="sd">                   model</span>
+
+<span class="sd">    :param model: the spaCy model, or ``None`` (the default) to create a new</span>
+<span class="sd">                  one using ``model_name``</span>
+
+<span class="sd">    :param model_name: the Spacy model name (defualts to ``en_core_web_sm``);</span>
+<span class="sd">                       this is ignored if ``model`` is not ``None``</span>
+
+<span class="sd">    :param lang: the natural language the identify the model</span>
+
+<span class="sd">    :param components: additional Spacy components to add to the pipeline</span>
+
+<span class="sd">    :param token_normalizer: the token normalizer for methods that use it,</span>
+<span class="sd">                             i.e. ``features``</span>
+
+<span class="sd">    :param special_case_tokens: tokens that will be parsed as one token,</span>
+<span class="sd">                                i.e. ``&lt;/s&gt;``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MODELS</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">config</span><span class="p">:</span> <span class="n">Configurable</span>
+    <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Language</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">components</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">disable_components</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">token_normalizer</span><span class="p">:</span> <span class="n">TokenNormalizer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">special_case_tokens</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lang</span><span class="si">}</span><span class="s1">_core_web_sm&#39;</span>
+        <span class="n">nlp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="k">if</span> <span class="n">nlp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># cache model in class space</span>
+            <span class="n">nlp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODELS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">nlp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;en_core_web_sm&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MODELS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">nlp</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">nlp</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;adding </span><span class="si">{</span><span class="n">comp</span><span class="si">}</span><span class="s1"> to the pipeline&#39;</span><span class="p">)</span>
+                <span class="n">nlp</span><span class="o">.</span><span class="n">add_pipe</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disable_components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_components</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_normalizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;adding default tokenizer&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">token_normalizer</span> <span class="o">=</span> <span class="n">TokenNormalizer</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">stok</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">special_case_tokens</span><span class="p">:</span>
+            <span class="n">rule</span> <span class="o">=</span> <span class="p">[{</span><span class="n">ORTH</span><span class="p">:</span> <span class="n">stok</span><span class="p">}]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;adding special token: </span><span class="si">{</span><span class="n">stok</span><span class="si">}</span><span class="s1"> with rule: </span><span class="si">{</span><span class="n">rule</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">add_special_case</span><span class="p">(</span><span class="n">stok</span><span class="p">,</span> <span class="n">rule</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LanguageResource.parse"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.LanguageResource.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Doc</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Parse ``text`` in to a Spacy document.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;creating document with model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s1">, &#39;</span> <span class="o">+</span>
+                     <span class="sa">f</span><span class="s1">&#39;disable components: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">disable_components</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">disable_components</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doc</span></div>
+
+<div class="viewcode-block" id="LanguageResource.parse_tokens"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.LanguageResource.parse_tokens">[docs]</a>    <span class="k">def</span> <span class="nf">parse_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Doc</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Just like ``parse`` but process a stream of (already) tokenized</span>
+<span class="sd">        words/tokens.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">Doc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">vocab</span><span class="p">,</span> <span class="n">words</span><span class="o">=</span><span class="n">tokens</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_pipe</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">pipe_names</span><span class="p">):</span>
+            <span class="n">pipe</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doc</span></div>
+
+<div class="viewcode-block" id="LanguageResource.features"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.LanguageResource.features">[docs]</a>    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Doc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">TokenFeatures</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Generate an iterator of :class:`.TokenFeatures` instances with features on a</span>
+<span class="sd">        per token level.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">TokenFeatures</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="o">*</span><span class="n">t</span><span class="p">),</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">token_normalizer</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">doc</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LanguageResource.normalized_tokens"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.LanguageResource.normalized_tokens">[docs]</a>    <span class="k">def</span> <span class="nf">normalized_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Doc</span><span class="p">,</span> <span class="n">tn</span><span class="p">:</span> <span class="n">TokenNormalizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> \
+            <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return an iterator of the normalized text of each token.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_normalizer</span> <span class="k">if</span> <span class="n">tn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">tn</span>
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tn</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">doc</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LanguageResource.tokenizer"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.LanguageResource.tokenizer">[docs]</a>    <span class="k">def</span> <span class="nf">tokenizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a simple Spacy tokenizer.  Currently only English is supported.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lang</span> <span class="o">==</span> <span class="s1">&#39;en&#39;</span><span class="p">:</span>
+            <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">English</span><span class="p">()</span><span class="o">.</span><span class="n">Defaults</span><span class="o">.</span><span class="n">create_tokenizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;no such language: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lang</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;model_name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s1">, lang: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lang</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DocStash"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.DocStash">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DocStash</span><span class="p">(</span><span class="n">DelegateStash</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A stash that transforms loaded items in to a SpaCy document.</span>
+
+<span class="sd">    All items returned from the delegate must have a ``text`` attribute or</span>
+<span class="sd">    override ``item_to_text``.</span>
+
+<span class="sd">    :param lang_res: used to parse and create the SpaCy documents.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">langres</span><span class="p">:</span> <span class="n">LanguageResource</span>
+
+<div class="viewcode-block" id="DocStash.item_to_text"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.DocStash.item_to_text">[docs]</a>    <span class="k">def</span> <span class="nf">item_to_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the text of the item that is loaded with ``load``.  This default</span>
+<span class="sd">        method uses the ``text`` attribute from ``item``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">text</span></div>
+
+<div class="viewcode-block" id="DocStash.load"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.lang.DocStash.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_to_text</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">langres</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, Paul Landes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

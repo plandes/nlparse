@@ -1,0 +1,1237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>zensols.nlp package &mdash; Zensols Natural Language Parsing 0.0.13 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../CONTRIBUTING.html" />
+    <link rel="prev" title="API Reference" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../top.html" class="icon icon-home" alt="Documentation Home"> Zensols Natural Language Parsing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.13
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/normalizers.html">Token Normalizers and Mappers List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/parse.html">Natural Language Parsing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">zensols.nlp package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.nlp.feature">zensols.nlp.feature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.nlp.lang">zensols.nlp.lang module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.nlp.norm">zensols.nlp.norm module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.nlp.stemmer">zensols.nlp.stemmer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.nlp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../top.html">Zensols Natural Language Parsing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../top.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">API Reference</a> &raquo;</li>
+        
+      <li>zensols.nlp package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/zensols.nlp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="zensols-nlp-package">
+<h1>zensols.nlp package<a class="headerlink" href="#zensols-nlp-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-zensols.nlp.feature">
+<span id="zensols-nlp-feature-module"></span><h2>zensols.nlp.feature module<a class="headerlink" href="#module-zensols.nlp.feature" title="Permalink to this headline">¶</a></h2>
+<p>Domain container classes that can generate numeric and string features from
+SpaCy artifacts.</p>
+<dl class="py class">
+<dt id="zensols.nlp.feature.BasicTokenFeatures">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.feature.</code><code class="sig-name descname">BasicTokenFeatures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/feature.html#BasicTokenFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.BasicTokenFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.feature.DetatchableTokenFeatures" title="zensols.nlp.feature.DetatchableTokenFeatures"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.feature.DetatchableTokenFeatures</span></code></a></p>
+<p>A token feature set meant to be extended for cases where tokens are not
+parsed with SpaCy using <code class="xref py py-class docutils literal notranslate"><span class="pre">LanguageResources</span></code> and
+<a class="reference internal" href="#zensols.nlp.norm.TokenNormalizer" title="zensols.nlp.norm.TokenNormalizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenNormalizer</span></code></a>.</p>
+<dl class="py method">
+<dt id="zensols.nlp.feature.BasicTokenFeatures.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/feature.html#BasicTokenFeatures.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.BasicTokenFeatures.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.BasicTokenFeatures.norm">
+<em class="property">property </em><code class="sig-name descname">norm</code><a class="headerlink" href="#zensols.nlp.feature.BasicTokenFeatures.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>rtype</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.feature.DetatchableTokenFeatures">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.feature.</code><code class="sig-name descname">DetatchableTokenFeatures</code><a class="reference internal" href="../_modules/zensols/nlp/feature.html#DetatchableTokenFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.DetatchableTokenFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.feature.TokenAttributes" title="zensols.nlp.feature.TokenAttributes"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.feature.TokenAttributes</span></code></a></p>
+<p>Subclasses that can detach features from SpaCy artifacts enabling clean
+pickling.</p>
+<dl class="py attribute">
+<dt id="zensols.nlp.feature.DetatchableTokenFeatures.NONE">
+<code class="sig-name descname">NONE</code><em class="property"> = '&lt;none&gt;'</em><a class="headerlink" href="#zensols.nlp.feature.DetatchableTokenFeatures.NONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.feature.DetatchableTokenFeatures.PROP_REGEX">
+<code class="sig-name descname">PROP_REGEX</code><em class="property"> = re.compile('^[a-z][a-z_-]*')</em><a class="headerlink" href="#zensols.nlp.feature.DetatchableTokenFeatures.PROP_REGEX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.DetatchableTokenFeatures.detach">
+<code class="sig-name descname">detach</code><span class="sig-paren">(</span><em class="sig-param">feature_ids=None</em>, <em class="sig-param">inst=&lt;class 'zensols.nlp.feature.TokenAttributes'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/feature.html#DetatchableTokenFeatures.detach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.DetatchableTokenFeatures.detach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new instance of the object detached from SpaCy C data structures.
+This is useful for pickling of the object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – the names of attributes to populate in the
+returned instance; defaults to all</p></li>
+<li><p><strong>inst</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#zensols.nlp.feature.TokenAttributes" title="zensols.nlp.feature.TokenAttributes"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenAttributes</span></code></a>]) – a class or object instance that extends
+<a class="reference internal" href="#zensols.nlp.feature.TokenAttributes" title="zensols.nlp.feature.TokenAttributes"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenAttributes</span></code></a>; if a class, it is instantiated
+by passing no arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#zensols.nlp.feature.TokenAttributes" title="zensols.nlp.feature.TokenAttributes"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenAttributes</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.feature.TokenAttributes">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.feature.</code><code class="sig-name descname">TokenAttributes</code><a class="reference internal" href="../_modules/zensols/nlp/feature.html#TokenAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://plandes.github.io/util/api/zensols.config.html#zensols.config.dictable.Dictable" title="(in Zensols Utilities v1.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.config.dictable.Dictable</span></code></a></p>
+<p>Contains token properties and a few utility methods.</p>
+<dl class="py attribute">
+<dt id="zensols.nlp.feature.TokenAttributes.FIELD_IDS">
+<code class="sig-name descname">FIELD_IDS</code><em class="property"> = frozenset({'children', 'dep', 'dep_', 'ent', 'ent_', 'i', 'idx', 'index', 'is_contraction', 'is_ent', 'is_pronoun', 'is_punctuation', 'is_space', 'is_stop', 'is_superlative', 'is_wh', 'lemma', 'norm', 'shape', 'shape_', 'tag', 'tag_'})</em><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes.FIELD_IDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.feature.TokenAttributes.FIELD_IDS_BY_TYPE">
+<code class="sig-name descname">FIELD_IDS_BY_TYPE</code><em class="property"> = {'bool': frozenset({'is_contraction', 'is_ent', 'is_pronoun', 'is_space', 'is_stop', 'is_superlative', 'is_wh'}), 'int': frozenset({'dep', 'ent', 'i', 'idx', 'index', 'is_punctuation', 'shape', 'tag'}), 'list': frozenset({'children'}), 'str': frozenset({'dep_', 'ent_', 'lemma', 'norm', 'shape_', 'tag_'})}</em><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes.FIELD_IDS_BY_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.feature.TokenAttributes.TYPES_BY_FIELD_ID">
+<code class="sig-name descname">TYPES_BY_FIELD_ID</code><em class="property"> = {'children': 'list', 'dep': 'int', 'dep_': 'str', 'ent': 'int', 'ent_': 'str', 'i': 'int', 'idx': 'int', 'index': 'int', 'is_contraction': 'bool', 'is_ent': 'bool', 'is_pronoun': 'bool', 'is_punctuation': 'int', 'is_space': 'bool', 'is_stop': 'bool', 'is_superlative': 'bool', 'is_wh': 'bool', 'lemma': 'str', 'norm': 'str', 'shape': 'int', 'shape_': 'str', 'tag': 'int', 'tag_': 'str'}</em><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes.TYPES_BY_FIELD_ID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.feature.TokenAttributes.WRITABLE_FIELD_IDS">
+<code class="sig-name descname">WRITABLE_FIELD_IDS</code><em class="property"> = ('text', 'norm', 'i', 'tag', 'is_wh', 'entity', 'dep', 'children')</em><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes.WRITABLE_FIELD_IDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenAttributes.asdict">
+<code class="sig-name descname">asdict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recurse</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">readable</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">class_name_param</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/feature.html#TokenAttributes.asdict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes.asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the token attributes as a dictionary representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenAttributes.features">
+<em class="property">property </em><code class="sig-name descname">features</code><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes.features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the features as numeric values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenAttributes.string_features">
+<em class="property">property </em><code class="sig-name descname">string_features</code><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes.string_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>The features of the token as strings (both keys and values).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenAttributes.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">depth=0</em>, <em class="sig-param">writer=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/feature.html#TokenAttributes.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.TokenAttributes.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the features in a human readable format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>writer</strong> (<a class="reference external" href="https://docs.python.org/3/library/io.html#io.TextIOBase" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextIOBase</span></code></a>) – where to output, defaults to standard out</p></li>
+<li><p><strong>level</strong> – the indentation level</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.feature.TokenFeatures">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.feature.</code><code class="sig-name descname">TokenFeatures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc</span></em>, <em class="sig-param"><span class="n">tok_or_ent</span></em>, <em class="sig-param"><span class="n">norm</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/feature.html#TokenFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.feature.DetatchableTokenFeatures" title="zensols.nlp.feature.DetatchableTokenFeatures"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.feature.DetatchableTokenFeatures</span></code></a></p>
+<p>Convenience class to create features from text.  The features are derived
+from parsed Spacy artifacts.</p>
+<p>The attributes of this class, such as <code class="docutils literal notranslate"><span class="pre">norm</span></code> and <code class="docutils literal notranslate"><span class="pre">is_wh</span></code> are referred
+to as <em>feature ids</em>.</p>
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc</span></em>, <em class="sig-param"><span class="n">tok_or_ent</span></em>, <em class="sig-param"><span class="n">norm</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/feature.html#TokenFeatures.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a features instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>doc</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Doc</span></code>) – the spacy document</p>
+</dd>
+<dt class="field-even">Tok_or_ent</dt>
+<dd class="field-even"><p>either a token or entity parsed from <code class="docutils literal notranslate"><span class="pre">doc</span></code></p>
+</dd>
+<dt class="field-odd">Norm</dt>
+<dd class="field-odd"><p>the normalized text of the token (i.e. lemmatized version)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.asdict">
+<code class="sig-name descname">asdict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recurse</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">readable</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">class_name_param</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/feature.html#TokenFeatures.asdict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the token attributes as a dictionary representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.children">
+<em class="property">property </em><code class="sig-name descname">children</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sequence of the token’s immediate syntactic children.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.dep">
+<em class="property">property </em><code class="sig-name descname">dep</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.dep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Syntactic dependency relation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.dep_">
+<em class="property">property </em><code class="sig-name descname">dep_</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.dep_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Syntactic dependency relation string representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.ent">
+<em class="property">property </em><code class="sig-name descname">ent</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.ent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the entity numeric value or 0 if this is not an entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.ent_">
+<em class="property">property </em><code class="sig-name descname">ent_</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.ent_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the entity string label or <code class="docutils literal notranslate"><span class="pre">None</span></code> if this token has no entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.i">
+<em class="property">property </em><code class="sig-name descname">i</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The index of the token within the parent document.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.idx">
+<em class="property">property </em><code class="sig-name descname">idx</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.idx" title="Permalink to this definition">¶</a></dt>
+<dd><p>The character offset of the token within the parent document.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.is_contraction">
+<em class="property">property </em><code class="sig-name descname">is_contraction</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.is_contraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if this token is a contradiction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.is_pronoun">
+<em class="property">property </em><code class="sig-name descname">is_pronoun</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.is_pronoun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if this is a pronoun (i.e. ‘he’) token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.is_punctuation">
+<em class="property">property </em><code class="sig-name descname">is_punctuation</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.is_punctuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if this is a punctuation (i.e. ‘?’) token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.is_space">
+<em class="property">property </em><code class="sig-name descname">is_space</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.is_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if this token is white space only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.is_stop">
+<em class="property">property </em><code class="sig-name descname">is_stop</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.is_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if this is a stop word.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.is_superlative">
+<em class="property">property </em><code class="sig-name descname">is_superlative</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.is_superlative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if this token is the superlative.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.is_wh">
+<em class="property">property </em><code class="sig-name descname">is_wh</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.is_wh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if this is a WH word (i.e. what, where).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.lemma">
+<em class="property">property </em><code class="sig-name descname">lemma</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.lemma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the string lemma or text of the named entitiy if tagged as a named
+entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.norm">
+<em class="property">property </em><code class="sig-name descname">norm</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the normalized text, which is the text/orth or the named entity if
+tagged as a named entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform of the tokens’s string, to show orthographic features. For
+example, “Xxxx” or “d.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.shape_">
+<em class="property">property </em><code class="sig-name descname">shape_</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.shape_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform of the tokens’s string, to show orthographic features. For
+example, “Xxxx” or “d.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.tag">
+<em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fine-grained part-of-speech text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.tag_">
+<em class="property">property </em><code class="sig-name descname">tag_</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.tag_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fine-grained part-of-speech text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.text">
+<em class="property">property </em><code class="sig-name descname">text</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the unmodified parsed tokenized text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.feature.TokenFeatures.token">
+<em class="property">property </em><code class="sig-name descname">token</code><a class="headerlink" href="#zensols.nlp.feature.TokenFeatures.token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the SpaCy token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Token</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-zensols.nlp.lang">
+<span id="zensols-nlp-lang-module"></span><h2>zensols.nlp.lang module<a class="headerlink" href="#module-zensols.nlp.lang" title="Permalink to this headline">¶</a></h2>
+<p>Spacy and textacy convenience classes.</p>
+<dl class="py class">
+<dt id="zensols.nlp.lang.DocStash">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.lang.</code><code class="sig-name descname">DocStash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delegate</span></em>, <em class="sig-param"><span class="n">langres</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#DocStash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.DocStash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://plandes.github.io/util/api/zensols.persist.html#zensols.persist.domain.DelegateStash" title="(in Zensols Utilities v1.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.persist.domain.DelegateStash</span></code></a></p>
+<p>A stash that transforms loaded items in to a SpaCy document.</p>
+<p>All items returned from the delegate must have a <code class="docutils literal notranslate"><span class="pre">text</span></code> attribute or
+override <code class="docutils literal notranslate"><span class="pre">item_to_text</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lang_res</strong> – used to parse and create the SpaCy documents.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.nlp.lang.DocStash.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delegate</span></em>, <em class="sig-param"><span class="n">langres</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.lang.DocStash.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.DocStash.item_to_text">
+<code class="sig-name descname">item_to_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#DocStash.item_to_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.DocStash.item_to_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the text of the item that is loaded with <code class="docutils literal notranslate"><span class="pre">load</span></code>.  This default
+method uses the <code class="docutils literal notranslate"><span class="pre">text</span></code> attribute from <code class="docutils literal notranslate"><span class="pre">item</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.DocStash.langres">
+<code class="sig-name descname">langres</code><em class="property">: <a class="reference internal" href="#zensols.nlp.lang.LanguageResource" title="zensols.nlp.lang.LanguageResource">zensols.nlp.lang.LanguageResource</a></em><a class="headerlink" href="#zensols.nlp.lang.DocStash.langres" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.DocStash.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#DocStash.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.DocStash.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a data value from the pickled data with key <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.lang.DocUtil">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.lang.</code><code class="sig-name descname">DocUtil</code><a class="reference internal" href="../_modules/zensols/nlp/lang.html#DocUtil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.DocUtil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Utility class to pretty print and serialize Spacy documents.</p>
+<dl class="py method">
+<dt id="zensols.nlp.lang.DocUtil.to_json">
+<em class="property">static </em><code class="sig-name descname">to_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#DocUtil.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.DocUtil.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert <code class="docutils literal notranslate"><span class="pre">doc</span></code> to a JSON Python object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.DocUtil.write">
+<em class="property">static </em><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">doc</em>, <em class="sig-param">writer=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#DocUtil.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.DocUtil.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty print <code class="docutils literal notranslate"><span class="pre">doc</span></code> using <code class="docutils literal notranslate"><span class="pre">writer</span></code>, which defauls to standard out.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.lang.LanguageResource">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.lang.</code><code class="sig-name descname">LanguageResource</code><span class="sig-paren">(</span><em class="sig-param">config</em>, <em class="sig-param">lang='en'</em>, <em class="sig-param">model=None</em>, <em class="sig-param">model_name=None</em>, <em class="sig-param">components=None</em>, <em class="sig-param">disable_components=None</em>, <em class="sig-param">token_normalizer=None</em>, <em class="sig-param">special_case_tokens=&lt;factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#LanguageResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.LanguageResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>This langauge resource parses text in to Spacy documents.</p>
+<p>Configuration example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[default_langres]
+class_name = zensols.nlp.LanguageResource
+lang = en
+model_name = ${lang}_core_web_sm
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://plandes.github.io/util/api/zensols.config.html#zensols.config.configbase.Configurable" title="(in Zensols Utilities v1.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configurable</span></code></a>) – the application configuration used to create the Spacy
+model</p></li>
+<li><p><strong>model</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Language</span></code>]) – the spaCy model, or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default) to create a new
+one using <code class="docutils literal notranslate"><span class="pre">model_name</span></code></p></li>
+<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the Spacy model name (defualts to <code class="docutils literal notranslate"><span class="pre">en_core_web_sm</span></code>);
+this is ignored if <code class="docutils literal notranslate"><span class="pre">model</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>lang</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the natural language the identify the model</p></li>
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>]) – additional Spacy components to add to the pipeline</p></li>
+<li><p><strong>token_normalizer</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#zensols.nlp.norm.TokenNormalizer" title="zensols.nlp.norm.TokenNormalizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenNormalizer</span></code></a>]) – the token normalizer for methods that use it,
+i.e. <code class="docutils literal notranslate"><span class="pre">features</span></code></p></li>
+<li><p><strong>special_case_tokens</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>) – tokens that will be parsed as one token,
+i.e. <code class="docutils literal notranslate"><span class="pre">&lt;/s&gt;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.MODELS">
+<code class="sig-name descname">MODELS</code><em class="property"> = {}</em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.MODELS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.LanguageResource.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">config</em>, <em class="sig-param">lang='en'</em>, <em class="sig-param">model=None</em>, <em class="sig-param">model_name=None</em>, <em class="sig-param">components=None</em>, <em class="sig-param">disable_components=None</em>, <em class="sig-param">token_normalizer=None</em>, <em class="sig-param">special_case_tokens=&lt;factory&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.components">
+<code class="sig-name descname">components</code><em class="property">: List</em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.components" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.config">
+<code class="sig-name descname">config</code><em class="property">: <a class="reference external" href="https://plandes.github.io/util/api/zensols.config.html#zensols.config.configbase.Configurable" title="(in Zensols Utilities v1.3.1)">zensols.config.configbase.Configurable</a></em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.disable_components">
+<code class="sig-name descname">disable_components</code><em class="property">: List</em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.disable_components" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.LanguageResource.features">
+<code class="sig-name descname">features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#LanguageResource.features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an iterator of <a class="reference internal" href="#zensols.nlp.feature.TokenFeatures" title="zensols.nlp.feature.TokenFeatures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenFeatures</span></code></a> instances with features on a
+per token level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#zensols.nlp.feature.TokenFeatures" title="zensols.nlp.feature.TokenFeatures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenFeatures</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.lang">
+<code class="sig-name descname">lang</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = 'en'</em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.lang" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.model">
+<code class="sig-name descname">model</code><em class="property">: spacy.language.Language</em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.model_name">
+<code class="sig-name descname">model_name</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.model_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.LanguageResource.normalized_tokens">
+<code class="sig-name descname">normalized_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc</span></em>, <em class="sig-param"><span class="n">tn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#LanguageResource.normalized_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.normalized_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterator of the normalized text of each token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.LanguageResource.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#LanguageResource.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <code class="docutils literal notranslate"><span class="pre">text</span></code> in to a Spacy document.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Doc</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.LanguageResource.parse_tokens">
+<code class="sig-name descname">parse_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tokens</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#LanguageResource.parse_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.parse_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just like <code class="docutils literal notranslate"><span class="pre">parse</span></code> but process a stream of (already) tokenized
+words/tokens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Doc</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.special_case_tokens">
+<code class="sig-name descname">special_case_tokens</code><em class="property">: List</em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.special_case_tokens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.lang.LanguageResource.token_normalizer">
+<code class="sig-name descname">token_normalizer</code><em class="property">: <a class="reference internal" href="#zensols.nlp.norm.TokenNormalizer" title="zensols.nlp.norm.TokenNormalizer">zensols.nlp.norm.TokenNormalizer</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.token_normalizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.lang.LanguageResource.tokenizer">
+<code class="sig-name descname">tokenizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/lang.html#LanguageResource.tokenizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.lang.LanguageResource.tokenizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a simple Spacy tokenizer.  Currently only English is supported.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-zensols.nlp.norm">
+<span id="zensols-nlp-norm-module"></span><h2>zensols.nlp.norm module<a class="headerlink" href="#module-zensols.nlp.norm" title="Permalink to this headline">¶</a></h2>
+<p>Normalize text and map Spacy documents.</p>
+<dl class="py class">
+<dt id="zensols.nlp.norm.FilterTokenMapper">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.norm.</code><code class="sig-name descname">FilterTokenMapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">remove_stop</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_space</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_pronouns</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_punctuation</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_determiners</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#FilterTokenMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.FilterTokenMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.norm.TokenMapper" title="zensols.nlp.norm.TokenMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.norm.TokenMapper</span></code></a></p>
+<p>Filter tokens based on token (Spacy) attributes.</p>
+<p>Configuration example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">filter_token_mapper</span><span class="p">]</span>
+<span class="n">class_name</span> <span class="o">=</span> <span class="n">zensols</span><span class="o">.</span><span class="n">nlp</span><span class="o">.</span><span class="n">FilterTokenMapper</span>
+<span class="n">remove_stop</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">remove_punctuation</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="zensols.nlp.norm.FilterTokenMapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">remove_stop</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_space</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_pronouns</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_punctuation</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_determiners</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.norm.FilterTokenMapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.norm.FilterTokenMapper.map_tokens">
+<code class="sig-name descname">map_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token_tups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#FilterTokenMapper.map_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.FilterTokenMapper.map_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform token tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Token</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.FilterTokenMapper.remove_determiners">
+<code class="sig-name descname">remove_determiners</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = False</em><a class="headerlink" href="#zensols.nlp.norm.FilterTokenMapper.remove_determiners" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.FilterTokenMapper.remove_pronouns">
+<code class="sig-name descname">remove_pronouns</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = False</em><a class="headerlink" href="#zensols.nlp.norm.FilterTokenMapper.remove_pronouns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.FilterTokenMapper.remove_punctuation">
+<code class="sig-name descname">remove_punctuation</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = False</em><a class="headerlink" href="#zensols.nlp.norm.FilterTokenMapper.remove_punctuation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.FilterTokenMapper.remove_space">
+<code class="sig-name descname">remove_space</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = False</em><a class="headerlink" href="#zensols.nlp.norm.FilterTokenMapper.remove_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.FilterTokenMapper.remove_stop">
+<code class="sig-name descname">remove_stop</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = False</em><a class="headerlink" href="#zensols.nlp.norm.FilterTokenMapper.remove_stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.norm.LambdaTokenMapper">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.norm.</code><code class="sig-name descname">LambdaTokenMapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">add_lambda</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">map_lambda</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#LambdaTokenMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.LambdaTokenMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.norm.TokenMapper" title="zensols.nlp.norm.TokenMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.norm.TokenMapper</span></code></a></p>
+<p>Use a lambda expression to map a token tuple.</p>
+<p>This is handy for specialized behavior that can be added directly to a
+configuration file.</p>
+<p>Configuration example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">lc_lambda_token_mapper</span><span class="p">]</span>
+<span class="n">class_name</span> <span class="o">=</span> <span class="n">zensols</span><span class="o">.</span><span class="n">nlp</span><span class="o">.</span><span class="n">LambdaTokenMapper</span>
+<span class="n">map_lambda</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="zensols.nlp.norm.LambdaTokenMapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">add_lambda</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">map_lambda</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.norm.LambdaTokenMapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.LambdaTokenMapper.add_lambda">
+<code class="sig-name descname">add_lambda</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.norm.LambdaTokenMapper.add_lambda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.LambdaTokenMapper.map_lambda">
+<code class="sig-name descname">map_lambda</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.norm.LambdaTokenMapper.map_lambda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.norm.LambdaTokenMapper.map_tokens">
+<code class="sig-name descname">map_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token_tups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#LambdaTokenMapper.map_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.LambdaTokenMapper.map_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform token tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Token</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.norm.LemmatizeTokenMapper">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.norm.</code><code class="sig-name descname">LemmatizeTokenMapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lemmatize</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">remove_first_stop</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#LemmatizeTokenMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.LemmatizeTokenMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.norm.TokenMapper" title="zensols.nlp.norm.TokenMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.norm.TokenMapper</span></code></a></p>
+<p>Lemmatize tokens and optional remove entity stop words.</p>
+<p><strong>Important:</strong> This completely ignores the normalized input token string
+and essentially just replaces it with the lemma found in the token
+instance.</p>
+<p>Configuration example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">lemma_token_mapper</span><span class="p">]</span>
+<span class="n">class_name</span> <span class="o">=</span> <span class="n">zensols</span><span class="o">.</span><span class="n">nlp</span><span class="o">.</span><span class="n">LemmatizeTokenMapper</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lemmatize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – lemmatize if <code class="docutils literal notranslate"><span class="pre">True</span></code>; this is an option to allow (only)
+the removal of the first top word in named entities</p></li>
+<li><p><strong>remove_first_stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether to remove the first top word in named
+entities when <code class="docutils literal notranslate"><span class="pre">embed_entities</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.nlp.norm.LemmatizeTokenMapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lemmatize</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">remove_first_stop</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.norm.LemmatizeTokenMapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.LemmatizeTokenMapper.lemmatize">
+<code class="sig-name descname">lemmatize</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = True</em><a class="headerlink" href="#zensols.nlp.norm.LemmatizeTokenMapper.lemmatize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.norm.LemmatizeTokenMapper.map_tokens">
+<code class="sig-name descname">map_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token_tups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#LemmatizeTokenMapper.map_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.LemmatizeTokenMapper.map_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform token tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Token</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.LemmatizeTokenMapper.remove_first_stop">
+<code class="sig-name descname">remove_first_stop</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = False</em><a class="headerlink" href="#zensols.nlp.norm.LemmatizeTokenMapper.remove_first_stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.norm.MapTokenNormalizer">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.norm.</code><code class="sig-name descname">MapTokenNormalizer</code><span class="sig-paren">(</span><em class="sig-param">embed_entities=True</em>, <em class="sig-param">limit=None</em>, <em class="sig-param">config=None</em>, <em class="sig-param">mapper_class_list=&lt;factory&gt;</em>, <em class="sig-param">reload=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#MapTokenNormalizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.MapTokenNormalizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.norm.TokenNormalizer" title="zensols.nlp.norm.TokenNormalizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.norm.TokenNormalizer</span></code></a></p>
+<p>A normalizer that applies a sequence of <a class="reference internal" href="#zensols.nlp.norm.TokenMapper" title="zensols.nlp.norm.TokenMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenMapper</span></code></a> instances to
+transform the normalized token text.</p>
+<p>Configuration example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">map_filter_token_normalizer</span><span class="p">]</span>
+<span class="n">class_name</span> <span class="o">=</span> <span class="n">zensols</span><span class="o">.</span><span class="n">nlp</span><span class="o">.</span><span class="n">MapTokenNormalizer</span>
+<span class="n">mapper_class_list</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">:</span> <span class="s1">&#39;filter_token_mapper&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://plandes.github.io/util/api/zensols.config.html#zensols.config.configbase.Configurable" title="(in Zensols Utilities v1.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configurable</span></code></a>]) – the application context</p></li>
+<li><p><strong>mapper_class_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the configuration names to create with
+<code class="docutils literal notranslate"><span class="pre">ImportConfigFactory</span></code></p></li>
+<li><p><strong>reload</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether or not to reload the module when creating the
+instance, which is useful while prototyping</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.nlp.norm.MapTokenNormalizer.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">embed_entities=True</em>, <em class="sig-param">limit=None</em>, <em class="sig-param">config=None</em>, <em class="sig-param">mapper_class_list=&lt;factory&gt;</em>, <em class="sig-param">reload=False</em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.norm.MapTokenNormalizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.MapTokenNormalizer.config">
+<code class="sig-name descname">config</code><em class="property">: <a class="reference external" href="https://plandes.github.io/util/api/zensols.config.html#zensols.config.configbase.Configurable" title="(in Zensols Utilities v1.3.1)">zensols.config.configbase.Configurable</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.norm.MapTokenNormalizer.config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.MapTokenNormalizer.mapper_class_list">
+<code class="sig-name descname">mapper_class_list</code><em class="property">: List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></em><a class="headerlink" href="#zensols.nlp.norm.MapTokenNormalizer.mapper_class_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.MapTokenNormalizer.reload">
+<code class="sig-name descname">reload</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = False</em><a class="headerlink" href="#zensols.nlp.norm.MapTokenNormalizer.reload" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.norm.SplitTokenMapper">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.norm.</code><code class="sig-name descname">SplitTokenMapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">regex</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#SplitTokenMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.SplitTokenMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.norm.TokenMapper" title="zensols.nlp.norm.TokenMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.norm.TokenMapper</span></code></a></p>
+<p>Splits the normalized text on a per token basis with a regular expression.</p>
+<p>Configuration example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">lemma_token_mapper</span><span class="p">]</span>
+<span class="n">class_name</span> <span class="o">=</span> <span class="n">zensols</span><span class="o">.</span><span class="n">nlp</span><span class="o">.</span><span class="n">SplitTokenMapper</span>
+<span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;[ \t]&#39;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="zensols.nlp.norm.SplitTokenMapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">regex</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.norm.SplitTokenMapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.norm.SplitTokenMapper.map_tokens">
+<code class="sig-name descname">map_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token_tups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#SplitTokenMapper.map_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.SplitTokenMapper.map_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform token tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Token</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.SplitTokenMapper.regex">
+<code class="sig-name descname">regex</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = ''</em><a class="headerlink" href="#zensols.nlp.norm.SplitTokenMapper.regex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.norm.SubstituteTokenMapper">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.norm.</code><code class="sig-name descname">SubstituteTokenMapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">regex</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">replace_char</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#SubstituteTokenMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.SubstituteTokenMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.norm.TokenMapper" title="zensols.nlp.norm.TokenMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.norm.TokenMapper</span></code></a></p>
+<p>Replace a regular expression in normalized token text.</p>
+<p>Configuration example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">subs_token_mapper</span><span class="p">]</span>
+<span class="n">class_name</span> <span class="o">=</span> <span class="n">zensols</span><span class="o">.</span><span class="n">nlp</span><span class="o">.</span><span class="n">SubstituteTokenMapper</span>
+<span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;[ \t]&#39;</span>
+<span class="n">replace_char</span> <span class="o">=</span> <span class="n">_</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="zensols.nlp.norm.SubstituteTokenMapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">regex</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">replace_char</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.norm.SubstituteTokenMapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.norm.SubstituteTokenMapper.map_tokens">
+<code class="sig-name descname">map_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token_tups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#SubstituteTokenMapper.map_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.SubstituteTokenMapper.map_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform token tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Token</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.SubstituteTokenMapper.regex">
+<code class="sig-name descname">regex</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = ''</em><a class="headerlink" href="#zensols.nlp.norm.SubstituteTokenMapper.regex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.SubstituteTokenMapper.replace_char">
+<code class="sig-name descname">replace_char</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = ''</em><a class="headerlink" href="#zensols.nlp.norm.SubstituteTokenMapper.replace_char" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.norm.TokenMapper">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.norm.</code><code class="sig-name descname">TokenMapper</code><a class="reference internal" href="../_modules/zensols/nlp/norm.html#TokenMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.TokenMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Abstract class used to transform token tuples generated from
+<a class="reference internal" href="#zensols.nlp.norm.TokenNormalizer.normalize" title="zensols.nlp.norm.TokenNormalizer.normalize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">TokenNormalizer.normalize()</span></code></a>.</p>
+<dl class="py method">
+<dt id="zensols.nlp.norm.TokenMapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.norm.TokenMapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.norm.TokenMapper.map_tokens">
+<em class="property">abstract </em><code class="sig-name descname">map_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token_tups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#TokenMapper.map_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.TokenMapper.map_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform token tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Token</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.nlp.norm.TokenNormalizer">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.norm.</code><code class="sig-name descname">TokenNormalizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">embed_entities</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">limit</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#TokenNormalizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.TokenNormalizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Base token extractor returns tuples of tokens and their normalized version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embed_entities</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether or not to replace tokens with their
+respective named entity version</p></li>
+<li><p><strong>remove_first_stop</strong> – whether to remove the first top word in named
+entities when <code class="docutils literal notranslate"><span class="pre">embed_entities</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<p>Configuration example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">default_token_normalizer</span><span class="p">]</span>
+<span class="n">class_name</span> <span class="o">=</span> <span class="n">zensols</span><span class="o">.</span><span class="n">nlp</span><span class="o">.</span><span class="n">TokenNormalizer</span>
+<span class="n">embed_entities</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="zensols.nlp.norm.TokenNormalizer.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">embed_entities</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">limit</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.norm.TokenNormalizer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.TokenNormalizer.embed_entities">
+<code class="sig-name descname">embed_entities</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = True</em><a class="headerlink" href="#zensols.nlp.norm.TokenNormalizer.embed_entities" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.nlp.norm.TokenNormalizer.limit">
+<code class="sig-name descname">limit</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.nlp.norm.TokenNormalizer.limit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.norm.TokenNormalizer.normalize">
+<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/norm.html#TokenNormalizer.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.norm.TokenNormalizer.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize Spacey document <code class="docutils literal notranslate"><span class="pre">doc</span></code> in to (token, normal text) tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Token</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-zensols.nlp.stemmer">
+<span id="zensols-nlp-stemmer-module"></span><h2>zensols.nlp.stemmer module<a class="headerlink" href="#module-zensols.nlp.stemmer" title="Permalink to this headline">¶</a></h2>
+<p>Stem text using the Porter stemmer.</p>
+<dl class="py class">
+<dt id="zensols.nlp.stemmer.PorterStemmerTokenMapper">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.nlp.stemmer.</code><code class="sig-name descname">PorterStemmerTokenMapper</code><a class="reference internal" href="../_modules/zensols/nlp/stemmer.html#PorterStemmerTokenMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.stemmer.PorterStemmerTokenMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.nlp.norm.TokenMapper" title="zensols.nlp.norm.TokenMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.nlp.norm.TokenMapper</span></code></a></p>
+<p>Use the Porter Stemmer from the NTLK to stem as normalized tokens.</p>
+<dl class="py method">
+<dt id="zensols.nlp.stemmer.PorterStemmerTokenMapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#zensols.nlp.stemmer.PorterStemmerTokenMapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.nlp.stemmer.PorterStemmerTokenMapper.map_tokens">
+<code class="sig-name descname">map_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token_tups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/nlp/stemmer.html#PorterStemmerTokenMapper.map_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.nlp.stemmer.PorterStemmerTokenMapper.map_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform token tuples.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-zensols.nlp">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-zensols.nlp" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../CONTRIBUTING.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../api.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, Paul Landes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

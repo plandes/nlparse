@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Zensols Natural Language Parsing &mdash; Zensols Natural Language Parsing 0.0.13 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Token Normalizers and Mappers List" href="doc/normalizers.html" />
+    <link rel="prev" title="Zensols Natural Language Parsing" href="top.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="top.html" class="icon icon-home" alt="Documentation Home"> Zensols Natural Language Parsing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.13
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#obtaining">Obtaining</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attribution">Attribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changelog">Changelog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="doc/normalizers.html">Token Normalizers and Mappers List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc/parse.html">Natural Language Parsing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="top.html">Zensols Natural Language Parsing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="top.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Zensols Natural Language Parsing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="zensols-natural-language-parsing">
+<h1>Zensols Natural Language Parsing<a class="headerlink" href="#zensols-natural-language-parsing" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://pypi.python.org/pypi/zensols.nlp"><img alt="PyPI" src="https://img.shields.io/pypi/v/zensols.nlp.svg" /></a>
+<a class="reference external" href="https://www.python.org/downloads/release/python-370"><img alt="Python 3.7" src="https://img.shields.io/badge/python-3.7-blue.svg" /></a>
+<a class="reference external" href="https://www.python.org/downloads/release/python-380"><img alt="Python 3.8" src="https://img.shields.io/badge/python-3.8-blue.svg" /></a>
+<a class="reference external" href="https://www.python.org/downloads/release/python-390"><img alt="Python 3.9" src="https://img.shields.io/badge/python-3.9-blue.svg" /></a>
+<a class="reference external" href="https://github.com/plandes/nlparse/actions"><img alt="Build Status" src="https://github.com/plandes/nlparse/workflows/CI/badge.svg" /></a></p>
+<p>This framework wraps the <a class="reference external" href="https://spacy.io">spaCy</a> framework and creates features.  The
+motivation is to generate features from the parsed text in an object oriented
+fashion that is fast and easy to pickle.  Other features include:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="doc/parse.html"><span class="doc">Token normalization</span></a> as a stream of strings by lemmatization,
+stop word and/or punctuation filters, up/down casing, porter stemming and
+<a class="reference internal" href="doc/normalizers.html"><span class="doc">others</span></a>.</p></li>
+<li><p><a class="reference internal" href="doc/parse.html"><span class="doc">Detached features</span></a> that are safe and easy to pickle to disk.</p></li>
+<li><p>Configuration drive parsing and token normalization using <a class="reference external" href="https://plandes.github.io/util/doc/config.html#configuration-factory">configuration
+factories</a>.</p></li>
+<li><p>Pretty print functionality for easy natural language feature selection.</p></li>
+</ul>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://plandes.github.io/nlparse/">Framework documentation</a></p></li>
+<li><p><a class="reference internal" href="doc/parse.html"><span class="doc">Natural Language Parsing</span></a></p></li>
+<li><p><a class="reference internal" href="doc/normalizers.html"><span class="doc">List Token Normalizers and Mappers</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="obtaining">
+<h2>Obtaining<a class="headerlink" href="#obtaining" title="Permalink to this headline">¶</a></h2>
+<p>The easist way to install the command line program is via the <code class="docutils literal notranslate"><span class="pre">pip</span></code> installer:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install zensols.nlp
+</pre></div>
+</div>
+<p>Binaries are also available on <a class="reference external" href="https://pypi.org/project/zensols.nlp/">pypi</a>.</p>
+</div>
+<div class="section" id="attribution">
+<h2>Attribution<a class="headerlink" href="#attribution" title="Permalink to this headline">¶</a></h2>
+<p>This project, or example code, uses:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://spacy.io">spaCy</a> for natural language parsing</p></li>
+<li><p><a class="reference external" href="https://msgpack.org">msgpack</a> and <a class="reference external" href="https://pypi.org/project/smart-open/">smart-open</a> for Python disk serialization</p></li>
+<li><p><a class="reference external" href="https://www.nltk.org">nltk</a> for the <a class="reference external" href="https://tartarus.org/martin/PorterStemmer/">porter stemmer</a> functionality</p></li>
+</ul>
+</div>
+<div class="section" id="changelog">
+<h2>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h2>
+<p>An extensive changelog is available <a class="reference internal" href="CHANGELOG.html"><span class="doc">here</span></a>.</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="LICENSE.html"><span class="doc">MIT License</span></a></p>
+<p>Copyright (c) 2020 Paul Landes</p>
+<!-- links --></div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="doc/normalizers.html" class="btn btn-neutral float-right" title="Token Normalizers and Mappers List" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="top.html" class="btn btn-neutral float-left" title="Zensols Natural Language Parsing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, Paul Landes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

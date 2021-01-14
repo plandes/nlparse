@@ -1,0 +1,589 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>zensols.nlp.feature &mdash; Zensols Natural Language Parsing 0.0.13 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../top.html" class="icon icon-home" alt="Documentation Home"> Zensols Natural Language Parsing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.13
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/normalizers.html">Token Normalizers and Mappers List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/parse.html">Natural Language Parsing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../top.html">Zensols Natural Language Parsing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../top.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>zensols.nlp.feature</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for zensols.nlp.feature</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Domain container classes that can generate numeric and string features from</span>
+<span class="sd">SpaCy artifacts.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Paul Landes&#39;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">TextIOBase</span>
+<span class="kn">from</span> <span class="nn">spacy.tokens.token</span> <span class="kn">import</span> <span class="n">Token</span>
+<span class="kn">from</span> <span class="nn">spacy.tokens.doc</span> <span class="kn">import</span> <span class="n">Doc</span>
+<span class="kn">from</span> <span class="nn">spacy.tokens.span</span> <span class="kn">import</span> <span class="n">Span</span>
+<span class="kn">from</span> <span class="nn">zensols.config</span> <span class="kn">import</span> <span class="n">Dictable</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TokenAttributes"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.TokenAttributes">[docs]</a><span class="k">class</span> <span class="nc">TokenAttributes</span><span class="p">(</span><span class="n">Dictable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains token properties and a few utility methods.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">WRITABLE_FIELD_IDS</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="s1">&#39;text norm i tag is_wh entity dep children&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+    <span class="n">FIELD_IDS_BY_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;bool&#39;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">(</span><span class="s1">&#39;is_space is_stop is_ent is_wh is_contraction is_superlative is_pronoun&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()),</span>
+        <span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">(</span><span class="s1">&#39;i idx is_punctuation tag ent dep index shape&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()),</span>
+        <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">(</span><span class="s1">&#39;norm lemma tag_ ent_ dep_ shape_&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()),</span>
+        <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">())}</span>
+    <span class="n">TYPES_BY_FIELD_ID</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span>
+        <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">itm</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">itm</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">itm</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">FIELD_IDS_BY_TYPE</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span>
+    <span class="n">FIELD_IDS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+        <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">res</span> <span class="o">|</span> <span class="n">x</span><span class="p">,</span> <span class="n">FIELD_IDS_BY_TYPE</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+<div class="viewcode-block" id="TokenAttributes.asdict"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.TokenAttributes.asdict">[docs]</a>    <span class="k">def</span> <span class="nf">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recurse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">readable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+               <span class="n">class_name_param</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the token attributes as a dictionary representation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">string_features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;The features of the token as strings (both keys and values).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                  <span class="s1">&#39;norm&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span>
+                  <span class="s1">&#39;lemma&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lemma</span><span class="p">,</span>
+                  <span class="s1">&#39;is_wh&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_wh</span><span class="p">,</span>
+                  <span class="s1">&#39;is_stop&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop</span><span class="p">,</span>
+                  <span class="s1">&#39;is_space&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_space</span><span class="p">,</span>
+                  <span class="s1">&#39;is_punctuation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_punctuation</span><span class="p">,</span>
+                  <span class="s1">&#39;is_contraction&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_contraction</span><span class="p">,</span>
+                  <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span>
+                  <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">,</span>
+                  <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_</span><span class="p">,</span>
+                  <span class="s1">&#39;entity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_</span><span class="p">,</span>
+                  <span class="s1">&#39;is_entity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span><span class="p">,</span>
+                  <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape_</span><span class="p">,</span>
+                  <span class="s1">&#39;children&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">),</span>
+                  <span class="s1">&#39;superlative&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_superlative</span><span class="p">,</span>
+                  <span class="s1">&#39;dep&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">params</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the features as numeric values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_feats&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_feats</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
+                           <span class="s1">&#39;is_wh&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_wh</span><span class="p">,</span>
+                           <span class="s1">&#39;is_stop&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop</span><span class="p">,</span>
+                           <span class="s1">&#39;is_pronoun&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pronoun</span><span class="p">,</span>
+                           <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">,</span>
+                           <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span>
+                           <span class="s1">&#39;is_space&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_space</span><span class="p">,</span>
+                           <span class="s1">&#39;is_punctuation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_punctuation</span><span class="p">,</span>
+                           <span class="s1">&#39;is_contraction&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_contraction</span><span class="p">,</span>
+                           <span class="s1">&#39;entity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent</span><span class="p">,</span>
+                           <span class="s1">&#39;is_entity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span><span class="p">,</span>
+                           <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                           <span class="s1">&#39;is_superlative&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_superlative</span><span class="p">,</span>
+                           <span class="s1">&#39;children&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">),</span>
+                           <span class="s1">&#39;dep&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feats</span>
+
+<div class="viewcode-block" id="TokenAttributes.write"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.TokenAttributes.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">TextIOBase</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write the features in a human readable format.</span>
+
+<span class="sd">        :param writer: where to output, defaults to standard out</span>
+<span class="sd">        :param level: the indentation level</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">string_features</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">WRITABLE_FIELD_IDS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_line</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">writer</span><span class="p">)</span>
+        <span class="n">nfeats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span>
+        <span class="k">if</span> <span class="n">nfeats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_line</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;numerics: </span><span class="si">{</span><span class="n">nfeats</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">writer</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;tok_or_ent&#39;</span><span class="p">):</span>
+            <span class="n">tokstr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tokstr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tokstr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DetatchableTokenFeatures"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.DetatchableTokenFeatures">[docs]</a><span class="k">class</span> <span class="nc">DetatchableTokenFeatures</span><span class="p">(</span><span class="n">TokenAttributes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Subclasses that can detach features from SpaCy artifacts enabling clean</span>
+<span class="sd">    pickling.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s1">&#39;&lt;none&gt;&#39;</span>
+    <span class="n">PROP_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[a-z][a-z_-]*&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DetatchableTokenFeatures.detach"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.DetatchableTokenFeatures.detach">[docs]</a>    <span class="k">def</span> <span class="nf">detach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">inst</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">TokenAttributes</span><span class="p">]</span> <span class="o">=</span> <span class="n">TokenAttributes</span><span class="p">)</span> <span class="o">-&gt;</span> \
+            <span class="n">TokenAttributes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a new instance of the object detached from SpaCy C data structures.</span>
+<span class="sd">        This is useful for pickling of the object.</span>
+
+<span class="sd">        :param feature_ids: the names of attributes to populate in the</span>
+<span class="sd">                            returned instance; defaults to all</span>
+
+<span class="sd">        :param inst: a class or object instance that extends</span>
+<span class="sd">                     :class:`.TokenAttributes`; if a class, it is instantiated</span>
+<span class="sd">                     by passing no arguments</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">skips</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="s1">&#39;doc token tok_or_ent features string_features&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROP_REGEX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> \
+               <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skips</span> <span class="ow">and</span> \
+               <span class="p">(</span><span class="n">feature_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">feature_ids</span><span class="p">):</span>
+                <span class="n">attrs</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inst</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="n">ta</span> <span class="o">=</span> <span class="n">inst</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ta</span> <span class="o">=</span> <span class="n">inst</span>
+        <span class="n">ta</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ta</span></div></div>
+
+
+<div class="viewcode-block" id="BasicTokenFeatures"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.BasicTokenFeatures">[docs]</a><span class="k">class</span> <span class="nc">BasicTokenFeatures</span><span class="p">(</span><span class="n">DetatchableTokenFeatures</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A token feature set meant to be extended for cases where tokens are not</span>
+<span class="sd">    parsed with SpaCy using :class:`.LanguageResources` and</span>
+<span class="sd">    :class:`.TokenNormalizer`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BasicTokenFeatures.__init__"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.BasicTokenFeatures.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">FIELD_SET</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="n">ftype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPES_BY_FIELD_ID</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ftype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;bool&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span>
+                    <span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="p">()}[</span><span class="n">ftype</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TokenFeatures"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.TokenFeatures">[docs]</a><span class="k">class</span> <span class="nc">TokenFeatures</span><span class="p">(</span><span class="n">DetatchableTokenFeatures</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience class to create features from text.  The features are derived</span>
+<span class="sd">    from parsed Spacy artifacts.</span>
+
+<span class="sd">    The attributes of this class, such as ``norm`` and ``is_wh`` are referred</span>
+<span class="sd">    to as *feature ids*.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TokenFeatures.__init__"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.TokenFeatures.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Doc</span><span class="p">,</span> <span class="n">tok_or_ent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Token</span><span class="p">,</span> <span class="n">Span</span><span class="p">],</span> <span class="n">norm</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a features instance.</span>
+
+<span class="sd">        :param doc: the spacy document</span>
+
+<span class="sd">        :tok_or_ent: either a token or entity parsed from ``doc``</span>
+
+<span class="sd">        :norm: the normalized text of the token (i.e. lemmatized version)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span> <span class="o">=</span> <span class="n">tok_or_ent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span> <span class="o">=</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tok_or_ent</span><span class="p">,</span> <span class="n">Token</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_norm</span> <span class="o">=</span> <span class="n">norm</span></div>
+
+<div class="viewcode-block" id="TokenFeatures.asdict"><a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.feature.TokenFeatures.asdict">[docs]</a>    <span class="k">def</span> <span class="nf">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recurse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">readable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+               <span class="n">class_name_param</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="n">recurse</span><span class="p">,</span> <span class="n">readable</span><span class="p">,</span> <span class="n">class_name_param</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the unmodified parsed tokenized text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the normalized text, which is the text/orth or the named entity if</span>
+<span class="sd">        tagged as a named entity.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_norm</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">NONE</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">token</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the SpaCy token.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span><span class="p">:</span>
+            <span class="n">tok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">start</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">tok</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_wh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``True`` if this is a WH word (i.e. what, where).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">tag_</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``True`` if this is a stop word.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">is_stop</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_punctuation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``True`` if this is a punctuation (i.e. &#39;?&#39;) token.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">is_punct</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_pronoun</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``True`` if this is a pronoun (i.e. &#39;he&#39;) token.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span><span class="o">.</span><span class="n">lemma_</span> <span class="o">==</span> <span class="s1">&#39;-PRON-&#39;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_apos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return whether or not ``t`` is an apostrophy (&#39;) symbol.</span>
+
+<span class="sd">        :param t: the string to compare</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">orth</span> <span class="o">!=</span> <span class="n">t</span><span class="o">.</span><span class="n">lemma</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">orth_</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lemma</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the string lemma or text of the named entitiy if tagged as a named</span>
+<span class="sd">        entity.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span><span class="o">.</span><span class="n">orth_</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span><span class="o">.</span><span class="n">lemma_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_contraction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``True`` if this token is a contradiction.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_apos</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">doc</span>
+                <span class="n">dl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">((</span><span class="n">t</span><span class="o">.</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">dl</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_apos</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the entity numeric value or 0 if this is not an entity.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ent_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the entity string label or ``None`` if this token has no entity.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_or_ent</span><span class="o">.</span><span class="n">label_</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">NONE</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_superlative</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``True`` if this token is the superlative.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">tag_</span> <span class="o">==</span> <span class="s1">&#39;JJS&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``True`` if this token is white space only.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">is_space</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">i</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The index of the token within the parent document.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">i</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The character offset of the token within the parent document.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">idx</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Fine-grained part-of-speech text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">tag</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tag_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Fine-grained part-of-speech text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">tag_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Transform of the tokens’s string, to show orthographic features. For</span>
+<span class="sd">        example, “Xxxx” or “d.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Transform of the tokens’s string, to show orthographic features. For</span>
+<span class="sd">        example, “Xxxx” or “d.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">shape_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A sequence of the token’s immediate syntactic children.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">i</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">children</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dep</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Syntactic dependency relation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">dep</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dep_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Syntactic dependency relation string representation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">dep_</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, Paul Landes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

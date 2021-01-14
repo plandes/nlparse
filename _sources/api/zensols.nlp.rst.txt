@@ -1,0 +1,45 @@
+zensols.nlp package
+===================
+
+Submodules
+----------
+
+zensols.nlp.feature module
+--------------------------
+
+.. automodule:: zensols.nlp.feature
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.lang module
+-----------------------
+
+.. automodule:: zensols.nlp.lang
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.norm module
+-----------------------
+
+.. automodule:: zensols.nlp.norm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.stemmer module
+--------------------------
+
+.. automodule:: zensols.nlp.stemmer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: zensols.nlp
+   :members:
+   :undoc-members:
+   :show-inheritance:
