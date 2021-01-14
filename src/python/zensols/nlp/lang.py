@@ -109,18 +109,19 @@ class LanguageResource(object):
     def __post_init__(self):
         if self.model_name is None:
             self.model_name = f'{self.lang}_core_web_sm'
-        if self.model is None:
+        nlp = self.model
+        if nlp is None:
             # cache model in class space
             nlp = self.MODELS.get(self.model_name)
             if nlp is None:
                 nlp = spacy.load("en_core_web_sm")
                 self.MODELS[self.model_name] = nlp
+            self.model = nlp
         if self.components is not None:
             for comp in self.components:
                 logger.debug(f'adding {comp} to the pipeline')
                 comp.add_to_pipeline(nlp)
         self.disable_components = self.disable_components
-        self.model = nlp
         if self.token_normalizer is None:
             logger.debug('adding default tokenizer')
             self.token_normalizer = TokenNormalizer()
