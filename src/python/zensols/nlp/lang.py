@@ -120,7 +120,7 @@ class LanguageResource(object):
         if self.components is not None:
             for comp in self.components:
                 logger.debug(f'adding {comp} to the pipeline')
-                comp.add_to_pipeline(nlp)
+                nlp.add_pipe(comp)
         self.disable_components = self.disable_components
         if self.token_normalizer is None:
             logger.debug('adding default tokenizer')
