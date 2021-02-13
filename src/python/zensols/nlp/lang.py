@@ -75,36 +75,41 @@ class LanguageResource(object):
         lang = en
         model_name = ${lang}_core_web_sm
 
-    :param config: the application configuration used to create the Spacy
-                   model
-
-    :param model: the spaCy model, or ``None`` (the default) to create a new
-                  one using ``model_name``
-
-    :param model_name: the Spacy model name (defualts to ``en_core_web_sm``);
-                       this is ignored if ``model`` is not ``None``
-
-    :param lang: the natural language the identify the model
-
-    :param components: additional Spacy components to add to the pipeline
-
-    :param token_normalizer: the token normalizer for methods that use it,
-                             i.e. ``features``
-
-    :param special_case_tokens: tokens that will be parsed as one token,
-                                i.e. ``</s>``
-
     """
     MODELS = {}
 
-    config: Configurable
+    config: Configurable = field()
+    """The application configuration used to create the Spacy model."""
+
     lang: str = field(default='en')
+    """The natural language the identify the model."""
+
     model: Language = field(default=None)
+    """The spaCy model, or ``None`` (the default) to create a new one using
+    ``model_name``.
+
+    """
+
     model_name: str = field(default=None)
+    """The Spacy model name (defualts to ``en_core_web_sm``); this is ignored
+    if ``model`` is not ``None``.
+
+    """
+
     components: List = field(default=None)
+    """Additional Spacy components to add to the pipeline."""
+
     disable_components: List = field(default=None)
+    """Components to disable in the spaCy model when creating documents in
+    :meth:`parse`.
+
+    """
+
     token_normalizer: TokenNormalizer = field(default=None)
+    """The token normalizer for methods that use it, i.e. ``features``."""
+
     special_case_tokens: List = field(default_factory=list)
+    """Tokens that will be parsed as one token, i.e. ``</s>``."""
 
     def __post_init__(self):
         if self.model_name is None:
@@ -193,10 +198,9 @@ class DocStash(DelegateStash):
     All items returned from the delegate must have a ``text`` attribute or
     override ``item_to_text``.
 
-    :param lang_res: used to parse and create the SpaCy documents.
-
     """
-    langres: LanguageResource
+    langres: LanguageResource = field()
+    """Used to parse and create the SpaCy documents."""
 
     def item_to_text(self, item: object) -> str:
         """Return the text of the item that is loaded with ``load``.  This default

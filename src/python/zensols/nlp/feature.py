@@ -94,6 +94,7 @@ class TokenAttributes(Dictable):
         """Write the features in a human readable format.
 
         :param writer: where to output, defaults to standard out
+
         :param level: the indentation level
 
         """

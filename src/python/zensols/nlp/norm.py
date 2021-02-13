@@ -20,12 +20,6 @@ logger = logging.getLogger(__name__)
 class TokenNormalizer(object):
     """Base token extractor returns tuples of tokens and their normalized version.
 
-    :param embed_entities: whether or not to replace tokens with their
-                           respective named entity version
-
-    :param remove_first_stop: whether to remove the first top word in named
-                              entities when ``embed_entities`` is ``True``
-
     Configuration example::
 
         [default_token_normalizer]
@@ -33,8 +27,12 @@ class TokenNormalizer(object):
         embed_entities = False
 
     """
+
     embed_entities: bool = field(default=True)
-    limit: int = field(default=None)
+    """Whether or not to replace tokens with their respective named entity
+    version.
+
+    """
 
     def __embed_entities(self, doc: Doc):
         """For each token, return the named entity form if it exists.
@@ -45,25 +43,30 @@ class TokenNormalizer(object):
         tlen = len(doc)
         ents = {}
         for ent in doc.ents:
-            logger.debug(f'adding entity start: {ent.start} -> {ent}')
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'adding entity start: {ent.start} -> {ent}')
             ents[ent.start] = ent
-        logger.debug(f'entities: {ents}')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'entities: {ents}')
         i = 0
         while i < tlen:
             if i in ents:
                 ent = ents[i]
-                logger.debug(f'adding entity: {ent}')
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f'adding entity: {ent}')
                 yield ent
                 i = ent.end
             else:
                 tok = doc[i]
-                logger.debug(f'adding token: {tok}')
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f'adding token: {tok}')
                 yield tok
                 i += 1
 
     def _to_token_tuple(self, doc: Doc) -> Iterable[Tuple[Token, str]]:
         "Normalize the document in to (token, normal text) tuples."
-        logger.debug(f'embedding entities: {self.embed_entities}')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'embedding entities: {self.embed_entities}')
         if self.embed_entities:
             toks = self.__embed_entities(doc)
         else:
@@ -71,7 +74,8 @@ class TokenNormalizer(object):
         toks = map(lambda t: (t, t.orth_,), toks)
         return toks
 
-    def _map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> Iterable[Tuple[Token, str]]:
+    def _map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
         """Map token tuples in sub classes.
 
         :param token_tups: tuples generated from ``_to_token_tuple``
@@ -192,20 +196,24 @@ class FilterTokenMapper(TokenMapper):
     remove_determiners: bool = field(default=False)
 
     def __post_init__(self):
-        logger.debug(f'created {self.__class__}: ' +
-                     f'remove_stop: {self.remove_stop}, ' +
-                     f'remove_space: {self.remove_space}, ' +
-                     f'remove_pronouns: {self.remove_pronouns}, ' +
-                     f'remove_punctuation: {self.remove_punctuation}, ' +
-                     f'remove_determiners: {self.remove_determiners}')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'created {self.__class__}: ' +
+                         f'remove_stop: {self.remove_stop}, ' +
+                         f'remove_space: {self.remove_space}, ' +
+                         f'remove_pronouns: {self.remove_pronouns}, ' +
+                         f'remove_punctuation: {self.remove_punctuation}, ' +
+                         f'remove_determiners: {self.remove_determiners}')
 
     def _filter(self, tok_or_ent_tup):
         tok_or_ent = tok_or_ent_tup[0]
-        logger.debug(f'filter: {tok_or_ent} ({type(tok_or_ent)})')
         keep = False
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'filter: {tok_or_ent} ({type(tok_or_ent)})')
         if isinstance(tok_or_ent, Token):
             t = tok_or_ent
-            logger.debug(f'token {t}: l={len(t)}, s={t.is_stop}, p={t.is_punct}')
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'token {t}: l={len(t)}, ' +
+                             f's={t.is_stop}, p={t.is_punct}')
             if (not self.remove_stop or not t.is_stop) and \
                (not self.remove_space or not t.is_space) and \
                (not self.remove_pronouns or not t.lemma_ == '-PRON-') and \
@@ -215,12 +223,14 @@ class FilterTokenMapper(TokenMapper):
                 keep = True
         else:
             keep = True
-        logger.debug(f'filter: keeping={keep}')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'filter: keeping={keep}')
         return keep
 
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
-        logger.debug('filter mapper: map_tokens')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('filter mapper: map_tokens')
         return (filter(self._filter, token_tups),)
 
 
@@ -244,7 +254,8 @@ class SubstituteTokenMapper(TokenMapper):
 
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
-        return (map(lambda x: (x[0], re.sub(self.regex, self.replace_char, x[1])),
+        return (map(lambda x: (x[0], re.sub(
+            self.regex, self.replace_char, x[1])),
                     token_tups),)
 
 
@@ -291,18 +302,18 @@ class MapTokenNormalizer(TokenNormalizer):
         class_name = zensols.nlp.MapTokenNormalizer
         mapper_class_list = eval: 'filter_token_mapper'.split()
 
-    :param config: the application context
-
-    :param mapper_class_list: the configuration names to create with
-                              ``ImportConfigFactory``
-
-    :param reload: whether or not to reload the module when creating the
-                   instance, which is useful while prototyping
-
     """
     config: Configurable = field(default=None)
+    """The application context."""
+
     mapper_class_list: List[str] = field(default_factory=list)
+    """The configuration names to create with ``ImportConfigFactory``."""
+
     reload: bool = field(default=False)
+    """Whether or not to reload the module when creating the instance, which is
+    useful while prototyping.
+
+    """
 
     def __post_init__(self):
         ta = ImportConfigFactory(self.config, reload=self.reload)
@@ -311,6 +322,7 @@ class MapTokenNormalizer(TokenNormalizer):
     def _map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
         for mapper in self.mappers:
-            logger.debug(f'mapping token_tups with {mapper}')
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'mapping token_tups with {mapper}')
             token_tups = it.chain(*mapper.map_tokens(token_tups))
         return token_tups
