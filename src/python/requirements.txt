@@ -1,4 +1,4 @@
-spacy>=2.3.5
+spacy==2.3.5
 msgpack>=1.0.0
 msgpack-numpy>=0.4.7.1
 smart-open>=4.0.1
