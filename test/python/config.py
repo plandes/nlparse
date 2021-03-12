@@ -6,7 +6,7 @@ class AppConfig(ExtendedInterpolationConfig):
 
     def __init__(self, name='nlparse'):
         super(AppConfig, self).__init__(
-            config_file=f'test-resources/{name}.conf', default_expect=True)
+            config_file=f'test-resources/{name}.conf')
 
     @property
     def parse_path(self):
