@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.15] - 2021-03-17
+## Changes
+- Upgrade to [zensols.util]==1.4.1.
+- Upgrade documentation API generation.
+- Nail dependencies to spacy 2.3.5 until pip deps are fixed.
+
+
 ## [0.0.14] - 2021-01-14
 ### Changes
 - Fix component adds for spacy > 2.0.
@@ -106,7 +113,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.14...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.15...HEAD
+[0.0.15]: https://github.com/plandes/nlparse/compare/v0.0.14...v0.0.15
 [0.0.14]: https://github.com/plandes/nlparse/compare/v0.0.13...v0.0.14
 [0.0.13]: https://github.com/plandes/nlparse/compare/v0.0.12...v0.0.13
 [0.0.12]: https://github.com/plandes/nlparse/compare/v0.0.11...v0.0.12
@@ -125,3 +133,4 @@ Data classes are now used so Python 3.7 is now a requirement.
 [nltk]: https://www.nltk.org
 [zensols.deepnlp]: https://github.com/plandes/deepnlp
 [zenbuild]: https://github.com/plandes/zenbuild
+[zensols.util]: https://github.com/plandes/util
