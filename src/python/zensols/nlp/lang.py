@@ -3,49 +3,49 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Iterable
+from typing import List, Iterable, Dict, Any
 from dataclasses import dataclass, field
 import logging
 import sys
+from io import TextIOBase
 import spacy
 from spacy.symbols import ORTH
 from spacy.tokens.doc import Doc
 from spacy.language import Language
 from spacy.lang.en import English
-from zensols.config import Configurable
+from zensols.config import Configurable, Dictable
 from zensols.persist import DelegateStash
 from zensols.nlp import TokenFeatures, TokenNormalizer
 
 logger = logging.getLogger(__name__)
 
 
-class DocUtil(object):
+@dataclass
+class DictableDoc(Dictable):
     """Utility class to pretty print and serialize Spacy documents.
 
     """
-    @staticmethod
-    def write(doc, writer=sys.stdout):
+    doc: Doc = field(repr=False)
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         """Pretty print ``doc`` using ``writer``, which defauls to standard out.
 
         """
-        writer.write(f'text: {doc.text}\n')
-        writer.write('tokens:\n')
-        for t in doc:
-            writer.write(f'  {t}: tag={t.tag_}, pos={t.pos_}, ' +
-                         f'stop={t.is_stop}, lemma={t.lemma_}, dep={t.dep_}\n')
-        writer.write('entities:\n')
-        for ent in doc.ents:
-            writer.write(f'  {ent}: {ent.label_}\n')
+        self._write_line(f'text: {self.doc.text}', depth, writer)
+        self._write_line('tokens:', depth, writer)
+        for t in self.doc:
+            s = (f'{t}: tag={t.tag_}, pos={t.pos_}, ' +
+                 f'stop={t.is_stop}, lemma={t.lemma_}, dep={t.dep_}')
+            self._write_line(s, depth + 1, writer)
+        self._write_line('entities:', depth, writer)
+        for ent in self.doc.ents:
+            self._write_line(f'{ent}: {ent.label_}', depth + 1, writer)
 
-    @staticmethod
-    def to_json(doc):
-        """Convert ``doc`` to a JSON Python object.
-
-        """
-        sents = tuple(doc.sents)
+    def _from_dictable(self, *args, **kwargs) -> Dict[str, Any]:
+        sents = tuple(self.doc.sents)
         em = {}
-        for e in doc.ents:
-            for tok in doc[e.start:e.end]:
+        for e in self.doc.ents:
+            for tok in self.doc[e.start:e.end]:
                 em[tok.i] = e.label_
 
         def tok_json(t):
@@ -57,11 +57,11 @@ class DocUtil(object):
 
         def sent_json(idx):
             s = sents[idx]
-            return {t.i: tok_json(t) for t in doc[s.start:s.end]}
+            return {t.i: tok_json(t) for t in self.doc[s.start:s.end]}
 
-        return {'text': doc.text,
+        return {'text': self.doc.text,
                 'sents': {i: sent_json(i) for i in range(len(sents))},
-                'ents': [(str(e), e.label_,) for e in doc.ents]}
+                'ents': [(str(e), e.label_,) for e in self.doc.ents]}
 
 
 @dataclass

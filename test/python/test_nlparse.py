@@ -2,10 +2,7 @@ import logging
 import unittest
 import json
 from zensols.config import ImportConfigFactory
-from zensols.nlp import (
-    LanguageResource,
-    DocUtil,
-)
+from zensols.nlp import LanguageResource, DictableDoc
 from config import AppConfig
 
 logger = logging.getLogger(__name__)
@@ -32,7 +29,8 @@ class TestParse(unittest.TestCase):
         lr = self.lr
         self.assertTrue(isinstance(lr, LanguageResource))
         doc = lr.parse('Dan throws the ball.')
-        res = DocUtil.to_json(doc)
+        dd = DictableDoc(doc)
+        res = dd.asdict()
         with open(self.config.parse_path) as f:
             c = eval(f.read())
         self.assertEqual(rec_sort(c), rec_sort(res))
