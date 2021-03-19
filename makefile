@@ -5,6 +5,7 @@ PROJ_TYPE =		python
 PROJ_MODULES =		git python-doc python-doc-deploy
 PY_DEP_POST_DEPS +=	nlpdeps
 SPACY_MODELS +=		sm
+PIP_ARGS +=		--use-deprecated=legacy-resolver
 
 include ./zenbuild/main.mk
 
