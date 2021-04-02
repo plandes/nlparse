@@ -7,9 +7,11 @@ from typing import List, Iterable, Dict, Any
 from dataclasses import dataclass, field
 import logging
 import sys
+import itertools as it
 from io import TextIOBase
 import spacy
 from spacy.symbols import ORTH
+from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
 from spacy.language import Language
 from spacy.lang.en import English
@@ -27,16 +29,26 @@ class DictableDoc(Dictable):
     """
     doc: Doc = field(repr=False)
 
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
-        """Pretty print ``doc`` using ``writer``, which defauls to standard out.
+    def _write_token(self, tok: Token, depth: int, writer: TextIOBase):
+        s = (f'{tok}: tag={tok.tag_}, pos={tok.pos_}, stop={tok.is_stop}, ' +
+             f'lemma={tok.lemma_}, dep={tok.dep_}')
+        self._write_line(s, depth, writer)
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+              token_limit: int = sys.maxsize):
+        """Pretty print the document.
+
+        :param token_limit: the max number of tokens to write, which defaults
+                            to all of them
 
         """
-        self._write_line(f'text: {self.doc.text}', depth, writer)
+        text = self._trunc(str(self.doc.text))
+        self._write_line(f'text: {text}', depth, writer)
         self._write_line('tokens:', depth, writer)
-        for t in self.doc:
-            s = (f'{t}: tag={t.tag_}, pos={t.pos_}, ' +
-                 f'stop={t.is_stop}, lemma={t.lemma_}, dep={t.dep_}')
-            self._write_line(s, depth + 1, writer)
+        for sent in self.doc.sents:
+            self._write_line(self._trunc(str(sent)), depth + 1, writer)
+            for t in it.islice(sent, token_limit):
+                self._write_token(t, depth + 2, writer)
         self._write_line('entities:', depth, writer)
         for ent in self.doc.ents:
             self._write_line(f'{ent}: {ent.label_}', depth + 1, writer)
