@@ -334,6 +334,13 @@ class TokenFeatures(DetatchableTokenFeatures):
         return self.token.idx
 
     @property
+    def i_sent(self) -> int:
+        """Return the index of the token in the respective sentence.
+
+        """
+        return self.token.i - self.token.sent.start
+
+    @property
     def tag(self) -> int:
         """Fine-grained part-of-speech text.
 
