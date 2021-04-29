@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-## [0.0.14] - 2021-03-17
+## [0.0.14] - 2021-04-29
 ## Changes
 - Upgrade to [zensols.util]==1.4.1.
 - Upgrade documentation API generation.
