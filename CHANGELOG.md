@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Upgrade to [zensols.util]==1.4.1.
 - Upgrade documentation API generation.
 - Nail dependencies to spacy 2.3.5 until pip deps are fixed.
+- Added sentence index features to reconstruct sentences from documents.
 
 
 ## [0.0.13] - 2021-01-14
