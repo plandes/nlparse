@@ -17,7 +17,7 @@ from spacy.language import Language
 from spacy.lang.en import English
 from zensols.config import Configurable, Dictable
 from zensols.persist import DelegateStash
-from zensols.nlp import TokenFeatures, TokenNormalizer
+from . import ParseError, TokenFeatures, TokenNormalizer
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,8 @@ class LanguageResource(object):
         model_name = ${lang}_core_web_sm
 
     """
-    MODELS = {}
+    _MODELS = {}
+    """Contains cached models, such as ``en_core_web_sm``."""
 
     config: Configurable = field()
     """The application configuration used to create the Spacy model."""
@@ -108,7 +109,7 @@ class LanguageResource(object):
 
     """
 
-    components: List = field(default=None)
+    components: List = field(default=())
     """Additional Spacy components to add to the pipeline."""
 
     disable_components: List = field(default=None)
@@ -128,31 +129,48 @@ class LanguageResource(object):
             self.model_name = f'{self.lang}_core_web_sm'
         nlp = self.model
         if nlp is None:
+            mkey = f'{self.model_name}-' + '|'.join(sorted(self.components))
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'model key: {mkey}')
             # cache model in class space
-            nlp = self.MODELS.get(self.model_name)
+            nlp: Language = self._MODELS.get(mkey)
             if nlp is None:
-                nlp = spacy.load("en_core_web_sm")
-                self.MODELS[self.model_name] = nlp
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f'loading model: {self.model_name}')
+                nlp = spacy.load(self.model_name)
+                self._MODELS[mkey] = nlp
+            else:
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f'cached model: {mkey} ({self.model_name})')
             self.model = nlp
         if self.components is not None:
+            comp: str
             for comp in self.components:
-                logger.debug(f'adding {comp} to the pipeline')
-                nlp.add_pipe(comp)
+                if comp in nlp.pipe_names:
+                    if logger.isEnabledFor(logging.DEBUG):
+                        logger.debug(f'{comp} already registered--skipping')
+                else:
+                    if logger.isEnabledFor(logging.DEBUG):
+                        logger.debug(f'adding {comp} to the pipeline')
+                    nlp.add_pipe(comp)
         self.disable_components = self.disable_components
         if self.token_normalizer is None:
-            logger.debug('adding default tokenizer')
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug('adding default tokenizer')
             self.token_normalizer = TokenNormalizer()
         for stok in self.special_case_tokens:
             rule = [{ORTH: stok}]
-            logger.debug(f'adding special token: {stok} with rule: {rule}')
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'adding special token: {stok} with rule: {rule}')
             self.model.tokenizer.add_special_case(stok, rule)
 
     def parse(self, text: str) -> Doc:
         """Parse ``text`` in to a Spacy document.
 
         """
-        logger.debug(f'creating document with model: {self.model_name}, ' +
-                     f'disable components: {self.disable_components}')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'creating document with model: {self.model_name}, ' +
+                         f'disable components: {self.disable_components}')
         if self.disable_components is None:
             doc = self.model(text)
         else:
@@ -193,7 +211,7 @@ class LanguageResource(object):
         if self.lang == 'en':
             tokenizer = English().Defaults.create_tokenizer(self.model)
         else:
-            raise ValueError(f'no such language: {self.lang}')
+            raise ParseError(f'no such language: {self.lang}')
         return tokenizer(text)
 
     def __str__(self):

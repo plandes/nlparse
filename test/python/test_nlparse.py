@@ -1,6 +1,7 @@
 import logging
 import unittest
 import json
+from zensols.util.log import loglevel
 from zensols.config import ImportConfigFactory
 from zensols.nlp import LanguageResource, DictableDoc
 from config import AppConfig
@@ -41,12 +42,10 @@ class TestParse(unittest.TestCase):
         lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('Dan throws the ball.')
         self.assertEqual('MapTokenNormalizer: embed=True', str(tn))
-
         res = tuple(map(lambda x: x.string_features, lr.features(doc)))
         with open(self.config.feature_path) as f:
-            c = eval(f.read())
+            c = json.load(f)
         self.assertEqual(rec_sort(c), rec_sort(res))
-
         tn = tnfac.instance('nonorm_token_normalizer')
         lr = self.fac.instance('default_langres', token_normalizer=tn)
         res = tuple(map(lambda x: x.norm, lr.features(doc)))
@@ -78,7 +77,9 @@ class TestParse(unittest.TestCase):
         tags = tuple(map(lambda t: t.tag_, doc))
         self.assertEqual(('NNP', 'VBZ', 'DT', 'NN', '.'), tags)
         self.assertEqual('tagger parser'.split(), dis_lr.disable_components)
-        doc_dis = dis_lr.parse('Dan throws the ball.')
+        # spacy warns about trying to add POS tags
+        with loglevel('spacy', logging.ERROR):
+            doc_dis = dis_lr.parse('Dan throws the ball.')
         no_tags = tuple(map(lambda t: t.tag_, doc_dis))
         self.assertEqual(('', '', '', '', ''), no_tags)
 

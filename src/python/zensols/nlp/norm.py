@@ -11,9 +11,15 @@ import re
 import itertools as it
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
+from zensols.util import APIError
 from zensols.config import Configurable, ImportConfigFactory
 
 logger = logging.getLogger(__name__)
+
+
+class ParseError(APIError):
+    """Raised for any parsing errors for this API."""
+    pass
 
 
 @dataclass
@@ -216,7 +222,7 @@ class FilterTokenMapper(TokenMapper):
                              f's={t.is_stop}, p={t.is_punct}')
             if (not self.remove_stop or not t.is_stop) and \
                (not self.remove_space or not t.is_space) and \
-               (not self.remove_pronouns or not t.lemma_ == '-PRON-') and \
+               (not self.remove_pronouns or not t.pos_ == 'PRON') and \
                (not self.remove_punctuation or not t.is_punct) and \
                (not self.remove_determiners or not t.tag_ == 'DT') and \
                len(t) > 0:

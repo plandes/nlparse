@@ -24,11 +24,12 @@ class TokenAttributes(Dictable):
     """Contains token properties and a few utility methods.
 
     """
-    WRITABLE_FIELD_IDS = tuple('text norm i tag is_wh entity dep children'.split())
+
+    WRITABLE_FIELD_IDS = tuple('text norm i tag pos is_wh entity dep children'.split())
     FIELD_IDS_BY_TYPE = {
         'bool': frozenset('is_space is_stop is_ent is_wh is_contraction is_superlative is_pronoun'.split()),
         'int': frozenset('i idx is_punctuation tag ent dep index shape'.split()),
-        'str': frozenset('norm lemma tag_ ent_ dep_ shape_'.split()),
+        'str': frozenset('norm lemma tag_ pos_ ent_ dep_ shape_'.split()),
         'list': frozenset('children'.split())}
     TYPES_BY_FIELD_ID = dict(chain.from_iterable(
         map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
@@ -59,6 +60,7 @@ class TokenAttributes(Dictable):
                   'i': self.i,
                   'index': self.idx,
                   'tag': self.tag_,
+                  'pos': self.pos_,
                   'entity': self.ent_,
                   'is_entity': self.is_ent,
                   'shape': self.shape_,
@@ -74,6 +76,7 @@ class TokenAttributes(Dictable):
         """
         if not hasattr(self, '_feats'):
             self._feats = {'tag': self.tag,
+                           'pos': self.pos,
                            'is_wh': self.is_wh,
                            'is_stop': self.is_stop,
                            'is_pronoun': self.is_pronoun,
@@ -256,7 +259,7 @@ class TokenFeatures(DetatchableTokenFeatures):
         """Return ``True`` if this is a pronoun (i.e. 'he') token.
 
         """
-        return self.tok_or_ent.lemma_ == '-PRON-'
+        return False if self.is_ent else self.tok_or_ent.pos_ == 'PRON'
 
     @staticmethod
     def _is_apos(t) -> bool:
@@ -353,6 +356,20 @@ class TokenFeatures(DetatchableTokenFeatures):
 
         """
         return self.token.tag_
+
+    @property
+    def pos(self) -> int:
+        """The simple UPOS part-of-speech tag.
+
+        """
+        return self.token.pos
+
+    @property
+    def pos_(self) -> str:
+        """The simple UPOS part-of-speech tag.
+
+        """
+        return self.token.pos_
 
     @property
     def shape(self) -> int:
