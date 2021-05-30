@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - POS feature inclusion by default to support `is_pronoun`, which is needed
   after spaCy 3 changed how lemmatization works.
+- Move feature containers and parser from `zensols.deepnlp`, including test
+  cases.
 
 
 ## [0.0.14] - 2021-04-29
