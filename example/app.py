@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from zensols.nlp import LanguageResource
+from zensols.nlp import LanguageResource, FeatureDocumentParser
 
 
 @dataclass
@@ -11,9 +11,11 @@ class Application(object):
 
     langres: LanguageResource
     lc_langres: LanguageResource
+    doc_parser: FeatureDocumentParser
 
     def run(self):
-        sent = 'California is part of the United States.'
+        sent = 'California is part of the United States.  Next sentence.'
+
         doc = self.langres.parse(sent)
         print(type(doc))
         for tok in doc:
@@ -32,3 +34,7 @@ class Application(object):
 
         doc = self.lc_langres.parse(sent)
         print(', '.join(self.lc_langres.normalized_tokens(doc)))
+        print('-' * 10)
+
+        doc = self.doc_parser.parse(sent)
+        doc.write()

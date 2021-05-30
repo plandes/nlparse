@@ -7,6 +7,8 @@ PY_DEP_POST_DEPS +=	nlpdeps
 SPACY_MODELS +=		sm
 PIP_ARGS +=		--use-deprecated=legacy-resolver
 
+#PY_SRC_TEST_PAT ?=	'test_doc_c*.py'
+
 include ./zenbuild/main.mk
 
 # https://spacy.io/models/en

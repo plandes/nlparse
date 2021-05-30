@@ -16,14 +16,22 @@ files = parser.conf
 class_name = app.Application
 langres = instance: langres
 lc_langres = instance: lc_langres
+doc_parser = instance: doc_parser
 """
 
 
 def main():
     print()
-    cli = ApplicationFactory('nlparse', StringIO(CONFIG))
+    if 0:
+        import logging
+        logging.basicConfig(level=logging.WARN)
+        logging.getLogger('zensols.nlp').setLevel(logging.DEBUG)
+    cli = ApplicationFactory('nlparse', StringIO(CONFIG), reload_factory=True)
     cli.invoke()
 
 
 if __name__ == '__main__':
     main()
+
+
+main()
