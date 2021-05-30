@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changes
+- Upgrade from spaCy 2.x to 3.x.
+### Added
+- POS feature inclusion by default to support `is_pronoun`, which is needed
+  after spaCy 3 changed how lemmatization works.
+
+
 ## [0.0.14] - 2021-04-29
 ## Changes
 - Upgrade to [zensols.util]==1.4.1.
