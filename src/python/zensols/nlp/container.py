@@ -287,7 +287,7 @@ class FeatureDocument(TokensContainer):
         else:
             return it.islice(self.sents, *args)
 
-    def get_text(self, *args, insert_space: bool = False):
+    def get_text(self, *args, insert_space: bool = True):
         delim = ' ' if insert_space else ''
         return delim.join(map(lambda s: s.text, self.sent_iter(*args)))
 
