@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Set, Iterable, Dict, Type, Any
+from typing import List, Tuple, Set, Iterable, Dict, Type
 from dataclasses import dataclass, field
 import dataclasses
 from abc import ABCMeta, abstractmethod
@@ -260,6 +260,9 @@ class FeatureDocument(TokensContainer):
     :param sents: the sentences defined for this document
 
     """
+
+    PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_doc'}
+
     sents: List[FeatureSentence] = field()
     """The sentences that make up the document."""
 
@@ -401,11 +404,6 @@ class FeatureDocument(TokensContainer):
 
     def __iter__(self):
         return self.sent_iter()
-
-    def __getstate__(self) -> Dict[str, Any]:
-        state: Dict[str, Any] = super().__getstate__()
-        state.pop('spacy_doc')
-        return state
 
     def __str__(self):
         return f'<{self.text[:79]}>'
