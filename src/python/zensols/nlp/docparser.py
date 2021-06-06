@@ -19,9 +19,6 @@ logger = logging.getLogger(__name__)
 class FeatureDocumentParser(object):
     """This class parses text in to instances of ``FeatureDocument``.
 
-    *Important:* It is better to use ``FeatureDocumentVectorizerManager``
-     instead of this class.
-
     :see FeatureDocumentVectorizerManager:
 
     """
@@ -31,15 +28,17 @@ class FeatureDocumentParser(object):
     token_feature_ids: Set[str] = field(
         default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
     doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
+    sent_class: Type[FeatureSentence] = field(default=FeatureSentence)
+    token_class: Type[FeatureToken] = field(default=FeatureToken)
     remove_empty_sentences: bool = field(default=False)
 
     def _create_token(self, feature: TokenFeatures) -> FeatureToken:
-        return FeatureToken(feature, self.token_feature_ids)
+        return self.token_class(feature, self.token_feature_ids)
 
     def _create_sent(self, stoks: Iterable[TokenFeatures], text: str) -> \
             FeatureSentence:
         sent = tuple(map(self._create_token, stoks))
-        sent = FeatureSentence(sent, text)
+        sent = self.sent_class(sent, text)
         return sent
 
     def _from_string(self, text: str) -> Tuple[Doc, List[FeatureSentence]]:
@@ -48,7 +47,7 @@ class FeatureDocumentParser(object):
         """
         lr: LanguageResource = self.langres
         doc: Doc = lr.parse(text)
-        toks = tuple(lr.features(doc))
+        toks: Tuple[TokenFeatures] = tuple(lr.features(doc))
         ntoks = len(toks)
         tix = 0
         sents = []
@@ -80,4 +79,8 @@ class FeatureDocumentParser(object):
         if not isinstance(text, str):
             raise ParseError(f'Expecting string text but got: {text}')
         spacy_doc, sents = self._from_string(text)
-        return self.doc_class(sents, spacy_doc, *args, **kwargs)
+        try:
+            return self.doc_class(sents, spacy_doc, *args, **kwargs)
+        except Exception as e:
+            raise ParseError(
+                f'Could not parse <{text}> for {self.doc_class}') from e
