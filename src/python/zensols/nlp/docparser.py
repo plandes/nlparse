@@ -24,13 +24,26 @@ class FeatureDocumentParser(object):
     """
     TOKEN_FEATURE_IDS = FeatureToken.TOKEN_FEATURE_IDS
 
-    langres: LanguageResource
+    langres: LanguageResource = field()
+    """The language resource used to parse documents and create token attributes.
+
+    """
+
     token_feature_ids: Set[str] = field(
         default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
+    """The features to keep from spaCy tokens."""
+
     doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
+    """The type of document instances to create."""
+
     sent_class: Type[FeatureSentence] = field(default=FeatureSentence)
+    """The type of sentence instances to create."""
+
     token_class: Type[FeatureToken] = field(default=FeatureToken)
+    """The type of document instances to create."""
+
     remove_empty_sentences: bool = field(default=False)
+    """If ``True``, remove sentences that only have space tokens."""
 
     def _create_token(self, feature: TokenFeatures) -> FeatureToken:
         return self.token_class(feature, self.token_feature_ids)
