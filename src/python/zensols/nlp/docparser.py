@@ -7,6 +7,7 @@ from typing import List, Set, Type, Iterable, Tuple
 from dataclasses import dataclass, field
 import logging
 from spacy.tokens.doc import Doc
+from spacy.tokens.span import Span
 from . import (
     ParseError, LanguageResource, TokenFeatures,
     FeatureToken, FeatureSentence, FeatureDocument,
@@ -17,9 +18,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class FeatureDocumentParser(object):
-    """This class parses text in to instances of ``FeatureDocument``.
-
-    :see FeatureDocumentVectorizerManager:
+    """This class parses text in to instances of :class:`.FeatureDocument`
+    instances.
 
     """
     TOKEN_FEATURE_IDS = FeatureToken.TOKEN_FEATURE_IDS
@@ -33,6 +33,9 @@ class FeatureDocumentParser(object):
         default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
     """The features to keep from spaCy tokens."""
 
+    additional_token_feature_ids: Set[str] = field(default_factory=set)
+    """More feature IDs in addition to :obj:`token_feature_ids`."""
+
     doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
     """The type of document instances to create."""
 
@@ -45,11 +48,15 @@ class FeatureDocumentParser(object):
     remove_empty_sentences: bool = field(default=False)
     """If ``True``, remove sentences that only have space tokens."""
 
+    def __post_init__(self):
+        self.token_feature_ids = \
+            self.token_feature_ids | self.additional_token_feature_ids
+
     def _create_token(self, feature: TokenFeatures) -> FeatureToken:
         return self.token_class(feature, self.token_feature_ids)
 
-    def _create_sent(self, stoks: Iterable[TokenFeatures], text: str) -> \
-            FeatureSentence:
+    def _create_sent(self, spacy_sent: Span, stoks: Iterable[TokenFeatures],
+                     text: str) -> FeatureSentence:
         sent = tuple(map(self._create_token, stoks))
         sent = self.sent_class(sent, text)
         return sent
@@ -64,6 +71,7 @@ class FeatureDocumentParser(object):
         ntoks = len(toks)
         tix = 0
         sents = []
+        sent: Span
         for sent in doc.sents:
             if self.remove_empty_sentences and \
                (all(map(lambda t: t.is_space, sent)) or len(sent) == 0):
@@ -77,7 +85,7 @@ class FeatureDocumentParser(object):
                 else:
                     break
                 tix += 1
-            sents.append(self._create_sent(stoks, sent.text))
+            sents.append(self._create_sent(sent, stoks, sent.text))
         return doc, sents
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
