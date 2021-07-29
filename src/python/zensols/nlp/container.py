@@ -32,8 +32,8 @@ class TextContainer(Writable, metaclass=ABCMeta):
 
 class FeatureToken(TextContainer):
     """A container class for features about a token.  This extracts only a subset
-    of features from the heavy object ``TokenFeatures``, which contains Spacy C
-    data structures and is hard/expensive to pickle.
+    of features from the heavy object :class:`.TokenFeatures`, which contains
+    Spacy C data structures and is hard/expensive to pickle.
 
     """
     TOKEN_FEATURE_IDS_BY_TYPE = TokenAttributes.FIELD_IDS_BY_TYPE
@@ -316,6 +316,27 @@ class FeatureDocument(TokensContainer):
 
     def to_document(self) -> FeatureDocument:
         return self
+
+    @persisted('_id_to_sent_pw', transient=True)
+    def _id_to_sent(self) -> Dict[int, int]:
+        id_to_sent = {}
+        for six, sent in enumerate(self):
+            for tok in sent:
+                id_to_sent[tok.idx] = six
+        return id_to_sent
+
+    def sentences_for_tokens(self, tokens: Tuple[FeatureToken]) -> \
+            Tuple[FeatureSentence]:
+        """Find sentences having a set of tokens.
+
+        :param tokens: the query used to finding containing sentences
+
+        :return: the document ordered tuple of sentences containing `tokens`
+
+        """
+        id_to_sent = self._id_to_sent()
+        sent_ids = sorted(set(map(lambda t: id_to_sent[t.idx], tokens)))
+        return tuple(map(lambda six: self[six], sent_ids))
 
     def _combine_documents(self, docs: Tuple[FeatureDocument],
                            cls: Type[FeatureDocument]) -> FeatureDocument:
