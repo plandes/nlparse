@@ -13,22 +13,29 @@ class Application(object):
     lc_langres: LanguageResource
     doc_parser: FeatureDocumentParser
 
-    def run(self):
-        sent = 'California is part of the United States.  Next sentence.'
+    def run(self, no_detached: bool = False):
+        """Run the test.
 
+        :param detached: add detatched information
+
+        """
+        sent = 'California is part of the United States. Next sentence.'
         doc = self.langres.parse(sent)
-        print(type(doc))
+        print(f'document ({type(doc)}:')
+        print(doc)
+        print('-' * 10, 'token POS, stop words:')
         for tok in doc:
             print(tok, tok.tag_, tok.is_stop)
-        print('-' * 10)
+        print('-' * 10, 'token features:')
         feats = self.langres.features(doc)
         for feat in feats:
             print(f'{feat} {type(feat)}')
-            feat.write(depth=1)
+            feat.write(depth=1, writable_field_ids=(*feat.WRITABLE_FIELD_IDS, 'sent_i'))
             print('-' * 5)
-            det = feat.detach()
-            print(f'detached: {type(det)}: {det.asdict()}')
-            print('-' * 5)
+            if not no_detached:
+                det = feat.detach()
+                print(f'detached: {type(det)}: {det.asdict()}')
+                print('-' * 5)
         print(', '.join(self.langres.normalized_tokens(doc)))
         print('-' * 10)
 
