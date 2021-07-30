@@ -127,6 +127,8 @@ class DetatchableTokenFeatures(TokenAttributes):
     """Subclasses that can detach features from SpaCy artifacts enabling clean
     pickling.
 
+    :see: :meth:`detach`
+
     """
     NONE = '<none>'
     PROP_REGEX = re.compile(r'^[a-z][a-z_-]*')
@@ -135,7 +137,8 @@ class DetatchableTokenFeatures(TokenAttributes):
                inst: Type[TokenAttributes] = TokenAttributes) -> \
             TokenAttributes:
         """Return a new instance of the object detached from SpaCy C data structures.
-        This is useful for pickling of the object.
+        This works by setting attributes directly on a new instance of a
+        :class:`TokenAttributes` object instance.
 
         :param feature_ids: the names of attributes to populate in the
                             returned instance; defaults to all
@@ -143,6 +146,9 @@ class DetatchableTokenFeatures(TokenAttributes):
         :param inst: a class or object instance that extends
                      :class:`.TokenAttributes`; if a class, it is instantiated
                      by passing no arguments
+
+        :return: an instance that is able to be quickly and efficiently
+                 pickled
 
         """
         attrs = {}
@@ -191,6 +197,11 @@ class TokenFeatures(DetatchableTokenFeatures):
 
     The attributes of this class, such as ``norm`` and ``is_wh`` are referred
     to as *feature ids*.
+
+    **Implementation note**: Many of the properties in this class are not
+    efficient and many attributes (i.e. the spaCy
+    :class:`~spacy.tokens.doc.Doc`) is heavy weight and not can not be pickled.
+    For this reason, use :meth:`detach` to store in memory or on disk.
 
     """
     def __init__(self, doc: Doc, tok_or_ent: Union[Token, Span], norm: str):
