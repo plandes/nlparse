@@ -4,7 +4,7 @@ SpaCy artifacts.
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Set, Any, Union, Type
+from typing import Dict, Set, Any, Union, Type, Tuple
 import logging
 import sys
 import inspect
@@ -24,11 +24,10 @@ class TokenAttributes(Dictable):
     """Contains token properties and a few utility methods.
 
     """
-
-    WRITABLE_FIELD_IDS = tuple('text norm i tag pos is_wh entity dep children'.split())
+    WRITABLE_FIELD_IDS = tuple('text norm i i_sent tag pos is_wh entity dep children'.split())
     FIELD_IDS_BY_TYPE = {
         'bool': frozenset('is_space is_stop is_ent is_wh is_contraction is_superlative is_pronoun'.split()),
-        'int': frozenset('i idx i_sent is_punctuation tag ent dep index shape'.split()),
+        'int': frozenset('i idx i_sent sent_i is_punctuation tag ent dep index shape'.split()),
         'str': frozenset('norm lemma tag_ pos_ ent_ dep_ shape_'.split()),
         'list': frozenset('children'.split())}
     TYPES_BY_FIELD_ID = dict(chain.from_iterable(
@@ -58,6 +57,8 @@ class TokenAttributes(Dictable):
                   'is_punctuation': self.is_punctuation,
                   'is_contraction': self.is_contraction,
                   'i': self.i,
+                  'i_sent': self.i_sent,
+                  'sent_i': self.sent_i,
                   'index': self.idx,
                   'tag': self.tag_,
                   'pos': self.pos_,
@@ -80,8 +81,10 @@ class TokenAttributes(Dictable):
                            'is_wh': self.is_wh,
                            'is_stop': self.is_stop,
                            'is_pronoun': self.is_pronoun,
-                           'index': self.idx,
                            'i': self.i,
+                           'i_sent': self.i_sent,
+                           'sent_i': self.sent_i,
+                           'index': self.idx,
                            'is_space': self.is_space,
                            'is_punctuation': self.is_punctuation,
                            'is_contraction': self.is_contraction,
@@ -93,7 +96,8 @@ class TokenAttributes(Dictable):
                            'dep': self.dep}
         return self._feats
 
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+              writable_field_ids: Tuple[str] = None):
         """Write the features in a human readable format.
 
         :param writer: where to output, defaults to standard out
@@ -101,12 +105,12 @@ class TokenAttributes(Dictable):
         :param level: the indentation level
 
         """
-        params = self.string_features
-        for k in self.WRITABLE_FIELD_IDS:
+        params = self.features
+        params.update(self.string_features)
+        if writable_field_ids is None:
+            writable_field_ids = self.WRITABLE_FIELD_IDS
+        for k in writable_field_ids:
             self._write_line(f'{k}: {params[k]}', depth, writer)
-        nfeats = self.features
-        if nfeats is not None:
-            self._write_line(f'numerics: {nfeats}', depth, writer)
 
     def __str__(self):
         if hasattr(self, 'tok_or_ent'):
@@ -338,10 +342,31 @@ class TokenFeatures(DetatchableTokenFeatures):
 
     @property
     def i_sent(self) -> int:
-        """Return the index of the token in the respective sentence.
+        """The index of the token in the respective sentence.  This is not to be
+        confused with the index of the sentence to which the token belongs,
+        which is :obj:`sent_i`.
+
+        This attribute does not exist in a spaCy token, and was named as such
+        to follow the naming conventions of their API.
 
         """
         return self.token.i - self.token.sent.start
+
+    @property
+    def sent_i(self) -> int:
+        """The index of the sentence to which the token belongs.  This is not to be
+        confused with the index of the token in the respective sentence, which
+        is :obj:`i_sent`.
+
+        This attribute does not exist in a spaCy token, and was named as such
+        to follow the naming conventions of their API.
+
+        """
+        targ = self.i
+        for six, sent in enumerate(self.doc.sents):
+            for tok in sent:
+                if tok.i == targ:
+                    return six
 
     @property
     def tag(self) -> int:
