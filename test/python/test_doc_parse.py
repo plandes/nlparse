@@ -92,7 +92,8 @@ the United States of America."""
         doc_new = pickle.load(b)
         self._test_token_iter(doc_new)
 
-    def _test_sent_parsing(self, text: str, parser_name: str, n_sents: int):
+    def _test_sent_parsing(self, text: str, parser_name: str, n_sents: int,
+                           has_space: bool):
         parser = self.fac(parser_name)
         sents = parser.parse(text)
         self.assertEqual(n_sents, len(sents))
@@ -106,13 +107,16 @@ the United States of America."""
         if n_sents == 3:
             self.assertEqual((), tuple(sents[n_sent].norm_token_iter()))
             n_sent += 1
-        self.assertEqual("I'm done.", sents[n_sent].text)
+        should = "I'm done."
+        if has_space:
+            should = ' ' + should
+        self.assertEqual(should, sents[n_sent].text)
         self.assertEqual(('I', "'m", 'done', '.'),
                          tuple(sents[n_sent].norm_token_iter()))
 
     def test_sent_parsing(self):
         text = "I'm Paul Landes and I live in the United States. I'm done."
-        self._test_sent_parsing(text, 'doc_parser', 2)
+        self._test_sent_parsing(text, 'doc_parser', 2, False)
         text = "I'm Paul Landes and I live in the United States.  I'm done."
-        self._test_sent_parsing(text, 'doc_parser', 2)
-        self._test_sent_parsing(text, 'doc_parser_no_remove_sents', 3)
+        self._test_sent_parsing(text, 'doc_parser', 2, True)
+        self._test_sent_parsing(text, 'doc_parser_no_remove_sents', 2, True)
