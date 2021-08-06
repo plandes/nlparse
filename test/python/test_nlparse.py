@@ -71,17 +71,22 @@ class TestParse(unittest.TestCase):
                              doc, tnfac.instance('map_filter_subs_token_normalizer'))))
 
     def test_disable(self):
-        lr = self.lr
-        dis_lr = self.fac.instance('disable_tagger_langres')
-        doc = lr.parse('Dan throws the ball.')
-        tags = tuple(map(lambda t: t.tag_, doc))
-        self.assertEqual(('NNP', 'VBZ', 'DT', 'NN', '.'), tags)
-        self.assertEqual('tagger parser'.split(), dis_lr.disable_components)
-        # spacy warns about trying to add POS tags
-        with loglevel('spacy', logging.ERROR):
-            doc_dis = dis_lr.parse('Dan throws the ball.')
-        no_tags = tuple(map(lambda t: t.tag_, doc_dis))
-        self.assertEqual(('', '', '', '', ''), no_tags)
+        import warnings
+        # since spacy 3.1, warnings are thrown when certain components are
+        # disabled in the pipline
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', message=r"^\[W108\] The rule-based lemmatizer did not find POS annotation for the token.*Check that your pipeline")
+            lr = self.lr
+            dis_lr = self.fac.instance('disable_tagger_langres')
+            doc = lr.parse('Dan throws the ball.')
+            tags = tuple(map(lambda t: t.tag_, doc))
+            self.assertEqual(('NNP', 'VBZ', 'DT', 'NN', '.'), tags)
+            self.assertEqual('tagger parser'.split(), dis_lr.disable_components)
+            # spacy warns about trying to add POS tags
+            with loglevel('spacy', logging.ERROR):
+                doc_dis = dis_lr.parse('Dan throws the ball.')
+            no_tags = tuple(map(lambda t: t.tag_, doc_dis))
+            self.assertEqual(('', '', '', '', ''), no_tags)
 
     def test_filter_features(self):
         tnfac = ImportConfigFactory(self.config)
