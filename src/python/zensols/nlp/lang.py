@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Iterable, Dict, Any
+from typing import List, Sequence, Iterable, Dict, Any
 from dataclasses import dataclass, field
 import logging
 import sys
@@ -77,6 +77,53 @@ class DictableDoc(Dictable):
 
 
 @dataclass
+class Component(object):
+    """A pipeline component to be added to the spaCy model.  There are a list of
+    these set in the :class:`.LanguageResource`.
+
+    """
+    name: str = field()
+    """The section name."""
+
+    pipe_name: str = field(default=None)
+    """The pipeline component name to add to the pipeline.  If ``None``, use
+    :obj:`name`.
+
+    """
+
+    pipe_config: Dict[str, str] = field(default=None)
+    """The configuration to add with the ``config`` kwarg in the
+    :meth:`.Language.add_pipe` call to the spaCy model.
+
+    """
+    modules: Sequence[str] = field(default=())
+    """The module to import before adding component pipelines.  This will register
+    components mentioned in :obj:`components` when the resepctive module is
+    loaded.
+
+    """
+    def __post_init__(self):
+        if self.pipe_name is None:
+            self.pipe_name = self.name
+
+    def init(self, model: Language):
+        """Initialize the component and add it to the NLP pipe line.  This base class
+        implementation loads the :obj:`module`, then calls
+        :meth:`.Language.add_pipe`.
+
+        :param model: the model to add the spaCy model (``nlp`` in their
+                      parlance)
+
+        """
+        for mod in self.modules:
+            __import__(mod)
+        if self.pipe_config is None:
+            model.add_pipe(self.pipe_name)
+        else:
+            model.add_pipe(self.pipe_name, config=self.pipe_config)
+
+
+@dataclass
 class LanguageResource(object):
     """This langauge resource parses text in to Spacy documents.
 
@@ -109,10 +156,10 @@ class LanguageResource(object):
 
     """
 
-    components: List = field(default=())
+    components: Sequence[Component] = field(default=())
     """Additional Spacy components to add to the pipeline."""
 
-    disable_components: List = field(default=None)
+    disable_component_names: Sequence[str] = field(default=None)
     """Components to disable in the spaCy model when creating documents in
     :meth:`parse`.
 
@@ -129,7 +176,11 @@ class LanguageResource(object):
             self.model_name = f'{self.lang}_core_web_sm'
         nlp = self.model
         if nlp is None:
-            mkey = f'{self.model_name}-' + '|'.join(sorted(self.components))
+            comp_str = ''
+            comps = sorted(map(lambda c: c.pipe_name, self.components))
+            if comps:
+                comp_str = '-' + '|'.join(comps)
+            mkey = f'{self.model_name}{comp_str}'
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'model key: {mkey}')
             # cache model in class space
@@ -144,16 +195,15 @@ class LanguageResource(object):
                     logger.debug(f'cached model: {mkey} ({self.model_name})')
             self.model = nlp
         if self.components is not None:
-            comp: str
+            comp: Component
             for comp in self.components:
-                if comp in nlp.pipe_names:
+                if comp.pipe_name in nlp.pipe_names:
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'{comp} already registered--skipping')
                 else:
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'adding {comp} to the pipeline')
-                    nlp.add_pipe(comp)
-        self.disable_components = self.disable_components
+                    comp.init(nlp)
         if self.token_normalizer is None:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug('adding default tokenizer')
@@ -170,11 +220,11 @@ class LanguageResource(object):
         """
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'creating document with model: {self.model_name}, ' +
-                         f'disable components: {self.disable_components}')
-        if self.disable_components is None:
+                         f'disable components: {self.disable_component_names}')
+        if self.disable_component_names is None:
             doc = self.model(text)
         else:
-            doc = self.model(text, disable=self.disable_components)
+            doc = self.model(text, disable=self.disable_component_names)
         return doc
 
     def parse_tokens(self, tokens: List[str]) -> Doc:

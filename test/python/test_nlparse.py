@@ -81,7 +81,7 @@ class TestParse(unittest.TestCase):
             doc = lr.parse('Dan throws the ball.')
             tags = tuple(map(lambda t: t.tag_, doc))
             self.assertEqual(('NNP', 'VBZ', 'DT', 'NN', '.'), tags)
-            self.assertEqual('tagger parser'.split(), dis_lr.disable_components)
+            self.assertEqual('tagger parser'.split(), dis_lr.disable_component_names)
             # spacy warns about trying to add POS tags
             with loglevel('spacy', logging.ERROR):
                 doc_dis = dis_lr.parse('Dan throws the ball.')
