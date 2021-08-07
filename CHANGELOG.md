@@ -8,13 +8,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.15] - 2021-08-07
 ### Changes
 - Upgrade from spaCy 2.x to 3.x.
+
 ### Added
 - POS feature inclusion by default to support `is_pronoun`, which is needed
   after spaCy 3 changed how lemmatization works.
 - Move feature containers and parser from `zensols.deepnlp`, including test
   cases.
+- A sentence index feature (`i_sent`).
+- An *index of sentence* feature (`sent_i`).
+- Advanced spacy configuration by adding component classes.  This gives more
+  control over configuring the spaCy pipeline.
+- Add feature containers (`FeatureDocument`) and parser
+  (`FeatureDocumentParser`), which were moved over from [zensols.deepnlp].
 
 
 ## [0.0.14] - 2021-04-29
@@ -123,7 +131,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.14...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.15...HEAD
+[0.0.15]: https://github.com/plandes/nlparse/compare/v0.0.14...v0.0.15
 [0.0.14]: https://github.com/plandes/nlparse/compare/v0.0.13...v0.0.14
 [0.0.13]: https://github.com/plandes/nlparse/compare/v0.0.13...v0.0.13
 [0.0.13]: https://github.com/plandes/nlparse/compare/v0.0.12...v0.0.13
