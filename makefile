@@ -13,7 +13,11 @@ include ./zenbuild/main.mk
 
 # https://spacy.io/models/en
 .PHONY:			nlpdeps
-nlpdeps:
+nlpdeps:		deps
 			for i in $(SPACY_MODELS) ; do \
 				$(PYTHON_BIN) -m spacy download en_core_web_$${i} ; \
 			done
+
+.PHONY:			uninstalldeps
+uninstalldeps:
+			pip freeze | grep spacy | sed 's/\([^= ]*\).*/\1/' | xargs pip uninstall -y
