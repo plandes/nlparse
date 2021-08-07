@@ -13,7 +13,7 @@ include ./zenbuild/main.mk
 
 # https://spacy.io/models/en
 .PHONY:			nlpdeps
-nlpdeps:		deps
+nlpdeps:
 			for i in $(SPACY_MODELS) ; do \
 				$(PYTHON_BIN) -m spacy download en_core_web_$${i} ; \
 			done
