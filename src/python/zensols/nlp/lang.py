@@ -106,6 +106,13 @@ class Component(object):
         if self.pipe_name is None:
             self.pipe_name = self.name
 
+    def __hash__(self) -> int:
+        x = hash(self.name)
+        x += 13 * hash(self.pipe_name)
+        if self.pipe_config:
+            x += 13 * hash(self.pipe_config.values())
+        return x
+
     def init(self, model: Language):
         """Initialize the component and add it to the NLP pipe line.  This base class
         implementation loads the :obj:`module`, then calls
@@ -177,7 +184,8 @@ class LanguageResource(object):
         nlp = self.model
         if nlp is None:
             comp_str = ''
-            comps = sorted(map(lambda c: c.pipe_name, self.components))
+            comps = sorted(map(lambda c: f'{c.pipe_name}:{hash(c)}',
+                               self.components))
             if comps:
                 comp_str = '-' + '|'.join(comps)
             mkey = f'{self.model_name}{comp_str}'
