@@ -35,6 +35,10 @@ class FeatureToken(TextContainer):
     of features from the heavy object :class:`.TokenFeatures`, which contains
     Spacy C data structures and is hard/expensive to pickle.
 
+    **Feature note**: features ``i`` and ``i_sent`` are always added to
+    features tokens to be able to reconstruct sentences (see
+    :meth:`.FeatureDocument.uncombine_sentences`).
+
     """
     TOKEN_FEATURE_IDS_BY_TYPE = TokenAttributes.FIELD_IDS_BY_TYPE
     TYPES_BY_TOKEN_FEATURE_ID = TokenAttributes.TYPES_BY_FIELD_ID
