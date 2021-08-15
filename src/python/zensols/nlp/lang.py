@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Sequence, Iterable, Dict, Any
+from typing import List, Sequence, Iterable, Dict, Any, Type
 from dataclasses import dataclass, field
 import logging
 import sys
@@ -178,6 +178,9 @@ class LanguageResource(object):
     special_case_tokens: List = field(default_factory=list)
     """Tokens that will be parsed as one token, i.e. ``</s>``."""
 
+    feature_type: Type[TokenFeatures] = field(default=TokenFeatures)
+    """The class to use for instances created by :meth:`features`."""
+
     def __post_init__(self):
         if self.model_name is None:
             self.model_name = f'{self.lang}_core_web_sm'
@@ -251,8 +254,8 @@ class LanguageResource(object):
         per token level.
 
         """
-        return map(lambda t: TokenFeatures(doc, *t),
-                   self.token_normalizer.normalize(doc))
+        tp: Type[TokenFeatures] = self.feature_type
+        return map(lambda t: tp(doc, *t), self.token_normalizer.normalize(doc))
 
     def normalized_tokens(self, doc: Doc, tn: TokenNormalizer = None) -> \
             Iterable[str]:
