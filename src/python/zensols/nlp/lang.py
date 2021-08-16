@@ -16,7 +16,7 @@ from spacy.tokens.doc import Doc
 from spacy.language import Language
 from spacy.lang.en import English
 from zensols.config import Configurable, Dictable
-from zensols.persist import DelegateStash
+from zensols.persist import DelegateStash, persisted, PersistedWork
 from . import ParseError, TokenFeatures, TokenNormalizer
 
 logger = logging.getLogger(__name__)
@@ -28,6 +28,7 @@ class DictableDoc(Dictable):
 
     """
     doc: Doc = field(repr=False)
+    """The document from which to create a :class:`.dict`."""
 
     def _write_token(self, tok: Token, depth: int, writer: TextIOBase):
         s = (f'{tok}: tag={tok.tag_}, pos={tok.pos_}, stop={tok.is_stop}, ' +
@@ -157,12 +158,6 @@ class LanguageResource(object):
     lang: str = field(default='en')
     """The natural language the identify the model."""
 
-    model: Language = field(default=None)
-    """The spaCy model, or ``None`` (the default) to create a new one using
-    ``model_name``.
-
-    """
-
     model_name: str = field(default=None)
     """The Spacy model name (defualts to ``en_core_web_sm``); this is ignored
     if ``model`` is not ``None``.
@@ -188,29 +183,18 @@ class LanguageResource(object):
     """The class to use for instances created by :meth:`features`."""
 
     def __post_init__(self):
-        if self.model_name is None:
-            self.model_name = f'{self.lang}_core_web_sm'
-        nlp = self.model
-        if nlp is None:
-            comp_str = ''
-            comps = sorted(map(lambda c: f'{c.pipe_name}:{hash(c)}',
-                               self.components))
-            if comps:
-                comp_str = '-' + '|'.join(comps)
-            mkey = f'{self.name}-{self.model_name}{comp_str}'
-            if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(f'model key: {mkey}')
-            # cache model in class space
-            nlp: Language = self._MODELS.get(mkey)
-            if nlp is None:
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug(f'loading model: {self.model_name}')
-                nlp = spacy.load(self.model_name)
-                self._MODELS[mkey] = nlp
-            else:
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug(f'cached model: {mkey} ({self.model_name})')
-            self.model = nlp
+        self._model = PersistedWork('_model', self)
+
+    def _create_model_key(self) -> str:
+        comps = sorted(map(lambda c: f'{c.pipe_name}:{hash(c)}',
+                           self.components))
+        comp_str = '-' + '|'.join(comps)
+        return f'{self.model_name}{comp_str}'
+
+    def _create_model(self) -> Language:
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'loading model: {self.model_name}')
+        nlp = spacy.load(self.model_name)
         if self.components is not None:
             comp: Component
             for comp in self.components:
@@ -221,6 +205,28 @@ class LanguageResource(object):
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'adding {comp} to the pipeline')
                     comp.init(nlp)
+        return nlp
+
+    @property
+    @persisted('_model')
+    def model(self) -> Language:
+        """The spaCy model.  On first access, this creates a new instance using
+        ``model_name``.
+
+        """
+        mkey: str = self._create_model_key()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'model key: {mkey}')
+        if self.model_name is None:
+            self.model_name = f'{self.lang}_core_web_sm'
+        # cache model in class space
+        nlp: Language = self._MODELS.get(mkey)
+        if nlp is None:
+            nlp: Language = self._create_model()
+            self._MODELS[mkey] = nlp
+        else:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'cached model: {mkey} ({self.model_name})')
         if self.token_normalizer is None:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug('adding default tokenizer')
@@ -229,7 +235,8 @@ class LanguageResource(object):
             rule = [{ORTH: stok}]
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'adding special token: {stok} with rule: {rule}')
-            self.model.tokenizer.add_special_case(stok, rule)
+            nlp.tokenizer.add_special_case(stok, rule)
+        return nlp
 
     def parse(self, text: str) -> Doc:
         """Parse ``text`` in to a Spacy document.
