@@ -109,7 +109,7 @@ class TokenAttributes(Dictable):
 
         """
         params = dict(self.features)
-        params.update(self.string_features)
+        params.update(self.get_string_features())
         if field_ids is None:
             field_ids = self.WRITABLE_FIELD_IDS
         return {k: params[k] for k in field_ids}
@@ -178,7 +178,7 @@ class DetatchableTokenFeatures(TokenAttributes):
 
         """
         attrs = {}
-        skips = set('doc token tok_or_ent features string_features'.split())
+        skips = set('doc token tok_or_ent'.split())
         for p, v in inspect.getmembers(self, lambda x: not callable(x)):
             if self.PROP_REGEX.match(p) and \
                p not in skips and \
