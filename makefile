@@ -3,8 +3,8 @@
 # type of project
 PROJ_TYPE =		python
 PROJ_MODULES =		git python-doc python-doc-deploy
-SPACY_MODELS +=		sm md lg
 PY_DEP_POST_DEPS +=	modeldeps
+SPACY_MODELS +=		sm md lg
 PIP_ARGS +=		--use-deprecated=legacy-resolver
 
 #PY_SRC_TEST_PAT ?=	'test_doc_c*.py'
