@@ -7,7 +7,6 @@ __author__ = 'Paul Landes'
 from typing import Dict, Set, Any, Union, Type, Iterable
 import logging
 import sys
-import inspect
 import re
 from itertools import chain
 from functools import reduce
@@ -27,8 +26,8 @@ class TokenAttributes(Dictable):
     WRITABLE_FIELD_IDS = tuple('text norm i i_sent tag pos is_wh entity dep children'.split())
     FIELD_IDS_BY_TYPE = {
         'bool': frozenset('is_space is_stop is_ent is_wh is_contraction is_superlative is_pronoun'.split()),
-        'int': frozenset('i idx i_sent sent_i is_punctuation tag ent dep index shape'.split()),
-        'str': frozenset('norm lemma tag_ pos_ ent_ dep_ shape_'.split()),
+        'int': frozenset('i idx i_sent sent_i is_punctuation tag ent dep shape'.split()),
+        'str': frozenset('norm lemma_ tag_ pos_ ent_ dep_ shape_'.split()),
         'list': frozenset('children'.split())}
     TYPES_BY_FIELD_ID = dict(chain.from_iterable(
         map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
@@ -40,79 +39,23 @@ class TokenAttributes(Dictable):
                class_name_param: str = None) -> Dict[str, Any]:
         """Return the token attributes as a dictionary representation.
 
-        """
-        return self.__dict__
-
-    def get_string_features(self) -> Dict[str, str]:
-        """The features of the token as strings (both keys and values).
+        :see: :meth:`get_features`
 
         """
-        if not hasattr(self, '_str_feats'):
-            self._str_feats = {'text': self.text,
-                               'norm': self.norm,
-                               'lemma': self.lemma,
-                               'is_wh': self.is_wh,
-                               'is_stop': self.is_stop,
-                               'is_space': self.is_space,
-                               'is_punctuation': self.is_punctuation,
-                               'is_contraction': self.is_contraction,
-                               'i': self.i,
-                               'i_sent': self.i_sent,
-                               'sent_i': self.sent_i,
-                               'index': self.idx,
-                               'tag': self.tag_,
-                               'pos': self.pos_,
-                               'entity': self.ent_,
-                               'is_entity': self.is_ent,
-                               'shape': self.shape_,
-                               'children': len(self.children),
-                               'superlative': self.is_superlative,
-                               'dep': self.dep_}
-        return self._str_feats
+        return self.get_features(skip_missing=True)
 
-    def get_numeric_features(self) -> Dict[str, str]:
-        """Return the features as numeric values.
-
-        """
-        if not hasattr(self, '_feats'):
-            self._feats = {'tag': self.tag,
-                           'pos': self.pos,
-                           'is_wh': self.is_wh,
-                           'is_stop': self.is_stop,
-                           'is_pronoun': self.is_pronoun,
-                           'i': self.i,
-                           'i_sent': self.i_sent,
-                           'sent_i': self.sent_i,
-                           'index': self.idx,
-                           'is_space': self.is_space,
-                           'is_punctuation': self.is_punctuation,
-                           'is_contraction': self.is_contraction,
-                           'entity': self.ent,
-                           'is_entity': self.is_ent,
-                           'shape': self.shape,
-                           'is_superlative': self.is_superlative,
-                           'children': len(self.children),
-                           'dep': self.dep}
-        return self._feats
-
-    def get_writable_features(self, field_ids: Iterable[str] = None) -> \
-            Dict[str, Any]:
-        """Get both numeric and string features.  String features that have the same
-        key entry as numeric features are overwritten.
-
-        :param depth: the starting indentation depth
-
-        :param writer: the writer to dump the content of this writable
+    def get_features(self, field_ids: Iterable[str] = None,
+                     skip_missing: bool = False) -> Dict[str, Any]:
+        """Get both as a `:class:`dict`.
 
         :param field_ids: the fields to write, which defaults to
-                          :obj:`WRITABLE_FIELD_IDS`
+                          :obj:`FIELD_IDS`
 
         """
-        params = dict(self.features)
-        params.update(self.get_string_features())
-        if field_ids is None:
-            field_ids = self.WRITABLE_FIELD_IDS
-        return {k: params[k] for k in field_ids}
+        field_ids = self.FIELD_IDS if field_ids is None else field_ids
+        if skip_missing:
+            field_ids = filter(lambda fid: hasattr(self, fid), field_ids)
+        return {k: getattr(self, k) for k in field_ids}
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               field_ids: Iterable[str] = None):
@@ -128,7 +71,7 @@ class TokenAttributes(Dictable):
         :see: :meth:`get_writable_features`
 
         """
-        feats = self.get_writable_features(field_ids)
+        feats = self.get_features(self.WRITABLE_FIELD_IDS, True)
         for k in sorted(feats.keys()):
             self._write_line(f'{k}: {feats[k]}', depth, writer)
 
@@ -178,12 +121,9 @@ class DetatchableTokenFeatures(TokenAttributes):
 
         """
         attrs = {}
-        skips = set('doc token tok_or_ent'.split())
-        for p, v in inspect.getmembers(self, lambda x: not callable(x)):
-            if self.PROP_REGEX.match(p) and \
-               p not in skips and \
-               (feature_ids is None or p in feature_ids):
-                attrs[p] = v
+        feature_ids = self.FIELD_IDS if feature_ids is None else feature_ids
+        for p in feature_ids:
+            attrs[p] = getattr(self, p)
         if isinstance(inst, type):
             ta = inst()
         else:
@@ -305,16 +245,16 @@ class TokenFeatures(DetatchableTokenFeatures):
         return False if self.is_ent else self.tok_or_ent.pos_ == 'PRON'
 
     @staticmethod
-    def _is_apos(t) -> bool:
-        """Return whether or not ``t`` is an apostrophy (') symbol.
+    def _is_apos(tok: Token) -> bool:
+        """Return whether or not ``tok`` is an apostrophy (') symbol.
 
-        :param t: the string to compare
+        :param tok: the token to copmare
 
         """
-        return (t.orth != t.lemma) and (t.orth_.find('\'') >= 0)
+        return (tok.orth != tok.lemma_) and (tok.orth_.find('\'') >= 0)
 
     @property
-    def lemma(self) -> str:
+    def lemma_(self) -> str:
         """Return the string lemma or text of the named entitiy if tagged as a named
         entity.
 

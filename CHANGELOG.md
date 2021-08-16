@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changes
+- Attributes set on detached token features are no longer robust.  Before, if a
+  token feature ID was specified, but didn't exist on the source token feature
+  set, it would copy over a `None`.  This now raises an `AttributeError` instead.
+- For `TokenAttributes`, creation of `dicts` (either by `asdict` or
+  `get_features`) is now consistent with the set attributes and properties of
+  the class.  Only those specified passed to methods, which default to
+  `FIELD_IDS` of the class (which can be overridden at a class level).
+
+### Removed
+- The dictionary creation of attribute/property individual features methods
+  `TokenAttributes.{string}features`.  These methods are obviated by the
+  `get_features`, which returns all features in `FIELD_IDS`.
+- `FeatureDocumentParser.additional_token_feature_ids` to simplify token
+  feature IDs passed to feature tokens.
+
+
 ## [0.0.15] - 2021-08-07
 ### Changes
 - Upgrade from spaCy 2.x to 3.x.

@@ -3,7 +3,7 @@ import unittest
 import json
 from zensols.util.log import loglevel
 from zensols.config import ImportConfigFactory
-from zensols.nlp import LanguageResource, DictableDoc
+from zensols.nlp import LanguageResource, DictableDoc, TokenFeatures
 from config import AppConfig
 
 logger = logging.getLogger(__name__)
@@ -42,7 +42,8 @@ class TestParse(unittest.TestCase):
         lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('Dan throws the ball.')
         self.assertEqual('MapTokenNormalizer: embed=True', str(tn))
-        res = tuple(map(lambda x: x.get_string_features(), lr.features(doc)))
+        res = tuple(map(lambda x: x.get_features(TokenFeatures.FIELD_IDS),
+                        lr.features(doc)))
         with open(self.config.feature_path) as f:
             c = json.load(f)
         self.assertEqual(rec_sort(c), rec_sort(res))
@@ -146,7 +147,7 @@ the ball.''')
         feats = lr.features(doc)
         objs = []
         for f in feats:
-            objs.append(f.detach().asdict())
+            objs.append(f.asdict())
         if 0:
             with open(json_path, 'w') as f:
                 json.dump(objs, f, indent=4)

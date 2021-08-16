@@ -52,11 +52,9 @@ class FeatureToken(TextContainer, Dictable):
         :param feature_id: a string identifying the type of feature that will
 
         """
-        fd = features.detach(feature_ids).asdict()
-        for k in feature_ids:
-            if k not in fd:
-                fd[k] = None
-        self.__dict__.update(fd)
+        # fd = features.detach(feature_ids).asdict()
+        # self.__dict__.update(fd)
+        self.__dict__.update(features.get_features(feature_ids))
         # features used for sentence decomposition in FeatureDocument
         self.i = features.i
         self.i_sent = features.i_sent

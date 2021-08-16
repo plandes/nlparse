@@ -24,7 +24,7 @@ class TestThirdParty(unittest.TestCase):
         self.assertEqual(('Bobby', 'be', 'fast', 'and', 'run', 'with', 'dog',
                           ',', 'army', ',', 'and', 'sheep', 'from', 'the',
                           'police', '.'),
-                         tuple(map(lambda f: f.lemma, feats)))
+                         tuple(map(lambda f: f.lemma_, feats)))
         lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('stemmer_token_normalizer'))
         feats = tuple(lr.features(doc))
         self.assertEqual(('bobbi', 'is', 'fast', 'and', 'run', 'with', 'dog',

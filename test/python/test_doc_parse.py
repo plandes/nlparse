@@ -124,3 +124,18 @@ the United States of America."""
         else:
             self._test_sent_parsing(text, 'doc_parser', 2, False)
             self._test_sent_parsing(text, 'doc_parser_no_remove_sents', 3, False)
+
+    def test_feature_subset(self):
+        parser = self.fac('doc_parser_default')
+        fdoc = parser.parse(self.SENT_TEXT_SPACE)
+        for tok in fdoc.tokens:
+            self.assertEqual(24, len(tok.asdict()))
+
+        parser = self.fac('doc_parser_feat_subset')
+        fdoc = parser.parse(self.SENT_TEXT_SPACE)
+        for tok in fdoc.tokens:
+            self.assertEqual(6, len(tok.asdict()))
+
+        parser = self.fac('doc_parser_feat_no_exist')
+        with self.assertRaises(AttributeError):
+            fdoc = parser.parse(self.SENT_TEXT_SPACE)

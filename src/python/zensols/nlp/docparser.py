@@ -33,8 +33,8 @@ class FeatureDocumentParser(object):
         default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
     """The features to keep from spaCy tokens."""
 
-    additional_token_feature_ids: Set[str] = field(default_factory=set)
-    """More feature IDs in addition to :obj:`token_feature_ids`."""
+    # additional_token_feature_ids: Set[str] = field(default_factory=set)
+    # """More feature IDs in addition to :obj:`token_feature_ids`."""
 
     doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
     """The type of document instances to create."""
@@ -49,8 +49,9 @@ class FeatureDocumentParser(object):
     """If ``True``, remove sentences that only have space tokens."""
 
     def __post_init__(self):
-        self.token_feature_ids = \
-            self.token_feature_ids | self.additional_token_feature_ids
+        # self.token_feature_ids = \
+        #     self.token_feature_ids | self.additional_token_feature_ids
+        pass
 
     def _create_token(self, feature: TokenFeatures) -> FeatureToken:
         return self.token_class(feature, self.token_feature_ids)
