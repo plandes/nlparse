@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Set, Iterable, Dict, Type
+from typing import List, Tuple, Set, Iterable, Dict, Type, Any
 from dataclasses import dataclass, field
 import dataclasses
 from abc import ABCMeta, abstractmethod
@@ -15,7 +15,7 @@ from itertools import chain
 import itertools as it
 from spacy.tokens.doc import Doc
 from zensols.persist import PersistableContainer, persisted
-from zensols.config import Writable
+from zensols.config import Writable, Dictable
 from . import TokenAttributes, TokenFeatures
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class TextContainer(Writable, metaclass=ABCMeta):
                          depth, writer)
 
 
-class FeatureToken(TextContainer):
+class FeatureToken(TextContainer, Dictable):
     """A container class for features about a token.  This extracts only a subset
     of features from the heavy object :class:`.TokenFeatures`, which contains
     Spacy C data structures and is hard/expensive to pickle.
@@ -78,6 +78,18 @@ class FeatureToken(TextContainer):
             ptype = self.TYPES_BY_TOKEN_FEATURE_ID.get(k)
             ptype = 'missing type' if ptype is None else ptype
             self._write_line(f'{k}={v} ({ptype})', depth + 1, writer)
+
+    def asdict(self, recurse: bool = True, readable: bool = True,
+               class_name_param: str = None) -> Dict[str, Any]:
+        dct = {}
+        for k, v in self.__dict__.items():
+            if not k.startswith('_'):
+                if isinstance(v, set):
+                    v = ','.join(sorted(map(str, v)))
+                elif not isinstance(v, str):
+                    v = str(v)
+                dct[k] = v
+        return dct
 
     def __eq__(self, other) -> bool:
         return self.i == other.i and self.__dict__ == other.__dict__
