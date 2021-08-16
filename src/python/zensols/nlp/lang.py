@@ -17,7 +17,7 @@ from spacy.language import Language
 from spacy.lang.en import English
 from zensols.config import Configurable, Dictable
 from zensols.persist import DelegateStash, persisted, PersistedWork
-from . import ParseError, TokenFeatures, TokenNormalizer
+from . import ParseError, TokenFeatures, SpacyTokenFeatures, TokenNormalizer
 
 logger = logging.getLogger(__name__)
 
@@ -179,7 +179,7 @@ class LanguageResource(object):
     special_case_tokens: List = field(default_factory=list)
     """Tokens that will be parsed as one token, i.e. ``</s>``."""
 
-    feature_type: Type[TokenFeatures] = field(default=TokenFeatures)
+    feature_type: Type[TokenFeatures] = field(default=SpacyTokenFeatures)
     """The class to use for instances created by :meth:`features`."""
 
     def __post_init__(self):

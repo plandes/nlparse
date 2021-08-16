@@ -35,6 +35,10 @@ copy/move functionality, but speeds things up.
   feature IDs passed to feature tokens.
 - The `TokenAttributes` class, as it was just a metadata member holder.
 
+### Added
+- A SpaCy implementation of the `TokenFeatures` class, that somewhat resembles
+  the old `TokenFeatures` of the old class hierarchy.
+
 
 ## [0.0.15] - 2021-08-07
 ### Changes

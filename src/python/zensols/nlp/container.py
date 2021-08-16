@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Set, Iterable, Dict, Type, Any
+from typing import List, Tuple, Set, Iterable, Dict, Type
 from dataclasses import dataclass, field
 import dataclasses
 from abc import ABCMeta, abstractmethod
@@ -64,12 +64,6 @@ class FeatureToken(TextContainer, Dictable):
         """
         return self.norm
 
-    def to_vector(self, feature_ids: List[str]) -> Iterable[str]:
-        """Return an iterable of feature data.
-
-        """
-        return map(lambda a: getattr(self, a), feature_ids)
-
     def write_attributes(self, depth: int = 0, writer: TextIOBase = sys.stdout,
                          include_type: bool = True):
         """Write feature attributes.
@@ -81,26 +75,34 @@ class FeatureToken(TextContainer, Dictable):
         :param include_type: if ``True`` write the type of value (if available)
 
         """
-        for k, v in self.__dict__.items():
+        dct = self.asdict()
+        for k in sorted(dct.keys()):
+            val: str = dct[k]
             if include_type:
                 ptype = self.TYPES_BY_TOKEN_FEATURE_ID.get(k)
                 ptype = '?' if ptype is None else ptype
                 ptype = f' ({ptype})'
             else:
                 ptype = ''
-            self._write_line(f'{k}={v}{ptype}', depth, writer)
+            self._write_line(f'{k}={val}{ptype}', depth, writer)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         super().write(depth, writer)
         self._write_line('attributes:', depth, writer)
         self.write_attributes(depth + 1, writer)
 
+    def to_vector(self, feature_ids: List[str]) -> Iterable[str]:
+        """Return an iterable of feature data.
+
+        """
+        return map(lambda a: getattr(self, a), sorted(feature_ids))
+
     def asdict(self, recurse: bool = True, readable: bool = True,
-               class_name_param: str = None) -> Dict[str, Any]:
+               class_name_param: str = None) -> Dict[str, str]:
         dct = {}
         for k, v in self.__dict__.items():
             if not k.startswith('_'):
-                if isinstance(v, set):
+                if isinstance(v, (set, list, tuple)):
                     v = ','.join(sorted(map(str, v)))
                 elif not isinstance(v, str):
                     v = str(v)
@@ -115,7 +117,7 @@ class FeatureToken(TextContainer, Dictable):
 
     def long_repr(self) -> str:
         attrs = []
-        for s in 'norm lemma tag ent'.split():
+        for s in 'norm lemma_ tag_ ent_'.split():
             v = getattr(self, s) if hasattr(self, s) else None
             if v is not None:
                 attrs.append(f'{s}: {v}')
