@@ -4,7 +4,7 @@ SpaCy artifacts.
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Set, Any, Union, Type, Tuple, Iterable
+from typing import Dict, Set, Any, Union, Type, Iterable
 import logging
 import sys
 import inspect
