@@ -4,7 +4,7 @@ SpaCy artifacts.
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Set, Any, Union, Type, Tuple
+from typing import Dict, Set, Any, Union, Type, Tuple, Iterable
 import logging
 import sys
 import inspect
@@ -96,21 +96,42 @@ class TokenAttributes(Dictable):
                            'dep': self.dep}
         return self._feats
 
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
-              writable_field_ids: Tuple[str] = None):
-        """Write the features in a human readable format.
+    def get_writable_features(self, field_ids: Iterable[str] = None) -> \
+            Dict[str, Any]:
+        """Get both numeric and string features.  String features that have the same
+        key entry as numeric features are overwritten.
 
-        :param writer: where to output, defaults to standard out
+        :param depth: the starting indentation depth
 
-        :param level: the indentation level
+        :param writer: the writer to dump the content of this writable
+
+        :param field_ids: the fields to write, which defaults to
+                          :obj:`WRITABLE_FIELD_IDS`
 
         """
-        params = self.features
+        params = dict(self.features)
         params.update(self.string_features)
-        if writable_field_ids is None:
-            writable_field_ids = self.WRITABLE_FIELD_IDS
-        for k in writable_field_ids:
-            self._write_line(f'{k}: {params[k]}', depth, writer)
+        if field_ids is None:
+            field_ids = self.WRITABLE_FIELD_IDS
+        return {k: params[k] for k in field_ids}
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+              field_ids: Iterable[str] = None):
+        """Write the features in a human readable format.
+
+        :param depth: the starting indentation depth
+
+        :param writer: the writer to dump the content of this writable
+
+        :param field_ids: the fields to write, which defaults to
+                          :obj:`WRITABLE_FIELD_IDS`
+
+        :see: :meth:`get_writable_features`
+
+        """
+        feats = self.get_writable_features(field_ids)
+        for k in sorted(feats.keys()):
+            self._write_line(f'{k}: {feats[k]}', depth, writer)
 
     def __str__(self):
         if hasattr(self, 'tok_or_ent'):
