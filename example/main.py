@@ -21,17 +21,9 @@ doc_parser = instance: doc_parser
 
 
 def main():
-    print()
-    if 0:
-        import logging
-        logging.basicConfig(level=logging.WARN)
-        logging.getLogger('zensols.nlp').setLevel(logging.DEBUG)
     cli = ApplicationFactory('nlparse', StringIO(CONFIG), reload_factory=True)
     cli.invoke()
 
 
 if __name__ == '__main__':
     main()
-
-
-main()
