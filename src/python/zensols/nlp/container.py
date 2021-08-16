@@ -287,8 +287,8 @@ class FeatureDocument(TokensContainer):
     :param sents: the sentences defined for this document
 
     """
-
     PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_doc'}
+    """Don't serialize the spacy document on persistance pickling."""
 
     sents: List[FeatureSentence] = field()
     """The sentences that make up the document."""
