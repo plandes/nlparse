@@ -42,7 +42,7 @@ class TestParse(unittest.TestCase):
         lr = self.fac.instance('default_langres', token_normalizer=tn)
         doc = lr.parse('Dan throws the ball.')
         self.assertEqual('MapTokenNormalizer: embed=True', str(tn))
-        res = tuple(map(lambda x: x.string_features, lr.features(doc)))
+        res = tuple(map(lambda x: x.get_string_features(), lr.features(doc)))
         with open(self.config.feature_path) as f:
             c = json.load(f)
         self.assertEqual(rec_sort(c), rec_sort(res))

@@ -43,35 +43,34 @@ class TokenAttributes(Dictable):
         """
         return self.__dict__
 
-    @property
-    def string_features(self) -> Dict[str, str]:
+    def get_string_features(self) -> Dict[str, str]:
         """The features of the token as strings (both keys and values).
 
         """
-        params = {'text': self.text,
-                  'norm': self.norm,
-                  'lemma': self.lemma,
-                  'is_wh': self.is_wh,
-                  'is_stop': self.is_stop,
-                  'is_space': self.is_space,
-                  'is_punctuation': self.is_punctuation,
-                  'is_contraction': self.is_contraction,
-                  'i': self.i,
-                  'i_sent': self.i_sent,
-                  'sent_i': self.sent_i,
-                  'index': self.idx,
-                  'tag': self.tag_,
-                  'pos': self.pos_,
-                  'entity': self.ent_,
-                  'is_entity': self.is_ent,
-                  'shape': self.shape_,
-                  'children': len(self.children),
-                  'superlative': self.is_superlative,
-                  'dep': self.dep_}
-        return params
+        if not hasattr(self, '_str_feats'):
+            self._str_feats = {'text': self.text,
+                               'norm': self.norm,
+                               'lemma': self.lemma,
+                               'is_wh': self.is_wh,
+                               'is_stop': self.is_stop,
+                               'is_space': self.is_space,
+                               'is_punctuation': self.is_punctuation,
+                               'is_contraction': self.is_contraction,
+                               'i': self.i,
+                               'i_sent': self.i_sent,
+                               'sent_i': self.sent_i,
+                               'index': self.idx,
+                               'tag': self.tag_,
+                               'pos': self.pos_,
+                               'entity': self.ent_,
+                               'is_entity': self.is_ent,
+                               'shape': self.shape_,
+                               'children': len(self.children),
+                               'superlative': self.is_superlative,
+                               'dep': self.dep_}
+        return self._str_feats
 
-    @property
-    def features(self) -> Dict[str, str]:
+    def get_numeric_features(self) -> Dict[str, str]:
         """Return the features as numeric values.
 
         """
@@ -152,7 +151,13 @@ class DetatchableTokenFeatures(TokenAttributes):
 
     """
     NONE = '<none>'
+    """Default string for *not a feature*, or missing features."""
+
     PROP_REGEX = re.compile(r'^[a-z][a-z_-]*')
+    """Matches on property/attribute names."""
+
+    def __init__(self):
+        super().__init__()
 
     def detach(self, feature_ids: Set[str] = None,
                inst: Type[TokenAttributes] = TokenAttributes) -> \
@@ -194,6 +199,7 @@ class BasicTokenFeatures(DetatchableTokenFeatures):
 
     """
     def __init__(self, text: str):
+        super().__init__()
         self.text = text
 
     @property
@@ -235,6 +241,7 @@ class TokenFeatures(DetatchableTokenFeatures):
         :norm: the normalized text of the token (i.e. lemmatized version)
 
         """
+        super().__init__()
         self.doc = doc
         self.tok_or_ent = tok_or_ent
         self.is_ent = not isinstance(tok_or_ent, Token)
