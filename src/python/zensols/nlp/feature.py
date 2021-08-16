@@ -7,7 +7,6 @@ __author__ = 'Paul Landes'
 from typing import Dict, Any, Union, Iterable
 import logging
 import sys
-from itertools import chain
 from functools import reduce
 from io import TextIOBase
 from spacy.tokens.token import Token
@@ -39,14 +38,12 @@ class TokenFeatures(Dictable):
         'list': frozenset('children'.split())}
     """Map of class type to set of feature IDs."""
 
-    TYPES_BY_FIELD_ID = dict(chain.from_iterable(
-        map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
-            FIELD_IDS_BY_TYPE.items())))
-
     FIELD_IDS = frozenset(
         reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
+    """All default available field IDs."""
 
     WRITABLE_FIELD_IDS = tuple('text norm i i_sent tag pos is_wh entity dep children'.split())
+    """Field IDs that are dumped on :meth:`write`."""
 
     NONE = '<none>'
     """Default string for *not a feature*, or missing features."""
