@@ -71,13 +71,24 @@ class FeatureToken(TextContainer, Dictable):
         """
         return map(lambda a: getattr(self, a), feature_ids)
 
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
-        super().write(depth, writer)
-        self._write_line('attributes:', depth, writer)
+    def write_attributes(self, depth: int = 0,
+                         writer: TextIOBase = sys.stdout):
+        """Write feature attributes.
+
+        :param depth: the starting indentation depth
+
+        :param writer: the writer to dump the content of this writable
+
+        """
         for k, v in self.__dict__.items():
             ptype = self.TYPES_BY_TOKEN_FEATURE_ID.get(k)
             ptype = 'missing type' if ptype is None else ptype
-            self._write_line(f'{k}={v} ({ptype})', depth + 1, writer)
+            self._write_line(f'{k}={v} ({ptype})', depth, writer)
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
+        super().write(depth, writer)
+        self._write_line('attributes:', depth, writer)
+        self.write_attributes(depth + 1, writer)
 
     def asdict(self, recurse: bool = True, readable: bool = True,
                class_name_param: str = None) -> Dict[str, Any]:
