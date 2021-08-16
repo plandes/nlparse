@@ -4,6 +4,7 @@
 PROJ_TYPE =		python
 PROJ_MODULES =		git python-doc python-doc-deploy
 SPACY_MODELS +=		sm md lg
+PY_DEP_POST_DEPS +=	modeldeps
 PIP_ARGS +=		--use-deprecated=legacy-resolver
 
 #PY_SRC_TEST_PAT ?=	'test_doc_c*.py'
@@ -18,6 +19,10 @@ allmodels:
 				$(PYTHON_BIN) -m spacy download en_core_web_$${i} ; \
 			done
 
+.PHONY:			modeldeps
+modeldeps:
+			$(PIP_BIN) install $(PIP_ARGS) -r $(PY_SRC)/requirements-model.txt
+
 .PHONY:			uninstalldeps
 uninstalldeps:
-			pip freeze | grep spacy | sed 's/\([^= ]*\).*/\1/' | xargs pip uninstall -y
+			$(PYTHON_BIN) -m pip freeze | grep spacy | sed 's/\([^= ]*\).*/\1/' | xargs pip uninstall -y
