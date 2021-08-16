@@ -145,6 +145,12 @@ class LanguageResource(object):
     _MODELS = {}
     """Contains cached models, such as ``en_core_web_sm``."""
 
+    name: str = field()
+    """The name of the language resource, which is taken from the section name when
+    created with a :class:`~zensols.config.ConfigFactory`.
+
+    """
+
     config: Configurable = field()
     """The application configuration used to create the Spacy model."""
 
@@ -191,7 +197,7 @@ class LanguageResource(object):
                                self.components))
             if comps:
                 comp_str = '-' + '|'.join(comps)
-            mkey = f'{self.model_name}{comp_str}'
+            mkey = f'{self.name}-{self.model_name}{comp_str}'
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'model key: {mkey}')
             # cache model in class space
