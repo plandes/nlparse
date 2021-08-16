@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+This release simplifies the token attributes level classes in the `features`
+module by:
+  * Using feature IDs instead of trying to make sense of the class
+    property/attribute member data.
+  * Using the `FeatureDocumentParser` and `FeatureToken` to copy spaCy
+    resources to simple picklable Python classes.
+
+Not only does this greatly reduce complexity in class hierarchy and data
+copy/move functionality, but speeds things up.
+
 ### Changes
 - Attributes set on detached token features are no longer robust.  Before, if a
   token feature ID was specified, but didn't exist on the source token feature
@@ -23,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   `get_features`, which returns all features in `FIELD_IDS`.
 - `FeatureDocumentParser.additional_token_feature_ids` to simplify token
   feature IDs passed to feature tokens.
+- The `TokenAttributes` class, as it was just a metadata member holder.
 
 
 ## [0.0.15] - 2021-08-07
