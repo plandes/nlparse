@@ -30,7 +30,7 @@ class Application(object):
         feats = self.langres.features(doc)
         for feat in feats:
             print(f'{feat} {type(feat)}')
-            feat.write(depth=1, writable_field_ids=(*feat.WRITABLE_FIELD_IDS, 'sent_i'))
+            feat.write(depth=1, field_ids=(*feat.WRITABLE_FIELD_IDS, 'sent_i'))
             print('-' * 5)
             if not no_detached:
                 det = feat.detach()
