@@ -4,10 +4,9 @@ SpaCy artifacts.
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Set, Any, Union, Type, Iterable
+from typing import Dict, Any, Union, Iterable
 import logging
 import sys
-import re
 from itertools import chain
 from functools import reduce
 from io import TextIOBase
@@ -19,147 +18,8 @@ from zensols.config import Dictable
 logger = logging.getLogger(__name__)
 
 
-class TokenAttributes(Dictable):
-    """Contains token properties and a few utility methods.
-
-    """
-    WRITABLE_FIELD_IDS = tuple('text norm i i_sent tag pos is_wh entity dep children'.split())
-    FIELD_IDS_BY_TYPE = {
-        'bool': frozenset('is_space is_stop is_ent is_wh is_contraction is_superlative is_pronoun'.split()),
-        'int': frozenset('i idx i_sent sent_i is_punctuation tag ent dep shape'.split()),
-        'str': frozenset('norm lemma_ tag_ pos_ ent_ dep_ shape_'.split()),
-        'list': frozenset('children'.split())}
-    TYPES_BY_FIELD_ID = dict(chain.from_iterable(
-        map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
-            FIELD_IDS_BY_TYPE.items())))
-    FIELD_IDS = frozenset(
-        reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
-
-    def asdict(self, recurse: bool = True, readable: bool = True,
-               class_name_param: str = None) -> Dict[str, Any]:
-        """Return the token attributes as a dictionary representation.
-
-        :see: :meth:`get_features`
-
-        """
-        return self.get_features(skip_missing=True)
-
-    def get_features(self, field_ids: Iterable[str] = None,
-                     skip_missing: bool = False) -> Dict[str, Any]:
-        """Get both as a `:class:`dict`.
-
-        :param field_ids: the fields to write, which defaults to
-                          :obj:`FIELD_IDS`
-
-        """
-        field_ids = self.FIELD_IDS if field_ids is None else field_ids
-        if skip_missing:
-            field_ids = filter(lambda fid: hasattr(self, fid), field_ids)
-        return {k: getattr(self, k) for k in field_ids}
-
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
-              field_ids: Iterable[str] = None):
-        """Write the features in a human readable format.
-
-        :param depth: the starting indentation depth
-
-        :param writer: the writer to dump the content of this writable
-
-        :param field_ids: the fields to write, which defaults to
-                          :obj:`WRITABLE_FIELD_IDS`
-
-        :see: :meth:`get_writable_features`
-
-        """
-        feats = self.get_features(self.WRITABLE_FIELD_IDS, True)
-        for k in sorted(feats.keys()):
-            self._write_line(f'{k}: {feats[k]}', depth, writer)
-
-    def __str__(self):
-        if hasattr(self, 'tok_or_ent'):
-            tokstr = self.tok_or_ent
-        else:
-            tokstr = self.norm
-        return '{} ({})'.format(tokstr, self.norm)
-
-    def __repr__(self):
-        return self.__str__()
-
-
-class DetatchableTokenFeatures(TokenAttributes):
-    """Subclasses that can detach features from SpaCy artifacts enabling clean
-    pickling.
-
-    :see: :meth:`detach`
-
-    """
-    NONE = '<none>'
-    """Default string for *not a feature*, or missing features."""
-
-    PROP_REGEX = re.compile(r'^[a-z][a-z_-]*')
-    """Matches on property/attribute names."""
-
-    def __init__(self):
-        super().__init__()
-
-    def detach(self, feature_ids: Set[str] = None,
-               inst: Type[TokenAttributes] = TokenAttributes) -> \
-            TokenAttributes:
-        """Return a new instance of the object detached from SpaCy C data structures.
-        This works by setting attributes directly on a new instance of a
-        :class:`TokenAttributes` object instance.
-
-        :param feature_ids: the names of attributes to populate in the
-                            returned instance; defaults to all
-
-        :param inst: a class or object instance that extends
-                     :class:`.TokenAttributes`; if a class, it is instantiated
-                     by passing no arguments
-
-        :return: an instance that is able to be quickly and efficiently
-                 pickled
-
-        """
-        attrs = {}
-        feature_ids = self.FIELD_IDS if feature_ids is None else feature_ids
-        for p in feature_ids:
-            attrs[p] = getattr(self, p)
-        if isinstance(inst, type):
-            ta = inst()
-        else:
-            ta = inst
-        ta.__dict__.update(attrs)
-        return ta
-
-
-class BasicTokenFeatures(DetatchableTokenFeatures):
-    """A token feature set meant to be extended for cases where tokens are not
-    parsed with SpaCy using :class:`.LanguageResources` and
-    :class:`.TokenNormalizer`.
-
-    """
-    def __init__(self, text: str):
-        super().__init__()
-        self.text = text
-
-    @property
-    def norm(self) -> str:
-        return self.text
-
-    def __getattr__(self, attr):
-        if attr in self.FIELD_SET:
-            return super().__getattribute__(attr)
-        ftype = self.TYPES_BY_FIELD_ID.get(attr)
-        if ftype is not None:
-            return {'bool': False,
-                    'str': self.NONE,
-                    'int': -1,
-                    'list': ()}[ftype]
-        return super().__getattribute__(attr)
-
-
-class TokenFeatures(DetatchableTokenFeatures):
-    """Convenience class to create features from text.  The features are derived
+class TokenFeatures(Dictable):
+    """A container class that create features from text.  The features are derived
     from parsed Spacy artifacts.
 
     The attributes of this class, such as ``norm`` and ``is_wh`` are referred
@@ -168,9 +28,29 @@ class TokenFeatures(DetatchableTokenFeatures):
     **Implementation note**: Many of the properties in this class are not
     efficient and many attributes (i.e. the spaCy
     :class:`~spacy.tokens.doc.Doc`) is heavy weight and not can not be pickled.
-    For this reason, use :meth:`detach` to store in memory or on disk.
+    For this reason, use a :class:`.FeatureDocumentParser` to create
+    :class:`.FeatureToken` instances.
 
     """
+    FIELD_IDS_BY_TYPE = {
+        'bool': frozenset('is_space is_stop is_ent is_wh is_contraction is_superlative is_pronoun'.split()),
+        'int': frozenset('i idx i_sent sent_i is_punctuation tag ent dep shape'.split()),
+        'str': frozenset('norm lemma_ tag_ pos_ ent_ dep_ shape_'.split()),
+        'list': frozenset('children'.split())}
+    """Map of class type to set of feature IDs."""
+
+    TYPES_BY_FIELD_ID = dict(chain.from_iterable(
+        map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
+            FIELD_IDS_BY_TYPE.items())))
+
+    FIELD_IDS = frozenset(
+        reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
+
+    WRITABLE_FIELD_IDS = tuple('text norm i i_sent tag pos is_wh entity dep children'.split())
+
+    NONE = '<none>'
+    """Default string for *not a feature*, or missing features."""
+
     def __init__(self, doc: Doc, tok_or_ent: Union[Token, Span], norm: str):
         """Initialize a features instance.
 
@@ -187,10 +67,7 @@ class TokenFeatures(DetatchableTokenFeatures):
         self.is_ent = not isinstance(tok_or_ent, Token)
         self._norm = norm
 
-    def asdict(self, recurse: bool = True, readable: bool = True,
-               class_name_param: str = None) -> Dict[str, Any]:
-        return self.detach().asdict(recurse, readable, class_name_param)
-
+    # properties
     @property
     def text(self) -> str:
         """Return the unmodified parsed tokenized text.
@@ -411,3 +288,54 @@ class TokenFeatures(DetatchableTokenFeatures):
 
         """
         return self.token.dep_
+
+    # method
+    def asdict(self, recurse: bool = True, readable: bool = True,
+               class_name_param: str = None) -> Dict[str, Any]:
+        """Return the token attributes as a dictionary representation.
+
+        :see: :meth:`get_features`
+
+        """
+        return self.get_features(skip_missing=True)
+
+    def get_features(self, field_ids: Iterable[str] = None,
+                     skip_missing: bool = False) -> Dict[str, Any]:
+        """Get both as a `:class:`dict`.
+
+        :param field_ids: the fields to write, which defaults to
+                          :obj:`FIELD_IDS`
+
+        """
+        field_ids = self.FIELD_IDS if field_ids is None else field_ids
+        if skip_missing:
+            field_ids = filter(lambda fid: hasattr(self, fid), field_ids)
+        return {k: getattr(self, k) for k in field_ids}
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+              field_ids: Iterable[str] = None):
+        """Write the features in a human readable format.
+
+        :param depth: the starting indentation depth
+
+        :param writer: the writer to dump the content of this writable
+
+        :param field_ids: the fields to write, which defaults to
+                          :obj:`WRITABLE_FIELD_IDS`
+
+        :see: :meth:`get_writable_features`
+
+        """
+        feats = self.get_features(self.WRITABLE_FIELD_IDS, True)
+        for k in sorted(feats.keys()):
+            self._write_line(f'{k}: {feats[k]}', depth, writer)
+
+    def __str__(self):
+        if hasattr(self, 'tok_or_ent'):
+            tokstr = self.tok_or_ent
+        else:
+            tokstr = self.norm
+        return '{} ({})'.format(tokstr, self.norm)
+
+    def __repr__(self):
+        return self.__str__()

@@ -16,7 +16,7 @@ import itertools as it
 from spacy.tokens.doc import Doc
 from zensols.persist import PersistableContainer, persisted
 from zensols.config import Writable, Dictable
-from . import TokenAttributes, TokenFeatures
+from . import TokenFeatures
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +40,9 @@ class FeatureToken(TextContainer, Dictable):
     :meth:`.FeatureDocument.uncombine_sentences`).
 
     """
-    TOKEN_FEATURE_IDS_BY_TYPE = TokenAttributes.FIELD_IDS_BY_TYPE
-    TYPES_BY_TOKEN_FEATURE_ID = TokenAttributes.TYPES_BY_FIELD_ID
-    TOKEN_FEATURE_IDS = TokenAttributes.FIELD_IDS
+    TOKEN_FEATURE_IDS_BY_TYPE = TokenFeatures.FIELD_IDS_BY_TYPE
+    TYPES_BY_TOKEN_FEATURE_ID = TokenFeatures.TYPES_BY_FIELD_ID
+    TOKEN_FEATURE_IDS = TokenFeatures.FIELD_IDS
 
     def __init__(self, features: TokenFeatures, feature_ids: Set[str]):
         """Initialize.
@@ -52,8 +52,6 @@ class FeatureToken(TextContainer, Dictable):
         :param feature_id: a string identifying the type of feature that will
 
         """
-        # fd = features.detach(feature_ids).asdict()
-        # self.__dict__.update(fd)
         self.__dict__.update(features.get_features(feature_ids))
         # features used for sentence decomposition in FeatureDocument
         self.i = features.i
