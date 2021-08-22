@@ -13,6 +13,12 @@ class Application(object):
     lc_langres: LanguageResource
     doc_parser: FeatureDocumentParser
 
+    def _feature_dataframe(self, sent: str):
+        from zensols.nlp.dataframe import FeatureDataFrameFactory
+        fac = FeatureDataFrameFactory()
+        doc = self.doc_parser.parse(sent)
+        return fac(doc)
+
     def run(self, print_dict: bool = True):
         """Run the test.
 
@@ -28,6 +34,7 @@ class Application(object):
             print(tok, tok.tag_, tok.is_stop)
         print('-' * 10, 'token features:')
         feats = self.langres.features(doc)
+        print(tuple(feats))
         for feat in feats:
             print(f'{feat} {type(feat)}')
             feat.write(depth=1, field_ids=(*feat.WRITABLE_FIELD_IDS, 'sent_i'))
@@ -44,3 +51,6 @@ class Application(object):
 
         doc = self.doc_parser.parse(sent)
         doc.write()
+
+        print('-' * 10)
+        print(self._feature_dataframe(sent))

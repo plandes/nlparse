@@ -26,5 +26,12 @@ def main():
     cli.invoke()
 
 
-if __name__ == '__main__':
-    main()
+if (__name__ == '__main__'):
+    # when running from a shell, run the CLI entry point
+    import __main__ as mmod
+    if hasattr(mmod, '__file__'):
+        main()
+    # otherwise, assume a Python REPL and run the prototyping method
+    else:
+        print('--> proto')
+        main()
