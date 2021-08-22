@@ -33,8 +33,10 @@ class TokenFeatures(Dictable):
 
     """
     FIELD_IDS_BY_TYPE = {
-        'bool': frozenset('is_space is_stop is_ent is_wh is_contraction is_superlative is_pronoun'.split()),
-        'int': frozenset('i idx i_sent sent_i is_punctuation tag ent dep shape'.split()),
+        'bool': frozenset(('is_space is_stop is_ent is_wh is_contraction ' +
+                           'is_superlative is_pronoun').split()),
+        'int': frozenset(('i idx i_sent sent_i is_punctuation tag ' +
+                          'ent dep shape').split()),
         'str': frozenset('norm lemma_ tag_ pos_ ent_ dep_ shape_'.split()),
         'list': frozenset('children'.split())}
     """Map of class type to set of feature IDs."""
@@ -51,7 +53,8 @@ class TokenFeatures(Dictable):
         reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
     """All default available field IDs."""
 
-    WRITABLE_FIELD_IDS = tuple('text norm i i_sent tag pos is_wh entity dep children'.split())
+    WRITABLE_FIELD_IDS = tuple(('text norm idx sent_i i i_sent tag pos ' +
+                                'is_wh entity dep children').split())
     """Field IDs that are dumped on :meth:`write`."""
 
     NONE = '<none>'
