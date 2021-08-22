@@ -8,6 +8,7 @@ from typing import Dict, Any, Union, Iterable
 import logging
 import sys
 from functools import reduce
+from itertools import chain
 from io import TextIOBase
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
@@ -37,6 +38,14 @@ class TokenFeatures(Dictable):
         'str': frozenset('norm lemma_ tag_ pos_ ent_ dep_ shape_'.split()),
         'list': frozenset('children'.split())}
     """Map of class type to set of feature IDs."""
+
+    TYPES_BY_FIELD_ID = dict(chain.from_iterable(
+        map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
+            FIELD_IDS_BY_TYPE.items())))
+    """A map of feature ID to string type.  This is used by
+    :meth:`.FeatureToken.write_attributes` to dump the type features.
+
+    """
 
     FIELD_IDS = frozenset(
         reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
