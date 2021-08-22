@@ -13,7 +13,7 @@ class Application(object):
     lc_langres: LanguageResource
     doc_parser: FeatureDocumentParser
 
-    def run(self, no_detached: bool = False):
+    def run(self, print_dict: bool = True):
         """Run the test.
 
         :param detached: add detatched information
@@ -32,9 +32,8 @@ class Application(object):
             print(f'{feat} {type(feat)}')
             feat.write(depth=1, field_ids=(*feat.WRITABLE_FIELD_IDS, 'sent_i'))
             print('-' * 5)
-            if not no_detached:
-                det = feat.detach()
-                print(f'detached: {type(det)}: {det.asdict()}')
+            if print_dict:
+                print(feat.asdict())
                 print('-' * 5)
         print(', '.join(self.langres.normalized_tokens(doc)))
         print('-' * 10)
