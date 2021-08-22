@@ -21,7 +21,8 @@ doc_parser = instance: doc_parser
 
 
 def main():
-    cli = ApplicationFactory('nlparse', StringIO(CONFIG), reload_factory=True)
+    cli = ApplicationFactory('nlparse', StringIO(CONFIG),
+                             reload_pattern=r'^app')
     cli.invoke()
 
 
