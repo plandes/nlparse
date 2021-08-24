@@ -105,7 +105,7 @@ class FeatureToken(TextContainer):
             if not k.startswith('_'):
                 if isinstance(v, (set, list, tuple)):
                     v = ','.join(sorted(map(str, v)))
-                elif not isinstance(v, str):
+                elif not isinstance(v, (int, float, bool, str)):
                     v = str(v)
                 dct[k] = v
         return dct
