@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Set, Iterable, Dict, Type
+from typing import List, Tuple, Set, Iterable, Dict, Type, Any
 from dataclasses import dataclass, field
 import dataclasses
 from abc import ABCMeta, abstractmethod
@@ -15,13 +15,13 @@ from itertools import chain
 import itertools as it
 from spacy.tokens.doc import Doc
 from zensols.persist import PersistableContainer, persisted
-from zensols.config import Writable, Dictable
+from zensols.config import Dictable
 from . import TokenFeatures
 
 logger = logging.getLogger(__name__)
 
 
-class TextContainer(Writable, metaclass=ABCMeta):
+class TextContainer(Dictable, metaclass=ABCMeta):
     """A *writable* class that has a ``text`` property or attribute.
 
     """
@@ -30,7 +30,7 @@ class TextContainer(Writable, metaclass=ABCMeta):
                          depth, writer)
 
 
-class FeatureToken(TextContainer, Dictable):
+class FeatureToken(TextContainer):
     """A container class for features about a token.  This extracts only a subset
     of features from the heavy object :class:`.TokenFeatures`, which contains
     Spacy C data structures and is hard/expensive to pickle.
@@ -43,6 +43,7 @@ class FeatureToken(TextContainer, Dictable):
     TOKEN_FEATURE_IDS_BY_TYPE = TokenFeatures.FIELD_IDS_BY_TYPE
     TYPES_BY_TOKEN_FEATURE_ID = TokenFeatures.TYPES_BY_FIELD_ID
     TOKEN_FEATURE_IDS = TokenFeatures.FIELD_IDS
+    WRITABLE__DESCENDANTS = True
 
     def __init__(self, features: TokenFeatures, feature_ids: Set[str]):
         """Initialize.
@@ -97,8 +98,8 @@ class FeatureToken(TextContainer, Dictable):
         """
         return map(lambda a: getattr(self, a), sorted(feature_ids))
 
-    def asdict(self, recurse: bool = True, readable: bool = True,
-               class_name_param: str = None) -> Dict[str, str]:
+    def _from_dictable(self, recurse: bool, readable: bool,
+                       class_name_param: str = None) -> Dict[str, Any]:
         dct = {}
         for k, v in self.__dict__.items():
             if not k.startswith('_'):
@@ -267,6 +268,11 @@ class FeatureSentence(TokensContainer):
             return {root[0]: self._branch(root[0], toks, tid_to_idx)}
         else:
             return {}
+
+    def _from_dictable(self, recurse: bool, readable: bool,
+                       class_name_param: str = None) -> Dict[str, Any]:
+        return {'text': self.text,
+                'tokens': self._from_object(self.tokens, recurse, readable)}
 
     def __getitem__(self, key) -> FeatureToken:
         return self.tokens[key]
@@ -474,7 +480,6 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
     """A feature sentence that contains token annotations.
 
     """
-
     annotations: Tuple[str] = field(default=())
     """A token level annotation, which is one-to-one to tokens."""
 
