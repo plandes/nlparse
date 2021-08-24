@@ -43,7 +43,7 @@ class FeatureToken(TextContainer):
     TOKEN_FEATURE_IDS_BY_TYPE = TokenFeatures.FIELD_IDS_BY_TYPE
     TYPES_BY_TOKEN_FEATURE_ID = TokenFeatures.TYPES_BY_FIELD_ID
     TOKEN_FEATURE_IDS = TokenFeatures.FIELD_IDS
-    WRITABLE__DESCENDANTS = True
+    _DICTABLE_WRITABLE_DESCENDANTS = True
 
     def __init__(self, features: TokenFeatures, feature_ids: Set[str]):
         """Initialize.
