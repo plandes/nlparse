@@ -4,7 +4,7 @@ SpaCy artifacts.
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Any, Union, Iterable
+from typing import Dict, Any, Union, Iterable, Tuple
 import logging
 import sys
 from functools import reduce
@@ -267,6 +267,14 @@ class SpacyTokenFeatures(NormalizedTokenFeatures):
 
         """
         return self.token.idx
+
+    @property
+    def loc(self) -> Tuple[int, int]:
+        """The location in the document as an (starting, ending) range.  This uses
+        :obj:`idx`.
+
+        """
+        return (self.idx, self.idx + len(self.norm))
 
     @property
     def i_sent(self) -> int:
