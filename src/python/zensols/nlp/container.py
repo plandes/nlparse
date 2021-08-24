@@ -457,6 +457,11 @@ class FeatureDocument(TokensContainer):
         for s in it.islice(self.sents, n_sents):
             s.write(depth + 2, writer, n_tokens=n_tokens)
 
+    def _from_dictable(self, recurse: bool, readable: bool,
+                       class_name_param: str = None) -> Dict[str, Any]:
+        return {'text': self.text,
+                'sentences': self._from_object(self.sents, recurse, readable)}
+
     def __getitem__(self, key):
         return self.sents[key]
 
