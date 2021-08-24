@@ -16,10 +16,10 @@ class FeatureDataFrameFactory(object):
     """Creates a Pandas dataframe of features from a document annotations.
 
     """
-    feature_ids: Set[str] = field(default=TokenFeatures.FIELD_IDS)
+    token_feature_ids: Set[str] = field(default=TokenFeatures.FIELD_IDS)
 
     def __call__(self, doc: FeatureDocument) -> pd.DataFrame:
-        fids = self.feature_ids
+        fids = self.token_feature_ids
         cols: List[str] = list(filter(lambda n: n in fids,
                                       TokenFeatures.WRITABLE_FIELD_IDS))
         cols.extend(sorted(fids - set(cols)))
