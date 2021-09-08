@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- Creates a Pandas dataframe from token feature attributes.
+- Add back `FeatureToken` feature ID -> type for write dumping
+- Add lexical location `SpacyTokenFeatures.loc` location in the document as an
+  (starting, ending) range.
+
+### Changed
+- Fixed bug with creating a `dict` from a `FeatureToken`.
+- Fixed/improved how `Feature{Token,Sentence,Document}` are `dict`ified with
+  (`asdict`) and how they are written as text with `write`.
+
+
 ## [0.0.16] - 2021-08-16
 This release simplifies the token attributes level classes in the `features`
 module by:
