@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-## [0.0.17] - 2021-09-07
+## [0.1.1] - 2021-09-07
 ### Added
 - Creates a Pandas dataframe from token feature attributes.
 - Add back `FeatureToken` feature ID -> type for write dumping
@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   (`asdict`) and how they are written as text with `write`.
 
 
-## [0.0.16] - 2021-08-16
+## [0.1.0] - 2021-08-16
 This release simplifies the token attributes level classes in the `features`
 module by:
   * Using feature IDs instead of trying to make sense of the class
@@ -177,9 +177,9 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.0.17...HEAD
-[0.0.17]: https://github.com/plandes/nlparse/compare/v0.0.16...v0.0.17
-[0.0.16]: https://github.com/plandes/nlparse/compare/v0.0.15...v0.0.16
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/plandes/nlparse/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/plandes/nlparse/compare/v0.0.15...v0.1.0
 [0.0.15]: https://github.com/plandes/nlparse/compare/v0.0.14...v0.0.15
 [0.0.14]: https://github.com/plandes/nlparse/compare/v0.0.13...v0.0.14
 [0.0.13]: https://github.com/plandes/nlparse/compare/v0.0.13...v0.0.13
