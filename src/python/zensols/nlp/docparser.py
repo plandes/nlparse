@@ -100,4 +100,5 @@ class FeatureDocumentParser(object):
             return self.doc_class(sents, spacy_doc, *args, **kwargs)
         except Exception as e:
             raise ParseError(
-                f'Could not parse <{text}> for {self.doc_class}') from e
+                f'Could not parse <{text}> for {self.doc_class} ' +
+                f'with args {args}') from e
