@@ -16,7 +16,9 @@ from spacy.tokens.doc import Doc
 from spacy.language import Language
 from spacy.lang.en import English
 from zensols.config import Configurable, Dictable
-from zensols.persist import DelegateStash, persisted, PersistedWork
+from zensols.persist import (
+    DelegateStash, persisted, PersistedWork, PersistableContainer
+)
 from . import ParseError, TokenFeatures, SpacyTokenFeatures, TokenNormalizer
 
 logger = logging.getLogger(__name__)
@@ -132,7 +134,7 @@ class Component(object):
 
 
 @dataclass
-class LanguageResource(object):
+class LanguageResource(PersistableContainer):
     """This langauge resource parses text in to Spacy documents.
 
     Configuration example::
@@ -183,6 +185,7 @@ class LanguageResource(object):
     """The class to use for instances created by :meth:`features`."""
 
     def __post_init__(self):
+        super().__init__()
         self._model = PersistedWork('_model', self)
 
     def _create_model_key(self) -> str:
