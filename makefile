@@ -2,7 +2,7 @@
 
 # type of project
 PROJ_TYPE =		python
-PROJ_MODULES =		git python-doc python-doc-deploy
+PROJ_MODULES =		git python-resources python-doc python-doc-deploy
 PY_DEP_POST_DEPS +=	modeldeps
 SPACY_MODELS +=		sm md lg
 PIP_ARGS +=		--use-deprecated=legacy-resolver
