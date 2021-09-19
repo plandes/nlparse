@@ -99,6 +99,13 @@ class Component(object):
     :meth:`.Language.add_pipe` call to the spaCy model.
 
     """
+
+    pipe_add_kwargs: Dict[str, Any] = field(default=dict)
+    """Arguments to add along with the call to
+    :meth:`~spacy.language.Language.add_pipe`.
+
+    """
+
     modules: Sequence[str] = field(default=())
     """The module to import before adding component pipelines.  This will register
     components mentioned in :obj:`components` when the resepctive module is
@@ -128,9 +135,10 @@ class Component(object):
         for mod in self.modules:
             __import__(mod)
         if self.pipe_config is None:
-            model.add_pipe(self.pipe_name)
+            model.add_pipe(self.pipe_name, **self.pipe_add_kwargs)
         else:
-            model.add_pipe(self.pipe_name, config=self.pipe_config)
+            model.add_pipe(self.pipe_name, config=self.pipe_config,
+                           **self.pipe_add_kwargs)
 
 
 @dataclass
