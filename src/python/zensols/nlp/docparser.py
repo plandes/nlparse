@@ -102,3 +102,6 @@ class FeatureDocumentParser(object):
             raise ParseError(
                 f'Could not parse <{text}> for {self.doc_class} ' +
                 f'with args {args}') from e
+
+    def __call__(self, text: str, *args, **kwargs) -> FeatureDocument:
+        return self.parse(text, *args, **kwargs)
