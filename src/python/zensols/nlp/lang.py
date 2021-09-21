@@ -260,6 +260,8 @@ class LanguageResource(PersistableContainer):
             doc = self.model(text)
         else:
             doc = self.model(text, disable=self.disable_component_names)
+        if logger.isEnabledFor(logging.INFO):
+            logger.info(f'parsed document: <{text}> -> {doc}')
         return doc
 
     def parse_tokens(self, tokens: List[str]) -> Doc:
@@ -279,7 +281,13 @@ class LanguageResource(PersistableContainer):
 
         """
         tp: Type[TokenFeatures] = self.feature_type
-        return map(lambda t: tp(doc, *t), self.token_normalizer.normalize(doc))
+        if logger.isEnabledFor(logging.INFO):
+            logger.info(f'parsing features in {doc}')
+        norm_doc = tuple(
+            map(lambda t: tp(doc, *t), self.token_normalizer.normalize(doc)))
+        if logger.isEnabledFor(logging.INFO):
+            logger.info(f'normalized document: <{doc}> -> {norm_doc} ({tp})')
+        return norm_doc
 
     def normalized_tokens(self, doc: Doc, tn: TokenNormalizer = None) -> \
             Iterable[str]:

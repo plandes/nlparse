@@ -26,8 +26,15 @@ class TextContainer(Dictable, metaclass=ABCMeta):
 
     """
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
-        self._write_line(f'{self.__class__.__name__}: <{self.text}>',
-                         depth, writer)
+        self._write_line(f'{self.__class__.__name__}:', depth, writer)
+        self._write_line(f'original: {self.text}', depth + 1, writer)
+        self._write_line(f'normalized: {self.norm}', depth + 1, writer)
+
+    def __str__(self):
+        return f'<{self.norm[:79]}>'
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class FeatureToken(TextContainer):
@@ -89,8 +96,8 @@ class FeatureToken(TextContainer):
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         super().write(depth, writer)
-        self._write_line('attributes:', depth, writer)
-        self.write_attributes(depth + 1, writer)
+        self._write_line('attributes:', depth + 1, writer)
+        self.write_attributes(depth + 2, writer)
 
     def to_vector(self, feature_ids: List[str]) -> Iterable[str]:
         """Return an iterable of feature data.
@@ -124,12 +131,6 @@ class FeatureToken(TextContainer):
                 attrs.append(f'{s}: {v}')
         return ', '.join(attrs)
 
-    def __str__(self) -> str:
-        return self.text
-
-    def __repr__(self):
-        return self.__str__()
-
 
 class TokensContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     """Each instance has the following attributes:
@@ -151,6 +152,12 @@ class TokensContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
         """
         return map(lambda t: t.norm, self.token_iter(*args))
+
+    @property
+    @persisted('_norm', transient=True)
+    def norm(self) -> str:
+        """The normalized version of the sentence."""
+        return ' '.join(self.norm_token_iter())
 
     @property
     @persisted('_tokens', transient=True)
@@ -201,9 +208,9 @@ class TokensContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
               n_tokens: int = sys.maxsize):
         super().write(depth, writer)
         if n_tokens > 0:
-            self._write_line('tokens:', depth, writer)
+            self._write_line('tokens:', depth + 1, writer)
             for t in it.islice(self.token_iter(), n_tokens):
-                t.write(depth + 1, writer)
+                t.write(depth + 2, writer)
 
 
 @dataclass
@@ -282,12 +289,6 @@ class FeatureSentence(TokensContainer):
 
     def __iter__(self):
         return self.token_iter()
-
-    def __str__(self):
-        return f'<{self.text[:79]}>'
-
-    def __repr__(self):
-        return self.__str__()
 
 
 @dataclass
@@ -451,7 +452,14 @@ class FeatureDocument(TokensContainer):
         return self.get_text()
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
-              n_tokens: int = 0, n_sents: int = sys.maxsize):
+              n_sents: int = sys.maxsize, n_tokens: int = 0):
+        """Write the document and optionally sentence features.
+
+        :param n_sents the number of sentences to write
+
+        :param n_tokens: the number of tokens to print across all sentences
+
+        """
         TextContainer.write(self, depth, writer)
         self._write_line('sentences:', depth + 1, writer)
         for s in it.islice(self.sents, n_sents):
@@ -470,12 +478,6 @@ class FeatureDocument(TokensContainer):
 
     def __iter__(self):
         return self.sent_iter()
-
-    def __str__(self):
-        return f'<{self.text[:79]}>'
-
-    def __repr__(self):
-        return self.__str__()
 
 
 # annotations
