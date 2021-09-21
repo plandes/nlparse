@@ -30,6 +30,44 @@ Other features include:
 * [List Token Normalizers and Mappers]
 
 
+## Usage
+
+An example that provides ways to configure the parser is given
+[here](example/config).  See the `makefile` or `./run.py -h` for command line
+usage.
+
+A very [simple](example/simple.py) example is given below:
+```python
+from io import StringIO
+from zensols.config import ImportIniConfig, ImportConfigFactory
+from zensols.nlp import FeatureDocument
+
+
+CONFIG = """
+[import]
+references = default
+sections = imp_conf
+
+# import the ``zensols.nlp`` library
+[imp_conf]
+type = importini
+config_files = list: resource(zensols.nlp): resources/obj.conf
+
+# override the parse to keep only the norm, ent
+[doc_parser]
+token_feature_ids = eval: set('ent_ tag_'.split())
+"""
+
+if __name__ == '__main__':
+    fac = ImportConfigFactory(ImportIniConfig(StringIO(CONFIG)))
+    doc_parser = fac('doc_parser')
+    sent = 'He was George Washington and first president of the United States.'
+    doc: FeatureDocument = doc_parser(sent)
+    for tok in doc.tokens:
+        tok.write()
+```
+
+
 ## Obtaining / Installing
 
 1. The easist way to install the command line program is via the `pip`
