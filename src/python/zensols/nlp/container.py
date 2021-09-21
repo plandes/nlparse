@@ -61,6 +61,8 @@ class FeatureToken(TextContainer):
 
         """
         self.__dict__.update(features.get_features(feature_ids))
+        # the normalized version is needed for __str__ and writing
+        self.norm = features.norm
         # features used for sentence decomposition in FeatureDocument
         self.i = features.i
         self.i_sent = features.i_sent
