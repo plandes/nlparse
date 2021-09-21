@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.1.3] - 2021-09-21
+
+### Changed
+- Dependency.
+
+
 ## [0.1.2] - 2021-09-21
 ### Changed
 - Make `FeatureDocumentParser` callable.
@@ -187,7 +193,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/plandes/nlparse/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/plandes/nlparse/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/plandes/nlparse/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/plandes/nlparse/compare/v0.0.15...v0.1.0
