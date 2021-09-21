@@ -6,10 +6,12 @@ PROJ_MODULES =		git python-resources python-doc python-doc-deploy
 PY_DEP_POST_DEPS +=	modeldeps
 SPACY_MODELS +=		sm md lg
 PIP_ARGS +=		--use-deprecated=legacy-resolver
+CLEAN_DEPS +=		cleanexample
 
 #PY_SRC_TEST_PAT ?=	'test_doc_c*.py'
 
 include ./zenbuild/main.mk
+
 
 # https://spacy.io/models/en
 .PHONY:			allmodels
@@ -26,3 +28,9 @@ modeldeps:
 .PHONY:			uninstalldeps
 uninstalldeps:
 			$(PYTHON_BIN) -m pip freeze | grep spacy | sed 's/\([^= ]*\).*/\1/' | xargs pip uninstall -y
+
+.PHONY:			cleanexample
+cleanexample:
+			find example -type d -name __pycache__ \
+			  -prune -exec rm -r {} \;
+
