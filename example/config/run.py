@@ -24,7 +24,6 @@ expect = False
 #default = path: default.conf
 
 [import]
-references = default
 sections = imp_conf
 
 # import the ``zensols.nlp`` library

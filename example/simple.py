@@ -6,7 +6,6 @@ from zensols.nlp import FeatureDocument
 
 CONFIG = """
 [import]
-references = default
 sections = imp_conf
 
 # import the ``zensols.nlp`` library
