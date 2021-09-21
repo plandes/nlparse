@@ -40,9 +40,9 @@ class_name = app.Application
 doc_parser = instance: doc_parser
 """
 
+sent = 'Barak Obama was the 44th president of the United States.'
 CliHarness(
     app_config_resource=StringIO(CONFIG),
-    proto_args=['-c', 'terse.conf',
-                'Barak Obama was the 44th president of the United States.'],
+    proto_args=['-c', 'terse.conf', sent],
     proto_factory_kwargs={'reload_pattern': '^app'},
 ).run()

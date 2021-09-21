@@ -50,17 +50,19 @@ class Application(object):
         else:
             df.to_csv(output_file, index=False)
 
-    def parse(self, sentence: str):
+    def parse(self, sentence: str, token_length: int = -1):
         """Parse a sentence.
 
         :param sentence: the sentene to parse
+
 
         """
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'parsing: {sentence}')
         doc: FeatureDocument = self.doc_parser(sentence)
         print(doc)
-        doc.write(n_tokens=sys.maxsize)
+        token_length = sys.maxsize if token_length == -1 else token_length
+        doc.write(n_tokens=token_length)
 
     def json(self, sentence: str):
         """Parse a sentence and output JSON.
