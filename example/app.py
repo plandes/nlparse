@@ -6,7 +6,10 @@ __author__ = 'Paul Landes'
 
 from dataclasses import dataclass
 import sys
-from zensols.nlp import FeatureDocument, FeatureDocumentParser
+from spacy.tokens.doc import Doc
+from zensols.nlp import (
+    FeatureDocument, FeatureDocumentParser, LanguageResource
+)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -62,28 +65,18 @@ class Application(object):
         :param sentence: the sentene to parse
 
         """
-        doc = self.doc_parser.langres.parse(sentence)
-        print(f'document ({type(doc)}:')
+        langres: LanguageResource = self.doc_parser.langres
+        doc: Doc = langres.parse(sentence)
         print(doc)
         print('-' * 10, 'token POS, stop words:')
         for tok in doc:
             print(tok, tok.tag_, tok.is_stop)
         print('-' * 10, 'token features:')
-        feats = self.langres.features(doc)
+        feats = langres.features(doc)
         print(tuple(feats))
         for feat in feats:
             print(f'{feat} {type(feat)}')
             feat.write(depth=1, field_ids=(*feat.WRITABLE_FIELD_IDS, 'sent_i'))
             print('-' * 5)
-            # if print_dict:
-            #     print(feat.asdict())
-            #     print('-' * 5)
-        print(', '.join(self.langres.normalized_tokens(doc)))
+        print(', '.join(langres.normalized_tokens(doc)))
         print('-' * 10)
-
-        doc = self.lc_langres.parse(sentence)
-        print(', '.join(self.lc_langres.normalized_tokens(doc)))
-        print('-' * 10)
-
-        doc = self.doc_parser.parse(sentence)
-        doc.write()
