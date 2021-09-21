@@ -65,6 +65,9 @@ if __name__ == '__main__':
     for tok in doc.tokens:
         tok.write()
 ```
+This uses a [resource
+library](https://plandes.github.io/util/doc/config.html#resource-libraries) to
+source in the configuration from this package so minimal configuration is necessary.
 
 
 ## Obtaining / Installing
