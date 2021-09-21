@@ -97,7 +97,9 @@ class FeatureToken(TextContainer):
             self._write_line(f'{k}={val}{ptype}', depth, writer)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
-        super().write(depth, writer)
+        self._write_line(f'{self.__class__.__name__}: ' +
+                         f'org=<{self.text}>, norm=<{self.norm}>',
+                         depth, writer)
         self._write_line('attributes:', depth + 1, writer)
         self.write_attributes(depth + 2, writer)
 

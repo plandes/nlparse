@@ -12,7 +12,7 @@ run:
 		@echo "---------- terse.conf (filter punctuation, stop words)"
 		$(PROG) parse $(SENT) -c terse.conf
 		@echo "---------- terse.conf (filter punctuation, stop words)"
-		$(PROG) dataframe $(SENT) -c terse.conf
+		$(PROG) csv $(SENT) -c terse.conf
 
 .PHONY:		help
 help:
