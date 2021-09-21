@@ -42,7 +42,6 @@ from io import StringIO
 from zensols.config import ImportIniConfig, ImportConfigFactory
 from zensols.nlp import FeatureDocument
 
-
 CONFIG = """
 [import]
 references = default
