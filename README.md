@@ -6,13 +6,18 @@
 [![Python 3.9][python39-badge]][python39-link]
 [![Build Status][build-badge]][build-link]
 
-This framework wraps the [spaCy] framework and creates features.  The
+This framework wraps the [spaCy] framework and creates light weight features in
+a class [hierarchy] that reflects the structure of natural language.  The
 motivation is to generate features from the parsed text in an object oriented
-fashion that is fast and easy to pickle.  Other features include:
-* [Token normalization](doc/parse.md) as a stream of strings by lemmatization,
-  stop word and/or punctuation filters, up/down casing, porter stemming and
-  [others](doc/normalizers.md).
-* [Detached features](doc/parse.md) that are safe and easy to pickle to disk.
+fashion that is fast and easy to pickle.
+
+* See the [full documentation].
+* Paper on [arXiv](http://arxiv.org/abs/2109.03383).
+
+Other features include:
+* [Parse and normalize] a stream of tokens as stop words, punctuation
+  filters, up/down casing, porter stemming and [others].
+* [Detached features] that are safe and easy to pickle to disk.
 * Configuration drive parsing and token normalization using [configuration
   factories].
 * Pretty print functionality for easy natural language feature selection.
@@ -20,9 +25,9 @@ fashion that is fast and easy to pickle.  Other features include:
 
 ## Documentation
 
-* [Framework documentation](https://plandes.github.io/nlparse/)
-* [Natural Language Parsing](doc/parse.md)
-* [List Token Normalizers and Mappers](doc/normalizers.md)
+* [Framework documentation]
+* [Natural Language Parsing]
+* [List Token Normalizers and Mappers]
 
 
 ## Obtaining / Installing
@@ -40,6 +45,22 @@ This project, or example code, uses:
 * [spaCy] for natural language parsing
 * [msgpack] and [smart-open] for Python disk serialization
 * [nltk] for the [porter stemmer] functionality
+
+
+## Citation
+
+If you use this framework in your research you must it cite with:
+```
+@article{Landes_DiEugenio_Caragea_2021,
+  title={DeepZensols: Deep Natural Language Processing Framework},
+  url={http://arxiv.org/abs/2109.03383},
+  note={arXiv: 2109.03383},
+  journal={arXiv:2109.03383 [cs]},
+  author={Landes, Paul and Di Eugenio, Barbara and Caragea, Cornelia},
+  year={2021},
+  month={Sep}
+}
+```
 
 
 ## Changelog
@@ -66,6 +87,15 @@ Copyright (c) 2020 - 2021 Paul Landes
 [python39-link]: https://www.python.org/downloads/release/python-390
 [build-badge]: https://github.com/plandes/nlparse/workflows/CI/badge.svg
 [build-link]: https://github.com/plandes/nlparse/actions
+
+[hierarchy]: https://plandes.github.io/nlparse/api/zensols.nlp.html#zensols.nlp.container.FeatureDocument
+[Parse and normalize]: https://plandes.github.io/nlparse/doc/parse.html
+[others]: https://plandes.github.io/nlparse/doc/normalizers.html
+[Detached features]: https://plandes.github.io/nlparse/doc/parse.html#detached-features
+[Framework documentation]: https://plandes.github.io/nlparse/
+[Natural Language Parsing]: https://plandes.github.io/nlparse/doc/parse.html
+[List Token Normalizers and Mappers]: https://plandes.github.io/nlparse/doc/normalizers.html
+
 
 [spaCy]: https://spacy.io
 [nltk]: https://www.nltk.org
