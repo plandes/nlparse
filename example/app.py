@@ -6,6 +6,7 @@ __author__ = 'Paul Landes'
 
 from dataclasses import dataclass
 import sys
+from pathlib import Path
 from spacy.tokens.doc import Doc
 from zensols.nlp import (
     FeatureDocument, FeatureDocumentParser, LanguageResource
@@ -20,22 +21,34 @@ class Application(object):
     """Parses natural language text.
 
     """
-    CONFIG_CLI = {'option_includes': {}}
+    CLI_META = {'option_excludes': {'doc_parser'},
+                'option_overrides': {'output_file': {'long_name': 'out'}}}
 
     doc_parser: FeatureDocumentParser
 
-    def dataframe(self, sent: str):
+    def csv(self, sentence: str, output_file: Path = None):
+        """Create and print a Pandas (if installed) dataframe of feature.
+
+        :param sentence: the sentene to parse
+
+        :output_file: the CSV file to create, otherwise print to standard out
+
+        """
         import pandas as pd
         from zensols.nlp.dataframe import FeatureDataFrameFactory
+
         fac = FeatureDataFrameFactory()
-        doc = self.doc_parser.parse(sent)
+        doc = self.doc_parser.parse(sentence)
         df: pd.DataFrame = fac(doc)
-        try:
-            from tabulate import tabulate
-            print(tabulate(df))
-        except Exception as e:
-            logger.error(f'tabulate not installed: {e}--using CSV')
-            df.to_csv(sys.stdout, index=False)
+        if output_file is None:
+            try:
+                from tabulate import tabulate
+                print(tabulate(df))
+            except Exception as e:
+                logger.error(f'tabulate not installed: {e}--using CSV')
+                df.to_csv(sys.stdout, index=False)
+        else:
+            df.to_csv(output_file, index=False)
 
     def parse(self, sentence: str):
         """Parse a sentence.
