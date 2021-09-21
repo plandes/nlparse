@@ -8,17 +8,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.1.2] - 2021-09-21
+### Changed
+- Make `FeatureDocumentParser` callable.
+- Fix memory leak in `LanguageResource`.
+
+### Added
+- Configuration Resource library.
+- Configuration for keyword arguments to the `add_pipe_comp` and example.
+
+
 ## [0.1.1] - 2021-09-07
+### Changed
+- Fixed bug with creating a `dict` from a `FeatureToken`.
+- Fixed/improved how `Feature{Token,Sentence,Document}` are `dict`ified with
+  (`asdict`) and how they are written as text with `write`.
+
 ### Added
 - Creates a Pandas dataframe from token feature attributes.
 - Add back `FeatureToken` feature ID -> type for write dumping
 - Add lexical location `SpacyTokenFeatures.loc` location in the document as an
   (starting, ending) range.
-
-### Changed
-- Fixed bug with creating a `dict` from a `FeatureToken`.
-- Fixed/improved how `Feature{Token,Sentence,Document}` are `dict`ified with
-  (`asdict`) and how they are written as text with `write`.
 
 
 ## [0.1.0] - 2021-08-16
@@ -177,7 +187,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/plandes/nlparse/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/plandes/nlparse/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/plandes/nlparse/compare/v0.0.15...v0.1.0
 [0.0.15]: https://github.com/plandes/nlparse/compare/v0.0.14...v0.0.15
