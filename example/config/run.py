@@ -41,7 +41,6 @@ class_name = app.Application
 doc_parser = instance: doc_parser
 """
 
-
 CliHarness(
     app_config_resource=StringIO(CONFIG),
     proto_args=['-c', 'terse.conf',
