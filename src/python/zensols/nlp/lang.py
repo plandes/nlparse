@@ -11,15 +11,15 @@ import itertools as it
 from io import TextIOBase
 import spacy
 from spacy.symbols import ORTH
+from spacy.tokenizer import Tokenizer
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
 from spacy.language import Language
-from spacy.lang.en import English
 from zensols.config import Configurable, Dictable
 from zensols.persist import (
     DelegateStash, persisted, PersistedWork, PersistableContainer
 )
-from . import ParseError, TokenFeatures, SpacyTokenFeatures, TokenNormalizer
+from . import TokenFeatures, SpacyTokenFeatures, TokenNormalizer
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ class Component(object):
 
     """
 
-    pipe_add_kwargs: Dict[str, Any] = field(default=dict)
+    pipe_add_kwargs: Dict[str, Any] = field(default_factory=dict)
     """Arguments to add along with the call to
     :meth:`~spacy.language.Language.add_pipe`.
 
@@ -134,6 +134,9 @@ class Component(object):
         """
         for mod in self.modules:
             __import__(mod)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'creating pipe {self.pipe_name} with args: ' +
+                         f'{self.pipe_add_kwargs}')
         if self.pipe_config is None:
             model.add_pipe(self.pipe_name, **self.pipe_add_kwargs)
         else:
@@ -297,15 +300,12 @@ class LanguageResource(PersistableContainer):
         tn = self.token_normalizer if tn is None else tn
         return map(lambda t: t[1], tn.normalize(doc))
 
-    def tokenizer(self, text: str):
-        """Create a simple Spacy tokenizer.  Currently only English is supported.
+    def tokenizer(self) -> Tokenizer:
+        """Create and return a simple Spacy tokenizer.  Currently only English is
+        supported.
 
         """
-        if self.lang == 'en':
-            tokenizer = English().Defaults.create_tokenizer(self.model)
-        else:
-            raise ParseError(f'no such language: {self.lang}')
-        return tokenizer(text)
+        return Tokenizer(self.model.vocab)
 
     def __str__(self):
         return f'model_name: {self.model_name}, lang: {self.lang}'
