@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Dependency.
 
+### Removed
+- `zensols.nlp.lang.DocStash`
+
 
 ## [0.1.2] - 2021-09-21
 ### Changed

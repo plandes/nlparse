@@ -13,12 +13,19 @@ from zensols.nlp import TokenFeatures, FeatureDocument
 
 @dataclass
 class FeatureDataFrameFactory(object):
-    """Creates a Pandas dataframe of features from a document annotations.
+    """Creates a Pandas dataframe of features from a document annotations.  Each
+    feature ID is given a column in the output :class:`pandas.DataFrame`.
 
     """
     token_feature_ids: Set[str] = field(default=TokenFeatures.FIELD_IDS)
+    """The feature IDs to add to the :class:`pandas.DataFrame`."""
+
     priority_feature_ids: Tuple[str] = field(
         default=TokenFeatures.WRITABLE_FIELD_IDS)
+    """Feature IDs that are used first in the column order in the output
+    :class:`pandas.DataFrame`.
+
+    """
 
     def __call__(self, doc: FeatureDocument) -> pd.DataFrame:
         fids = self.token_feature_ids

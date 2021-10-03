@@ -16,9 +16,7 @@ from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
 from spacy.language import Language
 from zensols.config import Configurable, Dictable
-from zensols.persist import (
-    DelegateStash, persisted, PersistedWork, PersistableContainer
-)
+from zensols.persist import persisted, PersistedWork, PersistableContainer
 from . import TokenFeatures, SpacyTokenFeatures, TokenNormalizer
 
 logger = logging.getLogger(__name__)
@@ -312,27 +310,3 @@ class LanguageResource(PersistableContainer):
 
     def __repr__(self):
         return self.__str__()
-
-
-@dataclass
-class DocStash(DelegateStash):
-    """A stash that transforms loaded items in to a SpaCy document.
-
-    All items returned from the delegate must have a ``text`` attribute or
-    override ``item_to_text``.
-
-    """
-    langres: LanguageResource = field()
-    """Used to parse and create the SpaCy documents."""
-
-    def item_to_text(self, item: object) -> str:
-        """Return the text of the item that is loaded with ``load``.  This default
-        method uses the ``text`` attribute from ``item``.
-
-        """
-        return item.text
-
-    def load(self, name: str):
-        item = super().load(name)
-        text = self.item_to_text(item)
-        return self.langres.parse(text)
