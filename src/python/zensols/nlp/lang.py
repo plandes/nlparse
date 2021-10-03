@@ -15,7 +15,7 @@ from spacy.tokenizer import Tokenizer
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
 from spacy.language import Language
-from zensols.config import Configurable, Dictable
+from zensols.config import Configurable, ConfigFactory, Dictable
 from zensols.persist import persisted, PersistedWork, PersistableContainer
 from . import TokenFeatures, SpacyTokenFeatures, TokenNormalizer
 
@@ -163,6 +163,9 @@ class LanguageResource(PersistableContainer):
 
     """
 
+    config_factory: ConfigFactory = field()
+    """The configuration factory used to create this instance."""
+
     config: Configurable = field()
     """The application configuration used to create the Spacy model."""
 
@@ -207,6 +210,7 @@ class LanguageResource(PersistableContainer):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'loading model: {self.model_name}')
         nlp = spacy.load(self.model_name)
+        nlp.langres = self
         if self.components is not None:
             comp: Component
             for comp in self.components:
