@@ -60,15 +60,6 @@ class TokenFeatures(Dictable):
     NONE = '<none>'
     """Default string for *not a feature*, or missing features."""
 
-    def asdict(self, recurse: bool = True, readable: bool = True,
-               class_name_param: str = None) -> Dict[str, Any]:
-        """Return the token attributes as a dictionary representation.
-
-        :see: :meth:`get_features`
-
-        """
-        return self.get_features(skip_missing=True)
-
     def get_features(self, field_ids: Iterable[str] = None,
                      skip_missing: bool = False) -> Dict[str, Any]:
         """Get both as a `:class:`dict`.
@@ -81,6 +72,15 @@ class TokenFeatures(Dictable):
         if skip_missing:
             field_ids = filter(lambda fid: hasattr(self, fid), field_ids)
         return {k: getattr(self, k) for k in field_ids}
+
+    def asdict(self, recurse: bool = True, readable: bool = True,
+               class_name_param: str = None) -> Dict[str, Any]:
+        """Return the token attributes as a dictionary representation.
+
+        :see: :meth:`get_features`
+
+        """
+        return self.get_features(skip_missing=True)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               field_ids: Iterable[str] = None):
