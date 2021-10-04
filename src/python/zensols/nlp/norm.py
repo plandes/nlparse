@@ -11,15 +11,9 @@ import re
 import itertools as it
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
-from zensols.util import APIError
 from zensols.config import Configurable, ImportConfigFactory
 
 logger = logging.getLogger(__name__)
-
-
-class ParseError(APIError):
-    """Raised for any parsing errors for this API."""
-    pass
 
 
 @dataclass
@@ -129,12 +123,13 @@ class SplitTokenMapper(TokenMapper):
 
     Configuration example::
 
-        [lemma_token_mapper]
+        [split_token_mapper]
         class_name = zensols.nlp.SplitTokenMapper
-        regex = r'[ \\t]'
+        regex = r'[ ]'
 
     """
-    regex: str = field(default='')
+    regex: str = field(default=r'[ ]')
+    """The regular expression to use for splitting tokens, which is a space."""
 
     def __post_init__(self):
         self.regex = re.compile(eval(self.regex))
