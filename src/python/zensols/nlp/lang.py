@@ -144,7 +144,9 @@ class Component(object):
 
 @dataclass
 class LanguageResource(PersistableContainer):
-    """This langauge resource parses text in to Spacy documents.
+    """This langauge resource parses text in to Spacy documents.  Loaded spaCy
+  models have attribute ``langres`` set enable creation of factory instances
+  from registered pipe components (i.e. specified by :class:`.Component`).
 
     Configuration example::
 

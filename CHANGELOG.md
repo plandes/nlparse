@@ -8,8 +8,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-## [0.1.3] - 2021-09-21
+### Added
+- A `FeatureDocumentCombiner` that merges features from different document
+  parsers.
+- Top level library `NLPError`.
 
+### Changed
+- Split out optional resource library content in to `mappers.conf`.
+- The spaCy model has attribute `langres` set on `LanguageResource` to enable
+  creation of factory instances from registered pipe components.
+- Fix issue with component creation with no pipeline arguments.
+
+### Removed
+- The `DocStash` instance as it was too simple for any practical application.
+
+
+## [0.1.3] - 2021-09-21
 ### Changed
 - Dependency.
 
