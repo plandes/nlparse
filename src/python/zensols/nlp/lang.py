@@ -201,15 +201,22 @@ class LanguageResource(PersistableContainer):
         self._model = PersistedWork('_model', self)
 
     def _create_model_key(self) -> str:
+        """Create a unique key used for storing expensive-to-create spaCy language
+        models in :obj:`_MODELS`.
+
+        """
         comps = sorted(map(lambda c: f'{c.pipe_name}:{hash(c)}',
                            self.components))
         comp_str = '-' + '|'.join(comps)
         return f'{self.model_name}{comp_str}'
 
     def _create_model(self) -> Language:
+        """Load, configure and return a new spaCy model instance."""
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'loading model: {self.model_name}')
         nlp = spacy.load(self.model_name)
+        # pipe components can create other application context instance via the
+        # :obj:`config_factory` with access to this instance
         nlp.langres = self
         if self.components is not None:
             comp: Component
