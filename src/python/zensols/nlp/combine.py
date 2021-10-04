@@ -17,12 +17,12 @@ logger = logging.getLogger(__name__)
 @dataclass
 class CombinerFeatureDocumentParser(FeatureDocumentParser):
     """A class that combines features from two :class:`.FeatureDocumentParser`
-    instances.  Features parsed using the :obj:`replica_parser` are optionally
+    instances.  Features parsed using each :obj:`replica_parser` are optionally
     copied or overwritten on a token by token basis in the feature document
     parsed by this instance.
 
     """
-    replica_parser: FeatureDocumentParser = field(default=None)
+    replica_parsers: List[FeatureDocumentParser] = field(default=None)
     """The language resource used to parse documents and create token attributes.
 
     """
@@ -92,10 +92,11 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         primary_doc = super().parse(text, *args, **kwargs)
-        if self.replica_parser is None:
-            logger.warning(f'No replica doc set on {self}, ' +
+        if self.replica_parsers is None or len(self.replica_parsers) == 0:
+            logger.warning(f'No replica parsers set on {self}, ' +
                            'which disables feature combining')
         else:
-            replica_doc = self.replica_parser.parse(text, *args, **kwargs)
-            self._merge_doc(primary_doc, replica_doc)
+            for replica_parser in self.replica_parsers:
+                replica_doc = replica_parser.parse(text, *args, **kwargs)
+                self._merge_doc(primary_doc, replica_doc)
         return primary_doc
