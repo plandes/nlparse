@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - A `FeatureDocumentCombiner` that merges features from different document
   parsers.
 - Top level library `NLPError`.
+- A pipeline component and resource configuration library entry to remove
+  sentence boundaries in a spaCy document.
 
 ### Changed
 - Split out optional resource library content in to `mappers.conf`.
