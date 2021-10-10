@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import sys
 from pathlib import Path
 from spacy.tokens.doc import Doc
+from zensols.config import Configurable
 from zensols.nlp import (
     FeatureDocument, FeatureDocumentParser, LanguageResource
 )
@@ -21,10 +22,15 @@ class Application(object):
     """Parses natural language text.
 
     """
-    CLI_META = {'option_excludes': {'doc_parser'},
+    CLI_META = {'option_excludes': {'config', 'doc_parser'},
                 'option_overrides': {'output_file': {'long_name': 'out'}}}
 
+    config: Configurable
     doc_parser: FeatureDocumentParser
+
+    def show_config(self):
+        """Print out the configuration."""
+        self.config.write()
 
     def csv(self, sentence: str, output_file: Path = None):
         """Create and print a Pandas (if installed) dataframe of feature.
@@ -60,7 +66,7 @@ class Application(object):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'parsing: {sentence}')
         doc: FeatureDocument = self.doc_parser(sentence)
-        print(doc)
+        #print(doc)
         token_length = sys.maxsize if token_length == -1 else token_length
         doc.write(n_tokens=token_length)
 

@@ -6,7 +6,10 @@ SENT=		'He was George Washington, the first president of the United States.'
 
 .PHONY:		run
 run:
-		@echo "---------- lemma.conf"
+		@echo "---------- no configuration give, use defaults"
+		$(PROG) parse $(SENT) | head -12
+		@echo "--<all tokens provided; trimmed for brevity>--"
+		@echo "---------- lemma.conf (lemmatize each token)"
 		$(PROG) parse $(SENT) -c lemma.conf | head -12
 		@echo "--<all tokens provided; trimmed for brevity>--"
 		@echo "---------- terse.conf (filter punctuation, stop words)"
