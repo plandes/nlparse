@@ -24,6 +24,9 @@ class FeatureDocumentParser(object):
     """
     TOKEN_FEATURE_IDS = FeatureToken.TOKEN_FEATURE_IDS
 
+    name: str = field()
+    """The name of the parser, which is used for errors and logging."""
+
     langres: LanguageResource = field()
     """The language resource used to parse documents and create token attributes.
 
@@ -101,7 +104,7 @@ class FeatureDocumentParser(object):
         except Exception as e:
             raise ParseError(
                 f'Could not parse <{text}> for {self.doc_class} ' +
-                f'with args {args}') from e
+                f"with args {args} for parser '{self.name}'") from e
 
     def __call__(self, text: str, *args, **kwargs) -> FeatureDocument:
         return self.parse(text, *args, **kwargs)
