@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 import logging
 from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
+from zensols.config import Dictable
 from . import (
     ParseError, LanguageResource, TokenFeatures,
     FeatureToken, FeatureSentence, FeatureDocument,
@@ -17,12 +18,13 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class FeatureDocumentParser(object):
+class FeatureDocumentParser(Dictable):
     """This class parses text in to instances of :class:`.FeatureDocument`
     instances.
 
     """
     TOKEN_FEATURE_IDS = FeatureToken.TOKEN_FEATURE_IDS
+    """The default value for :obj:`token_feature_ids`."""
 
     name: str = field()
     """The name of the parser, which is used for errors and logging."""
@@ -34,7 +36,11 @@ class FeatureDocumentParser(object):
 
     token_feature_ids: Set[str] = field(
         default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
-    """The features to keep from spaCy tokens."""
+    """The features to keep from spaCy tokens.
+
+    :see: :obj:`TOKEN_FEATURE_IDS`
+
+    """
 
     doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
     """The type of document instances to create."""
