@@ -51,7 +51,8 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
         return val
 
     def _merge_tokens(self, primary_tok: FeatureToken,
-                      replica_tok: FeatureToken):
+                      replica_tok: FeatureToken,
+                      context_sent: FeatureSentence):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging tokens: {replica_tok} -> {primary_tok}')
         for f in self.validate_features:
@@ -60,7 +61,8 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
             if prim != rep:
                 raise ParseError(
                     f'Mismatch tokens: {primary_tok.text}({f}={prim}) ' +
-                    f'!= {replica_tok.text}({f}={rep})')
+                    f'!= {replica_tok.text}({f}={rep}) ' +
+                    f'in sentence: {context_sent}')
         for f in self.yield_features:
             targ = self._get_tok_value(primary_tok, f)
             if targ is None:
@@ -82,7 +84,7 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
             logger.debug(f'merging sentences: {replica_sent.tokens} ' +
                          f'-> {primary_sent.tokens}')
         for primary_tok, replica_tok in zip(primary_sent, replica_sent):
-            self._merge_tokens(primary_tok, replica_tok)
+            self._merge_tokens(primary_tok, replica_tok, primary_sent)
 
     def _merge_doc(self, primary_doc: FeatureDocument, replica_doc):
         if logger.isEnabledFor(logging.DEBUG):
