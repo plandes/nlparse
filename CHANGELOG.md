@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.0.0] - 2021-10-22
+First major development release.
+
 ### Added
 - A `FeatureDocumentCombiner` that merges features from different document
   parsers.
@@ -212,7 +215,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/plandes/nlparse/compare/v0.1.3...v1.0.0
 [0.1.3]: https://github.com/plandes/nlparse/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/plandes/nlparse/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/plandes/nlparse/compare/v0.1.0...v0.1.1
