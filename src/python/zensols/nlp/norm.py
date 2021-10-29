@@ -3,8 +3,8 @@
 """
 __author__ = 'Paul Landes'
 
+from typing import List, Iterable, Tuple, Union
 from dataclasses import dataclass, field
-from typing import List, Iterable, Tuple
 from abc import abstractmethod, ABC
 import logging
 import re
@@ -128,11 +128,12 @@ class SplitTokenMapper(TokenMapper):
         regex = r'[ ]'
 
     """
-    regex: str = field(default=r'[ ]')
+    regex: Union[re.Pattern, str] = field(default=r'[ ]')
     """The regular expression to use for splitting tokens, which is a space."""
 
     def __post_init__(self):
-        self.regex = re.compile(eval(self.regex))
+        if not isinstance(self.regex, re.Pattern):
+            self.regex = re.compile(eval(self.regex))
 
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
