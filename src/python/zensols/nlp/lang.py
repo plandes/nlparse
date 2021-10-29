@@ -278,6 +278,10 @@ class LanguageResource(PersistableContainer):
             logger.info(f'parsed document: <{text}> -> {doc}')
         return doc
 
+    def __call__(self, text: str) -> Doc:
+        """Invoke :meth:`parse`."""
+        return self.parse(text)
+
     def parse_tokens(self, tokens: List[str]) -> Doc:
         """Just like ``parse`` but process a stream of (already) tokenized
         words/tokens.
