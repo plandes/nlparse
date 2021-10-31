@@ -160,7 +160,6 @@ class SplitEntityTokenMapper(TokenMapper):
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
         def map_tup(tup):
-            # print('T', tup)
             if isinstance(tup[0], Span):
                 span = tup[0]
                 for tix in range(span.end - span.start):
@@ -170,10 +169,6 @@ class SplitEntityTokenMapper(TokenMapper):
                         tok = span[tix]
                     for attr in cp_attribs:
                         setattr(tok, attr, getattr(span, attr))
-                    # t = span.doc[tok.start]
-                    # print(f'SPAN {span} -> {tok}({tok.start}/{t.idx})')
-                    # if hasattr(span._, 'cui_'):
-                    #     print('C', span._.cui_)
                     yield (tok, tok.orth_)
             else:
                 yield tup

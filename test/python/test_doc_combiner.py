@@ -1,6 +1,5 @@
 from util import TestBase
 from spacy.tokens.doc import Doc
-from spacy.tokens.span import Span
 from zensols.nlp import (
     LanguageResource, FeatureDocument, FeatureDocumentParser, ParseError
 )
@@ -16,7 +15,7 @@ class TestDocCombine(TestBase):
     def test_ent_splitter(self):
         doc_parser: FeatureDocumentParser = self.fac.instance(
             'doc_parser_split_ents')
-        lr = doc_parser.langres
+        lr: LanguageResource = doc_parser.langres
         doc: Doc = lr(self.sent_text2)
         toks = tuple(lr.normalized_tokens(doc))
         should_ents = \
@@ -37,7 +36,7 @@ class TestDocCombine(TestBase):
         self.assertEqual(should_ents, tents)
 
     def test_align(self):
-        doc_parser = self.fac.instance('doc_parser_combiner')
+        doc_parser: FeatureDocumentParser = self.fac.instance('doc_parser_combiner')
         doc: FeatureDocument = doc_parser(self.sent_text2)
         should = \
             ((0, 'I', '<none>'), (2, 'am', '<none>'), (5, 'a', '<none>'),
@@ -62,8 +61,8 @@ class TestDocCombine(TestBase):
         self.assertEqual(should, str(ents))
 
     def test_align_reverse(self):
-        doc_parser = self.fac.instance('doc_parser_combiner_reverse')
-        doc = doc_parser(self.sent_text2)
+        doc_parser: FeatureDocumentParser = self.fac.instance('doc_parser_combiner_reverse')
+        doc: FeatureDocument = doc_parser(self.sent_text2)
         should = \
             ((0, 'I', '<none>'), (2, 'am', '<none>'), (5, 'a', '<none>'),
              (7, 'citizen', '<none>'), (15, 'of', '<none>'),
@@ -80,14 +79,8 @@ class TestDocCombine(TestBase):
         self.assertEqual(should, toks)
 
     def test_align_reverse2(self):
-        doc_parser = self.fac.instance('doc_parser_combiner_reverse_2')
+        doc_parser: FeatureDocumentParser = self.fac.instance('doc_parser_combiner_reverse_2')
         # this doesn't work because one (primary multi-token span) to many
         # (replica splits entities) mapping isn't supported
         with self.assertRaisesRegex(ParseError, r'^Mismatch tokens: the United States of America\(norm=the United States of America\) != the\(norm=the\)'):
             doc_parser(self.sent_text2)
-
-    # def test_first(self):
-    #     print()
-    #     doc_parser = self.fac.instance('doc_parser_combiner')
-    #     doc = doc_parser('The United States is where I live.')
-    #     doc.sents[0].write()
