@@ -84,6 +84,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         self.i_sent = features.i_sent
 
     def clone(self) -> FeatureToken:
+        """Create and return a copy of this feature token instance."""
         return cp.copy(self)
 
     @property
@@ -246,6 +247,18 @@ class TokensContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                        filter(lambda t: not t.is_punctuation and not t.is_stop,
                               self.tokens)))
 
+    @property
+    @persisted('_entities', transient=True)
+    def entities(self) -> Tuple[Tuple[FeatureToken]]:
+        """The named entities of the container with each multi-word entity as elements.
+
+        """
+        return self._get_entities()
+
+    @abstractmethod
+    def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
+        pass
+
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               n_tokens: int = sys.maxsize):
         super().write(depth, writer)
@@ -281,6 +294,11 @@ class FeatureSentence(TokensContainer):
         super().__init__()
         if self.text is None:
             self.text = ' '.join(map(lambda t: t.text, self.sent_tokens))
+        self._ents = []
+        if self.spacy_sent is not None:
+            for ent in self.spacy_sent.ents:
+                toks = tuple(ent)
+                self._ents.append((toks[0].idx, toks[-1].idx))
 
     def token_iter(self, *args) -> Iterable[FeatureToken]:
         if len(args) == 0:
@@ -326,6 +344,17 @@ class FeatureSentence(TokensContainer):
             return {root[0]: self._branch(root[0], toks, tid_to_idx)}
         else:
             return {}
+
+    def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
+        ents = []
+        for start, end in self._ents:
+            ent = []
+            for tok in self.token_iter():
+                if tok.idx >= start and tok.idx <= end:
+                    ent.append(tok)
+            if len(ent) > 0:
+                ents.append(tuple(ent))
+        return tuple(ents)
 
     def _from_dictable(self, recurse: bool, readable: bool,
                        class_name_param: str = None) -> Dict[str, Any]:
@@ -501,6 +530,10 @@ class FeatureDocument(TokensContainer):
             return FeatureDocument(tuple(self._reconstruct_sents_iter()))
         else:
             return self
+
+    def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
+        return tuple(chain.from_iterable(
+            map(lambda s: s.entities, self.sents)))
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               n_sents: int = sys.maxsize, n_tokens: int = 0):

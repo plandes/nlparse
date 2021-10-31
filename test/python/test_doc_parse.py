@@ -139,3 +139,24 @@ the United States of America."""
         parser = self.fac('doc_parser_feat_no_exist')
         with self.assertRaises(AttributeError):
             fdoc = parser.parse(self.SENT_TEXT_SPACE)
+
+    def test_entity(self):
+        parser = self.fac('doc_parser_split_ents')
+        doc = parser.parse(self.sent_text2)
+        ents = doc.entities
+        self.assertEqual(len(ents), 2)
+        should = '((<the>, <United>, <States>, <of>, <America>), (<Paul>, <Landes>))'
+        self.assertEqual(should, str(ents))
+
+    def test_entity_pickled(self):
+        parser = self.fac('doc_parser_split_ents')
+        doc = parser.parse(self.sent_text2)
+        bio = BytesIO()
+        pickle.dump(doc, bio)
+        doc = None
+        bio.seek(0)
+        doc2 = pickle.load(bio)
+        ents = doc2.entities
+        self.assertEqual(len(ents), 2)
+        should = '((<the>, <United>, <States>, <of>, <America>), (<Paul>, <Landes>))'
+        self.assertEqual(should, str(ents))

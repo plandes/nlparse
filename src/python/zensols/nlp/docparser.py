@@ -65,8 +65,7 @@ class FeatureDocumentParser(Dictable):
     def _create_sent(self, spacy_sent: Span, stoks: Iterable[TokenFeatures],
                      text: str) -> FeatureSentence:
         sent = tuple(map(self._create_token, stoks))
-        sent = self.sent_class(sent, text)
-        sent.spacy_sent = spacy_sent
+        sent = self.sent_class(sent, text, spacy_sent)
         return sent
 
     def _from_string(self, text: str) -> Tuple[Doc, List[FeatureSentence]]:
