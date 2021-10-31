@@ -133,7 +133,8 @@ class SpacyTokenFeatures(NormalizedTokenFeatures):
     """An implementation that creates features from a SpaCy token.
 
     """
-    def __init__(self, doc: Doc, tok_or_ent: Union[Token, Span], norm: str):
+    def __init__(self, doc: Doc, tok_or_ent: Union[Token, Span],
+                 norm: str = None):
         """Initialize a features instance.
 
         :param doc: the spacy document that contains ``tok_or_ent``
@@ -143,7 +144,7 @@ class SpacyTokenFeatures(NormalizedTokenFeatures):
         :norm: the normalized text of the token (i.e. lemmatized version)
 
         """
-        super().__init__(norm)
+        super().__init__(tok_or_ent.orth_ if norm is None else norm)
         self.doc = doc
         self.tok_or_ent = tok_or_ent
         self.is_ent = not isinstance(tok_or_ent, Token)
