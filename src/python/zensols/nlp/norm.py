@@ -10,6 +10,7 @@ import logging
 import re
 import itertools as it
 from spacy.tokens.token import Token
+from spacy.tokens.span import Span
 from spacy.tokens.doc import Doc
 from zensols.config import Configurable, ImportConfigFactory
 
@@ -33,7 +34,6 @@ class TokenNormalizer(object):
     version.
 
     """
-
     def __embed_entities(self, doc: Doc):
         """For each token, return the named entity form if it exists.
 
@@ -140,6 +140,47 @@ class SplitTokenMapper(TokenMapper):
         rg = self.regex
         return map(lambda t: map(lambda s: (t[0], s), re.split(rg, t[1])),
                    token_tups)
+
+
+@dataclass
+class SplitEntityTokenMapper(TokenMapper):
+    """Splits embedded entities in to separate tokens.  This is useful for
+    splitting up entities as tokens after being grouped with
+    :obj:`.TokenNormalizer.embed_entities`.  Note, ``embed_entities`` must be
+    ``True`` to create the entities as they come from spaCy as spans.  This
+    then can be used to create :class:`.SpacyTokenFeatures` with spans that
+    have the entity.
+
+    """
+    token_unit_type: bool = field(default=False)
+    """Whether to generate tokens for each split span or a one token span."""
+
+    copy_attributes: Tuple[str] = field(default=('label', 'label_'))
+
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
+        def map_tup(tup):
+            # print('T', tup)
+            if isinstance(tup[0], Span):
+                span = tup[0]
+                for tix in range(span.end - span.start):
+                    if not token_unit_type:
+                        tok = span[tix:tix+1]
+                    else:
+                        tok = span[tix]
+                    for attr in cp_attribs:
+                        setattr(tok, attr, getattr(span, attr))
+                    # t = span.doc[tok.start]
+                    # print(f'SPAN {span} -> {tok}({tok.start}/{t.idx})')
+                    # if hasattr(span._, 'cui_'):
+                    #     print('C', span._.cui_)
+                    yield (tok, tok.orth_)
+            else:
+                yield tup
+
+        token_unit_type = self.token_unit_type
+        cp_attribs = self.copy_attributes
+        return map(map_tup, token_tups)
 
 
 @dataclass

@@ -295,10 +295,21 @@ class FeatureSentence(TokensContainer):
         if self.text is None:
             self.text = ' '.join(map(lambda t: t.text, self.sent_tokens))
         self._ents = []
+        self._set_entity_spans()
+
+    def _set_entity_spans(self):
         if self.spacy_sent is not None:
-            for ent in self.spacy_sent.ents:
-                toks = tuple(ent)
-                self._ents.append((toks[0].idx, toks[-1].idx))
+            for ents in self.spacy_sent.ents:
+                start, end = None, None
+                ents = iter(ents)
+                try:
+                    start = end = next(ents)
+                    while True:
+                        end = next(ents)
+                except StopIteration:
+                    pass
+                if start is not None:
+                    self._ents.append((start.idx, end.idx))
 
     def token_iter(self, *args) -> Iterable[FeatureToken]:
         if len(args) == 0:
