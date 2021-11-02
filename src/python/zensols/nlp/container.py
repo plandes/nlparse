@@ -82,6 +82,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         # features used for sentence decomposition in FeatureDocument
         self.i = features.i
         self.i_sent = features.i_sent
+        # features used to retain entities in tact
+        self.idx = features.idx
 
     def clone(self) -> FeatureToken:
         """Create and return a copy of this feature token instance."""
