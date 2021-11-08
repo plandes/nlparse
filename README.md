@@ -132,6 +132,7 @@ Copyright (c) 2020 - 2021 Paul Landes
 [Parse and normalize]: https://plandes.github.io/nlparse/doc/parse.html
 [others]: https://plandes.github.io/nlparse/doc/normalizers.html
 [Detached features]: https://plandes.github.io/nlparse/doc/parse.html#detached-features
+[full documentation]: https://plandes.github.io/nlparse/
 [Framework documentation]: https://plandes.github.io/nlparse/
 [Natural Language Parsing]: https://plandes.github.io/nlparse/doc/parse.html
 [List Token Normalizers and Mappers]: https://plandes.github.io/nlparse/doc/normalizers.html
