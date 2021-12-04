@@ -16,6 +16,7 @@ from itertools import chain
 import itertools as it
 import copy as cp
 from io import TextIOBase
+from frozendict import frozendict
 from spacy.tokens.doc import Doc
 from spacy.tokens.token import Token
 from spacy.tokens.span import Span
@@ -260,6 +261,14 @@ class TokensContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     @abstractmethod
     def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
         pass
+
+    @property
+    @persisted('_tokens_by_idx', transient=True)
+    def tokens_by_idx(self) -> Dict[int, FeatureToken]:
+        """A map of tokens with keys as their character offset and values as tokens.
+
+        """
+        return frozendict({tok.idx: tok for tok in self.token_iter()})
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               n_tokens: int = sys.maxsize):
@@ -559,6 +568,7 @@ class FeatureDocument(TokensContainer):
         """
         TextContainer.write(self, depth, writer)
         self._write_line('sentences:', depth + 1, writer)
+        s: FeatureSentence
         for s in it.islice(self.sents, n_sents):
             s.write(depth + 2, writer, n_tokens=n_tokens)
 
