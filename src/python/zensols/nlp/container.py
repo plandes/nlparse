@@ -473,6 +473,13 @@ class FeatureDocument(TokensContainer):
                 id_to_sent[tok.idx] = six
         return id_to_sent
 
+    def sentence_index_for_token(self, token: FeatureToken) -> int:
+        return self._id_to_sent()[token.idx]
+
+    def sentence_for_token(self, token: FeatureToken) -> FeatureSentence:
+        six: int = self.sentence_index_for_token(token)
+        return self.sents[six]
+
     def sentences_for_tokens(self, tokens: Tuple[FeatureToken]) -> \
             Tuple[FeatureSentence]:
         """Find sentences having a set of tokens.
