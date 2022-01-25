@@ -59,7 +59,7 @@ token_feature_ids = eval: set('ent_ tag_'.split())
 
 if __name__ == '__main__':
     fac = ImportConfigFactory(ImportIniConfig(StringIO(CONFIG)))
-    doc_parser = fac('doc_parser')
+    doc_parser: FeatureDocumentParser = fac('doc_parser')
     sent = 'He was George Washington and first president of the United States.'
     doc: FeatureDocument = doc_parser(sent)
     for tok in doc.tokens:
@@ -68,6 +68,8 @@ if __name__ == '__main__':
 This uses a [resource
 library](https://plandes.github.io/util/doc/config.html#resource-libraries) to
 source in the configuration from this package so minimal configuration is necessary.
+
+See the [feature documents](doc/feature-doc.md) for more information.
 
 
 ## Obtaining / Installing

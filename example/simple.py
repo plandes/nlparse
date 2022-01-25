@@ -2,7 +2,7 @@
 
 from io import StringIO
 from zensols.config import ImportIniConfig, ImportConfigFactory
-from zensols.nlp import FeatureDocument
+from zensols.nlp import FeatureDocument, FeatureDocumentParser
 
 CONFIG = """
 [import]
@@ -20,7 +20,7 @@ token_feature_ids = eval: set('ent_ tag_'.split())
 
 if __name__ == '__main__':
     fac = ImportConfigFactory(ImportIniConfig(StringIO(CONFIG)))
-    doc_parser = fac('doc_parser')
+    doc_parser: FeatureDocumentParser = fac('doc_parser')
     sent = 'He was George Washington and first president of the United States.'
     doc: FeatureDocument = doc_parser(sent)
     for tok in doc.tokens:

@@ -1,5 +1,7 @@
 # Natural Language Parsing
 
+Before reading this, please read [feature documents].
+
 This framework wraps the [SpaCy] framework and creates features.  The
 motivation is to generate features from the parsed text in an object oriented
 fashion that is fast and easy to pickle as many SpaCy objects are C data
@@ -185,3 +187,4 @@ examples in this documentation.
 [MapTokenNormalizer]: ../api/zensols.nlp.html#zensols.nlp.norm.MapTokenNormalizer
 [TokenFeatures]: ../api/zensols.nlp.html#zensols.nlp.feature.TokenFeatures
 [detach method]: ../api/zensols.nlp.html#zensols.nlp.feature.DetatchableTokenFeatures.detach
+[feature documents]: feature-doc.html
