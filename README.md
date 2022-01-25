@@ -69,7 +69,7 @@ This uses a [resource
 library](https://plandes.github.io/util/doc/config.html#resource-libraries) to
 source in the configuration from this package so minimal configuration is necessary.
 
-See the [feature documents](doc/feature-doc.md) for more information.
+See the [feature documents] for more information.
 
 
 ## Obtaining / Installing
@@ -147,3 +147,4 @@ Copyright (c) 2020 - 2021 Paul Landes
 [porter stemmer]: https://tartarus.org/martin/PorterStemmer/
 
 [configuration factories]: https://plandes.github.io/util/doc/config.html#configuration-factory
+[feature documents]: https://plandes.github.io/nlparse/doc/feature-doc.html
