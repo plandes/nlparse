@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.0.1] - 2022-01-25
+### Added
+- Sentences and tokens accessible by index.
+
+### Changed
+- More robust regular expression for token splitting.
+- Mapping combiner is persistable with spaCy tokens and handles split named
+  entities.
+
+
 ## [1.0.0] - 2021-10-22
 First major development release.
 
@@ -215,7 +225,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/plandes/nlparse/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/plandes/nlparse/compare/v0.1.3...v1.0.0
 [0.1.3]: https://github.com/plandes/nlparse/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/plandes/nlparse/compare/v0.1.1...v0.1.2
