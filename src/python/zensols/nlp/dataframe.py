@@ -26,7 +26,6 @@ class FeatureDataFrameFactory(object):
     :class:`pandas.DataFrame`.
 
     """
-
     def __call__(self, doc: FeatureDocument) -> pd.DataFrame:
         fids = self.token_feature_ids
         cols: List[str] = list(filter(lambda n: n in fids,
