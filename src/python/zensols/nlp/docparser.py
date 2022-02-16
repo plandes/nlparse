@@ -33,7 +33,6 @@ class FeatureDocumentParser(Dictable):
     """The language resource used to parse documents and create token attributes.
 
     """
-
     token_feature_ids: Set[str] = field(
         default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
     """The features to keep from spaCy tokens.
@@ -41,7 +40,6 @@ class FeatureDocumentParser(Dictable):
     :see: :obj:`TOKEN_FEATURE_IDS`
 
     """
-
     doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
     """The type of document instances to create."""
 
