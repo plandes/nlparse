@@ -10,7 +10,7 @@ class ParseError(APIError):
     """Raised for any parsing errors."""
     pass
 
-
+from .overlap import *
 from .norm import *
 from .stemmer import *
 from .feature import *

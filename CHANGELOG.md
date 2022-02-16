@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- An overlapping utility library.
+
+
 ## [1.0.1] - 2022-01-25
 ### Added
 - Sentences and tokens accessible by index.
