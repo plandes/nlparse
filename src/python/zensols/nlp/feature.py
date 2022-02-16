@@ -162,7 +162,7 @@ class SpacyTokenFeatures(NormalizedTokenFeatures):
 
         """
         tok = self.tok_or_ent
-        if self.is_ent:
+        if isinstance(tok, Span):
             tok = self.doc[tok.start]
         return tok
 
