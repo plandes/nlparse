@@ -179,7 +179,6 @@ class LanguageResource(PersistableContainer):
     if ``model`` is not ``None``.
 
     """
-
     components: Sequence[Component] = field(default=())
     """Additional Spacy components to add to the pipeline."""
 
@@ -188,7 +187,6 @@ class LanguageResource(PersistableContainer):
     :meth:`parse`.
 
     """
-
     token_normalizer: TokenNormalizer = field(default=None)
     """The token normalizer for methods that use it, i.e. ``features``."""
 
@@ -220,6 +218,10 @@ class LanguageResource(PersistableContainer):
         # pipe components can create other application context instance via the
         # :obj:`config_factory` with access to this instance
         nlp.langres = self
+        return nlp
+
+    def _add_components(self, nlp: Language):
+        """Add components to the pipeline that was just created."""
         if self.components is not None:
             comp: Component
             for comp in self.components:
@@ -230,7 +232,6 @@ class LanguageResource(PersistableContainer):
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'adding {comp} to the pipeline')
                     comp.init(nlp)
-        return nlp
 
     @property
     @persisted('_model')
@@ -248,6 +249,7 @@ class LanguageResource(PersistableContainer):
         nlp: Language = self._MODELS.get(mkey)
         if nlp is None:
             nlp: Language = self._create_model()
+            self._add_components(nlp)
             self._MODELS[mkey] = nlp
         else:
             if logger.isEnabledFor(logging.DEBUG):
