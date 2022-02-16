@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Set, List, Union
+from typing import Set, List, Union, Dict, Tuple
 from dataclasses import dataclass, field
 import logging
 from spacy.tokens.span import Span
@@ -155,10 +155,11 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging sentences: {self._replica_sent.tokens} ' +
                          f'-> {self._primary_sent.tokens}')
-        rmap = self._replica_token_mapping
+        rmap: Dict[int, Tuple[FeatureToken, Token]] = self._replica_token_mapping
         for primary_tok in self._primary_sent:
-            entry = rmap.get(primary_tok.idx)
-            logger.debug(f'entry: {primary_tok.idx}/{primary_tok} -> {entry}')
+            entry: Tuple[FeatureToken, Token] = rmap.get(primary_tok.idx)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'entry: {primary_tok.idx}/{primary_tok} -> {entry}')
             if entry is not None:
                 replica_tok, spacy_tok = entry
                 if logger.isEnabledFor(logging.DEBUG):
@@ -170,8 +171,10 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                 self._merge_tokens(
                     primary_tok, replica_tok, self._primary_sent)
 
-    def _get_token_mapping(self, doc: FeatureDocument):
+    def _get_token_mapping(self, doc: FeatureDocument) -> \
+            Dict[int, Tuple[FeatureToken, Token]]:
         mapping = {}
+        tok: FeatureToken
         for tok in doc.token_iter():
             tok_or_ent: Union[Span, Token] = tok.spacy_token
             if isinstance(tok_or_ent, Span):
@@ -180,7 +183,7 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                     raise ParseError(
                         'Only support of singleton token spans is ' +
                         f'supportered, got: {stoks} in {doc}')
-                stok = stoks[0]
+                stok: Token = stoks[0]
                 if logger.isEnabledFor(logging.DEBUG):
                     logger.debug(f'match span: {stok.idx} -> {tok}/{stok}')
                 prev = mapping.get(stok.idx)
