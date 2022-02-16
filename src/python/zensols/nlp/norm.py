@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Iterable, Tuple, Union
+from typing import List, Iterable, Tuple, Union, Dict
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABC
 import logging
@@ -13,6 +13,7 @@ from spacy.tokens.token import Token
 from spacy.tokens.span import Span
 from spacy.tokens.doc import Doc
 from zensols.config import Configurable, ImportConfigFactory
+from . import overlaps
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,6 @@ class TokenNormalizer(object):
         embed_entities = False
 
     """
-
     embed_entities: bool = field(default=True)
     """Whether or not to replace tokens with their respective named entity
     version.
@@ -82,8 +82,9 @@ class TokenNormalizer(object):
         """
         return None
 
-    def normalize(self, doc) -> Iterable[Tuple[Token, str]]:
+    def normalize(self, doc: Doc) -> Iterable[Tuple[Token, str]]:
         """Normalize Spacey document ``doc`` in to (token, normal text) tuples.
+
         """
         tlist = self._to_token_tuple(doc)
         maps = self._map_tokens(tlist)
@@ -129,7 +130,7 @@ class SplitTokenMapper(TokenMapper):
 
     """
     regex: Union[re.Pattern, str] = field(default=r'[ ]')
-    """The regular expression to use for splitting tokens, which is a space."""
+    """The regular expression to use for splitting tokens."""
 
     def __post_init__(self):
         if not isinstance(self.regex, re.Pattern):
@@ -143,13 +144,98 @@ class SplitTokenMapper(TokenMapper):
 
 
 @dataclass
+class JoinTokenMapper(object):
+    regex: Union[re.Pattern, str] = field(default=r'[ ]')
+    """The regular expression to use for joining tokens"""
+
+    separator: str = field(default=None)
+    """The string used to separate normalized tokens in matches.  If ``None``, use
+    the token text.
+
+    """
+    def __post_init__(self):
+        if not isinstance(self.regex, re.Pattern):
+            self.regex = re.compile(eval(self.regex))
+
+    def _loc(self, doc: Doc, tok: Union[Token, Span]) -> Tuple[int, int]:
+        if isinstance(tok, Span):
+            etok = doc[tok.end - 1]
+            start = doc[tok.start].idx
+            end = etok.idx + len(etok.orth_)
+        else:
+            start = tok.idx
+            end = tok.idx + len(tok.orth_)
+        return start, end
+
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
+
+        def map_match(t: Token) -> str:
+            tup = tix2tup.get(t.idx)
+            if tup is not None:
+                return tup[1]
+
+        tups = tuple(token_tups)
+        stok: Token = tups[0][0]
+        etok: Token = tups[-1][0]
+        doc: Doc = stok.doc
+        src: Span = doc.char_span(stok.idx, etok.idx + len(etok.orth_))
+        matches: List[Span] = []
+        tix2tup: Dict[int, int]
+        if self.separator is not None:
+            tix2tup = {doc[t[0].start].idx
+                       if isinstance(t[0], Span) else t[0].idx: t
+                       for t in tups}
+        for match in re.finditer(self.regex, src.text):
+            start, end = match.span()
+            span: Span = doc.char_span(start, end)
+            # this is a Span object or None if match doesn't map to valid token
+            # sequence
+            if span is not None:
+                matches.append(span)
+        if len(matches) > 0:
+            mtups = []
+            mix = 0
+            mlen = len(matches)
+            stack = list(tups)
+            while len(stack) > 0:
+                tup = stack.pop(0)
+                tok = tup[0]
+                tok_loc = self._loc(doc, tok)
+                next_tup = tup
+                if mix < mlen:
+                    match: Span = matches[mix]
+                    if logger.isEnabledFor(logging.DEBUG):
+                        logger.debug(f'matched: {match}')
+                    mloc: Tuple[int, int] = self._loc(doc, match)
+                    if overlaps(mloc, tok_loc):
+                        mix += 1
+                        match_text = match.text
+                        if self.separator is not None:
+                            norms = map(map_match, doc[match.start:match.end])
+                            norms = filter(lambda t: t is not None, norms)
+                            match_text = self.separator.join(norms)
+                        next_tup = (match, match_text)
+                        while len(stack) > 0:
+                            tup = stack.pop(0)
+                            tok = tup[0]
+                            tok_loc = self._loc(doc, tok)
+                            if not overlaps(tok_loc, mloc):
+                                stack.insert(0, tup)
+                                break
+                mtups.append(next_tup)
+            tups = (mtups,)
+        return tups
+
+
+@dataclass
 class SplitEntityTokenMapper(TokenMapper):
-    """Splits embedded entities in to separate tokens.  This is useful for
-    splitting up entities as tokens after being grouped with
-    :obj:`.TokenNormalizer.embed_entities`.  Note, ``embed_entities`` must be
-    ``True`` to create the entities as they come from spaCy as spans.  This
-    then can be used to create :class:`.SpacyTokenFeatures` with spans that
-    have the entity.
+    """Splits embedded entities (or any :class:`~spacy.token.span.Span`) in to
+    separate tokens.  This is useful for splitting up entities as tokens after
+    being grouped with :obj:`.TokenNormalizer.embed_entities`.  Note,
+    ``embed_entities`` must be ``True`` to create the entities as they come
+    from spaCy as spans.  This then can be used to create
+    :class:`.SpacyTokenFeatures` with spans that have the entity.
 
     """
     token_unit_type: bool = field(default=False)
@@ -160,6 +246,8 @@ class SplitEntityTokenMapper(TokenMapper):
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
         def map_tup(tup):
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'setm: mapping tup: {tup}')
             if isinstance(tup[0], Span):
                 span = tup[0]
                 for tix in range(span.end - span.start):
@@ -169,6 +257,8 @@ class SplitEntityTokenMapper(TokenMapper):
                         tok = span[tix]
                     for attr in cp_attribs:
                         setattr(tok, attr, getattr(span, attr))
+                    if logger.isEnabledFor(logging.DEBUG):
+                        logger.debug(f'setm: split: {tok}')
                     yield (tok, tok.orth_)
             else:
                 yield tup
@@ -352,7 +442,6 @@ class MapTokenNormalizer(TokenNormalizer):
     useful while prototyping.
 
     """
-
     def __post_init__(self):
         ta = ImportConfigFactory(self.config, reload=self.reload)
         self.mappers = tuple(map(ta.instance, self.mapper_class_list))
@@ -364,3 +453,8 @@ class MapTokenNormalizer(TokenNormalizer):
                 logger.debug(f'mapping token_tups with {mapper}')
             token_tups = it.chain(*mapper.map_tokens(token_tups))
         return token_tups
+
+    def __str__(self) -> str:
+        s = super().__str__()
+        maps = ', '.join(map(str, self.mapper_class_list))
+        return f'{s}, reload={self.reload}, {maps}'
