@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - An lexical overlapping utility module (`overlap`).
 - A token normalizer that merges tokens in to spans (`JoinTokenMapper`).
+- Regular expression matching for entity and merge components (similar to
+  `JoinTokenMapper`).
 
 
 ## [1.0.1] - 2022-01-25
