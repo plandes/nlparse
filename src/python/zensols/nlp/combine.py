@@ -9,7 +9,7 @@ import logging
 from spacy.tokens.span import Span
 from spacy.tokens.token import Token
 from . import (
-    ParseError, FeatureDocumentParser,
+    ParseError, TokensContainer, FeatureDocumentParser,
     FeatureDocument, FeatureSentence, FeatureToken,
 )
 
@@ -49,7 +49,7 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     """
     def _validate_features(self, primary_tok: FeatureToken,
                            replica_tok: FeatureToken,
-                           context_sent: FeatureSentence):
+                           context_container: TokensContainer):
         for f in self.validate_features:
             prim = getattr(primary_tok, f)
             rep = getattr(replica_tok, f)
@@ -57,14 +57,14 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                 raise ParseError(
                     f'Mismatch tokens: {primary_tok.text}({f}={prim}) ' +
                     f'!= {replica_tok.text}({f}={rep}) ' +
-                    f'in sentence: {context_sent}')
+                    f'in container: {context_container}')
 
     def _merge_tokens(self, primary_tok: FeatureToken,
                       replica_tok: FeatureToken,
-                      context_sent: FeatureSentence):
+                      context_container: TokensContainer):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging tokens: {replica_tok} -> {primary_tok}')
-        self._validate_features(primary_tok, replica_tok, context_sent)
+        self._validate_features(primary_tok, replica_tok, context_container)
         for f in self.yield_features:
             targ = primary_tok.get_value(f)
             if targ is None:
@@ -151,12 +151,18 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
     text of the spaCy token.
 
     """
-    def _merge_sentence(self):
+    merge_sentences: bool = field(default=True)
+    """If ``False`` ignore sentences and map everything at the token level.
+    Otherwise, it use the same hierarchy mapping as the super class.  This is
+    useful when sentence demarcations are not aligned across replica document
+    parsers and this parser.
+
+    """
+    def _merge_token_containers(self, primary_container: TokensContainer,
+                                rmap: Dict[int, Tuple[FeatureToken, Token]]):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merging sentences: {self._replica_sent.tokens} ' +
-                         f'-> {self._primary_sent.tokens}')
-        rmap: Dict[int, Tuple[FeatureToken, Token]] = self._replica_token_mapping
-        for primary_tok in self._primary_sent:
+            logger.debug(f'merge: {primary_container}, mapping: {rmap}')
+        for primary_tok in primary_container.token_iter():
             entry: Tuple[FeatureToken, Token] = rmap.get(primary_tok.idx)
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'entry: {primary_tok.idx}/{primary_tok} -> {entry}')
@@ -168,8 +174,14 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                    replica_tok.norm != spacy_tok.orth_:
                     replica_tok = replica_tok.clone()
                     replica_tok.norm = spacy_tok.orth_
-                self._merge_tokens(
-                    primary_tok, replica_tok, self._primary_sent)
+                self._merge_tokens(primary_tok, replica_tok, primary_container)
+
+    def _merge_sentence(self):
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'merging sentences: {self._replica_sent.tokens} ' +
+                         f'-> {self._primary_sent.tokens}')
+        rmap: Dict[int, Tuple[FeatureToken, Token]] = self._replica_token_mapping
+        self._merge_token_containers(self._primary_sent, rmap)
 
     def _get_token_mapping(self, doc: FeatureDocument) -> \
             Dict[int, Tuple[FeatureToken, Token]]:
@@ -203,8 +215,20 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
         return mapping
 
     def _prepare_merge_doc(self):
-        self._replica_token_mapping = self._get_token_mapping(
-            self._replica_sent)
+        if self.merge_sentences:
+            self._replica_token_mapping = self._get_token_mapping(
+                self._replica_sent)
 
     def _complete_merge_doc(self):
-        del self._replica_token_mapping
+        if self.merge_sentences:
+            del self._replica_token_mapping
+
+    def _merge_doc(self):
+        if self.merge_sentences:
+            super()._merge_doc()
+        else:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'merging docs: {self._replica_doc} -> ' +
+                             f'{self._primary_doc}')
+            replica_token_mapping = self._get_token_mapping(self._replica_doc)
+            self._merge_token_containers(self._primary_doc, replica_token_mapping)
