@@ -145,6 +145,11 @@ class SplitTokenMapper(TokenMapper):
 
 @dataclass
 class JoinTokenMapper(object):
+    """Join tokens based on a regular expression.  It does this by creating spans
+    in the spaCy component (first in the tuple) and using the span text as the
+    normalized token.
+
+    """
     regex: Union[re.Pattern, str] = field(default=r'[ ]')
     """The regular expression to use for joining tokens"""
 
