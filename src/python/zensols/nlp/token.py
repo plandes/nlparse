@@ -4,12 +4,15 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Union, Optional, Any, Set, Iterable, Dict, Sequence
+from typing import (
+    Tuple, Union, Optional, Any, Set, Iterable, Dict, Sequence, ClassVar
+)
 from dataclasses import dataclass, field
 from functools import reduce
 from itertools import chain
 import sys
 from io import TextIOBase
+from frozendict import frozendict
 from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
@@ -34,32 +37,34 @@ class FeatureToken(PersistableContainer, TextContainer):
     _DICTABLE_WRITABLE_DESCENDANTS = True
     """Use write method."""
 
-    FIELD_IDS_BY_TYPE = {
+    FEATURE_IDS_BY_TYPE: ClassVar[Dict[str, Set[str]]] = frozendict({
         'bool': frozenset(('is_space is_stop is_ent is_wh is_contraction ' +
                            'is_superlative is_pronoun').split()),
         'int': frozenset(('i idx i_sent sent_i is_punctuation tag ' +
                           'ent dep shape').split()),
         'str': frozenset('norm lemma_ tag_ pos_ ent_ dep_ shape_'.split()),
         'list': frozenset('children'.split()),
-        'object': frozenset('lexspan'.split())}
+        'object': frozenset('lexspan'.split())})
     """Map of class type to set of feature IDs."""
 
-    TYPES_BY_FIELD_ID = dict(chain.from_iterable(
-        map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
-            FIELD_IDS_BY_TYPE.items())))
+    TYPES_BY_FEATURE_ID: ClassVar[Dict[str, str]] = frozendict(
+        chain.from_iterable(
+            map(lambda itm: map(lambda f: (f, itm[0]), itm[1]),
+                FEATURE_IDS_BY_TYPE.items())))
     """A map of feature ID to string type.  This is used by
     :meth:`.FeatureToken.write_attributes` to dump the type features.
 
     """
-    FIELD_IDS = frozenset(
-        reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
-    """All default available field IDs."""
+    FEATURE_IDS: ClassVar[Set[str]] = frozenset(
+        reduce(lambda res, x: res | x, FEATURE_IDS_BY_TYPE.values()))
+    """All default available feature IDs."""
 
-    WRITABLE_FIELD_IDS = tuple(('text norm idx sent_i i i_sent tag pos ' +
-                                'is_wh entity dep children').split())
-    """Field IDs that are dumped on :meth:`write`."""
+    WRITABLE_FEATURE_IDS: ClassVar[Tuple[str]] = tuple(
+        ('text norm idx sent_i i i_sent tag pos ' +
+         'is_wh entity dep children').split())
+    """Feature IDs that are dumped on :meth:`write`."""
 
-    NONE = '<none>'
+    NONE: ClassVar[str] = '<none>'
     """Default string for *not a feature*, or missing features."""
 
     i: int = field()
@@ -69,8 +74,13 @@ class FeatureToken(PersistableContainer, TextContainer):
     """The character offset of the token within the parent document."""
 
     i_sent: int = field()
-    """The index of the within the parent sentence."""
+    """The index of the within the parent sentence.
 
+    The index of the token in the respective sentence.  This is not to be
+    confused with the index of the sentence to which the token belongs, which
+    is :obj:`sent_i`.
+
+    """
     norm: str = field()
     """Normalized text, which is the text/orth or the named entity if tagged as a
         named entity.
@@ -105,18 +115,18 @@ class FeatureToken(PersistableContainer, TextContainer):
                 val = targ
         return val
 
-    def get_features(self, field_ids: Iterable[str] = None,
+    def get_features(self, feature_ids: Iterable[str] = None,
                      skip_missing: bool = False) -> Dict[str, Any]:
         """Get both as a `:class:`dict`.
 
-        :param field_ids: the fields to write, which defaults to
-                          :obj:`FIELD_IDS`
+        :param feature_ids: the features to write, which defaults to
+                          :obj:`FEATURE_IDS`
 
         """
-        field_ids = self.FIELD_IDS if field_ids is None else field_ids
+        feature_ids = self.FEATURE_IDS if feature_ids is None else feature_ids
         if skip_missing:
-            field_ids = filter(lambda fid: hasattr(self, fid), field_ids)
-        return {k: getattr(self, k) for k in field_ids}
+            feature_ids = filter(lambda fid: hasattr(self, fid), feature_ids)
+        return {k: getattr(self, k) for k in feature_ids}
 
     def to_vector(self, feature_ids: Sequence[str] = None) -> Iterable[str]:
         """Return an iterable of feature data.
@@ -145,7 +155,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         for k in sorted(dct.keys()):
             val: str = dct[k]
             if include_type:
-                ptype = self.TYPES_BY_FIELD_ID.get(k)
+                ptype = self.TYPES_BY_FEATURE_ID.get(k)
                 ptype = '?' if ptype is None else ptype
                 ptype = f' ({ptype})'
             else:
@@ -182,7 +192,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         return ', '.join(attrs)
 
 
-@dataclass
+@dataclass(init=False)
 class SpacyFeatureToken(FeatureToken):
     spacy_token: Union[Token, Span] = field(repr=False, compare=False)
     """The parsed spaCy token (or span if entity) this feature set is based.
@@ -190,14 +200,14 @@ class SpacyFeatureToken(FeatureToken):
     :see: :meth:`.FeatureDocument.spacy_doc`
 
     """
-    def __post_init__(self):
-        super().__post_init__()
-        #self.norm = self.spacy_token.orth_
+    def __init__(self, spacy_token: Union[Token, Span], norm: str):
+        self.spacy_token = spacy_token
         self.is_ent: bool = not isinstance(self.spacy_token, Token)
         self._doc: Doc = self.spacy_token.doc
-
-    def __getstate__(self):
-        raise NLPError('Not persistable')
+        i = self.token.i
+        idx = self.token.idx
+        i_sent = self.token.i - self.token.sent.start
+        super().__init__(i, idx, i_sent, norm)
 
     @property
     def token(self) -> Token:
@@ -298,38 +308,31 @@ class SpacyFeatureToken(FeatureToken):
         """
         return self.token.is_space
 
-    @property
-    def i(self) -> int:
-        """The index of the token within the parent document.
+    # @property
+    # def i(self) -> int:
+    #     """The index of the token within the parent document.
 
-        """
-        return self.token.i
+    #     """
+    #     return self.token.i
 
-    @property
-    def idx(self) -> int:
-        """The character offset of the token within the parent document.
+    # @property
+    # def idx(self) -> int:
+    #     """The character offset of the token within the parent document.
 
-        """
-        return self.token.idx
+    #     """
+    #     return self.token.idx
 
-    @property
-    def lexspan(self) -> LexicalSpan:
-        """The document indexed lexical span using :obj:`idx`.
+    # @property
+    # def i_sent(self) -> int:
+    #     """The index of the token in the respective sentence.  This is not to be
+    #     confused with the index of the sentence to which the token belongs,
+    #     which is :obj:`sent_i`.
 
-        """
-        return LexicalSpan.from_token(self.spacy_token)
+    #     This attribute does not exist in a spaCy token, and was named as such
+    #     to follow the naming conventions of their API.
 
-    @property
-    def i_sent(self) -> int:
-        """The index of the token in the respective sentence.  This is not to be
-        confused with the index of the sentence to which the token belongs,
-        which is :obj:`sent_i`.
-
-        This attribute does not exist in a spaCy token, and was named as such
-        to follow the naming conventions of their API.
-
-        """
-        return self.token.i - self.token.sent.start
+    #     """
+    #     return self.token.i - self.token.sent.start
 
     @property
     def sent_i(self) -> int:
@@ -346,6 +349,13 @@ class SpacyFeatureToken(FeatureToken):
             for tok in sent:
                 if tok.i == targ:
                     return six
+
+    @property
+    def lexspan(self) -> LexicalSpan:
+        """The document indexed lexical span using :obj:`idx`.
+
+        """
+        return LexicalSpan.from_token(self.spacy_token)
 
     @property
     def tag(self) -> int:
@@ -411,6 +421,9 @@ class SpacyFeatureToken(FeatureToken):
 
         """
         return self.token.dep_
+
+    def __getstate__(self):
+        raise NLPError('Not persistable')
 
     def __str__(self):
         if hasattr(self, 'spacy_token'):

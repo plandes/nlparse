@@ -9,9 +9,7 @@ from abc import abstractmethod, ABC
 import logging
 import re
 import itertools as it
-from spacy.tokens import Token
-from spacy.tokens import Span
-from spacy.tokens import Doc
+from spacy.tokens import Token, Span, Doc
 from zensols.config import Configurable, ImportConfigFactory
 from . import LexicalSpan
 
