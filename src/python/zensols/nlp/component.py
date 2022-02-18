@@ -37,6 +37,13 @@ def create_remove_sent_boundaries_component(doc: Doc):
 
 @dataclass
 class EntityRecognizer(object):
+    """Base class regular expression and spaCy match patterns named entity
+    recognizer.  Both subclasses allow for an optional label for each
+    respective pattern or regular expression.  If the label is provided, then
+    the match is made a named entity with a label.  In any case, a span is
+    created on the token, and in some cases, retokenized.
+
+    """
     nlp: Language = field()
     """The NLP model."""
 
@@ -78,7 +85,8 @@ class EntityRecognizer(object):
             # sequence
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'match: {span.text}')
-            doc.ents += (span,)
+            if label is not None:
+                doc.ents += (span,)
             if retok:
                 # https://github.com/explosion/spaCy/discussions/4806
                 with doc.retokenize() as retokenizer:
@@ -116,7 +124,8 @@ class RegexEntityRecognizer(EntityRecognizer):
     'regexner', default_config={'patterns': [], 'path': None})
 def create_regexner_component(
         nlp: Language, name: str,
-        patterns: Sequence[Tuple[Optional[str], Sequence[Union[re.Pattern, str]]]],
+        patterns: Sequence[Tuple[Optional[str],
+                                 Sequence[Union[re.Pattern, str]]]],
         path: str = None):
 
     def map_rlist(rlist):
