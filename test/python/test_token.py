@@ -1,4 +1,5 @@
 from unittest import TestCase
+from io import StringIO
 from zensols.nlp import FeatureToken
 
 
@@ -17,6 +18,20 @@ class TestToken(TestCase):
         self.assertNotEqual(t, FeatureToken(1, 2, 10, 'cat'))
         self.assertNotEqual(t, FeatureToken(1, 2, 3, 'dog'))
 
+    def test_detach(self):
+        t = FeatureToken(1, 2, 3, 'cat')
         det = t.detach()
         self.assertNotEqual(id(t), id(det))
         self.assertEqual(t, det)
+
+    def test_write(self):
+        t = FeatureToken(1, 2, 3, 'cat')
+        sio = StringIO()
+        t.write(writer=sio)
+        self.assertEqual("""\
+FeatureToken: norm=<cat>
+    attributes:
+        i=1 (int)
+        i_sent=3 (int)
+        idx=2 (int)
+        norm=cat (str)\n""", sio.getvalue())
