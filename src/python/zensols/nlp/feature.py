@@ -38,7 +38,7 @@ class TokenFeatures(Dictable):
         'int': frozenset(('i idx i_sent sent_i is_punctuation tag ' +
                           'ent dep shape').split()),
         'str': frozenset('norm lemma_ tag_ pos_ ent_ dep_ shape_'.split()),
-        'list': frozenset('children'.split())}
+        'list': frozenset('children loc'.split())}
     """Map of class type to set of feature IDs."""
 
     TYPES_BY_FIELD_ID = dict(chain.from_iterable(
