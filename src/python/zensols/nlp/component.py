@@ -53,6 +53,13 @@ class EntityRecognizer(object):
     import_file: Optional[str] = field()
     """An optional JSON file used to append the pattern configuration."""
 
+    patterns: List = field()
+    """A list of the regular expressions to find."""
+
+    def __post_init__(self):
+        if self.import_file is not None:
+            self._append_config(self.patterns)
+
     def _append_config(self, patterns: List):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'creating regex component for: {self.name}')
@@ -102,15 +109,11 @@ class RegexEntityRecognizer(EntityRecognizer):
     matches are found, re-tokenization merges them in to one token per match.
 
     """
-    regexs: List[Tuple[str, Tuple[re.Pattern]]] = field()
+    patterns: List[Tuple[str, Tuple[re.Pattern]]] = field()
     """A list of the regular expressions to find."""
 
-    def __post_init__(self):
-        if self.import_file is not None:
-            self._append_config(self.regexs)
-
     def __call__(self, doc: Doc) -> Doc:
-        for label, regex_list in self.regexs:
+        for label, regex_list in self.patterns:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'label: {label}, regex: {regex_list}')
             matches = map(lambda r: re.finditer(r, doc.text), regex_list)
@@ -150,9 +153,7 @@ class PatternEntityRecognizer(EntityRecognizer):
     """The patterns given to the :class:`~spacy.matcher.Matcher`."""
 
     def __post_init__(self):
-        if self.import_file is not None:
-            self._append_config(self.patterns)
-
+        super().__post_init__()
         self._matchers = []
         self._labels = {}
         for label, patterns in self.patterns:
