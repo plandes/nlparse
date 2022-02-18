@@ -48,7 +48,6 @@ class TokenFeatures(Dictable):
     :meth:`.FeatureToken.write_attributes` to dump the type features.
 
     """
-
     FIELD_IDS = frozenset(
         reduce(lambda res, x: res | x, FIELD_IDS_BY_TYPE.values()))
     """All default available field IDs."""
