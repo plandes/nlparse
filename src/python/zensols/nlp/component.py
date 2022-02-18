@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Dict, Any, Union
+from typing import List, Tuple, Dict, Any, Union, Sequence, Optional
 from dataclasses import dataclass, field
 import logging
 import re
@@ -36,57 +36,114 @@ def create_remove_sent_boundaries_component(doc: Doc):
 
 
 @dataclass
-class RegularExpressionMerger(object):
-    """Merges regular expression matches as a :class:`~spacy.tokens.Span`.  After
-    matches are found, re-tokenization merges them in to one token per match.
-
-    """
+class EntityRecognizer(object):
     nlp: Language = field()
     """The NLP model."""
 
-    regexs: Tuple[re.Pattern] = field()
-    """A list of the regular expressions to find."""
+    name: str = field()
+    """The component name."""
 
-    def __call__(self, doc: Doc) -> Doc:
-        regexes = map(lambda r: re.finditer(r, doc.text), self.regexs)
-        for match in chain.from_iterable(regexes):
-            start, end = match.span()
-            span = doc.char_span(start, end)
-            # This is a Span object or None if match doesn't map to valid token
+    import_file: Optional[str] = field()
+    """An optional JSON file used to append the pattern configuration."""
+
+    def _append_config(self, patterns: List):
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'creating regex component for: {self.name}')
+        if self.import_file is not None:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'reading file config file: {self.import_file}')
+            with open(self.import_file) as f:
+                add_pats = json.load(f)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'adding to patterns: {add_pats}')
+            patterns.extend(add_pats)
+
+    def _make_span(self, doc: Doc, start: int, end: int, label: str,
+                   is_char: bool, retok: bool):
+        span: Span
+        if is_char:
+            if label is None:
+                span = doc.char_span(start, end)
+            else:
+                span = doc.char_span(start, end, label=label)
+        else:
+            if label is None:
+                span = Span(doc, start, end)
+            else:
+                span = Span(doc, start, end, label=label)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'span ({start}, {end}) for {label}: {span}')
+        if span is not None:
+            # this is a span object or none if match doesn't map to valid token
             # sequence
-            if span is not None:
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug(f'match: {span.text}')
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'match: {span.text}')
+            doc.ents += (span,)
+            if retok:
                 # https://github.com/explosion/spaCy/discussions/4806
                 with doc.retokenize() as retokenizer:
                     # Iterate over all spans and merge them into one
                     # token. This is done after setting the entities –
                     # otherwise, it would cause mismatched indices!
                     retokenizer.merge(span)
-        return doc
-
-
-@Language.factory('regexmerge', default_config={'patterns': []})
-def create_regex_merge_component(
-        nlp: Language, name: str, patterns: List[Union[re.Pattern, str]]):
-    regex = map(lambda x: x if isinstance(x, re.Pattern) else re.compile(x),
-                patterns)
-    return RegularExpressionMerger(nlp, tuple(regex))
 
 
 @dataclass
-class RegularExpressionEntityMatcher(object):
+class RegexEntityRecognizer(EntityRecognizer):
+    """Merges regular expression matches as a :class:`~spacy.tokens.Span`.  After
+    matches are found, re-tokenization merges them in to one token per match.
+
+    """
+    regexs: List[Tuple[str, Tuple[re.Pattern]]] = field()
+    """A list of the regular expressions to find."""
+
+    def __post_init__(self):
+        if self.import_file is not None:
+            self._append_config(self.regexs)
+
+    def __call__(self, doc: Doc) -> Doc:
+        for label, regex_list in self.regexs:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'label: {label}, regex: {regex_list}')
+            matches = map(lambda r: re.finditer(r, doc.text), regex_list)
+            for match in chain.from_iterable(matches):
+                start, end = match.span()
+                self._make_span(doc, start, end, label, True, True)
+        return doc
+
+
+@Language.factory(
+    'regexner', default_config={'patterns': [], 'path': None})
+def create_regexner_component(
+        nlp: Language, name: str,
+        patterns: Sequence[Tuple[Optional[str], Sequence[Union[re.Pattern, str]]]],
+        path: str = None):
+
+    def map_rlist(rlist):
+        rl = map(lambda x: x if isinstance(x, re.Pattern) else re.compile(x),
+                 rlist)
+        return tuple(rl)
+
+    regexes = map(lambda x: (x[0], map_rlist(x[1])), patterns)
+    return RegexEntityRecognizer(nlp, name, path, list(regexes))
+
+
+@dataclass
+class PatternEntityRecognizer(EntityRecognizer):
     """Adds entities based on regular epxressions.
 
     :see: `Rule matching <https://spacy.io/usage/rule-based-matching>`_
+
     """
-    nlp: Language = field()
-    """The NLP model."""
+    _NULL_LABEL = '<_>'
 
     patterns: List[Tuple[str, List[List[Dict[str, Any]]]]] = field()
     """The patterns given to the :class:`~spacy.matcher.Matcher`."""
 
     def __post_init__(self):
+        if self.import_file is not None:
+            self._append_config(self.patterns)
+
         self._matchers = []
         self._labels = {}
         for label, patterns in self.patterns:
@@ -94,26 +151,16 @@ class RegularExpressionEntityMatcher(object):
                 logger.debug(f'label: {label}')
                 logger.debug(f'pattern: {patterns}')
             matcher = Matcher(self.nlp.vocab)
+            label = self._NULL_LABEL if label is None else label                
             matcher.add(label, patterns, on_match=self._add_event_ent)
             self._labels[id(matcher)] = label
             self._matchers.append(matcher)
 
     def _add_event_ent(self, matcher, doc, i, matches):
-        # Get the current match and create tuple of entity label, start and
-        # end.  Append entity to the doc's entity. (Don't overwrite doc.ents!)
-        label = self._labels[id(matcher)]
         match_id, start, end = matches[i]
-        entity = Span(doc, start, end, label=label)
-        doc.ents += (entity,)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'matched <{entity}>: {label}')
-
-        # https://github.com/explosion/spaCy/discussions/4806
-        with doc.retokenize() as retokenizer:
-            # Iterate over all spans and merge them into one token. This is
-            # done after setting the entities – otherwise, it would cause
-            # mismatched indices!
-            retokenizer.merge(entity)
+        label = self._labels[id(matcher)]
+        label = None if label == self._NULL_LABEL else label
+        self._make_span(doc, start, end, label, False, False)
 
     def __call__(self, doc: Doc) -> Doc:
         for matcher in self._matchers:
@@ -124,21 +171,10 @@ class RegularExpressionEntityMatcher(object):
         return doc
 
 
-@Language.factory('regexents',
-                  default_config={'patterns': [], 'import_file': None})
-def create_regex_entities_component(
+@Language.factory(
+    'patner', default_config={'patterns': [], 'path': None})
+def create_patner_component(
         nlp: Language, name: str,
-        patterns: List[Tuple[str, List[List[Dict[str, Any]]]]],
-        import_file: str = None):
-    if logger.isEnabledFor(logging.DEBUG):
-        logger.debug(f'creating regex component for: {name} ({nlp})')
-    if import_file is not None:
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'reading file JSON config file: {import_file}')
-        with open(import_file) as f:
-            add_pats = json.load(f)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'adding to patterns: {add_pats}')
-        patterns.extend(add_pats)
-    matcher = RegularExpressionEntityMatcher(nlp, patterns)
-    return matcher
+        patterns: List[Tuple[Optional[str], List[List[Dict[str, Any]]]]],
+        path: str = None):
+    return PatternEntityRecognizer(nlp, name, path, list(patterns))

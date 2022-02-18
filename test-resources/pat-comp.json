@@ -1,0 +1,12 @@
+[["MASK_DATE",
+  [[{"ORTH": "["},
+    {"ORTH": "*"},
+    {"ORTH": "*"},
+    {"TEXT": {"REGEX": "\\d+"}},
+    {"ORTH": "-"},
+    {"TEXT": {"REGEX": "\\d+"}},
+    {"ORTH": "-"},
+    {"TEXT": {"REGEX": "\\d+"}},
+    {"ORTH": "*"},
+    {"ORTH": "*"},
+    {"ORTH": "]"}]]]]
