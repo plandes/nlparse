@@ -1,9 +1,11 @@
+import pickle
+from io import BytesIO
 from unittest import TestCase
 from zensols.nlp import LexicalSpan
 
 
 class TestOverlap(TestCase):
-    def test_attr(self):
+    def test_access(self):
         loc = LexicalSpan(2, 5)
         self.assertEqual(loc[0], 2)
         self.assertEqual(loc[1], 5)
@@ -12,6 +14,10 @@ class TestOverlap(TestCase):
         self.assertEqual(3, len(loc))
         self.assertEqual('[2, 5]', str(loc))
         self.assertTrue(isinstance(hash(loc), int))
+        with self.assertRaises(AttributeError):
+            loc.start = 1
+        with self.assertRaises(TypeError):
+            loc[0] = 1
 
     def test_order(self):
         a = LexicalSpan(2, 5)
@@ -26,6 +32,14 @@ class TestOverlap(TestCase):
         self.assertGreater(d, a)
         self.assertLess(c, d)
         self.assertGreater(d, c)
+
+    def test_serial(self):
+        a = LexicalSpan(2, 5)
+        bio = BytesIO()
+        pickle.dump(a, bio)
+        bio.seek(0)
+        b = pickle.load(bio)
+        self.assertEqual(a, b)
 
     def test_overlap_meth(self):
         # case 1: both overlap

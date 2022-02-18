@@ -4,11 +4,13 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple
+from typing import Tuple, Union
 from abc import ABCMeta
-from dataclasses import dataclass, field
 import sys
 from io import TextIOBase
+from spacy.tokens import Token
+from spacy.tokens import Span
+from spacy.tokens import Doc
 from zensols.util import APIError
 from zensols.config import Dictable
 
@@ -55,9 +57,27 @@ class LexicalSpan(Dictable):
         self.begin = begin
         self.end = end
 
+    @classmethod
+    def from_token(cls, tok: Union[Token, Span]) -> Tuple[int, int]:
+        """Create a span from a spaCy :class:`~spacy.tokens.Token` or
+        :class:`~spacy.tokens.Span`.
+
+        """
+        if isinstance(tok, Span):
+            doc: Doc = tok.doc
+            etok = doc[tok.end - 1]
+            start = doc[tok.start].idx
+            end = etok.idx + len(etok.orth_)
+        else:
+            start = tok.idx
+            end = tok.idx + len(tok.orth_)
+        return cls(start, end)
+
     @staticmethod
     def overlaps(a0: int, a1: int, b0: int, b1: int, inclusive: bool = True):
         """Return whether or not one text span overlaps with another.
+
+        :param inclusive: whether to check include +1 on the end component
 
         :return: any overlap detected returns ``True``
 
@@ -68,17 +88,22 @@ class LexicalSpan(Dictable):
             m = (a0 <= b0 and a1 > b0) or (b0 <= a0 and b1 > a0)
         return m
 
-    def overlaps_with(self, other: Location, inclusive: bool = True) -> bool:
+    def overlaps_with(self, other: LexicalSpan,
+                      inclusive: bool = True) -> bool:
         """Return whether or not one text span overlaps non-inclusively with another.
 
         :param other: the other location
-        :type other: Location
+
+        :param inclusive: whether to check include +1 on the end component
 
         :return: any overlap detected returns ``True``
 
         """
         return self.overlaps(
             self.begin, self.end, other.begin, other.end, inclusive)
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
+        self._write_line(str(self), depth, writer)
 
     def __eq__(self, other):
         return self.begin == other.begin and self.end == other.end
@@ -92,15 +117,17 @@ class LexicalSpan(Dictable):
     def __hash__(self) -> int:
         return hash(self.begin) + (13 * hash(self.end))
 
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
-        self._write_line(str(self), depth, writer)
+    def __setattr__(self, name, value):
+        if hasattr(self, 'end'):
+            raise AttributeError(f'{self.__class__.__name__} is immutable')
+        super().__setattr__(name, value)
 
     def __getitem__(self, ix: int) -> int:
         if ix == 0:
             return self.begin
         elif ix == 1:
             return self.end
-        raise KeyError(f'Location index: {ix}')
+        raise KeyError(f'LexicalSpan index: {ix}')
 
     def __len__(self) -> int:
         return self.end - self.begin

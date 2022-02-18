@@ -9,11 +9,11 @@ from abc import abstractmethod, ABC
 import logging
 import re
 import itertools as it
-from spacy.tokens.token import Token
-from spacy.tokens.span import Span
-from spacy.tokens.doc import Doc
+from spacy.tokens import Token
+from spacy.tokens import Span
+from spacy.tokens import Doc
 from zensols.config import Configurable, ImportConfigFactory
-from . import overlaps
+from . import LexicalSpan
 
 logger = logging.getLogger(__name__)
 
@@ -206,14 +206,14 @@ class JoinTokenMapper(object):
             while len(stack) > 0:
                 tup = stack.pop(0)
                 tok = tup[0]
-                tok_loc = self._loc(doc, tok)
+                tok_loc = LexicalSpan.from_token(tok)
                 next_tup = tup
                 if mix < mlen:
                     match: Span = matches[mix]
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'matched: {match}')
-                    mloc: Tuple[int, int] = self._loc(doc, match)
-                    if overlaps(mloc, tok_loc):
+                    mloc = LexicalSpan.from_token(match)
+                    if mloc.overlaps_with(tok_loc):
                         mix += 1
                         match_text = match.text
                         if self.separator is not None:
@@ -225,7 +225,7 @@ class JoinTokenMapper(object):
                             tup = stack.pop(0)
                             tok = tup[0]
                             tok_loc = self._loc(doc, tok)
-                            if not overlaps(tok_loc, mloc):
+                            if not mloc.overlaps_with(tok_loc):
                                 stack.insert(0, tup)
                                 break
                 mtups.append(next_tup)

@@ -1,6 +1,6 @@
 from .domain import *
-# from .overlap import *
-# from .norm import *
+from .norm import *
+from .token import *
 # from .stemmer import *
 # from .feature import *
 # from .lang import *
