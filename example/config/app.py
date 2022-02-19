@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from spacy.tokens.doc import Doc
 from zensols.config import Configurable
-from zensols.nlp import FeatureDocument, FeatureDocumentParser
+from zensols.nlp import FeatureToken, FeatureDocument, FeatureDocumentParser
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,6 +25,9 @@ class Application(object):
 
     config: Configurable
     doc_parser: FeatureDocumentParser
+
+    def __post_init__(self):
+        FeatureToken.WRITABLE_FEATURE_IDS = self.doc_parser.token_feature_ids
 
     def show_config(self):
         """Print out the configuration."""
