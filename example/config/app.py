@@ -9,9 +9,7 @@ import sys
 from pathlib import Path
 from spacy.tokens.doc import Doc
 from zensols.config import Configurable
-from zensols.nlp import (
-    FeatureDocument, FeatureDocumentParser, LanguageResource
-)
+from zensols.nlp import FeatureDocument, FeatureDocumentParser
 import logging
 
 logger = logging.getLogger(__name__)
@@ -86,18 +84,18 @@ class Application(object):
         :param sentence: the sentene to parse
 
         """
-        langres: LanguageResource = self.doc_parser.langres
-        doc: Doc = langres.parse(sentence)
+        doc: Doc = self.doc_parser.parse_spacy_doc(sentence)
         print(doc)
         print('-' * 10, 'token POS, stop words:')
         for tok in doc:
             print(tok, tok.tag_, tok.is_stop)
         print('-' * 10, 'token features:')
-        feats = langres.features(doc)
-        print(tuple(feats))
-        for feat in feats:
+        doc: FeatureDocument = self.doc_parser(sentence)
+        toks = doc.tokens
+        print(toks)
+        for feat in toks:
             print(f'{feat} {type(feat)}')
-            feat.write(depth=1, field_ids=(*feat.WRITABLE_FIELD_IDS, 'sent_i'))
+            feat.write_attributes(depth=1, feature_ids=(*feat.WRITABLE_FEATURE_IDS, 'sent_i'))
             print('-' * 5)
-        print(', '.join(langres.normalized_tokens(doc)))
+        print(', '.join(doc.norm_token_iter()))
         print('-' * 10)

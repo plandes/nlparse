@@ -8,7 +8,7 @@ __author__ = 'Paul Landes'
 from typing import Set, List, Tuple
 from dataclasses import dataclass, field
 import pandas as pd
-from zensols.nlp import TokenFeatures, FeatureDocument
+from zensols.nlp import FeatureToken, FeatureDocument
 
 
 @dataclass
@@ -17,11 +17,11 @@ class FeatureDataFrameFactory(object):
     feature ID is given a column in the output :class:`pandas.DataFrame`.
 
     """
-    token_feature_ids: Set[str] = field(default=TokenFeatures.FIELD_IDS)
+    token_feature_ids: Set[str] = field(default=FeatureToken.FEATURE_IDS)
     """The feature IDs to add to the :class:`pandas.DataFrame`."""
 
     priority_feature_ids: Tuple[str] = field(
-        default=TokenFeatures.WRITABLE_FIELD_IDS)
+        default=FeatureToken.WRITABLE_FEATURE_IDS)
     """Feature IDs that are used first in the column order in the output
     :class:`pandas.DataFrame`.
 

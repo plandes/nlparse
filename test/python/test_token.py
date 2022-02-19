@@ -34,4 +34,5 @@ FeatureToken: norm=<cat>
         i=1 (int)
         i_sent=3 (int)
         idx=2 (int)
-        norm=cat (str)\n""", sio.getvalue())
+        norm=cat (str)
+        text=cat\n""", sio.getvalue())

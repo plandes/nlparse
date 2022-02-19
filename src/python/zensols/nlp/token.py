@@ -133,7 +133,7 @@ class FeatureToken(PersistableContainer, TextContainer):
 
         """
         feature_ids = self.FEATURE_IDS if feature_ids is None else feature_ids
-        feature_ids |= self._REQUIRED_FEATURE_IDS
+        feature_ids = set(feature_ids) | self._REQUIRED_FEATURE_IDS
         if skip_missing:
             feature_ids = filter(lambda fid: hasattr(self, fid), feature_ids)
         return {k: getattr(self, k) for k in feature_ids}
@@ -152,7 +152,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         return map(lambda a: getattr(self, a), sorted(feature_ids))
 
     def write_attributes(self, depth: int = 0, writer: TextIOBase = sys.stdout,
-                         include_type: bool = True):
+                         include_type: bool = True,
+                         feature_ids: Iterable[str] = None):
         """Write feature attributes.
 
         :param depth: the starting indentation depth
@@ -161,16 +162,18 @@ class FeatureToken(PersistableContainer, TextContainer):
 
         :param include_type: if ``True`` write the type of value (if available)
 
+        :param feature_ids: the features to write, which defaults to
+                          :obj:`WRITABLE_FEATURE_IDS`
+
         """
-        dct = self.asdict()
+        dct = self.get_features(self.WRITABLE_FEATURE_IDS, True)
         for k in sorted(dct.keys()):
             val: str = dct[k]
             if include_type:
                 ptype = self.TYPES_BY_FEATURE_ID.get(k)
-                ptype = '?' if ptype is None else ptype
-                ptype = f' ({ptype})'
-            else:
-                ptype = ''
+                if ptype is not None:
+                    ptype = f' ({ptype})'
+            ptype = '' if ptype is None else ptype
             self._write_line(f'{k}={val}{ptype}', depth, writer)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
