@@ -169,6 +169,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         dct = self.get_features(self.WRITABLE_FEATURE_IDS, True)
         for k in sorted(dct.keys()):
             val: str = dct[k]
+            ptype: str = None
             if include_type:
                 ptype = self.TYPES_BY_FEATURE_ID.get(k)
                 if ptype is not None:
