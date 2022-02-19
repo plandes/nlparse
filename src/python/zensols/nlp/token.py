@@ -34,6 +34,11 @@ class FeatureToken(PersistableContainer, TextContainer):
     _DICTABLE_WRITABLE_DESCENDANTS = True
     """Use write method."""
 
+    _REQUIRED_FEATURE_IDS: ClassVar[Set[str]] = frozenset(
+        'i idx i_sent norm'.split())
+    """Features retained regardless of configuration for basic functionality.
+
+    """
     FEATURE_IDS_BY_TYPE: ClassVar[Dict[str, Set[str]]] = frozendict({
         'bool': frozenset(('is_space is_stop is_ent is_wh is_contraction ' +
                            'is_superlative is_pronoun').split()),
@@ -128,6 +133,7 @@ class FeatureToken(PersistableContainer, TextContainer):
 
         """
         feature_ids = self.FEATURE_IDS if feature_ids is None else feature_ids
+        feature_ids |= self._REQUIRED_FEATURE_IDS
         if skip_missing:
             feature_ids = filter(lambda fid: hasattr(self, fid), feature_ids)
         return {k: getattr(self, k) for k in feature_ids}
