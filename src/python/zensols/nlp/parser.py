@@ -237,9 +237,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     token_normalizer: TokenNormalizer = field(default=None)
     """The token normalizer for methods that use it, i.e. ``features``."""
 
-    feature_type: Type[FeatureToken] = field(default=SpacyFeatureToken)
-    """The class to use for instances created by :meth:`features`."""
-
     doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
     """The type of document instances to create."""
 
