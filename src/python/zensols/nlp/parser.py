@@ -17,7 +17,7 @@ from spacy.symbols import ORTH
 from spacy.tokens import Doc, Span, Token
 from spacy.language import Language
 from zensols.persist import persisted, PersistedWork
-from zensols.config import Dictable, Configurable, ConfigFactory
+from zensols.config import Dictable
 from . import (
     ParseError, TokenNormalizer, FeatureToken, SpacyFeatureToken,
     FeatureSentence, FeatureDocument,
