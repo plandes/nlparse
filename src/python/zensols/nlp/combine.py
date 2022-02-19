@@ -3,10 +3,9 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Set, List, Union, Dict, Tuple
+from typing import Set, List, Dict, Tuple
 from dataclasses import dataclass, field
 import logging
-from spacy.tokens.span import Span
 from spacy.tokens.token import Token
 from . import (
     ParseError, TokenContainer, FeatureDocumentParser,
@@ -164,18 +163,11 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merge: {primary_container}, mapping: {rmap}')
         for primary_tok in primary_container.token_iter():
-            #entry: Tuple[FeatureToken, Token] = rmap.get(primary_tok.idx)
             replica_tok = rmap.get(primary_tok.idx)
-            # if logger.isEnabledFor(logging.DEBUG):
-            #     logger.debug(f'entry: {primary_tok.idx}/{primary_tok} -> {entry}')
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'entry: {primary_tok.idx}/{primary_tok} ' +
+                             f'-> {replica_tok}')
             if replica_tok is not None:
-                #replica_tok, spacy_tok = entry
-                # if logger.isEnabledFor(logging.DEBUG):
-                #     logger.debug(f'rep: {replica_tok}, spacy: {spacy_tok}')
-                # if self.clone_and_norm_replica_token and \
-                #    replica_tok.norm != spacy_tok.orth_:
-                #     replica_tok = replica_tok.clone()
-                #     replica_tok.norm = spacy_tok.orth_
                 self._merge_tokens(primary_tok, replica_tok, primary_container)
 
     def _merge_sentence(self):
@@ -190,39 +182,11 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
         mapping = {}
         tok: FeatureToken
         for tok in doc.token_iter():
-            # if logger.isEnabledFor(logging.DEBUG):
-            #     logger.debug(f'match tok: {tok_or_ent.idx} -> ' +
-            #                  f'{tok}/{tok_or_ent}')
             prev = mapping.get(tok.idx)
             if prev is not None:
                 raise ParseError(
                     f'Refusing to clobber previous mapping {tok} -> {prev}')
             mapping[tok.idx] = tok
-
-            # tok_or_ent: Union[Span, Token] = tok.spacy_token
-            # if isinstance(tok_or_ent, Span):
-            #     stoks = tuple(tok_or_ent)
-            #     if len(stoks) > 1:
-            #         raise ParseError(
-            #             'Only support of singleton token spans is ' +
-            #             f'supportered, got: {stoks} in {doc}')
-            #     stok: Token = stoks[0]
-            #     if logger.isEnabledFor(logging.DEBUG):
-            #         logger.debug(f'match span: {stok.idx} -> {tok}/{stok}')
-            #     prev = mapping.get(stok.idx)
-            #     if prev is not None:
-            #         raise ParseError(
-            #             f'Refusing to clobber previous mapping {tok} -> {prev}')
-            #     mapping[stok.idx] = (tok, stok)
-            # else:
-            #     if logger.isEnabledFor(logging.DEBUG):
-            #         logger.debug(f'match tok: {tok_or_ent.idx} -> ' +
-            #                      f'{tok}/{tok_or_ent}')
-            #     prev = mapping.get(tok_or_ent.idx)
-            #     if prev is not None:
-            #         raise ParseError(
-            #             f'Refusing to clobber previous mapping {tok} -> {prev}')
-            #     mapping[tok_or_ent.idx] = (tok, tok_or_ent)
         return mapping
 
     def _prepare_merge_doc(self):

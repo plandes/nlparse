@@ -5,12 +5,6 @@ from zensols.nlp import (
 )
 
 
-if 0:
-    import logging
-    logging.basicConfig(level=logging.WARNING)
-    logging.getLogger('zensols.nlp.combine').setLevel(logging.DEBUG)
-
-
 class TestDocCombine(TestBase):
     def test_ent_splitter(self):
         doc_parser: FeatureDocumentParser = self.fac.instance(
