@@ -255,12 +255,11 @@ class FeatureDocument(TokenContainer):
 
     spacy_doc: Doc = field(default=None, repr=False, compare=False)
     """The parsed spaCy document this feature set is based.  As explained in
-    :class:`~zensols.nlp.DetatchableTokenFeatures`, spaCy documents are heavy
-    weight and problematic to pickle.  For this reason, this attribute is
-    dropped when pickled, and only here for ad-hoc predictions.
+    :class:`~zensols.nlp.FeatureToken`, spaCy documents are heavy weight and
+    problematic to pickle.  For this reason, this attribute is dropped when
+    pickled, and only here for ad-hoc predictions.
 
     """
-
     def __post_init__(self):
         super().__init__()
 

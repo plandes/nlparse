@@ -22,13 +22,13 @@ from . import NLPError, TextContainer, LexicalSpan
 
 @dataclass
 class FeatureToken(PersistableContainer, TextContainer):
-    """A container class for features about a token.  This extracts only a subset
-    of features from the heavy object :class:`.TokenFeatures`, which contains
-    Spacy C data structures and is hard/expensive to pickle.
+    """A container class for features about a token.  Subclasses such as
+    :class:`.SpacyFeatureToken` extracts only a subset of features from the
+    heavy Spacy C data structures and is hard/expensive to pickle.
 
-    **Feature note**: features ``i`` and ``i_sent`` are always added to
-    features tokens to be able to reconstruct sentences (see
-    :meth:`.FeatureDocument.uncombine_sentences`).
+    **Feature note**: features ``i``, ``idx`` and ``i_sent`` are always added
+    to features tokens to be able to reconstruct sentences (see
+    :meth:`.FeatureDocument.uncombine_sentences`), and alwyas included.
 
     """
     _DICTABLE_WRITABLE_DESCENDANTS = True

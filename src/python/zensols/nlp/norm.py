@@ -238,7 +238,7 @@ class SplitEntityTokenMapper(TokenMapper):
     being grouped with :obj:`.TokenNormalizer.embed_entities`.  Note,
     ``embed_entities`` must be ``True`` to create the entities as they come
     from spaCy as spans.  This then can be used to create
-    :class:`.SpacyTokenFeatures` with spans that have the entity.
+    :class:`.SpacyFeatureToken` with spans that have the entity.
 
     """
     token_unit_type: bool = field(default=False)

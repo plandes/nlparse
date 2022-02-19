@@ -343,7 +343,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         return _DictableDoc(doc)
 
     def _normalize_tokens(self, doc: Doc) -> Iterable[FeatureToken]:
-        """Generate an iterator of :class:`.TokenFeatures` instances with features on a
+        """Generate an iterator of :class:`.FeatureToken` instances with features on a
         per token level.
 
         """
@@ -392,7 +392,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         if not isinstance(text, str):
-            raise ParseError(f'Expecting string text but got: {text}')
+            raise ParseError(
+                f'Expecting string text but got: {text} ({type(str)})')
         spacy_doc, sents = self._from_string(text)
         try:
             return self.doc_class(sents, spacy_doc, *args, **kwargs)
