@@ -128,6 +128,11 @@ class FeatureToken(PersistableContainer, TextContainer):
             feature_ids = filter(lambda fid: hasattr(self, fid), feature_ids)
         return {k: getattr(self, k) for k in feature_ids}
 
+    def _from_dictable(self, recurse: bool, readable: bool,
+                       class_name_param: str = None) -> Dict[str, Any]:
+        return self._from_dict(self.get_features(skip_missing=True),
+                               recurse, readable)
+
     def to_vector(self, feature_ids: Sequence[str] = None) -> Iterable[str]:
         """Return an iterable of feature data.
 
@@ -135,10 +140,6 @@ class FeatureToken(PersistableContainer, TextContainer):
         if feature_ids is None:
             feature_ids = self.__dict__.keys()
         return map(lambda a: getattr(self, a), sorted(feature_ids))
-
-    def _from_dictable(self, recurse: bool, readable: bool,
-                       class_name_param: str = None) -> Dict[str, Any]:
-        return self.get_features(skip_missing=True)
 
     def write_attributes(self, depth: int = 0, writer: TextIOBase = sys.stdout,
                          include_type: bool = True):

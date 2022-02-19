@@ -46,6 +46,8 @@ class LexicalSpan(Dictable):
     """A lexical character span of text in a document.
 
     """
+    _DICTABLE_ATTRIBUTES = {'begin', 'end'}
+
     def __init__(self, begin: int, end: int):
         """Initialize the interval.
 
@@ -133,7 +135,7 @@ class LexicalSpan(Dictable):
         return self.end - self.begin
 
     def __str__(self) -> str:
-        return f'[{self.begin}, {self.end}]'
+        return f'({self.begin}, {self.end})'
 
     def __repr__(self):
         return self.__str__()

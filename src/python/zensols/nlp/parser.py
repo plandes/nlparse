@@ -9,6 +9,9 @@ from typing import (
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABCMeta
 import logging
+import itertools as it
+import sys
+from io import TextIOBase
 import spacy
 from spacy.symbols import ORTH
 from spacy.tokens import Doc, Span, Token
@@ -21,6 +24,61 @@ from . import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class _DictableDoc(Dictable):
+    """Utility class to pretty print and serialize Spacy documents.
+
+    """
+    doc: Doc = field(repr=False)
+    """The document from which to create a :class:`.dict`."""
+
+    def _write_token(self, tok: Token, depth: int, writer: TextIOBase):
+        s = (f'{tok}: tag={tok.tag_}, pos={tok.pos_}, stop={tok.is_stop}, ' +
+             f'lemma={tok.lemma_}, dep={tok.dep_}')
+        self._write_line(s, depth, writer)
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+              token_limit: int = sys.maxsize):
+        """Pretty print the document.
+
+        :param token_limit: the max number of tokens to write, which defaults
+                            to all of them
+
+        """
+        text = self._trunc(str(self.doc.text))
+        self._write_line(f'text: {text}', depth, writer)
+        self._write_line('tokens:', depth, writer)
+        for sent in self.doc.sents:
+            self._write_line(self._trunc(str(sent)), depth + 1, writer)
+            for t in it.islice(sent, token_limit):
+                self._write_token(t, depth + 2, writer)
+        self._write_line('entities:', depth, writer)
+        for ent in self.doc.ents:
+            self._write_line(f'{ent}: {ent.label_}', depth + 1, writer)
+
+    def _from_dictable(self, *args, **kwargs) -> Dict[str, Any]:
+        sents = tuple(self.doc.sents)
+        em = {}
+        for e in self.doc.ents:
+            for tok in self.doc[e.start:e.end]:
+                em[tok.i] = e.label_
+
+        def tok_json(t):
+            return {'tag': t.tag_, 'pos': t.pos_,
+                    'is_stop': t.is_stop, 'lemma': t.lemma_, 'dep': t.dep_,
+                    'text': t.text, 'idx': t.idx,
+                    'ent': None if t.i not in em else em[t.i],
+                    'childs': tuple(map(lambda c: c.i, t.children))}
+
+        def sent_json(idx):
+            s = sents[idx]
+            return {t.i: tok_json(t) for t in self.doc[s.start:s.end]}
+
+        return {'text': self.doc.text,
+                'sents': {i: sent_json(i) for i in range(len(sents))},
+                'ents': [(str(e), e.label_,) for e in self.doc.ents]}
 
 
 @dataclass
@@ -88,13 +146,16 @@ class Component(object):
                            **self.pipe_add_kwargs)
 
 
+@dataclass
 class FeatureDocumentParser(Dictable, metaclass=ABCMeta):
     TOKEN_FEATURE_IDS: ClassVar[Set[str]] = FeatureToken.FEATURE_IDS
     """The default value for :obj:`token_feature_ids`."""
 
     name: str = field()
-    """The name of the parser, which is used for errors and logging."""
+    """The name of the parser, which is taken from the section name when created
+    with a :class:`~zensols.config.ConfigFactory`.
 
+    """
     def __post_init__(self):
         super().__init__()
 
@@ -140,11 +201,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     _MODELS = {}
     """Contains cached models, such as ``en_core_web_sm``."""
 
-    name: str = field()
-    """The name of the language resource, which is taken from the section name when
-    created with a :class:`~zensols.config.ConfigFactory`.
-
-    """
     lang: str = field(default='en')
     """The natural language the identify the model."""
 
@@ -195,7 +251,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     """If ``True``, remove sentences that only have space tokens."""
 
     def __post_init__(self):
-        super().__init__()
+        super().__post_init__()
         self._model = PersistedWork('_model', self)
 
     def _create_model_key(self) -> str:
@@ -263,7 +319,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             nlp.tokenizer.add_special_case(stok, rule)
         return nlp
 
-    def _parse_spacy(self, text: str) -> Doc:
+    def parse_spacy_doc(self, text: str) -> Doc:
         """Parse ``text`` in to a Spacy document.
 
         """
@@ -277,6 +333,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         if logger.isEnabledFor(logging.INFO):
             logger.info(f'parsed document: <{text}> -> {doc}')
         return doc
+
+    def get_dictable(self, doc: Doc) -> Dictable:
+        """Return a dictionary object graph and pretty prints spaCy docs.
+
+        """
+        return _DictableDoc(doc)
 
     def _normalize_tokens(self, doc: Doc) -> Iterable[FeatureToken]:
         """Generate an iterator of :class:`.TokenFeatures` instances with features on a
@@ -292,7 +354,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     def _create_token(self, tok: Token, norm: Tuple[Token, str]) -> FeatureToken:
         tp: Type[FeatureToken] = self.token_class
-        return tp(tok, norm)#i=tok.i, idx=tok.idx, i_sent=-1, norm=norm, spacy_token=tok)
+        return tp(tok, norm)
 
     def _create_sent(self, spacy_sent: Span, stoks: Iterable[FeatureToken],
                      text: str) -> FeatureSentence:
@@ -302,7 +364,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         """Parse a document from a string.
 
         """
-        doc: Doc = self._parse_spacy(text)
+        doc: Doc = self.parse_spacy_doc(text)
         toks: Tuple[FeatureToken] = tuple(self._normalize_tokens(doc))
         ntoks = len(toks)
         tix = 0

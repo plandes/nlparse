@@ -1,9 +1,10 @@
 import logging
 import unittest
 import json
+from spacy.tokens import Doc
 from zensols.util.log import loglevel
 from zensols.config import ImportConfigFactory
-from zensols.nlp import LanguageResource, DictableDoc, TokenFeatures
+from zensols.nlp import FeatureDocumentParser, FeatureToken
 from config import AppConfig
 
 logger = logging.getLogger(__name__)
@@ -24,13 +25,14 @@ class TestParse(unittest.TestCase):
         self.maxDiff = 999999
         self.config = AppConfig()
         self.fac = ImportConfigFactory(self.config, shared=False)
-        self.lr = self.fac.instance('default_langres')
+        self.doc_parser = self.fac('default_doc_parser')
+        self.sent = 'Dan throws the ball.'
 
     def test_parse(self):
-        lr = self.lr
-        self.assertTrue(isinstance(lr, LanguageResource))
-        doc = lr.parse('Dan throws the ball.')
-        dd = DictableDoc(doc)
+        doc_parser = self.doc_parser
+        self.assertTrue(isinstance(doc_parser, FeatureDocumentParser))
+        doc: Doc = doc_parser.parse_spacy_doc(self.sent)
+        dd = self.doc_parser.get_dictable(doc)
         res = dd.asdict()
         with open(self.config.parse_path) as f:
             c = eval(f.read())
@@ -39,37 +41,44 @@ class TestParse(unittest.TestCase):
     def test_feature(self):
         tnfac = ImportConfigFactory(self.config, shared=False)
         tn = tnfac.instance('default_token_normalizer')
-        lr = self.fac.instance('default_langres', token_normalizer=tn)
-        doc = lr.parse('Dan throws the ball.')
+        doc_parser = self.fac('default_doc_parser', token_normalizer=tn)
         self.assertEqual('MapTokenNormalizer: embed=True, reload=False, lemma_token_mapper', str(tn))
-        res = tuple(map(lambda x: x.get_features(TokenFeatures.FIELD_IDS),
-                        lr.features(doc)))
+        fd = doc_parser(self.sent)
+        res = fd.asdict()
+        if 0:
+            with open(self.config.feature_path, 'w') as f:
+                f.write(fd.asjson(indent=4))
         with open(self.config.feature_path) as f:
             c = json.load(f)
         self.assertEqual(rec_sort(c), rec_sort(res))
         tn = tnfac.instance('nonorm_token_normalizer')
-        lr = self.fac.instance('default_langres', token_normalizer=tn)
-        res = tuple(map(lambda x: x.norm, lr.features(doc)))
+        doc_parser = self.fac('default_doc_parser', token_normalizer=tn)
+        res = tuple(map(lambda x: x.norm, doc_parser(self.sent).token_iter()))
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
 
+    def _from_token_norm(self, sent, norm_name):
+        doc_parser = self.fac('default_doc_parser')
+        doc_parser.token_normalizer = self.fac(norm_name)
+        doc = doc_parser(sent)
+        return doc.token_iter()
+
     def test_map(self):
-        tnfac = ImportConfigFactory(self.config)
-        doc = self.lr.parse('I am a citizen of the United States of America.')
+        sent = 'I am a citizen of the United States of America.'
         self.assertEqual(('citizen', 'the United States of America'),
-                         tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_filter_token_normalizer'))))
+                         tuple(map(lambda t: t.norm, self._from_token_norm(
+                             sent, 'map_filter_token_normalizer'))))
         self.assertEqual(('am', 'citizen', 'of', 'the United States of America'),
-                         tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_filter_pron_token_normalizer'))))
+                         tuple(map(lambda t: t.norm, self._from_token_norm(
+                             sent, 'map_filter_pron_token_normalizer'))))
         self.assertEqual(('i', 'am', 'a', 'citizen', 'of', 'the united states of america', '.'),
-                         tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_lower_token_normalizer'))))
+                         tuple(map(lambda t: t.norm, self._from_token_norm(
+                             sent, 'map_lower_token_normalizer'))))
         self.assertEqual(('citizen', 'United', 'States', 'America'),
-                         tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_embed_token_normalizer'))))
+                         tuple(map(lambda t: t.norm, self._from_token_norm(
+                             sent, 'map_embed_token_normalizer'))))
         self.assertEqual(('citizen', 'the_united_states_of_america'),
-                         tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('map_filter_subs_token_normalizer'))))
+                         tuple(map(lambda t: t.norm, self._from_token_norm(
+                             sent, 'map_filter_subs_token_normalizer'))))
 
     def test_disable(self):
         import warnings
@@ -77,74 +86,68 @@ class TestParse(unittest.TestCase):
         # disabled in the pipline
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', message=r"^\[W108\] The rule-based lemmatizer did not find POS annotation for the token.*Check that your pipeline")
-            lr = self.lr
-            dis_lr = self.fac.instance('disable_tagger_langres')
-            doc = lr.parse('Dan throws the ball.')
+            #lr = self.lr
+            dis_dp = self.fac('disable_tagger_doc_parser')
+            doc = self.doc_parser.parse_spacy_doc(self.sent)
             tags = tuple(map(lambda t: t.tag_, doc))
             self.assertEqual(('NNP', 'VBZ', 'DT', 'NN', '.'), tags)
-            self.assertEqual('tagger parser'.split(), dis_lr.disable_component_names)
+            self.assertEqual('tagger parser'.split(), dis_dp.disable_component_names)
             # spacy warns about trying to add POS tags
             with loglevel('spacy', logging.ERROR):
-                doc_dis = dis_lr.parse('Dan throws the ball.')
+                doc_dis = dis_dp.parse_spacy_doc(self.sent)
             no_tags = tuple(map(lambda t: t.tag_, doc_dis))
             self.assertEqual(('', '', '', '', ''), no_tags)
 
     def test_filter_features(self):
         tnfac = ImportConfigFactory(self.config)
-        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
-        doc = self.lr.parse('I am a citizen of the United States of America.')
-        feats = lr.features(doc)
+        dp = self.fac('default_doc_parser', token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
+        feats = dp('I am a citizen of the United States of America.').token_iter()
         self.assertEqual(('I', 'am', 'a', 'citizen', 'of', 'the United States of America', '.'),
                          tuple(map(lambda f: f.norm, feats)))
-
-        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('feature_default_filter_token_normalizer'))
-        doc = self.lr.parse('I am a citizen of the United States of America.')
-        feats = lr.features(doc)
+        dp = self.fac('default_doc_parser', token_normalizer=tnfac.instance('feature_default_filter_token_normalizer'))
+        feats = dp.parse('I am a citizen of the United States of America.').token_iter()
         self.assertEqual(('I', 'am', 'citizen', 'of', 'the United States of America'),
                          tuple(map(lambda f: f.norm, feats)))
-
-        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('feature_stop_filter_token_normalizer'))
-        doc = self.lr.parse('I am a citizen of the United States of America.')
-        feats = lr.features(doc)
+        dp = self.fac('default_doc_parser', token_normalizer=tnfac.instance('feature_stop_filter_token_normalizer'))
+        feats = dp.parse('I am a citizen of the United States of America.').token_iter()
         self.assertEqual(('citizen', 'the United States of America'),
                          tuple(map(lambda f: f.norm, feats)))
 
     def test_space(self):
-        tnfac = ImportConfigFactory(self.config)
-        tn = tnfac.instance('nonorm_token_normalizer')
-        lr = self.fac.instance('default_langres', token_normalizer=tn)
-        doc = lr.parse('''Dan throws
-the ball.''')
-        res = tuple(map(lambda x: x.norm, lr.features(doc)))
+        sent = '''Dan throws
+the ball.'''
+        tn = self.fac('nonorm_token_normalizer')
+        dp = self.fac('default_doc_parser', token_normalizer=tn)
+        doc = dp.parse(sent)
+        res = tuple(map(lambda x: x.norm, doc.token_iter()))
         self.assertEqual(('Dan', 'throws', '\n', 'the', 'ball', '.'), res)
 
-        tn = tnfac.instance('map_filter_space_token_normalizer')
-        lr = self.fac.instance('default_langres', token_normalizer=tn)
-        doc = lr.parse('''Dan throws
-the ball.''')
-        res = tuple(map(lambda x: x.norm, lr.features(doc)))
+        tn = self.fac('map_filter_space_token_normalizer')
+        dp = self.fac('default_doc_parser', token_normalizer=tn)
+        doc = dp.parse(sent)
+        res = tuple(map(lambda x: x.norm, doc.token_iter()))
         self.assertEqual(('Dan', 'throws', 'the', 'ball', '.'), res)
 
     def test_tok_boundaries(self):
-        tnfac = ImportConfigFactory(self.config)
-        tn = tnfac.instance('nonorm_token_normalizer')
-        lr = self.fac.instance('default_langres', token_normalizer=tn)
-        doc = lr.parse('id:1234')
-        res = tuple(map(lambda x: x.norm, lr.features(doc)))
+        tn = self.fac('nonorm_token_normalizer')
+        dp = self.fac('default_doc_parser', token_normalizer=tn)
+        doc = dp.parse('id:1234')
+        res = tuple(map(lambda x: x.norm, doc.token_iter()))
         self.assertEqual(('id:1234',), res)
-        doc = lr.parse('id-1234')
-        res = tuple(map(lambda x: x.norm, lr.features(doc)))
+        doc = dp.parse('id-1234')
+        res = tuple(map(lambda x: x.norm, doc.token_iter()))
         self.assertEqual(('id-1234',), res)
-        doc = lr.parse('an identifier: id-1234')
-        res = tuple(map(lambda x: x.norm, lr.features(doc)))
+        doc = dp.parse('an identifier: id-1234')
+        res = tuple(map(lambda x: x.norm, doc.token_iter()))
         self.assertEqual(('an', 'identifier', ':', 'id-1234',), res)
 
     def test_detached_features(self):
         json_path = 'test-resources/detatch.json'
-        tnfac = ImportConfigFactory(self.config)
-        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('feature_no_filter_token_normalizer'))
-        doc = self.lr.parse('I am a citizen of the United States of America.')
-        feats = lr.features(doc)
+        dp = self.fac(
+            'default_doc_parser',
+            token_normalizer=self.fac('feature_no_filter_token_normalizer'))
+        doc = dp.parse('I am a citizen of the United States of America.')
+        feats = doc.token_iter()
         objs = []
         for f in feats:
             objs.append(f.asdict())
@@ -157,15 +160,13 @@ the ball.''')
             self.assertEqual(comps, objs)
 
     def test_special_tok(self):
-        tnfac = ImportConfigFactory(self.config)
-        txt = '<s> I am a citizen of the United States of America. </s>'
-        doc = self.lr.parse(txt)
+        sent = '<s> I am a citizen of the United States of America. </s>'
         self.assertEqual(('<', 's', '>', 'I', 'am', 'a', 'citizen', 'of',
                           'the United States of America', '.', '<', '/s', '>'),
-                         tuple(self.lr.normalized_tokens(
-                             doc, tnfac.instance('nonorm_token_normalizer'))))
-        lr = self.fac.instance('special_langres')
-        doc = lr.parse(txt)
+                         tuple(map(lambda t: t.norm, self._from_token_norm(
+                             sent, 'nonorm_token_normalizer'))))
+        dp = self.fac('special_doc_parser')
+        doc = dp.parse(sent)
         self.assertEqual(('<s>', 'I', 'am', 'a', 'citizen', 'of',
                           'the United States of America', '.', '</s>'),
-                         tuple(lr.normalized_tokens(doc)))
+                         tuple(map(lambda t: t.norm, doc.token_iter())))
