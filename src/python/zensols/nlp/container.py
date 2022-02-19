@@ -317,9 +317,11 @@ class FeatureDocument(TokenContainer):
         return id_to_sent
 
     def sentence_index_for_token(self, token: FeatureToken) -> int:
+        """Return index of the parent sentence having ``token``."""
         return self._id_to_sent()[token.idx]
 
     def sentence_for_token(self, token: FeatureToken) -> FeatureSentence:
+        """Return the parent sentence that has ``token``."""
         six: int = self.sentence_index_for_token(token)
         return self.sents[six]
 
