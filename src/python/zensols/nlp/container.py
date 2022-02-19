@@ -112,7 +112,14 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """A map of tokens with keys as their character offset and values as tokens.
 
         """
-        return frozendict({tok.idx: tok for tok in self.token_iter()})
+        by_idx = {}
+        cnt = 0
+        tok: FeatureToken
+        for tok in self.token_iter():
+            by_idx[tok.idx] = tok
+            cnt += 1
+        assert cnt == self.token_len
+        return frozendict(by_idx)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               n_tokens: int = sys.maxsize):

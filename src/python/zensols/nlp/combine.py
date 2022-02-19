@@ -9,7 +9,6 @@ import logging
 from spacy.tokens.token import Token
 from . import (
     ParseError, TokenContainer, FeatureDocumentParser,
-    SpacyFeatureDocumentParser,
     FeatureDocument, FeatureSentence, FeatureToken,
 )
 
@@ -17,68 +16,68 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class CombinerFeatureDocumentParser(SpacyFeatureDocumentParser):
+class CombinerFeatureDocumentParser(FeatureDocumentParser):
     """A class that combines features from two :class:`.FeatureDocumentParser`
-    instances.  Features parsed using each :obj:`replica_parser` are optionally
+    instances.  Features parsed using each :obj:`source_parser` are optionally
     copied or overwritten on a token by token basis in the feature document
     parsed by this instance.
 
-    The primary tokens are sometimes added to or clobbered from the replica,
+    The target tokens are sometimes added to or clobbered from the source,
     but not the other way around.
 
     """
-    replica_parsers: List[FeatureDocumentParser] = field(default=None)
+    target_parser: FeatureDocumentParser = field()
+    """The parser in to which data and features are merged."""
+
+    source_parsers: List[FeatureDocumentParser] = field(default=None)
     """The language resource used to parse documents and create token attributes.
 
     """
-
     validate_features: Set[str] = field(default_factory=set)
     """A set of features to compare across all tokens when copying.  If any of the
     given features don't match, an mismatch token error is raised.
 
     """
-
     yield_features: List[str] = field(default_factory=list)
-    """A list of features to be copied (in order) if the primary token is not set.
+    """A list of features to be copied (in order) if the target token is not set.
 
     """
-
     overwrite_features: List[str] = field(default_factory=list)
     """A list of features to be copied/overwritten in order given in the list.
 
     """
-    def _validate_features(self, primary_tok: FeatureToken,
-                           replica_tok: FeatureToken,
+    def _validate_features(self, target_tok: FeatureToken,
+                           source_tok: FeatureToken,
                            context_container: TokenContainer):
         for f in self.validate_features:
-            prim = getattr(primary_tok, f)
-            rep = getattr(replica_tok, f)
+            prim = getattr(target_tok, f)
+            rep = getattr(source_tok, f)
             if prim != rep:
                 raise ParseError(
-                    f'Mismatch tokens: {primary_tok.text}({f}={prim}) ' +
-                    f'!= {replica_tok.text}({f}={rep}) ' +
+                    f'Mismatch tokens: {target_tok.text}({f}={prim}) ' +
+                    f'!= {source_tok.text}({f}={rep}) ' +
                     f'in container: {context_container}')
 
-    def _merge_tokens(self, primary_tok: FeatureToken,
-                      replica_tok: FeatureToken,
+    def _merge_tokens(self, target_tok: FeatureToken,
+                      source_tok: FeatureToken,
                       context_container: TokenContainer):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merging tokens: {replica_tok} -> {primary_tok}')
-        self._validate_features(primary_tok, replica_tok, context_container)
+            logger.debug(f'merging tokens: {source_tok} -> {target_tok}')
+        self._validate_features(target_tok, source_tok, context_container)
         for f in self.yield_features:
-            targ = primary_tok.get_value(f)
+            targ = target_tok.get_value(f)
             if targ is None:
-                src = replica_tok.get_value(f)
+                src = source_tok.get_value(f)
                 if src is not None:
                     if logger.isEnabledFor(logging.DEBUG):
-                        logger.debug(f'{src} -> {primary_tok.text}.{f}')
-                    setattr(primary_tok, f, src)
+                        logger.debug(f'{src} -> {target_tok.text}.{f}')
+                    setattr(target_tok, f, src)
         for f in self.overwrite_features:
-            src = replica_tok.get_value(f)
+            src = source_tok.get_value(f)
             if src is not None:
                 if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug(f'{src} -> {primary_tok.text}.{f}')
-                setattr(primary_tok, f, src)
+                    logger.debug(f'{src} -> {target_tok.text}.{f}')
+                setattr(target_tok, f, src)
 
     def _debug_sentence(self, sent: FeatureSentence, name: str):
         logger.debug(f'{name}:')
@@ -88,11 +87,11 @@ class CombinerFeatureDocumentParser(SpacyFeatureDocumentParser):
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merging sentences: {self._replica_sent.tokens} ' +
-                         f'-> {self._primary_sent.tokens}')
-        for primary_tok, replica_tok in zip(
-                self._primary_sent, self._replica_sent):
-            self._merge_tokens(primary_tok, replica_tok, self._primary_sent)
+            logger.debug(f'merging sentences: {self._source_sent.tokens} ' +
+                         f'-> {self._target_sent.tokens}')
+        for target_tok, source_tok in zip(
+                self._target_sent, self._source_sent):
+            self._merge_tokens(target_tok, source_tok, self._target_sent)
 
     def _prepare_merge_doc(self):
         pass
@@ -102,41 +101,41 @@ class CombinerFeatureDocumentParser(SpacyFeatureDocumentParser):
 
     def _merge_doc(self):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merging docs: {self._replica_doc} -> ' +
-                         f'{self._primary_doc}')
-        for primary_sent, replica_sent in zip(
-                self._primary_doc, self._replica_doc):
-            self._primary_sent = primary_sent
-            self._replica_sent = replica_sent
+            logger.debug(f'merging docs: {self._source_doc} -> ' +
+                         f'{self._target_doc}')
+        for target_sent, source_sent in zip(
+                self._target_doc, self._source_doc):
+            self._target_sent = target_sent
+            self._source_sent = source_sent
             self._prepare_merge_doc()
             try:
                 self._merge_sentence()
             finally:
-                del self._primary_sent
-                del self._replica_sent
+                del self._target_sent
+                del self._source_sent
                 self._complete_merge_doc()
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
-        primary_doc = super().parse(text, *args, **kwargs)
-        if self.replica_parsers is None or len(self.replica_parsers) == 0:
-            logger.warning(f'No replica parsers set on {self}, ' +
+        target_doc = self.target_parser.parse(text, *args, **kwargs)
+        if self.source_parsers is None or len(self.source_parsers) == 0:
+            logger.warning(f'No source parsers set on {self}, ' +
                            'which disables feature combining')
         else:
-            for replica_parser in self.replica_parsers:
-                replica_doc = replica_parser.parse(text, *args, **kwargs)
-                self._primary_doc = primary_doc
-                self._replica_doc = replica_doc
+            for source_parser in self.source_parsers:
+                source_doc = source_parser.parse(text, *args, **kwargs)
+                self._target_doc = target_doc
+                self._source_doc = source_doc
                 try:
                     self._merge_doc()
                 finally:
-                    del self._primary_doc
-                    del self._replica_doc
-        return primary_doc
+                    del self._target_doc
+                    del self._source_doc
+        return target_doc
 
 
 @dataclass
 class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
-    """Maps the replica to respective tokens in the primary document using spaCy
+    """Maps the source to respective tokens in the target document using spaCy
     artifacts.
 
     """
@@ -146,51 +145,51 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
 
     """
 
-    clone_and_norm_replica_token: bool = field(default=True)
-    """If ``True``, clone the replica token and clobber the ``norm`` field with the
+    clone_and_norm_source_token: bool = field(default=True)
+    """If ``True``, clone the source token and clobber the ``norm`` field with the
     text of the spaCy token.
 
     """
     merge_sentences: bool = field(default=True)
     """If ``False`` ignore sentences and map everything at the token level.
     Otherwise, it use the same hierarchy mapping as the super class.  This is
-    useful when sentence demarcations are not aligned across replica document
+    useful when sentence demarcations are not aligned across source document
     parsers and this parser.
 
     """
-    def _merge_token_containers(self, primary_container: TokenContainer,
+    def _merge_token_containers(self, target_container: TokenContainer,
                                 rmap: Dict[int, Tuple[FeatureToken, Token]]):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merge: {primary_container}, mapping: {rmap}')
-        for primary_tok in primary_container.token_iter():
-            replica_tok = rmap.get(primary_tok.idx)
+            logger.debug(f'merge: {target_container}, mapping: {rmap}')
+        for target_tok in target_container.token_iter():
+            source_tok = rmap.get(target_tok.idx)
             if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(f'entry: {primary_tok.idx}/{primary_tok} ' +
-                             f'-> {replica_tok}')
-            if replica_tok is not None:
-                self._merge_tokens(primary_tok, replica_tok, primary_container)
+                logger.debug(f'entry: {target_tok.idx}/{target_tok} ' +
+                             f'-> {source_tok}')
+            if source_tok is not None:
+                self._merge_tokens(target_tok, source_tok, target_container)
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merging sentences: {self._replica_sent.tokens} ' +
-                         f'-> {self._primary_sent.tokens}')
-        rmap: Dict[int, Tuple[FeatureToken, Token]] = self._replica_token_mapping
-        self._merge_token_containers(self._primary_sent, rmap)
+            logger.debug(f'merging sentences: {self._source_sent.tokens} ' +
+                         f'-> {self._target_sent.tokens}')
+        rmap: Dict[int, Tuple[FeatureToken, Token]] = self._source_token_mapping
+        self._merge_token_containers(self._target_sent, rmap)
 
     def _prepare_merge_doc(self):
         if self.merge_sentences:
-            self._replica_token_mapping = self._replica_sent.tokens_by_idx
+            self._source_token_mapping = self._source_sent.tokens_by_idx
 
     def _complete_merge_doc(self):
         if self.merge_sentences:
-            del self._replica_token_mapping
+            del self._source_token_mapping
 
     def _merge_doc(self):
         if self.merge_sentences:
             super()._merge_doc()
         else:
             if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(f'merging docs: {self._replica_doc} -> ' +
-                             f'{self._primary_doc}')
-            replica_token_mapping = self._get_token_mapping(self._replica_doc)
-            self._merge_token_containers(self._primary_doc, replica_token_mapping)
+                logger.debug(f'merging docs: {self._source_doc} -> ' +
+                             f'{self._target_doc}')
+            source_token_mapping = self._get_token_mapping(self._source_doc)
+            self._merge_token_containers(self._target_doc, source_token_mapping)
