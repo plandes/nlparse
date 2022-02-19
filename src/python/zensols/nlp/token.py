@@ -100,6 +100,11 @@ class FeatureToken(PersistableContainer, TextContainer):
                           :obj:`FEATURE_IDS`
 
         """
+        if feature_ids is None:
+            feature_ids = set(self.FEATURE_IDS)
+        else:
+            feature_ids = set(feature_ids)
+        feature_ids.update(self._REQUIRED_FEATURE_IDS)
         feats: Dict[str, Any] = self.get_features(feature_ids, skip_missing)
         clone = FeatureToken.__new__(FeatureToken)
         clone.__dict__.update(feats)
@@ -134,15 +139,17 @@ class FeatureToken(PersistableContainer, TextContainer):
 
         """
         feature_ids = self.FEATURE_IDS if feature_ids is None else feature_ids
-        feature_ids = set(feature_ids) | self._REQUIRED_FEATURE_IDS
         if skip_missing:
             feature_ids = filter(lambda fid: hasattr(self, fid), feature_ids)
         return {k: getattr(self, k) for k in feature_ids}
 
     def _from_dictable(self, recurse: bool, readable: bool,
                        class_name_param: str = None) -> Dict[str, Any]:
-        return self._from_dict(self.get_features(skip_missing=True),
-                               recurse, readable)
+        dct = {}
+        for k, v in self.__dict__.items():
+            if not k.startswith('_'):
+                dct[k] = self._from_object(v, recurse, readable)
+        return dct
 
     def to_vector(self, feature_ids: Sequence[str] = None) -> Iterable[str]:
         """Return an iterable of feature data.
@@ -167,7 +174,9 @@ class FeatureToken(PersistableContainer, TextContainer):
                           :obj:`WRITABLE_FEATURE_IDS`
 
         """
-        dct = self.get_features(self.WRITABLE_FEATURE_IDS, True)
+        if feature_ids is None:
+            feature_ids = self.WRITABLE_FEATURE_IDS
+        dct = self.get_features(feature_ids, True)
         for k in sorted(dct.keys()):
             val: str = dct[k]
             ptype: str = None
@@ -178,13 +187,15 @@ class FeatureToken(PersistableContainer, TextContainer):
             ptype = '' if ptype is None else ptype
             self._write_line(f'{k}={val}{ptype}', depth, writer)
 
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+              include_type: bool = True,
+              feature_ids: Iterable[str] = None):
         con = f'norm=<{self.norm}>'
         if self.text != self.norm:
             con += f' org=<{self.text}>'
         self._write_line(f'{self.__class__.__name__}: ' + con, depth, writer)
         self._write_line('attributes:', depth + 1, writer)
-        self.write_attributes(depth + 2, writer)
+        self.write_attributes(depth + 2, writer, include_type, feature_ids)
 
     def __eq__(self, other: FeatureToken) -> bool:
         return self.i == other.i and self.idx == other.idx and \
