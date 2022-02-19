@@ -177,22 +177,9 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
         rmap: Dict[int, Tuple[FeatureToken, Token]] = self._replica_token_mapping
         self._merge_token_containers(self._primary_sent, rmap)
 
-    def _get_token_mapping(self, doc: FeatureDocument) -> \
-            Dict[int, Tuple[FeatureToken, Token]]:
-        mapping = {}
-        tok: FeatureToken
-        for tok in doc.token_iter():
-            prev = mapping.get(tok.idx)
-            if prev is not None:
-                raise ParseError(
-                    f'Refusing to clobber previous mapping {tok} -> {prev}')
-            mapping[tok.idx] = tok
-        return mapping
-
     def _prepare_merge_doc(self):
         if self.merge_sentences:
-            self._replica_token_mapping = self._get_token_mapping(
-                self._replica_sent)
+            self._replica_token_mapping = self._replica_sent.tokens_by_idx
 
     def _complete_merge_doc(self):
         if self.merge_sentences:
