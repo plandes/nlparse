@@ -342,7 +342,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         """
         return _DictableDoc(doc)
 
-    def _normalize_tokens(self, doc: Doc) -> Iterable[FeatureToken]:
+    def _normalize_tokens(self, doc: Doc, *args, **kwargs) -> \
+            Iterable[FeatureToken]:
         """Generate an iterator of :class:`.FeatureToken` instances with features on a
         per token level.
 
@@ -350,14 +351,14 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         if logger.isEnabledFor(logging.INFO):
             logger.info(f'parsing features in {doc}')
         tokens: Tuple[FeatureToken] = \
-            map(lambda tup: self._create_token(*tup),
+            map(lambda tup: self._create_token(*tup, *args, **kwargs),
                 self.token_normalizer.normalize(doc))
         return tokens
 
-    def _create_token(self, tok: Token, norm: Tuple[Token, str]) -> \
-            FeatureToken:
+    def _create_token(self, tok: Token, norm: Tuple[Token, str],
+                      *args, **kwargs) -> FeatureToken:
         tp: Type[FeatureToken] = self.token_class
-        ft: FeatureToken = tp(tok, norm)
+        ft: FeatureToken = tp(tok, norm, *args, **kwargs)
         return ft.detach(self.token_feature_ids)
 
     def _create_sent(self, spacy_sent: Span, stoks: Iterable[FeatureToken],
