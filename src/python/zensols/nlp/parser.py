@@ -352,9 +352,11 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 self.token_normalizer.normalize(doc))
         return tokens
 
-    def _create_token(self, tok: Token, norm: Tuple[Token, str]) -> FeatureToken:
+    def _create_token(self, tok: Token, norm: Tuple[Token, str]) -> \
+            FeatureToken:
         tp: Type[FeatureToken] = self.token_class
-        return tp(tok, norm)
+        ft: FeatureToken = tp(tok, norm)
+        return ft.detach(self.token_feature_ids)
 
     def _create_sent(self, spacy_sent: Span, stoks: Iterable[FeatureToken],
                      text: str) -> FeatureSentence:

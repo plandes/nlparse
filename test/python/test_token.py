@@ -20,7 +20,7 @@ class TestToken(TestCase):
 
     def test_detach(self):
         t = FeatureToken(1, 2, 3, 'cat')
-        det = t.detach()
+        det = t.detach(skip_missing=True)
         self.assertNotEqual(id(t), id(det))
         self.assertEqual(t, det)
 

@@ -13,9 +13,9 @@ class TestFeatureDocParse(TestBase):
 the United States of America."""
 
     def test_basic_parse(self):
-        langres = self.fac.instance('langres')
-        doc = langres.parse(self.sent_text)
-        self.assertEqual(self.def_parse, tuple(langres.normalized_tokens(doc)))
+        dp = self.fac.instance('doc_parser')
+        doc = dp.parse(self.sent_text)
+        self.assertEqual(self.def_parse, tuple(doc.norm_token_iter()))
 
     def test_whitespace_default_parse(self):
         parser = self.fac('doc_parser_default')
@@ -128,13 +128,14 @@ the United States of America."""
     def test_feature_subset(self):
         parser = self.fac('doc_parser_default')
         fdoc = parser.parse(self.SENT_TEXT_SPACE)
+
         for tok in fdoc.tokens:
-            self.assertEqual(24, len(tok.asdict()))
+            self.assertEqual(25, len(tok.asdict()))
 
         parser = self.fac('doc_parser_feat_subset')
         fdoc = parser.parse(self.SENT_TEXT_SPACE)
         for tok in fdoc.tokens:
-            self.assertEqual(6, len(tok.asdict()))
+            self.assertEqual(5, len(tok.asdict()))
 
         parser = self.fac('doc_parser_feat_no_exist')
         with self.assertRaises(AttributeError):

@@ -89,11 +89,18 @@ class FeatureToken(PersistableContainer, TextContainer):
     def __post_init__(self):
         super().__init__()
 
-    def detach(self, feature_ids: Set[str] = None) -> FeatureToken:
-        """Create a detected token (i.e. from spacy artifacts).
+    def detach(self, feature_ids: Set[str] = None,
+               skip_missing: bool = False) -> FeatureToken:
+        """Create a detected token (i.e. from spaCy artifacts).
+
+        :param feature_ids: the features to write, which defaults to
+                          :obj:`FEATURE_IDS`
 
         """
-        return FeatureToken(**self.asdict())
+        feats: Dict[str, Any] = self.get_features(feature_ids, skip_missing)
+        clone = FeatureToken.__new__(FeatureToken)
+        clone.__dict__.update(feats)
+        return clone
 
     @property
     def text(self) -> str:
@@ -195,7 +202,7 @@ class FeatureToken(PersistableContainer, TextContainer):
 
 @dataclass(init=False)
 class SpacyFeatureToken(FeatureToken):
-    spacy_token: Union[Token, Span] = field(repr=False, compare=False)
+    # spacy_token: Union[Token, Span] = field(repr=False, compare=False)
     """The parsed spaCy token (or span if entity) this feature set is based.
 
     :see: :meth:`.FeatureDocument.spacy_doc`
@@ -308,32 +315,6 @@ class SpacyFeatureToken(FeatureToken):
 
         """
         return self.token.is_space
-
-    # @property
-    # def i(self) -> int:
-    #     """The index of the token within the parent document.
-
-    #     """
-    #     return self.token.i
-
-    # @property
-    # def idx(self) -> int:
-    #     """The character offset of the token within the parent document.
-
-    #     """
-    #     return self.token.idx
-
-    # @property
-    # def i_sent(self) -> int:
-    #     """The index of the token in the respective sentence.  This is not to be
-    #     confused with the index of the sentence to which the token belongs,
-    #     which is :obj:`sent_i`.
-
-    #     This attribute does not exist in a spaCy token, and was named as such
-    #     to follow the naming conventions of their API.
-
-    #     """
-    #     return self.token.i - self.token.sent.start
 
     @property
     def sent_i(self) -> int:
