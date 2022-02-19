@@ -1,7 +1,7 @@
 from util import TestBase
 from spacy.tokens.doc import Doc
 from zensols.nlp import (
-    LanguageResource, FeatureDocument, FeatureDocumentParser, ParseError
+    FeatureDocument, FeatureDocumentParser, ParseError
 )
 
 
@@ -15,9 +15,8 @@ class TestDocCombine(TestBase):
     def test_ent_splitter(self):
         doc_parser: FeatureDocumentParser = self.fac.instance(
             'doc_parser_split_ents')
-        lr: LanguageResource = doc_parser.langres
-        doc: Doc = lr(self.sent_text2)
-        toks = tuple(lr.normalized_tokens(doc))
+        doc: Doc = doc_parser(self.sent_text2)
+        toks = tuple(doc.norm_token_iter())
         should_ents = \
             (('I', '<none>'), ('am', '<none>'), ('a', '<none>'),
              ('citizen', '<none>'), ('of', '<none>'), ('the', 'GPE'),

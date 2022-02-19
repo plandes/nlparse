@@ -14,20 +14,19 @@ class TestThirdParty(unittest.TestCase):
     def test_stemmer(self):
         tnfac = ImportConfigFactory(self.config)
         sent = 'Bobby is fast and runs with dogs, armies, and sheep from the police.'
-        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('nonorm_token_normalizer'))
-        doc = lr.parse(sent)
-        feats = tuple(lr.features(doc))
+        doc_parser = self.fac.instance('doc_parser', token_normalizer=tnfac.instance('nonorm_token_normalizer'))
+        doc = doc_parser.parse(sent)
+        feats = tuple(doc.norm_token_iter())
         self.assertEqual(('Bobby', 'is', 'fast', 'and', 'runs', 'with',
                           'dogs', ',', 'armies', ',', 'and', 'sheep', 'from',
-                          'the', 'police', '.'),
-                         tuple(map(lambda f: f.norm, feats)))
+                          'the', 'police', '.'), feats)
         self.assertEqual(('Bobby', 'be', 'fast', 'and', 'run', 'with', 'dog',
                           ',', 'army', ',', 'and', 'sheep', 'from', 'the',
                           'police', '.'),
-                         tuple(map(lambda f: f.lemma_, feats)))
-        lr = self.fac.instance('default_langres', token_normalizer=tnfac.instance('stemmer_token_normalizer'))
-        feats = tuple(lr.features(doc))
+                         tuple(map(lambda f: f.lemma_, doc.token_iter())))
+        doc_parser = self.fac.instance('doc_parser', token_normalizer=tnfac.instance('stemmer_token_normalizer'))
+        doc = doc_parser.parse(sent)
+        feats = tuple(doc.norm_token_iter())
         self.assertEqual(('bobbi', 'is', 'fast', 'and', 'run', 'with', 'dog',
                           ',', 'armi', ',', 'and', 'sheep', 'from', 'the',
-                          'polic', '.'),
-                         tuple(map(lambda f: f.norm, feats)))
+                          'polic', '.'), feats)

@@ -108,7 +108,8 @@ class LexicalSpan(Dictable):
         self._write_line(str(self), depth, writer)
 
     def __eq__(self, other):
-        return self.begin == other.begin and self.end == other.end
+        return isinstance(other, LexicalSpan) and \
+            self.begin == other.begin and self.end == other.end
 
     def __lt__(self, other):
         if self.begin == other.begin:

@@ -31,8 +31,8 @@ class FeatureToken(PersistableContainer, TextContainer):
     :meth:`.FeatureDocument.uncombine_sentences`).
 
     """
-    _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_token'}
-    """Don't serialize the spacy document on persistance pickling."""
+    # _PERSITABLE_REMOVE_ATTRIBUTES = {'spacy_token'}
+    # """Don't serialize the spacy document on persistance pickling."""
 
     _DICTABLE_WRITABLE_DESCENDANTS = True
     """Use write method."""
@@ -179,6 +179,9 @@ class FeatureToken(PersistableContainer, TextContainer):
         self.write_attributes(depth + 2, writer)
 
     def __eq__(self, other: FeatureToken) -> bool:
+        # print('E', self.i == other.i)
+        # print('E2', self.idx == other.idx)
+        # print('D', self.__dict__ == other.__dict__)
         return self.i == other.i and self.idx == other.idx and \
             self.__dict__ == other.__dict__
 
@@ -202,7 +205,7 @@ class FeatureToken(PersistableContainer, TextContainer):
 
 @dataclass(init=False)
 class SpacyFeatureToken(FeatureToken):
-    # spacy_token: Union[Token, Span] = field(repr=False, compare=False)
+    spacy_token: Union[Token, Span] = field(repr=False, compare=False)
     """The parsed spaCy token (or span if entity) this feature set is based.
 
     :see: :meth:`.FeatureDocument.spacy_doc`
@@ -216,6 +219,15 @@ class SpacyFeatureToken(FeatureToken):
         idx = self.token.idx
         i_sent = self.token.i - self.token.sent.start
         super().__init__(i, idx, i_sent, norm)
+
+    # def detach(self, feature_ids: Set[str] = None,
+    #            skip_missing: bool = False) -> FeatureToken:
+    #     clone = super().detach(feature_ids, skip_missing)
+    #     clone.spacy_token = self.spacy_token
+    #     return clone
+
+    def __getstate__(self):
+        raise NLPError('Not persistable')
 
     @property
     def token(self) -> Token:
@@ -403,9 +415,6 @@ class SpacyFeatureToken(FeatureToken):
 
         """
         return self.token.dep_
-
-    def __getstate__(self):
-        raise NLPError('Not persistable')
 
     def __str__(self):
         if hasattr(self, 'spacy_token'):

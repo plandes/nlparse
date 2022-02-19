@@ -12,7 +12,7 @@ class TestOverlap(TestCase):
         with self.assertRaises(KeyError):
             loc[2]
         self.assertEqual(3, len(loc))
-        self.assertEqual('[2, 5]', str(loc))
+        self.assertEqual('(2, 5)', str(loc))
         self.assertTrue(isinstance(hash(loc), int))
         with self.assertRaises(AttributeError):
             loc.start = 1

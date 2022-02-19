@@ -68,6 +68,17 @@ class TestDocCompose(TestBase):
         self.assertTrue(isinstance(doc2, FeatureDocument))
         self.assertFalse(doc is doc2)
         self.assertFalse(t1 is d2t1)
+        if 0:
+            for ak, bk in zip(t1.asdict().keys(), d2t1.asdict().keys()):
+                a = t1.get_value(ak)
+                b = d2t1.get_value(bk)
+                print(a == b, ak, a, b, type(a), type(b))
+            print(type(t1), type(d2t1))
+            print(t1.__dict__.keys())
+            print(d2t1.__dict__.keys())
+        # t1.write()
+        # d2t1.write()
+
         self.assertTrue(t1 == d2t1)
         self.assertFalse(doc.sents[0] is doc2.sents[0])
         self.assertTrue(doc.sents[0] == doc2.sents[0])
