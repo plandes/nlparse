@@ -237,6 +237,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     token_normalizer: TokenNormalizer = field(default=None)
     """The token normalizer for methods that use it, i.e. ``features``."""
 
+    special_case_tokens: List = field(default_factory=list)
+    """Tokens that will be parsed as one token, i.e. ``</s>``."""
+
     doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
     """The type of document instances to create."""
 
@@ -311,6 +314,11 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug('adding default tokenizer')
             self.token_normalizer = TokenNormalizer()
+        for stok in self.special_case_tokens:
+            rule = [{ORTH: stok}]
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'adding special token: {stok} with rule: {rule}')
+            nlp.tokenizer.add_special_case(stok, rule)
         return nlp
 
     def parse_spacy_doc(self, text: str) -> Doc:
