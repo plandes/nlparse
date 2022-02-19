@@ -236,13 +236,6 @@ class FeatureSentence(TokenContainer):
     def __iter__(self):
         return self.token_iter()
 
-    # def __getstate__(self) -> Dict[str, Any]:
-    #     state = super().__getstate__()
-    #     print('HERE')
-    #     state['sent_tokens'] = tuple(map(lambda t: t.detach(), self.sent_tokens))
-    #     print(state)
-    #     return state
-
 
 @dataclass
 class FeatureDocument(TokenContainer):

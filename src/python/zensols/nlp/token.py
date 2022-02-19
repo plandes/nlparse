@@ -63,7 +63,7 @@ class FeatureToken(PersistableContainer, TextContainer):
 
     WRITABLE_FEATURE_IDS: ClassVar[Tuple[str]] = tuple(
         ('text norm idx sent_i i i_sent tag pos ' +
-         'is_wh entity dep children').split())
+         'is_wh lexspan entity dep children').split())
     """Feature IDs that are dumped on :meth:`write`."""
 
     NONE: ClassVar[str] = '<none>'

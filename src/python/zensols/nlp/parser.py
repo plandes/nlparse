@@ -148,14 +148,13 @@ class Component(object):
 
 @dataclass
 class FeatureDocumentParser(Dictable, metaclass=ABCMeta):
+    """This class parses text in to instances of :class:`.FeatureDocument`
+    instances using :meth:`parse`.
+
+    """
     TOKEN_FEATURE_IDS: ClassVar[Set[str]] = FeatureToken.FEATURE_IDS
     """The default value for :obj:`token_feature_ids`."""
 
-    name: str = field()
-    """The name of the parser, which is taken from the section name when created
-    with a :class:`~zensols.config.ConfigFactory`.
-
-    """
     def __post_init__(self):
         super().__init__()
 
@@ -200,6 +199,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     """
     _MODELS = {}
     """Contains cached models, such as ``en_core_web_sm``."""
+
+    name: str = field()
+    """The name of the parser, which is taken from the section name when created
+    with a :class:`~zensols.config.ConfigFactory`.
+
+    """
 
     lang: str = field(default='en')
     """The natural language the identify the model."""

@@ -93,9 +93,9 @@ class Application(object):
         doc: FeatureDocument = self.doc_parser(sentence)
         toks = doc.tokens
         print(toks)
-        for feat in toks:
-            print(f'{feat} {type(feat)}')
-            feat.write_attributes(depth=1, feature_ids=(*feat.WRITABLE_FEATURE_IDS, 'sent_i'))
+        for tok in toks:
+            print(f'{tok} {type(tok)}')
+            tok.write_attributes(depth=1, feature_ids=(*tok.WRITABLE_FEATURE_IDS, 'sent_i'))
             print('-' * 5)
         print(', '.join(doc.norm_token_iter()))
         print('-' * 10)

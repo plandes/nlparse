@@ -25,23 +25,6 @@ class ParseError(APIError):
     pass
 
 
-class TextContainer(Dictable, metaclass=ABCMeta):
-    """A *writable* class that has a ``text`` property or attribute.  All
-    subclasses need a ``norm`` attribute or property.
-
-    """
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
-        self._write_line(f'{self.__class__.__name__}:', depth, writer)
-        self._write_line(f'original: {self.text}', depth + 1, writer)
-        self._write_line(f'normalized: {self.norm}', depth + 1, writer)
-
-    def __str__(self):
-        return f'<{self.norm[:79]}>'
-
-    def __repr__(self):
-        return self.__str__()
-
-
 class LexicalSpan(Dictable):
     """A lexical character span of text in a document.
 
@@ -107,6 +90,10 @@ class LexicalSpan(Dictable):
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         self._write_line(str(self), depth, writer)
 
+    def _from_dictable(self, *args, **kwargs):
+        # prettier printing
+        return dict(super()._from_dictable(*args, **kwargs))
+
     def __eq__(self, other):
         return isinstance(other, LexicalSpan) and \
             self.begin == other.begin and self.end == other.end
@@ -137,6 +124,23 @@ class LexicalSpan(Dictable):
 
     def __str__(self) -> str:
         return f'({self.begin}, {self.end})'
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class TextContainer(Dictable, metaclass=ABCMeta):
+    """A *writable* class that has a ``text`` property or attribute.  All
+    subclasses need a ``norm`` attribute or property.
+
+    """
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
+        self._write_line(f'{self.__class__.__name__}:', depth, writer)
+        self._write_line(f'original: {self.text}', depth + 1, writer)
+        self._write_line(f'normalized: {self.norm}', depth + 1, writer)
+
+    def __str__(self):
+        return f'<{self.norm[:79]}>'
 
     def __repr__(self):
         return self.__str__()
