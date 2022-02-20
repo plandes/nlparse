@@ -178,7 +178,7 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
 
     def _prepare_merge_doc(self):
         if self.merge_sentences:
-            self._source_token_mapping = self._source_sent.tokens_by_idx
+            self._source_token_mapping = self._source_doc.tokens_by_idx
 
     def _complete_merge_doc(self):
         if self.merge_sentences:
@@ -191,5 +191,5 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'merging docs: {self._source_doc} -> ' +
                              f'{self._target_doc}')
-            source_token_mapping = self._get_token_mapping(self._source_doc)
+            source_token_mapping = self._source_doc.tokens_by_idx
             self._merge_token_containers(self._target_doc, source_token_mapping)
