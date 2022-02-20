@@ -132,6 +132,16 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                     del self._source_doc
         return target_doc
 
+    def __getattr__(self, attr, default=None):
+        """Delegate attribute requests such as
+        :obj:`.SpacyFeatureDocumentParser.token_feature_ids`.
+
+        """
+        try:
+            return super().__getattribute__(attr)
+        except AttributeError:
+            return self.target_parser.__getattribute__(attr)
+
 
 @dataclass
 class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
