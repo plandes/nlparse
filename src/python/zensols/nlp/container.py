@@ -444,3 +444,19 @@ class FeatureDocument(TokenContainer):
 
     def __iter__(self):
         return self.sent_iter()
+
+
+@dataclass
+class TokenAnnotatedFeatureSentence(FeatureSentence):
+    """A feature sentence that contains token annotations.
+
+    """
+    annotations: Tuple[str] = field(default=())
+    """A token level annotation, which is one-to-one to tokens."""
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+              n_tokens: int = 0):
+        super().write(depth, writer, n_tokens=n_tokens)
+        n_ann = len(self.annotations)
+        self._write_line(f'annotations ({n_ann}): {self.annotations}',
+                         depth, writer)
