@@ -17,7 +17,7 @@ from spacy.symbols import ORTH
 from spacy.tokens import Doc, Span, Token
 from spacy.language import Language
 from zensols.persist import persisted, PersistedWork
-from zensols.config import Dictable
+from zensols.config import Dictable, ConfigFactory
 from . import (
     ParseError, TokenNormalizer, FeatureToken, SpacyFeatureToken,
     FeatureSentence, FeatureDocument,
@@ -186,8 +186,9 @@ class FeatureDocumentParser(Dictable, metaclass=ABCMeta):
 @dataclass
 class SpacyFeatureDocumentParser(FeatureDocumentParser):
     """This langauge resource parses text in to Spacy documents.  Loaded spaCy
-  models have attribute ``langres`` set enable creation of factory instances
-  from registered pipe components (i.e. specified by :class:`.Component`).
+    models have attribute ``doc_parser`` set enable creation of factory
+    instances from registered pipe components (i.e. specified by
+    :class:`.Component`).
 
     Configuration example::
 
@@ -200,12 +201,16 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     _MODELS = {}
     """Contains cached models, such as ``en_core_web_sm``."""
 
+    config_factory: ConfigFactory = field()
+    """A configuration parser optionally used by pipeline :class:`.Component`
+    instances.
+
+    """
     name: str = field()
     """The name of the parser, which is taken from the section name when created
     with a :class:`~zensols.config.ConfigFactory`.
 
     """
-
     lang: str = field(default='en')
     """The natural language the identify the model."""
 
@@ -271,9 +276,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'loading model: {self.model_name}')
         nlp = spacy.load(self.model_name)
-        # pipe components can create other application context instance via the
-        # :obj:`config_factory` with access to this instance
-        nlp.langres = self
         return nlp
 
     def _add_components(self, nlp: Language):
@@ -305,6 +307,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         nlp: Language = self._MODELS.get(mkey)
         if nlp is None:
             nlp: Language = self._create_model()
+            # pipe components can create other application context instance via
+            # the :obj:`config_factory` with access to this instance
+            nlp.doc_parser = self
             self._add_components(nlp)
             self._MODELS[mkey] = nlp
         else:

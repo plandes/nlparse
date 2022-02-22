@@ -42,6 +42,11 @@ class LexicalSpan(Dictable):
         self.begin = begin
         self.end = end
 
+    @property
+    def astuple(self) -> Tuple[int, int]:
+        """The span as a ``(begin, end)`` tuple."""
+        return (self.begin, self.end)
+
     @classmethod
     def from_token(cls, tok: Union[Token, Span]) -> Tuple[int, int]:
         """Create a span from a spaCy :class:`~spacy.tokens.Token` or
