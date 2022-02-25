@@ -95,19 +95,16 @@ class Component(object):
     :obj:`name`.
 
     """
-
     pipe_config: Dict[str, str] = field(default=None)
     """The configuration to add with the ``config`` kwarg in the
     :meth:`.Language.add_pipe` call to the spaCy model.
 
     """
-
     pipe_add_kwargs: Dict[str, Any] = field(default_factory=dict)
     """Arguments to add along with the call to
     :meth:`~spacy.language.Language.add_pipe`.
 
     """
-
     modules: Sequence[str] = field(default=())
     """The module to import before adding component pipelines.  This will register
     components mentioned in :obj:`components` when the resepctive module is
@@ -122,7 +119,7 @@ class Component(object):
         x = hash(self.name)
         x += 13 * hash(self.pipe_name)
         if self.pipe_config:
-            x += 13 * hash(self.pipe_config.values())
+            x += 13 * hash(str(self.pipe_config.values()))
         return x
 
     def init(self, model: Language):
@@ -311,7 +308,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             # the :obj:`config_factory` with access to this instance
             nlp.doc_parser = self
             self._add_components(nlp)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(
+                    f'adding {mkey} to cached models ({len(self._MODELS)})')
             self._MODELS[mkey] = nlp
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'cached models: {len(self._MODELS)}')
         else:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'cached model: {mkey} ({self.model_name})')
@@ -338,7 +340,10 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         else:
             doc = self.model(text, disable=self.disable_component_names)
         if logger.isEnabledFor(logging.INFO):
-            logger.info(f'parsed document: <{text}> -> {doc}')
+            logger.info(f'parsed text: <{self._trunc(text)}>')
+        if logger.isEnabledFor(logging.DEBUG):
+            doc_text = self._trunc(str(doc))
+            logger.debug(f'parsed document: <{doc_text}>')
         return doc
 
     def get_dictable(self, doc: Doc) -> Dictable:
@@ -353,8 +358,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         per token level.
 
         """
-        if logger.isEnabledFor(logging.INFO):
-            logger.info(f'parsing features in {doc}')
+        if logger.isEnabledFor(logging.DEBUG):
+            doc_text = self._trunc(str(doc))
+            logger.debug(f'parsing features in {doc_text}')
         tokens: Tuple[FeatureToken] = \
             map(lambda tup: self._create_token(*tup, *args, **kwargs),
                 self.token_normalizer.normalize(doc))
