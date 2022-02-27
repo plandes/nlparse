@@ -117,6 +117,15 @@ class FeatureToken(PersistableContainer, TextContainer):
         """
         return self.norm
 
+    @property
+    def is_none(self) -> bool:
+        """Return whether or not this token is represented as none or empty."""
+        return self._is_none(self.norm)
+
+    @classmethod
+    def _is_none(cls, targ: str) -> bool:
+        return targ is None or targ == cls.NONE or targ == 0
+
     def get_value(self, attr: str) -> Optional[Any]:
         """Get a value by attribute.
 
@@ -126,7 +135,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         val = None
         if hasattr(self, attr):
             targ = getattr(self, attr)
-            if targ is not None and targ != self.NONE and targ != 0:
+            #if targ is not None and targ != self.NONE and targ != 0:
+            if not self._is_none(targ):
                 val = targ
         return val
 
@@ -209,6 +219,18 @@ class FeatureToken(PersistableContainer, TextContainer):
 
     def __repr__(self) -> str:
         return self.__str__()
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = super().__getstate__()
+        if self.norm == self.NONE:
+            state['norm'] = None
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]):
+        # speed up none compares by using interned NONE
+        if state['norm'] is None:
+            state['norm'] = self.NONE
+        super().__setstate__(state)
 
     def long_repr(self) -> str:
         attrs = []
