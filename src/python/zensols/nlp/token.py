@@ -220,15 +220,16 @@ class FeatureToken(PersistableContainer, TextContainer):
     def __repr__(self) -> str:
         return self.__str__()
 
+    # speed up none compares by using interned NONE
     def __getstate__(self) -> Dict[str, Any]:
         state = super().__getstate__()
         if self.norm == self.NONE:
-            state['norm'] = None
+            del state['norm']
         return state
 
+    # speed up none compares by using interned NONE
     def __setstate__(self, state: Dict[str, Any]):
-        # speed up none compares by using interned NONE
-        if state['norm'] is None:
+        if 'norm' not in state:
             state['norm'] = self.NONE
         super().__setstate__(state)
 
