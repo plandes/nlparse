@@ -253,6 +253,9 @@ class FeatureDocument(TokenContainer):
 
     :param sents: the sentences defined for this document
 
+    .. document private functions
+    .. automethod:: _combine_documents
+
     """
     _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_doc'}
     """Don't serialize the spacy document on persistance pickling."""
