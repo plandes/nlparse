@@ -111,7 +111,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     def tokens_by_idx(self) -> Dict[int, FeatureToken]:
         """A map of tokens with keys as their character offset and values as tokens.
 
-        :see: :obj:`~zensols.nlp.FeatureToken.idx`
+        :see: :obj:`zensols.nlp.FeatureToken.idx`
 
         """
         by_idx = {}
