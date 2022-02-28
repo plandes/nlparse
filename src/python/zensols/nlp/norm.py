@@ -366,6 +366,35 @@ class FilterTokenMapper(TokenMapper):
 
 
 @dataclass
+class FilterRegularExpressionMapper(TokenMapper):
+    """Filter tokens based on normalized form regular expression.
+
+    """
+    regex: Union[re.Pattern, str] = field(default=r'[ ]+')
+    """The regular expression to use for splitting tokens."""
+
+    invert: bool = field(default=False)
+    """If ``True`` then remove rather than keep everything that matches.."""
+
+    def __post_init__(self):
+        if not isinstance(self.regex, re.Pattern):
+            self.regex = re.compile(eval(self.regex))
+
+    def _filter(self, tup: Tuple[Token, str]):
+        token, norm = tup
+        match = self.regex.match(norm) is not None
+        if self.invert:
+            match = not match
+        return match
+
+    def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
+            Iterable[Tuple[Token, str]]:
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('filter mapper: map_tokens')
+        return (filter(self._filter, token_tups),)
+
+
+@dataclass
 class SubstituteTokenMapper(TokenMapper):
     """Replace a regular expression in normalized token text.
 
@@ -378,7 +407,10 @@ class SubstituteTokenMapper(TokenMapper):
 
     """
     regex: str = field(default='')
+    """The regular expression to use for substitution."""
+
     replace_char: str = field(default='')
+    """The character that is used for replacement."""
 
     def __post_init__(self):
         self.regex = re.compile(eval(self.regex))
