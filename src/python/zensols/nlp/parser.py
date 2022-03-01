@@ -361,6 +361,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         if logger.isEnabledFor(logging.DEBUG):
             doc_text = self._trunc(str(doc))
             logger.debug(f'parsing features in {doc_text}')
+            logger.debug(f'args: <{args}>')
+            logger.debug(f'kwargs: <{kwargs}>')
         tokens: Tuple[FeatureToken] = \
             map(lambda tup: self._create_token(*tup, *args, **kwargs),
                 self.token_normalizer.normalize(doc))
