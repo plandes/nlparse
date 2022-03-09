@@ -7,7 +7,7 @@ from typing import (
     Tuple, Dict, Any, Sequence, Set, List, Iterable, Type, ClassVar
 )
 from dataclasses import dataclass, field
-from abc import abstractmethod, ABCMeta
+from abc import abstractmethod, ABCMeta, ABC
 import logging
 import itertools as it
 import sys
@@ -180,6 +180,15 @@ class FeatureDocumentParser(Dictable, metaclass=ABCMeta):
         return self.parse(text, *args, **kwargs)
 
 
+class SpacyFeatureTokenDecorator(ABC):
+    """Implementations can add, remove or modify features on a token.
+
+    """
+    @abstractmethod
+    def decorate(self, spacy_tok: Token, feature_token: FeatureToken):
+        pass
+
+
 @dataclass
 class SpacyFeatureDocumentParser(FeatureDocumentParser):
     """This langauge resource parses text in to Spacy documents.  Loaded spaCy
@@ -231,6 +240,10 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     components: Sequence[Component] = field(default=())
     """Additional Spacy components to add to the pipeline."""
 
+    token_decorators: Sequence[SpacyFeatureTokenDecorator] = field(default=())
+    """A list of decorators that can add, remove or modify features on a token.
+
+    """
     disable_component_names: Sequence[str] = field(default=None)
     """Components to disable in the spaCy model when creating documents in
     :meth:`parse`.
@@ -368,10 +381,16 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 self.token_normalizer.normalize(doc))
         return tokens
 
+    def _decorate_token(self, spacy_tok: Token, feature_token: FeatureToken):
+        decorator: SpacyFeatureTokenDecorator
+        for decorator in self.token_decorators:
+            decorator.decorate(spacy_tok, feature_token)
+
     def _create_token(self, tok: Token, norm: Tuple[Token, str],
                       *args, **kwargs) -> FeatureToken:
         tp: Type[FeatureToken] = self.token_class
         ft: FeatureToken = tp(tok, norm, *args, **kwargs)
+        self._decorate_token(tok, ft)
         return ft.detach(self.token_feature_ids)
 
     def _create_sent(self, spacy_sent: Span, stoks: Iterable[FeatureToken],
