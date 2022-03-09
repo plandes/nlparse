@@ -391,6 +391,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         tp: Type[FeatureToken] = self.token_class
         ft: FeatureToken = tp(tok, norm, *args, **kwargs)
         self._decorate_token(tok, ft)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'detaching using features: {self.token_feature_ids}')
         return ft.detach(self.token_feature_ids)
 
     def _create_sent(self, spacy_sent: Span, stoks: Iterable[FeatureToken],
