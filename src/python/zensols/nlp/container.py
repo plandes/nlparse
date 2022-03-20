@@ -483,7 +483,10 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
 
 @dataclass
 class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
-    """A feature sentence that contains token annotations.
+    """A feature sentence that contains token annotations.  Sentences can be
+    modeled with :class:`.TokenAnnotatedFeatureSentence` or just
+    :class:`.FeatureSentence` since this sets the `annotations` attribute when
+    combining.
 
     """
     @persisted('_combine_sentences', transient=True)
