@@ -352,42 +352,59 @@ class FeatureDocument(TokenContainer):
 
     def _combine_documents(self, docs: Tuple[FeatureDocument],
                            cls: Type[FeatureDocument],
-                           concat_tokens: bool) -> FeatureDocument:
+                           concat_tokens: bool,
+                           **kwargs) -> FeatureDocument:
         """Override if there are any fields in your dataclass.  In most cases, the only
         time this is called is by an embedding vectorizer to batch muultiple
         sentences in to a single document, so the only feature that matter are
         the sentence level.
 
+        :param docs: the documents to combine in to one
+
+        :param cls: the class of the instance to create
+
         :param concat_tokens:
             if ``True`` each sentence of the returned document are the
             concatenated tokens of each respective document; otherwise simply
             concatenate sentences in to one document
+
+        :param kwargs: additional keyword arguments to pass to the new feature
+                       document's initializer
 
         """
         if concat_tokens:
             return cls(list(chain.from_iterable(
-                map(lambda d: d.combine_sentences(), docs))))
+                map(lambda d: d.combine_sentences(), docs))), **kwargs)
         else:
-            return cls(list(chain.from_iterable(docs)))
+            return cls(list(chain.from_iterable(docs)), **kwargs)
 
     @classmethod
     def combine_documents(cls, docs: Iterable[FeatureDocument],
-                          concat_tokens: bool = True) -> FeatureDocument:
+                          concat_tokens: bool = True,
+                          **kwargs) -> FeatureDocument:
         """Coerce a tuple of token containers (either documents or sentences) in to one
         synthesized document.
+
+        :param docs: the documents to combine in to one
+
+        :param cls: the class of the instance to create
 
         :param concat_tokens:
             if ``True`` each sentence of the returned document are the
             concatenated tokens of each respective document; otherwise simply
             concatenate sentences in to one document
 
+        :param kwargs: additional keyword arguments to pass to the new feature
+                       document's initializer
+
         """
         docs = tuple(docs)
         if len(docs) == 0:
-            doc = cls([])
+            doc = cls([], **kwargs)
         else:
             fdoc = docs[0]
-            doc = fdoc._combine_documents(docs, type(fdoc), concat_tokens)
+            doc = fdoc._combine_documents(
+                docs, type(fdoc), concat_tokens, **kwargs)
         return doc
 
     @persisted('_combine_sentences', transient=True)
