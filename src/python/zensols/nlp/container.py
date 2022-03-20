@@ -351,21 +351,35 @@ class FeatureDocument(TokenContainer):
         return tuple(map(lambda six: self[six], sent_ids))
 
     def _combine_documents(self, docs: Tuple[FeatureDocument],
-                           cls: Type[FeatureDocument]) -> FeatureDocument:
+                           cls: Type[FeatureDocument],
+                           concat_tokens: bool) -> FeatureDocument:
         """Override if there are any fields in your dataclass.  In most cases, the only
         time this is called is by an embedding vectorizer to batch muultiple
         sentences in to a single document, so the only feature that matter are
         the sentence level.
 
+        :param concat_tokens:
+            if ``True`` each sentence of the returned document are the
+            concatenated tokens of each respective document; otherwise simply
+            concatenate sentences in to one document
+
         """
-        return cls(list(chain.from_iterable(
-            map(lambda c: c.combine_sentences(), docs))))
+        if concat_tokens:
+            return cls(list(chain.from_iterable(
+                map(lambda d: d.combine_sentences(), docs))))
+        else:
+            return cls(list(chain.from_iterable(docs)))
 
     @classmethod
-    def combine_documents(cls, docs: Iterable[FeatureDocument]) -> \
-            FeatureDocument:
-        """Coerce a tuple of token containers (either documents or sentences) in to
-        one *synthesized* document.
+    def combine_documents(cls, docs: Iterable[FeatureDocument],
+                          concat_tokens: bool = True) -> FeatureDocument:
+        """Coerce a tuple of token containers (either documents or sentences) in to one
+        synthesized document.
+
+        :param concat_tokens:
+            if ``True`` each sentence of the returned document are the
+            concatenated tokens of each respective document; otherwise simply
+            concatenate sentences in to one document
 
         """
         docs = tuple(docs)
@@ -373,7 +387,7 @@ class FeatureDocument(TokenContainer):
             doc = cls([])
         else:
             fdoc = docs[0]
-            doc = fdoc._combine_documents(docs, type(fdoc))
+            doc = fdoc._combine_documents(docs, type(fdoc), concat_tokens)
         return doc
 
     @persisted('_combine_sentences', transient=True)
@@ -456,7 +470,7 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
     """A feature sentence that contains token annotations.
 
     """
-    annotations: Tuple[str] = field(default=())
+    annotations: Tuple[Any] = field(default=())
     """A token level annotation, which is one-to-one to tokens."""
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
@@ -465,3 +479,39 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
         n_ann = len(self.annotations)
         self._write_line(f'annotations ({n_ann}): {self.annotations}',
                          depth, writer)
+
+
+@dataclass
+class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
+    """A feature sentence that contains token annotations.
+
+    """
+    @persisted('_combine_sentences', transient=True)
+    def combine_sentences(self) -> FeatureDocument:
+        """Combine all the sentences in this document in to a new document with a
+        single sentence.
+
+        """
+        if len(self.sents) == 1:
+            return self
+        else:
+            sent_cls = self._sent_class()
+            anns = chain.from_iterable(map(lambda s: s.annotations, self))
+            sent = sent_cls(self.tokens)
+            sent.annotations = tuple(anns)
+            doc = dataclasses.replace(self)
+            doc.sents = [sent]
+            doc._combined = True
+            return doc
+
+    def _combine_documents(self, docs: Tuple[FeatureDocument],
+                           cls: Type[FeatureDocument],
+                           concat_tokens: bool) -> FeatureDocument:
+        if concat_tokens:
+            return super()._combine_documents(docs, cls, concat_tokens)
+        else:
+            sents = chain.from_iterable(docs)
+            anns = chain.from_iterable(map(lambda s: s.annotations, self))
+            doc = cls(list(sents))
+            doc.sents[0].annotations = tuple(anns)
+            return doc
