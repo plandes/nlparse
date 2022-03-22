@@ -16,7 +16,7 @@ import spacy
 from spacy.symbols import ORTH
 from spacy.tokens import Doc, Span, Token
 from spacy.language import Language
-from zensols.persist import persisted, PersistedWork
+from zensols.persist import persisted, PersistedWork, PersistableContainer
 from zensols.config import Dictable, ConfigFactory
 from . import (
     ParseError, TokenNormalizer, FeatureToken, SpacyFeatureToken,
@@ -144,7 +144,7 @@ class Component(object):
 
 
 @dataclass
-class FeatureDocumentParser(Dictable, metaclass=ABCMeta):
+class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
     """This class parses text in to instances of :class:`.FeatureDocument`
     instances using :meth:`parse`.
 
