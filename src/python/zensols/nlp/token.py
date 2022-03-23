@@ -365,7 +365,7 @@ class SpacyFeatureToken(FeatureToken):
     def sent_i(self) -> int:
         """The index of the sentence to which the token belongs.  This is not to be
         confused with the index of the token in the respective sentence, which
-        is :obj:`i_sent`.
+        is :obj:`.FeatureToken.i_sent`.
 
         This attribute does not exist in a spaCy token, and was named as such
         to follow the naming conventions of their API.
