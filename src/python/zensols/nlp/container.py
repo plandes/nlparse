@@ -131,6 +131,12 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
             for t in it.islice(self.token_iter(), n_tokens):
                 t.write(depth + 2, writer)
 
+    def __str__(self):
+        return TextContainer.__str__(self)
+
+    def __repr__(self):
+        return TextContainer.__repr__(self)
+
 
 @dataclass(eq=True)
 class FeatureSentence(TokenContainer):
