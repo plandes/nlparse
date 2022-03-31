@@ -16,7 +16,7 @@ from io import TextIOBase
 from frozendict import frozendict
 from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
-from zensols.persist import PersistableContainer, persisted
+from zensols.persist import PersistableContainer, persisted, PersistedWork
 from . import TextContainer, FeatureToken
 
 logger = logging.getLogger(__name__)
@@ -271,6 +271,9 @@ class FeatureDocument(TokenContainer):
     sents: List[FeatureSentence] = field()
     """The sentences that make up the document."""
 
+    text: str = field(default=None)
+    """The original raw text of the sentence."""
+
     spacy_doc: Doc = field(default=None, repr=False, compare=False)
     """The parsed spaCy document this feature set is based.  As explained in
     :class:`~zensols.nlp.FeatureToken`, spaCy documents are heavy weight and
@@ -280,6 +283,8 @@ class FeatureDocument(TokenContainer):
     """
     def __post_init__(self):
         super().__init__()
+        if self.text is None:
+            self.text = ''.join(map(lambda s: s.text, self.sent_iter()))
 
     def token_iter(self, *args) -> Iterable[FeatureToken]:
         sent_toks = chain.from_iterable(map(lambda s: s.tokens, self.sents))
@@ -293,15 +298,6 @@ class FeatureDocument(TokenContainer):
             return iter(self.sents)
         else:
             return it.islice(self.sents, *args)
-
-    def get_text(self, *args, insert_space: bool = True):
-        delim = ' ' if insert_space else ''
-        return delim.join(map(lambda s: s.text, self.sent_iter(*args)))
-
-    @property
-    @persisted('_text', transient=True)
-    def text(self):
-        return self.get_text()
 
     @property
     def max_sentence_len(self) -> int:
@@ -321,7 +317,7 @@ class FeatureDocument(TokenContainer):
         sents = self.sent_iter(*args)
         toks = chain.from_iterable(map(lambda s: s.tokens, sents))
         cls = self._sent_class()
-        return cls(tuple(toks), self.get_text(*args))
+        return cls(tuple(toks), self.text)
 
     def to_document(self) -> FeatureDocument:
         return self
@@ -379,10 +375,14 @@ class FeatureDocument(TokenContainer):
 
         """
         if concat_tokens:
-            return cls(list(chain.from_iterable(
-                map(lambda d: d.combine_sentences(), docs))), **kwargs)
+            sents = list(chain.from_iterable(
+                map(lambda d: d.combine_sentences(), docs)))
         else:
-            return cls(list(chain.from_iterable(docs)), **kwargs)
+            sents = list(chain.from_iterable(docs))
+        if 'text' not in kwargs:
+            kwargs = dict(kwargs)
+            kwargs['text'] = ' '.join(map(lambda d: d.text, docs))
+        return cls(sents, **kwargs)
 
     @classmethod
     def combine_documents(cls, docs: Iterable[FeatureDocument],
@@ -537,7 +537,8 @@ class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
             return super()._combine_documents(docs, cls, concat_tokens)
         else:
             sents = chain.from_iterable(docs)
+            text = ' '.join(chain.from_iterable(map(lambda s: s.text, docs)))
             anns = chain.from_iterable(map(lambda s: s.annotations, self))
-            doc = cls(list(sents))
+            doc = cls(list(sents), text)
             doc.sents[0].annotations = tuple(anns)
             return doc

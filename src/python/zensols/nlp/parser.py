@@ -431,7 +431,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 f'Expecting string text but got: {text} ({type(str)})')
         spacy_doc, sents = self._from_string(text)
         try:
-            return self.doc_class(sents, spacy_doc, *args, **kwargs)
+            return self.doc_class(sents, text, spacy_doc, *args, **kwargs)
         except Exception as e:
             raise ParseError(
                 f'Could not parse <{text}> for {self.doc_class} ' +
