@@ -8,12 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.1.0] - 2022-05-04
+### Changed
+- Fix resource leaks and other bugs.
+- Persist original text along with `FeatureDocument` rather than reconstruct it
+  from sentence and/or token text.
+
 ### Added
 - An lexical overlapping utility module (`overlap`).
 - A token normalizer that merges tokens in to spans (`JoinTokenMapper`).
 - Regular expression matching for entity and merge components (similar to
   `JoinTokenMapper`).
-
+- Add back `TokenAnnotatedFeatureSentence` for down stream packages.
+- Add token decorator to spacy parser to allow for add/modify
+  features on creation separate from parser class hierarchy.
 
 ## [1.0.1] - 2022-01-25
 ### Added
@@ -232,7 +240,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/plandes/nlparse/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/plandes/nlparse/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/plandes/nlparse/compare/v0.1.3...v1.0.0
 [0.1.3]: https://github.com/plandes/nlparse/compare/v0.1.2...v0.1.3
