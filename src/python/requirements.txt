@@ -5,4 +5,4 @@ smart-open>=4.0.1
 nltk>=3.5
 python-Levenshtein
 click>=7.1.2,<8
-zensols.util~=1.7
+zensols.util~=1.8
