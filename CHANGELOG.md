@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add token decorator to spacy parser to allow for add/modify
   features on creation separate from parser class hierarchy.
 
+
 ## [1.0.1] - 2022-01-25
 ### Added
 - Sentences and tokens accessible by index.
