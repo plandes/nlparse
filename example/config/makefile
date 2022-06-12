@@ -16,6 +16,8 @@ run:
 		$(PROG) parse $(SENT) -c terse.conf
 		@echo "---------- terse.conf (filter punctuation, stop words)"
 		$(PROG) csv $(SENT) -c terse.conf
+		@echo "---------- longer API example"
+		$(PROG) detailed $(SENT) | head -50
 
 .PHONY:		help
 help:

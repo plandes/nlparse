@@ -27,11 +27,10 @@ class Application(object):
     doc_parser: FeatureDocumentParser
 
     def __post_init__(self):
-        FeatureToken.WRITABLE_FEATURE_IDS = self.doc_parser.token_feature_ids
-
-    def show_config(self):
-        """Print out the configuration."""
-        self.config.write()
+        # set only the features provided in the document parser configuration
+        # as those to be output in the `write` method
+        FeatureToken.WRITABLE_FEATURE_IDS = frozenset(
+            self.doc_parser.token_feature_ids)
 
     def csv(self, sentence: str, output_file: Path = None):
         """Create and print a Pandas (if installed) dataframe of feature.
@@ -41,11 +40,14 @@ class Application(object):
         :output_file: the CSV file to create, otherwise print to standard out
 
         """
+        # import only in this action to avoid Pandas as a dependency package
         import pandas as pd
         from zensols.nlp.dataframe import FeatureDataFrameFactory
 
+        # parse and generate a dataframe from the parsed artifacts as features
         fac = FeatureDataFrameFactory()
-        doc = self.doc_parser.parse(sentence)
+        # note that the `parse` method is called when used as a Callable
+        doc = self.doc_parser(sentence)
         df: pd.DataFrame = fac(doc)
         if output_file is None:
             try:
@@ -62,13 +64,13 @@ class Application(object):
 
         :param sentence: the sentene to parse
 
-
         """
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'parsing: {sentence}')
         doc: FeatureDocument = self.doc_parser(sentence)
-        #print(doc)
         token_length = sys.maxsize if token_length == -1 else token_length
+        # the write method dumps a human readable indented version of the
+        # object
         doc.write(n_tokens=token_length)
 
     def json(self, sentence: str):
@@ -91,14 +93,19 @@ class Application(object):
         print(doc)
         print('-' * 10, 'token POS, stop words:')
         for tok in doc:
-            print(tok, tok.tag_, tok.is_stop)
+            # print the normalized text, POS tag, and whether its a stop word
+            print(tok.norm, tok.tag_, tok.is_stop)
         print('-' * 10, 'token features:')
         doc: FeatureDocument = self.doc_parser(sentence)
         toks = doc.tokens
         print(toks)
+        # add the index of the sentence to which the token belongs as what to
+        # print
         for tok in toks:
             print(f'{tok} {type(tok)}')
-            tok.write_attributes(depth=1, feature_ids=(*tok.WRITABLE_FEATURE_IDS, 'sent_i'))
+            tok.write_attributes(
+                depth=1, feature_ids=(*tok.WRITABLE_FEATURE_IDS, 'sent_i'))
             print('-' * 5)
+        # iterate over normalized tokens
         print(', '.join(doc.norm_token_iter()))
         print('-' * 10)

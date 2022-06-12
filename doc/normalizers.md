@@ -34,3 +34,4 @@ factory] API.
 [FilterTokenMapper]: ../api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper
 [SubstituteTokenMapper]: ../api/zensols.nlp.html#zensols.nlp.norm.SubstituteTokenMapper
 [LambdaTokenMapper]: ../api/zensols.nlp.html#zensols.nlp.norm.LambdaTokenMapper
+

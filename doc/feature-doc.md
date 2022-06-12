@@ -29,7 +29,7 @@ parsing] documentation.
 
 ## Example
 
-The following [simple.py] is given in the `examples` directory in the repo,
+The following [simple.py] is given in the [examples] directory in the repo,
 which starts with an inline [configuration].  First we start by telling the
 [configuration API] to load this API package's [resource library]:
 ```ini
@@ -40,14 +40,14 @@ sections = list: imp_conf
 type = importini
 config_files = list: resource(zensols.nlp): resources/obj.conf
 ```
-In the [simply.py], this is defined as a string in the variable ``CONFIG``.
+In the [simple.py], this is defined as a string in the variable ``CONFIG``.
 
 After importing the package's [resource library], the `[doc_parser]` provides
 an entry for the [FeatureDocumentParser].  Next we override its configuration
 to only keep only the norm, ent during parsing:
 ```ini
 [doc_parser]
-token_feature_ids = eval: set('ent_ tag_'.split())
+token_feature_ids = set: ent_, tag_
 ```
 
 With this configuration, creating a parser is straight forward using an
@@ -105,6 +105,7 @@ FeatureToken: org=<was>, norm=<was>
 [natural language parsing]: parse.html
 [spaCy]: https://spacy.io
 [resource library]: https://plandes.github.io/util/doc/config.html#resource-libraries
-[simple.py]: https://github.com/plandes/nlparse/blob/master/example/simple.py
 [configuration]: https://plandes.github.io/util/doc/config.html
 [configuration API]: https://plandes.github.io/util/doc/config.html#import-ini-configuration
+[examples]: https://github.com/plandes/nlparse/tree/master/example
+[simple.py]: https://github.com/plandes/nlparse/blob/master/example/simple.py

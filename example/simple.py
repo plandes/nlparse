@@ -18,7 +18,7 @@ config_files = list: resource(zensols.nlp): resources/obj.conf
 token_feature_ids = eval: set('ent_ tag_'.split())
 """
 
-if __name__ == '__main__':
+if (__name__ == '__main__'):
     fac = ImportConfigFactory(ImportIniConfig(StringIO(CONFIG)))
     doc_parser: FeatureDocumentParser = fac('doc_parser')
     sent = 'He was George Washington and first president of the United States.'
