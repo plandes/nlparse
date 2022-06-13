@@ -4,5 +4,4 @@ msgpack-numpy>=0.4.7.1
 smart-open>=4.0.1
 nltk>=3.5
 python-Levenshtein
-typer~=0.3.2
 zensols.util~=1.10.0
