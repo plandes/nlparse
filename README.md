@@ -40,12 +40,11 @@ A very [simple](example/simple.py) example is given below:
 ```python
 from io import StringIO
 from zensols.config import ImportIniConfig, ImportConfigFactory
-from zensols.nlp import FeatureDocument
+from zensols.nlp import FeatureDocument, FeatureDocumentParser
 
 CONFIG = """
 [import]
-references = default
-sections = imp_conf
+sections = list: imp_conf
 
 # import the `zensols.nlp` library
 [imp_conf]
@@ -54,7 +53,7 @@ config_files = list: resource(zensols.nlp): resources/obj.conf
 
 # override the parse to keep only the norm, ent
 [doc_parser]
-token_feature_ids = eval: set('ent_ tag_'.split())
+token_feature_ids = set: ent_, tag_
 """
 
 if (__name__ == '__main__'):
@@ -65,9 +64,9 @@ if (__name__ == '__main__'):
     for tok in doc.tokens:
         tok.write()
 ```
-This uses a [resource
-library](https://plandes.github.io/util/doc/config.html#resource-libraries) to
-source in the configuration from this package so minimal configuration is necessary.
+
+This uses a [resource library] to source in the configuration from this package
+so minimal configuration is necessary.
 
 See the [feature documents] for more information.
 
@@ -138,7 +137,7 @@ Copyright (c) 2020 - 2021 Paul Landes
 [Framework documentation]: https://plandes.github.io/nlparse/
 [Natural Language Parsing]: https://plandes.github.io/nlparse/doc/parse.html
 [List Token Normalizers and Mappers]: https://plandes.github.io/nlparse/doc/normalizers.html
-
+[resource library]: https://plandes.github.io/util/doc/config.html#resource-libraries
 
 [spaCy]: https://spacy.io
 [nltk]: https://www.nltk.org
