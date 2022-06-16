@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [Unreleased]
+### Removed
+- Remove resource library `regular_expression_escape:dollar` configuration.
+  Use [zensols.util] `conf_esc:dollar` as a replacement.
 
 
 ## [1.1.2] - 2022-06-14
