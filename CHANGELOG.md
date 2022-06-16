@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [Unreleased]
+
+
+## [1.2.0] - 2022-06-16
 ### Removed
 - Remove resource library `regular_expression_escape:dollar` configuration.
   Use [zensols.util] `conf_esc:dollar` as a replacement.
@@ -254,7 +257,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/plandes/nlparse/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/plandes/nlparse/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/plandes/nlparse/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/plandes/nlparse/compare/v1.0.1...v1.1.0
