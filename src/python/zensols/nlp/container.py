@@ -65,7 +65,13 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     def get_overlapping_tokens(self, span: LexicalSpan) -> \
             Iterable[FeatureToken]:
-        """Get all tokens that overlap lexical span ``span``."""
+        """Get all tokens that overlap lexical span ``span``.
+
+        :param span: indicates the portion of the document to retain
+
+        :return: a token sequence containing the 0 index offset of ``span``
+
+        """
         return filter(lambda t: t.lexspan.overlaps_with(span),
                       self.token_iter())
 
@@ -463,6 +469,34 @@ class FeatureDocument(TokenContainer):
     def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
         return tuple(chain.from_iterable(
             map(lambda s: s.entities, self.sents)))
+
+    def get_overlapping_document(self, span: LexicalSpan) -> FeatureDocument:
+        """Get the portion of the document that overlaps ``span``.  For sentences that
+        are completely enclosed in the span, they sentences are copied.
+        Otherwise, new sentences are created from those tokens that overlap the
+        span.
+
+        :param span: indicates the portion of the document to retain
+
+        :return: a new document that contains the 0 index offset of ``span``
+
+        """
+        doc_text: str = self.text
+        sents: List[FeatureSentence] = []
+        for sent in self.sent_iter():
+            toks = tuple(sent.get_overlapping_tokens(span))
+            if len(toks) == 0:
+                continue
+            elif len(toks) == len(sent):
+                pass
+            else:
+                text: str = doc_text[toks[0].idx:toks[-1].idx+1]
+                sent = FeatureSentence(toks, text)
+            sents.append(sent)
+        doc = FeatureDocument(tuple(sents))
+        body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
+        assert body_len == doc.token_len
+        return doc
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               n_sents: int = sys.maxsize, n_tokens: int = 0):
