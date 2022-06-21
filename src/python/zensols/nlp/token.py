@@ -108,6 +108,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         feats: Dict[str, Any] = self.get_features(feature_ids, skip_missing)
         clone = FeatureToken.__new__(FeatureToken)
         clone.__dict__.update(feats)
+        if hasattr(self, '_text'):
+            clone._text = self._text
         return clone
 
     @property
@@ -115,7 +117,10 @@ class FeatureToken(PersistableContainer, TextContainer):
         """The initial text before normalized by any :class:`.TokenNormalizer`.
 
         """
-        return self.norm
+        if hasattr(self, '_text'):
+            return self._text
+        else:
+            return self.norm
 
     @property
     def is_none(self) -> bool:
@@ -257,6 +262,7 @@ class SpacyFeatureToken(FeatureToken):
         i = self.token.i
         idx = self.token.idx
         i_sent = self.token.i - self.token.sent.start
+        self._text = spacy_token.orth_
         super().__init__(i, idx, i_sent, norm)
 
     def __getstate__(self):
