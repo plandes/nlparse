@@ -17,7 +17,7 @@ from frozendict import frozendict
 from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
 from zensols.persist import PersistableContainer, persisted
-from . import TextContainer, FeatureToken
+from . import TextContainer, FeatureToken, LexicalSpan
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +62,12 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     def token_len(self) -> int:
         """Return the number of tokens."""
         return sum(1 for i in self.token_iter())
+
+    def get_overlapping_tokens(self, span: LexicalSpan) -> \
+            Iterable[FeatureToken]:
+        """Get all tokens that overlap lexical span ``span``."""
+        return filter(lambda t: t.lexspan.overlaps_with(span),
+                      self.token_iter())
 
     @abstractmethod
     def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
