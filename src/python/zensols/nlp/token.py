@@ -77,7 +77,7 @@ class FeatureToken(PersistableContainer, TextContainer):
     """The character offset of the token within the parent document."""
 
     i_sent: int = field()
-    """The index of the within the parent sentence.
+    """The index of the token within the parent sentence.
 
     The index of the token in the respective sentence.  This is not to be
     confused with the index of the sentence to which the token belongs, which
