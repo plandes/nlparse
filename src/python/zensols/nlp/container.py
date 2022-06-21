@@ -16,7 +16,7 @@ from io import TextIOBase
 from frozendict import frozendict
 from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
-from zensols.persist import PersistableContainer, persisted, PersistedWork
+from zensols.persist import PersistableContainer, persisted
 from . import TextContainer, FeatureToken
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     """
     @abstractmethod
-    def token_iter(self, *args) -> Iterable[FeatureToken]:
+    def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         """Return an iterator over the token features.
 
         :param args: the arguments given to :meth:`itertools.islice`
@@ -35,13 +35,13 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """
         pass
 
-    def norm_token_iter(self, *args) -> Iterable[str]:
+    def norm_token_iter(self, *args, **kwargs) -> Iterable[str]:
         """Return a list of normalized tokens.
 
         :param args: the arguments given to :meth:`itertools.islice`
 
         """
-        return map(lambda t: t.norm, self.token_iter(*args))
+        return map(lambda t: t.norm, self.token_iter(*args, **kwargs))
 
     @property
     @persisted('_norm', transient=True)
@@ -181,11 +181,11 @@ class FeatureSentence(TokenContainer):
                 if start is not None:
                     self._ents.append((start.idx, end.idx))
 
-    def token_iter(self, *args) -> Iterable[FeatureToken]:
+    def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         if len(args) == 0:
             return iter(self.sent_tokens)
         else:
-            return it.islice(self.sent_tokens, *args)
+            return it.islice(self.sent_tokens, *args, **kwargs)
 
     @property
     def tokens(self) -> Tuple[FeatureToken]:
@@ -286,18 +286,18 @@ class FeatureDocument(TokenContainer):
         if self.text is None:
             self.text = ''.join(map(lambda s: s.text, self.sent_iter()))
 
-    def token_iter(self, *args) -> Iterable[FeatureToken]:
+    def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         sent_toks = chain.from_iterable(map(lambda s: s.tokens, self.sents))
         if len(args) == 0:
             return sent_toks
         else:
-            return it.islice(sent_toks, *args)
+            return it.islice(sent_toks, *args, **kwargs)
 
-    def sent_iter(self, *args) -> Iterable[FeatureSentence]:
+    def sent_iter(self, *args, **kwargs) -> Iterable[FeatureSentence]:
         if len(args) == 0:
             return iter(self.sents)
         else:
-            return it.islice(self.sents, *args)
+            return it.islice(self.sents, *args, **kwargs)
 
     @property
     def max_sentence_len(self) -> int:
@@ -313,8 +313,8 @@ class FeatureDocument(TokenContainer):
             cls = FeatureSentence
         return cls
 
-    def to_sentence(self, *args) -> FeatureSentence:
-        sents = self.sent_iter(*args)
+    def to_sentence(self, *args, **kwargs) -> FeatureSentence:
+        sents = self.sent_iter(*args, **kwargs)
         toks = chain.from_iterable(map(lambda s: s.tokens, sents))
         cls = self._sent_class()
         return cls(tuple(toks), self.text)
