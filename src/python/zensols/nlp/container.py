@@ -493,7 +493,7 @@ class FeatureDocument(TokenContainer):
                 text: str = doc_text[toks[0].idx:toks[-1].idx+1]
                 sent = FeatureSentence(toks, text)
             sents.append(sent)
-        doc = FeatureDocument(tuple(sents))
+        doc = FeatureDocument(sents)
         body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
         assert body_len == doc.token_len
         return doc
