@@ -4,7 +4,7 @@ import json
 from spacy.tokens import Doc
 from zensols.util.log import loglevel
 from zensols.config import ImportConfigFactory
-from zensols.nlp import FeatureDocumentParser, FeatureToken
+from zensols.nlp import FeatureDocumentParser
 from config import AppConfig
 
 logger = logging.getLogger(__name__)
