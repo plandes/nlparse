@@ -202,6 +202,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         if feature_ids is None:
             feature_ids = self.WRITABLE_FEATURE_IDS
         dct = self.get_features(feature_ids, True)
+        if 'text' in dct and dct['norm'] == dct['text']:
+            del dct['text']
         for i, k in enumerate(sorted(dct.keys())):
             val: str = dct[k]
             ptype: str = None
