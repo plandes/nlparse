@@ -64,6 +64,15 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """Return the number of tokens."""
         return sum(1 for i in self.token_iter())
 
+    @property
+    @persisted('_lexspan', transient=True)
+    def lexspan(self) -> LexicalSpan:
+        """The document indexed lexical span using :obj:`idx`.
+
+        """
+        toks = self.tokens
+        return LexicalSpan(toks[0].lexspan.begin, toks[-1].lexspan.end)
+
     def get_overlapping_tokens(self, span: LexicalSpan) -> \
             Iterable[FeatureToken]:
         """Get all tokens that overlap lexical span ``span``.
@@ -470,6 +479,11 @@ class FeatureDocument(TokenContainer):
     def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
         return tuple(chain.from_iterable(
             map(lambda s: s.entities, self.sents)))
+
+    def get_overlapping_sentence(self, span: LexicalSpan) -> FeatureSentence:
+        for sent in self.sents:
+            if sent.lexspan.overlaps_with(span):
+                return sent
 
     def get_overlapping_document(self, span: LexicalSpan) -> FeatureDocument:
         """Get the portion of the document that overlaps ``span``.  For sentences that

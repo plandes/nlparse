@@ -99,6 +99,12 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     def _complete_merge_doc(self):
         pass
 
+    def _merge_entities_by_sentence(self):
+        for tsent, ssent in zip(self._target_doc, self._source_doc):
+            skips = set(tsent._ents)
+            to_add = filter(lambda e: e not in skips, ssent._ents)
+            tsent._ents.extend(to_add)
+
     def _merge_doc(self):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging docs: {self._source_doc} -> ' +
@@ -114,6 +120,7 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                 del self._target_sent
                 del self._source_sent
                 self._complete_merge_doc()
+        self._merge_entities_by_sentence()
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         target_doc = self.target_parser.parse(text, *args, **kwargs)
@@ -167,6 +174,17 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
     parsers and this parser.
 
     """
+    def _merge_entities_by_token(self, target_tok, source_tok):
+        tdoc, sdoc = self._target_doc, self._source_doc
+        source_sent = sdoc.get_overlapping_sentence(source_tok.lexspan)
+        if source_sent is not None:
+            targ_sent = tdoc.get_overlapping_sentence(target_tok.lexspan)
+            skips = set(targ_sent._ents)
+            for ent in source_sent._ents:
+                begin, end = ent
+                if begin == source_tok.idx and ent not in skips:
+                    targ_sent._ents.append(ent)
+
     def _merge_token_containers(self, target_container: TokenContainer,
                                 rmap: Dict[int, Tuple[FeatureToken, Token]]):
         if logger.isEnabledFor(logging.DEBUG):
@@ -178,13 +196,15 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                              f'-> {source_tok}')
             if source_tok is not None:
                 self._merge_tokens(target_tok, source_tok, target_container)
+                if source_tok.ent_ != FeatureToken.NONE:
+                    self._merge_entities_by_token(target_tok, source_tok)
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging sentences: {self._source_sent.tokens} ' +
                          f'-> {self._target_sent.tokens}')
-        rmap: Dict[int, Tuple[FeatureToken, Token]] = self._source_token_mapping
-        self._merge_token_containers(self._target_sent, rmap)
+        rmp: Dict[int, Tuple[FeatureToken, Token]] = self._source_token_mapping
+        self._merge_token_containers(self._target_sent, rmp)
 
     def _prepare_merge_doc(self):
         if self.merge_sentences:
