@@ -109,7 +109,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         clone = FeatureToken.__new__(FeatureToken)
         clone.__dict__.update(feats)
         if hasattr(self, '_text'):
-            clone._text = self._text
+            clone.text = self._text
         return clone
 
     @property
@@ -121,6 +121,13 @@ class FeatureToken(PersistableContainer, TextContainer):
             return self._text
         else:
             return self.norm
+
+    @text.setter
+    def text(self, text: str):
+        """The initial text before normalized by any :class:`.TokenNormalizer`.
+
+        """
+        self._text = text
 
     @property
     def is_none(self) -> bool:

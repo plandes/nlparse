@@ -12,6 +12,7 @@ import sys
 import logging
 from itertools import chain
 import itertools as it
+import copy
 from io import TextIOBase
 from frozendict import frozendict
 from spacy.tokens.doc import Doc
@@ -484,16 +485,32 @@ class FeatureDocument(TokenContainer):
         doc_text: str = self.text
         sents: List[FeatureSentence] = []
         for sent in self.sent_iter():
-            toks = tuple(sent.get_overlapping_tokens(span))
+            toks = list(sent.get_overlapping_tokens(span))
             if len(toks) == 0:
                 continue
             elif len(toks) == len(sent):
                 pass
             else:
                 text: str = doc_text[toks[0].idx:toks[-1].idx+1]
+                hang = (span.end + 1) - toks[-1].lexspan.end
+                if hang < 0:
+                    tok = toks[-1]
+                    clone = copy.deepcopy(tok)
+                    clone.norm = tok.norm[:hang]
+                    clone.text = tok.text[:hang]
+                    toks[-1] = clone
+                hang = toks[0].lexspan.begin - span.begin
+                if hang < 0:
+                    hang *= -1
+                    tok = toks[0]
+                    clone = copy.deepcopy(tok)
+                    clone.norm = tok.norm[hang:]
+                    clone.text = tok.text[hang:]
+                    toks[0] = clone
                 sent = FeatureSentence(toks, text)
             sents.append(sent)
-        doc = FeatureDocument(sents)
+        text: str = doc_text[span.begin:span.end+1]
+        doc = FeatureDocument(sents, text)
         body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
         assert body_len == doc.token_len
         return doc
