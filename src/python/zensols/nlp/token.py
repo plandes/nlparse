@@ -183,7 +183,8 @@ class FeatureToken(PersistableContainer, TextContainer):
 
     def write_attributes(self, depth: int = 0, writer: TextIOBase = sys.stdout,
                          include_type: bool = True,
-                         feature_ids: Iterable[str] = None):
+                         feature_ids: Iterable[str] = None,
+                         inline: bool = False):
         """Write feature attributes.
 
         :param depth: the starting indentation depth
@@ -195,11 +196,13 @@ class FeatureToken(PersistableContainer, TextContainer):
         :param feature_ids: the features to write, which defaults to
                           :obj:`WRITABLE_FEATURE_IDS`
 
+        :param inline: whether to print attributes all on the same line
+
         """
         if feature_ids is None:
             feature_ids = self.WRITABLE_FEATURE_IDS
         dct = self.get_features(feature_ids, True)
-        for k in sorted(dct.keys()):
+        for i, k in enumerate(sorted(dct.keys())):
             val: str = dct[k]
             ptype: str = None
             if include_type:
@@ -207,7 +210,17 @@ class FeatureToken(PersistableContainer, TextContainer):
                 if ptype is not None:
                     ptype = f' ({ptype})'
             ptype = '' if ptype is None else ptype
-            self._write_line(f'{k}={val}{ptype}', depth, writer)
+            sout = f'{k}={val}{ptype}'
+            if inline:
+                if i == 0:
+                    writer.write(self._sp(depth))
+                else:
+                    writer.write(', ')
+                writer.write(sout)
+            else:
+                self._write_line(sout, depth, writer)
+        if inline:
+            self._write_empty(writer)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_type: bool = True,
