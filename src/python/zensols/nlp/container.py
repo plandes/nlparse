@@ -459,9 +459,7 @@ class FeatureDocument(TokenContainer):
         if sents is None:
             return self._combine_all_sentences()
         else:
-            doc = dataclasses.replace(self)
-            doc.sents = list(sents)
-            return doc
+            return self.__class__(list(sents))
 
     def _reconstruct_sents_iter(self) -> Iterable[FeatureSentence]:
         for sent in self.sents:
