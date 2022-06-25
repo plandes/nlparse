@@ -176,14 +176,18 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
     """
     def _merge_entities_by_token(self, target_tok, source_tok):
         tdoc, sdoc = self._target_doc, self._source_doc
-        source_sent = sdoc.get_overlapping_sentence(source_tok.lexspan)
-        if source_sent is not None:
-            targ_sent = tdoc.get_overlapping_sentence(target_tok.lexspan)
-            skips = set(targ_sent._ents)
-            for ent in source_sent._ents:
+        tsent = None
+        try:
+            tsent = sdoc.get_overlapping_sentences(source_tok.lexspan)
+        except StopIteration:
+            pass
+        if tsent is not None:
+            tsent = next(tdoc.get_overlapping_sentences(target_tok.lexspan))
+            skips = set(tsent._ents)
+            for ent in tsent._ents:
                 begin, end = ent
                 if begin == source_tok.idx and ent not in skips:
-                    targ_sent._ents.append(ent)
+                    tsent._ents.append(ent)
 
     def _merge_token_containers(self, target_container: TokenContainer,
                                 rmap: Dict[int, Tuple[FeatureToken, Token]]):

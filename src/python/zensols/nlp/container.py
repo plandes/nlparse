@@ -146,8 +146,11 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         return frozendict(by_idx)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+              include_original: bool = True, include_normalized: bool = True,
               n_tokens: int = sys.maxsize):
-        super().write(depth, writer)
+        super().write(depth, writer,
+                      include_original=include_original,
+                      include_normalized=include_normalized)
         if n_tokens > 0:
             self._write_line('tokens:', depth + 1, writer)
             for t in it.islice(self.token_iter(), n_tokens):
@@ -435,12 +438,8 @@ class FeatureDocument(TokenContainer):
                 docs, type(fdoc), concat_tokens, **kwargs)
         return doc
 
-    @persisted('_combine_sentences', transient=True)
-    def combine_sentences(self) -> FeatureDocument:
-        """Combine all the sentences in this document in to a new document with a
-        single sentence.
-
-        """
+    @persisted('_combine_all_sentences_pw', transient=True)
+    def _combine_all_sentences(self) -> FeatureDocument:
         if len(self.sents) == 1:
             return self
         else:
@@ -449,6 +448,19 @@ class FeatureDocument(TokenContainer):
             doc = dataclasses.replace(self)
             doc.sents = [sent]
             doc._combined = True
+            return doc
+
+    def combine_sentences(self, sents: Iterable[FeatureSentence] = None) -> \
+            FeatureDocument:
+        """Combine all the sentences in this document in to a new document with a
+        single sentence.
+
+        """
+        if sents is None:
+            return self._combine_all_sentences()
+        else:
+            doc = dataclasses.replace(self)
+            doc.sents = [sents]
             return doc
 
     def _reconstruct_sents_iter(self) -> Iterable[FeatureSentence]:
@@ -480,10 +492,12 @@ class FeatureDocument(TokenContainer):
         return tuple(chain.from_iterable(
             map(lambda s: s.entities, self.sents)))
 
-    def get_overlapping_sentence(self, span: LexicalSpan) -> FeatureSentence:
+    def get_overlapping_sentences(self, span: LexicalSpan) -> \
+            Iterable[FeatureSentence]:
+        """Return sentences that overlaps with ``span`` from this document."""
         for sent in self.sents:
             if sent.lexspan.overlaps_with(span):
-                return sent
+                yield sent
 
     def get_overlapping_document(self, span: LexicalSpan) -> FeatureDocument:
         """Get the portion of the document that overlaps ``span``.  For sentences that
