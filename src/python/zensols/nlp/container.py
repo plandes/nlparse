@@ -460,7 +460,7 @@ class FeatureDocument(TokenContainer):
             return self._combine_all_sentences()
         else:
             doc = dataclasses.replace(self)
-            doc.sents = [sents]
+            doc.sents = list(sents)
             return doc
 
     def _reconstruct_sents_iter(self) -> Iterable[FeatureSentence]:
