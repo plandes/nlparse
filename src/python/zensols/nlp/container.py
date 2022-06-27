@@ -545,7 +545,7 @@ class FeatureDocument(TokenContainer):
               n_sents: int = sys.maxsize, n_tokens: int = 0):
         """Write the document and optionally sentence features.
 
-        :param n_sents the number of sentences to write
+        :param n_sents: the number of sentences to write
 
         :param n_tokens: the number of tokens to print across all sentences
 
