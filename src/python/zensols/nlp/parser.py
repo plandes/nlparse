@@ -264,6 +264,10 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     token_class: Type[FeatureToken] = field(default=SpacyFeatureToken)
     """The type of document instances to create."""
 
+    sentence_filters: List[str] = field(default_factory=list)
+    """A list of functions that return a boolean used to filter sentences.
+
+    """
     remove_empty_sentences: bool = field(default=False)
     """If ``True``, remove sentences that only have space tokens."""
 
@@ -399,20 +403,30 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                      text: str) -> FeatureSentence:
         return self.sent_class(tuple(stoks), text, spacy_sent)
 
+    def _filter_sent(self, sent: Span, fsent: FeatureSentence) -> \
+            List[FeatureSentence]:
+        def remove_empty_sentences(sent, fsent) -> bool:
+            return len(sent) > 0 and not all(map(lambda t: t.is_space, sent))
+
+        filters = list(map(eval, self.sentence_filters))
+        if self.remove_empty_sentences:
+            filters.append(remove_empty_sentences)
+        if len(filters) == 0:
+            return True
+        else:
+            return all(map(lambda f: f(sent, fsent), filters))
+
     def _from_string(self, text: str) -> Tuple[Doc, List[FeatureSentence]]:
         """Parse a document from a string.
 
         """
         doc: Doc = self.parse_spacy_doc(text)
         toks: Tuple[FeatureToken] = tuple(self._normalize_tokens(doc))
+        sents: List[FeatureSentence] = []
         ntoks = len(toks)
         tix = 0
-        sents = []
         sent: Span
         for sent in doc.sents:
-            if self.remove_empty_sentences and \
-               (all(map(lambda t: t.is_space, sent)) or len(sent) == 0):
-                continue
             e = sent[-1].i
             stoks = []
             while tix < ntoks:
@@ -422,7 +436,10 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 else:
                     break
                 tix += 1
-            sents.append(self._create_sent(sent, stoks, sent.text))
+            fsent: FeatureSentence = self._create_sent(sent, stoks, sent.text)
+            if not self._filter_sent(sent, fsent):
+                continue
+            sents.append(fsent)
         return doc, sents
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
