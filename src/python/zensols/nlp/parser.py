@@ -454,7 +454,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 f'Could not parse <{text}> for {self.doc_class} ' +
                 f"with args {args} for parser '{self.name}'") from e
 
-    def to_spacy_doc(self, doc: FeatureDocument, norm: bool = True) -> Doc:
+    def to_spacy_doc(self, doc: FeatureDocument, norm: bool = True,
+                     add_features: Set[str] = None) -> Doc:
         """Convert a feature document back in to a spaCy document.
 
         **Note**: not all data is copied--only text, ``pos_``, ``tag_``,
@@ -465,13 +466,23 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         :param norm: whether to use the normalized text as the ``orth_`` spaCy
                      token attribute or ``text``
 
+        :pram add_features: whether to add POS, NER tags, lemmas, heads and
+                            dependnencies
+
         :return: the feature document with copied data from ``doc``
 
         """
+        def conv_iob(t: FeatureToken) -> str:
+            if t.ent_iob_ == 'O':
+                return 'O'
+            return f'{t.ent_iob_}-{t.ent_}'
+
         if norm:
             words = list(doc.norm_token_iter())
         else:
             words = [t.text for t in doc.token_iter()]
+        if add_features is None:
+            add_features = set('pos tag lemma head dep ent'.split())
         sent_starts = [False] * len(words)
         sidx = 0
         for sent in doc:
@@ -481,16 +492,21 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                       words=words,
                       spaces=[True] * len(words),
                       sent_starts=sent_starts)
-        if doc.token_len > 0:
+        if add_features and doc.token_len > 0:
+            assert len(words) == doc.token_len
             tok = next(iter(doc.token_iter()))
-            if hasattr(tok, 'pos_'):
+            if hasattr(tok, 'pos_') and 'pos' in add_features:
                 params['pos'] = [t.pos_ for t in doc.token_iter()]
-            if hasattr(tok, 'tag_'):
+            if hasattr(tok, 'tag_') and 'tag' in add_features:
                 params['tags'] = [t.tag_ for t in doc.token_iter()]
-            if hasattr(tok, 'lemma_'):
+            if hasattr(tok, 'lemma_') and 'lemma' in add_features:
                 params['lemmas'] = [t.lemma_ for t in doc.token_iter()]
-            if hasattr(tok, 'dep_'):
+            if hasattr(tok, 'head_') and 'head' in add_features:
+                params['heads'] = [t.head_ for t in doc.token_iter()]
+            if hasattr(tok, 'dep_') and 'dep' in add_features:
                 params['deps'] = [t.dep_ for t in doc.token_iter()]
+            if hasattr(tok, 'ent_') and 'ent' in add_features:
+                params['ents'] = [conv_iob(t) for t in doc.token_iter()]
         return Doc(**params)
 
     def __str__(self):

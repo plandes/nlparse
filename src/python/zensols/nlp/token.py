@@ -43,8 +43,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         'bool': frozenset(('is_space is_stop is_ent is_wh is_contraction ' +
                            'is_superlative is_pronoun').split()),
         'int': frozenset(('i idx i_sent sent_i is_punctuation tag ' +
-                          'ent dep shape').split()),
-        'str': frozenset('norm lemma_ tag_ pos_ ent_ dep_ shape_'.split()),
+                          'ent ent_iob dep shape').split()),
+        'str': frozenset('norm lemma_ tag_ pos_ ent_ ent_iob_ dep_ shape_'.split()),
         'list': frozenset('children'.split()),
         'object': frozenset('lexspan'.split())})
     """Map of class type to set of feature IDs."""
@@ -374,6 +374,30 @@ class SpacyFeatureToken(FeatureToken):
 
         """
         return self.spacy_token.label_ if self.is_ent else self.NONE
+
+    @property
+    def ent_iob(self) -> int:
+        """Return the entity IOB tag, which ``I`` for in, ```O`` for out, `B`` for
+        begin.
+
+        """
+        return self.token.ent_iob if self.is_ent else 0
+
+    @property
+    def ent_iob_(self) -> str:
+        """Return the entity IOB nominal index for :obj:``ent_iob``.
+
+        """
+        return self.token.ent_iob_ if self.is_ent else 'O'
+
+    def conll_iob_(self) -> str:
+        """Return the CoNLL formatted IOB tag, such as ``B-ORG`` for a beginning
+        organization token.
+
+        """
+        if not self.is_ent:
+            return 'O'
+        return f'{self.self.token.ent_iob_}-{self.token.ent_type_}'
 
     @property
     def is_superlative(self) -> bool:

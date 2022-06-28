@@ -130,7 +130,7 @@ the United States of America."""
         fdoc = parser.parse(self.SENT_TEXT_SPACE)
 
         for tok in fdoc.tokens:
-            self.assertEqual(25, len(tok.asdict()))
+            self.assertEqual(27, len(tok.asdict()))
 
         parser = self.fac('doc_parser_feat_subset')
         fdoc = parser.parse(self.SENT_TEXT_SPACE)
