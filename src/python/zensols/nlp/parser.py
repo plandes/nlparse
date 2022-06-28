@@ -437,6 +437,45 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 f'Could not parse <{text}> for {self.doc_class} ' +
                 f"with args {args} for parser '{self.name}'") from e
 
+    def to_spacy_doc(self, doc: FeatureDocument, norm: bool = True) -> Doc:
+        """Convert a feature document back in to a spaCy document.
+
+        **Note**: not all data is copied--only text, ``pos_``, ``tag_``,
+        ``lemma_`` and ``dep_``.
+
+        :param doc: the spaCy doc to convert
+
+        :param norm: whether to use the normalized text as the ``orth_`` spaCy
+                     token attribute or ``text``
+
+        :return: the feature document with copied data from ``doc``
+
+        """
+        if norm:
+            words = list(doc.norm_token_iter())
+        else:
+            words = [t.text for t in doc.token_iter()]
+        sent_starts = [False] * len(words)
+        sidx = 0
+        for sent in doc:
+            sent_starts[sidx] = True
+            sidx += len(sent)
+        params = dict(vocab=self.model.vocab,
+                      words=words,
+                      spaces=[True] * len(words),
+                      sent_starts=sent_starts)
+        if doc.token_len > 0:
+            tok = next(iter(doc.token_iter()))
+            if hasattr(tok, 'pos_'):
+                params['pos'] = [t.pos_ for t in doc.token_iter()]
+            if hasattr(tok, 'tag_'):
+                params['tags'] = [t.tag_ for t in doc.token_iter()]
+            if hasattr(tok, 'lemma_'):
+                params['lemmas'] = [t.lemma_ for t in doc.token_iter()]
+            if hasattr(tok, 'dep_'):
+                params['deps'] = [t.dep_ for t in doc.token_iter()]
+        return Doc(**params)
+
     def __str__(self):
         return f'model_name: {self.model_name}, lang: {self.lang}'
 
