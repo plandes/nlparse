@@ -416,11 +416,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         else:
             return all(map(lambda f: f(sent, fsent), filters))
 
-    def _from_string(self, text: str) -> Tuple[Doc, List[FeatureSentence]]:
-        """Parse a document from a string.
-
-        """
-        doc: Doc = self.parse_spacy_doc(text)
+    def _create_sents(self, doc: Doc) -> List[FeatureSentence]:
+        """Create sentences from a spaCy doc."""
         toks: Tuple[FeatureToken] = tuple(self._normalize_tokens(doc))
         sents: List[FeatureSentence] = []
         ntoks = len(toks)
@@ -440,19 +437,41 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             if not self._filter_sent(sent, fsent):
                 continue
             sents.append(fsent)
-        return doc, sents
+        return sents
+
+    def from_spacy_doc(self, doc: Doc, *args, text: str = None,
+                       **kwargs) -> FeatureDocument:
+        """Create s :class:`.FeatureDocument` from a spaCy doc.
+
+        :param doc: the spaCy generated document to transform in to a feature
+                    document
+
+        :param text: either a string or a list of strings; if the former a
+                     document with one sentence will be created, otherwise a
+                     document is returned with a sentence for each string in
+                     the list
+
+        :param args: the arguments used to create the FeatureDocument instance
+
+        :param kwargs: the key word arguments used to create the
+                       FeatureDocument instance
+
+        """
+        text = doc.text if text is None else text
+        sents: List[FeatureSentence] = self._create_sents(doc)
+        try:
+            return self.doc_class(sents, text, doc, *args, **kwargs)
+        except Exception as e:
+            raise ParseError(
+                f'Could not parse <{text}> for {self.doc_class} ' +
+                f"with args {args} for parser '{self.name}'") from e
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         if not isinstance(text, str):
             raise ParseError(
                 f'Expecting string text but got: {text} ({type(str)})')
-        spacy_doc, sents = self._from_string(text)
-        try:
-            return self.doc_class(sents, text, spacy_doc, *args, **kwargs)
-        except Exception as e:
-            raise ParseError(
-                f'Could not parse <{text}> for {self.doc_class} ' +
-                f"with args {args} for parser '{self.name}'") from e
+        doc: Doc = self.parse_spacy_doc(text)
+        return self.from_spacy_doc(doc, *args, text=text, **kwargs)
 
     def to_spacy_doc(self, doc: FeatureDocument, norm: bool = True,
                      add_features: Set[str] = None) -> Doc:
