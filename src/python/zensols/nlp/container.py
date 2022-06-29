@@ -119,18 +119,6 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         return cls(**kwargs)
 
     @property
-    def norms(self) -> Set[str]:
-        return set(map(lambda t: t.norm.lower(),
-                       filter(lambda t: not t.is_punctuation and not t.is_stop,
-                              self.tokens)))
-
-    @property
-    def lemmas(self) -> Set[str]:
-        return set(map(lambda t: t.lemma.lower(),
-                       filter(lambda t: not t.is_punctuation and not t.is_stop,
-                              self.tokens)))
-
-    @property
     @persisted('_entities', transient=True)
     def entities(self) -> Tuple[Tuple[FeatureToken]]:
         """The named entities of the container with each multi-word entity as elements.
