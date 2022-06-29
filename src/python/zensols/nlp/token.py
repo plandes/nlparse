@@ -91,6 +91,7 @@ class FeatureToken(PersistableContainer, TextContainer):
     """
     def __post_init__(self):
         super().__init__()
+        self._detatched_feature_ids = None
 
     def detach(self, feature_ids: Set[str] = None,
                skip_missing: bool = False) -> FeatureToken:
@@ -110,7 +111,12 @@ class FeatureToken(PersistableContainer, TextContainer):
         clone.__dict__.update(feats)
         if hasattr(self, '_text'):
             clone.text = self._text
+        if feature_ids is not None:
+            clone._detatched_feature_ids = feature_ids
         return clone
+
+    def clone(self) -> FeatureToken:
+        return self.detach(self._detatched_feature_ids)
 
     @property
     def text(self) -> str:
@@ -178,7 +184,8 @@ class FeatureToken(PersistableContainer, TextContainer):
 
         """
         if feature_ids is None:
-            feature_ids = self.__dict__.keys()
+            feature_ids = set(self.__dict__.keys()) - \
+                {'_detatched_feature_ids'}
         return map(lambda a: getattr(self, a), sorted(feature_ids))
 
     def write_attributes(self, depth: int = 0, writer: TextIOBase = sys.stdout,
@@ -199,6 +206,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         :param inline: whether to print attributes all on the same line
 
         """
+        if feature_ids is None:
+            feature_ids = self._detatched_feature_ids
         if feature_ids is None:
             feature_ids = self.WRITABLE_FEATURE_IDS
         dct = self.get_features(feature_ids, True)
@@ -235,8 +244,13 @@ class FeatureToken(PersistableContainer, TextContainer):
         self.write_attributes(depth + 2, writer, include_type, feature_ids)
 
     def __eq__(self, other: FeatureToken) -> bool:
-        return self.i == other.i and self.idx == other.idx and \
-            self.__dict__ == other.__dict__
+        if self.i == other.i and self.idx == other.idx:
+            a = dict(self.__dict__)
+            b = dict(other.__dict__)
+            del a['_detatched_feature_ids']
+            del b['_detatched_feature_ids']
+            return a == b
+        return False
 
     def __hash__(self) -> int:
         return hash(self.i) * hash(self.i_sent)

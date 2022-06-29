@@ -104,6 +104,20 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """
         pass
 
+    def clone(self, cls: Type[TokenContainer] = None, **kwargs) -> \
+            TokenContainer:
+        """Clone an instance of this token container.
+
+        :param cls: the type of the new instance
+
+        :param kwargs: arguments to add to as attributes to the clone
+
+        :return: the cloned instance of this instance
+
+        """
+        cls = self.__class__ if cls is None else cls
+        return cls(**kwargs)
+
     @property
     def norms(self) -> Set[str]:
         return set(map(lambda t: t.norm.lower(),
@@ -189,7 +203,7 @@ class FeatureSentence(TokenContainer):
         super().__init__()
         if self.text is None:
             self.text = ' '.join(map(lambda t: t.text, self.sent_tokens))
-        self._ents = []
+        self._ents: List[Tuple[int, int]] = []
         self._set_entity_spans()
 
     def _set_entity_spans(self):
@@ -205,6 +219,16 @@ class FeatureSentence(TokenContainer):
                     pass
                 if start is not None:
                     self._ents.append((start.idx, end.idx))
+
+    def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
+        params = dict(kwargs)
+        if 'sent_tokens' not in params:
+            params['sent_tokens'] = [t.clone() for t in self.sent_tokens]
+        if 'text' not in params:
+            params['text'] = self.text
+        clone = super().clone(cls, **params)
+        clone._ents = list(self._ents)
+        return clone
 
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         if len(args) == 0:
@@ -310,6 +334,14 @@ class FeatureDocument(TokenContainer):
         super().__init__()
         if self.text is None:
             self.text = ''.join(map(lambda s: s.text, self.sent_iter()))
+
+    def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
+        params = dict(kwargs)
+        if 'sents' not in params:
+            params['sents'] = [s.clone() for s in self.sents]
+        if 'text' not in params:
+            params['text'] = self.text
+        return super().clone(cls, **params)
 
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         sent_toks = chain.from_iterable(map(lambda s: s.tokens, self.sents))
