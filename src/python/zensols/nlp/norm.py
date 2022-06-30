@@ -9,6 +9,7 @@ from abc import abstractmethod, ABC
 import logging
 import re
 import itertools as it
+from itertools import chain
 from spacy.tokens import Token, Span, Doc
 from zensols.config import Configurable, ImportConfigFactory
 from . import LexicalSpan
@@ -486,7 +487,7 @@ class MapTokenNormalizer(TokenNormalizer):
         for mapper in self.mappers:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'mapping token_tups with {mapper}')
-            token_tups = it.chain(*mapper.map_tokens(token_tups))
+            token_tups = chain.from_iterable(mapper.map_tokens(token_tups))
         return token_tups
 
     def __str__(self) -> str:
