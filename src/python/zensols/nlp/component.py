@@ -125,7 +125,6 @@ def create_regexner_component(
         patterns: Sequence[Tuple[Optional[str],
                                  Sequence[Union[re.Pattern, str]]]],
         path: str = None):
-
     def map_rlist(rlist):
         rl = map(lambda x: x if isinstance(x, re.Pattern) else re.compile(x),
                  rlist)
