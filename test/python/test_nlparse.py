@@ -42,7 +42,7 @@ class TestParse(unittest.TestCase):
         tnfac = ImportConfigFactory(self.config, shared=False)
         tn = tnfac.instance('default_token_normalizer')
         doc_parser = self.fac('default_doc_parser', token_normalizer=tn)
-        self.assertEqual('MapTokenNormalizer: embed=True, reload=False, lemma_token_mapper', str(tn))
+        self.assertEqual('MapTokenNormalizer: embed=True, lemma_token_mapper', str(tn))
         fd = doc_parser(self.sent)
         res = fd.asdict()
         if 0:

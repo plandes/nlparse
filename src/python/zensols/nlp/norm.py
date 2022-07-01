@@ -8,10 +8,9 @@ from dataclasses import dataclass, field
 from abc import abstractmethod, ABC
 import logging
 import re
-import itertools as it
 from itertools import chain
 from spacy.tokens import Token, Span, Doc
-from zensols.config import Configurable, ImportConfigFactory
+from zensols.config import ConfigFactory
 from . import LexicalSpan
 
 logger = logging.getLogger(__name__)
@@ -458,29 +457,28 @@ class LambdaTokenMapper(TokenMapper):
 @dataclass
 class MapTokenNormalizer(TokenNormalizer):
     """A normalizer that applies a sequence of :class:`.TokenMapper` instances to
-    transform the normalized token text.
+    transform the normalized token text.  The members of the
+    ``mapper_class_list`` are sections of the application configuration.
 
     Configuration example::
 
         [map_filter_token_normalizer]
         class_name = zensols.nlp.MapTokenNormalizer
-        mapper_class_list = eval: 'filter_token_mapper'.split()
+        mapper_class_list = list: filter_token_mapper
 
     """
-    config: Configurable = field(default=None)
-    """The application context."""
+    config_factory: ConfigFactory = field(default=None)
+    """The factory that created this instance and used to create the mappers.
 
+    """
     mapper_class_list: List[str] = field(default_factory=list)
-    """The configuration names to create with ``ImportConfigFactory``."""
-
-    reload: bool = field(default=False)
-    """Whether or not to reload the module when creating the instance, which is
-    useful while prototyping.
+    """The configuration section names to create from the application configuration
+    factory, which is added to :obj:`mappers`.  This field settings is
+    deprecated; use :obj:`mappers` instead.
 
     """
     def __post_init__(self):
-        ta = ImportConfigFactory(self.config, reload=self.reload)
-        self.mappers = tuple(map(ta.instance, self.mapper_class_list))
+        self.mappers = list(map(self.config_factory, self.mapper_class_list))
 
     def _map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
@@ -493,4 +491,4 @@ class MapTokenNormalizer(TokenNormalizer):
     def __str__(self) -> str:
         s = super().__str__()
         maps = ', '.join(map(str, self.mapper_class_list))
-        return f'{s}, reload={self.reload}, {maps}'
+        return f'{s}, {maps}'
