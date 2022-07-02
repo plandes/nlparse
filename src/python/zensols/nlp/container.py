@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Set, Iterable, Dict, Type, Any
+from typing import List, Tuple, Iterable, Dict, Type, Any
 from dataclasses import dataclass, field
 import dataclasses
 from abc import ABCMeta, abstractmethod
