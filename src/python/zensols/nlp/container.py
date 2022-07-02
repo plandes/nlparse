@@ -517,13 +517,18 @@ class FeatureDocument(TokenContainer):
             if sent.lexspan.overlaps_with(span):
                 yield sent
 
-    def get_overlapping_document(self, span: LexicalSpan) -> FeatureDocument:
+    def get_overlapping_document(self, span: LexicalSpan,
+                                 copy_deep: bool = False) -> FeatureDocument:
         """Get the portion of the document that overlaps ``span``.  For sentences that
-        are completely enclosed in the span, they sentences are copied.
+        are completely enclosed in the span, the sentences are copied.
         Otherwise, new sentences are created from those tokens that overlap the
         span.
 
         :param span: indicates the portion of the document to retain
+
+        :param copy_deep: whether or not to deep copy this document instance
+                          before setting the overlapping sentences as text;
+                          otherwise use a shallow copy using :meth:`copy.copy`
 
         :return: a new document that contains the 0 index offset of ``span``
 
@@ -556,7 +561,10 @@ class FeatureDocument(TokenContainer):
                 sent = FeatureSentence(toks, text)
             sents.append(sent)
         text: str = doc_text[span.begin:span.end+1]
-        doc = copy.deepcopy(self)
+        if copy_deep:
+            doc = copy.deepcopy(self)
+        else:
+            doc = copy.copy(self)
         doc.sents = sents
         doc.text = text
         body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
