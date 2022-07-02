@@ -533,42 +533,43 @@ class FeatureDocument(TokenContainer):
         :return: a new document that contains the 0 index offset of ``span``
 
         """
-        doc_text: str = self.text
-        sents: List[FeatureSentence] = []
-        for sent in self.sent_iter():
-            toks = list(sent.get_overlapping_tokens(span))
-            if len(toks) == 0:
-                continue
-            elif len(toks) == len(sent):
-                pass
-            else:
-                text: str = doc_text[toks[0].idx:toks[-1].idx+1]
-                hang = (span.end + 1) - toks[-1].lexspan.end
-                if hang < 0:
-                    tok = toks[-1]
-                    clone = copy.deepcopy(tok)
-                    clone.norm = tok.norm[:hang]
-                    clone.text = tok.text[:hang]
-                    toks[-1] = clone
-                hang = toks[0].lexspan.begin - span.begin
-                if hang < 0:
-                    hang *= -1
-                    tok = toks[0]
-                    clone = copy.deepcopy(tok)
-                    clone.norm = tok.norm[hang:]
-                    clone.text = tok.text[hang:]
-                    toks[0] = clone
-                sent = FeatureSentence(toks, text)
-            sents.append(sent)
-        text: str = doc_text[span.begin:span.end+1]
         if copy_deep:
             doc = copy.deepcopy(self)
         else:
             doc = copy.copy(self)
-        doc.sents = sents
-        doc.text = text
-        body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
-        assert body_len == doc.token_len
+        if span != self.lexspan:
+            doc_text: str = self.text
+            sents: List[FeatureSentence] = []
+            for sent in self.sent_iter():
+                toks = list(sent.get_overlapping_tokens(span))
+                if len(toks) == 0:
+                    continue
+                elif len(toks) == len(sent):
+                    pass
+                else:
+                    text: str = doc_text[toks[0].idx:toks[-1].idx+1]
+                    hang = (span.end + 1) - toks[-1].lexspan.end
+                    if hang < 0:
+                        tok = toks[-1]
+                        clone = copy.deepcopy(tok)
+                        clone.norm = tok.norm[:hang]
+                        clone.text = tok.text[:hang]
+                        toks[-1] = clone
+                    hang = toks[0].lexspan.begin - span.begin
+                    if hang < 0:
+                        hang *= -1
+                        tok = toks[0]
+                        clone = copy.deepcopy(tok)
+                        clone.norm = tok.norm[hang:]
+                        clone.text = tok.text[hang:]
+                        toks[0] = clone
+                    sent = FeatureSentence(toks, text)
+                sents.append(sent)
+            text: str = doc_text[span.begin:span.end+1]
+            doc.sents = sents
+            doc.text = text
+            body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
+            assert body_len == doc.token_len
         return doc
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
