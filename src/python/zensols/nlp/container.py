@@ -13,7 +13,7 @@ import logging
 from itertools import chain
 import itertools as it
 import copy
-from io import TextIOBase
+from io import TextIOBase, StringIO
 from frozendict import frozendict
 from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
@@ -27,6 +27,10 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     """Each instance has the following attributes:
 
     """
+    _SPACE_SKIP = set("""`‘“[({<""")
+    _CONTRACTIONS = set("'s n't 'll".split())
+    _LONGEST_CONTRACTION = max(map(len, _CONTRACTIONS))
+
     @abstractmethod
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         """Return an iterator over the token features.
@@ -48,7 +52,38 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     @persisted('_norm', transient=True)
     def norm(self) -> str:
         """The normalized version of the sentence."""
-        return ' '.join(self.norm_token_iter())
+        return self._calc_norm()
+
+    def _calc_norm(self) -> str:
+        """Create a string that follows English spacing rules."""
+        nsent: str
+        toks = self.tokens
+        tlen = len(toks)
+        has_punc = tlen > 0 and hasattr(toks[0], 'is_punctuation')
+        if has_punc:
+            space_skip = self._SPACE_SKIP
+            contracts = self._CONTRACTIONS
+            ncontract = self._LONGEST_CONTRACTION
+            sio = StringIO()
+            tlen_min_1 = tlen - 1
+            last_avoid = False
+            for tix, tok in enumerate(toks):
+                norm = tok.norm
+                if tix > 0 and tix < tlen_min_1:
+                    do_space_skip = False
+                    nlen = len(norm)
+                    if nlen == 1:
+                        do_space_skip = norm in space_skip
+                    if (not tok.is_punctuation or do_space_skip) and \
+                       not last_avoid and \
+                       not (nlen <= ncontract and norm in contracts):
+                        sio.write(' ')
+                    last_avoid = do_space_skip or tok.norm == '--'
+                sio.write(norm)
+            nsent = sio.getvalue()
+        else:
+            nsent = ' '.join(self.norm_token_iter())
+        return nsent
 
     @property
     @persisted('_tokens', transient=True)
@@ -332,7 +367,8 @@ class FeatureDocument(TokenContainer):
         return super().clone(cls, **params)
 
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
-        sent_toks = chain.from_iterable(map(lambda s: s.tokens, self.sents))
+        sent_toks = chain.from_iterable(
+            map(lambda s: s.token_iter(), self.sents))
         if len(args) == 0:
             return sent_toks
         else:
@@ -517,8 +553,7 @@ class FeatureDocument(TokenContainer):
             if sent.lexspan.overlaps_with(span):
                 yield sent
 
-    def get_overlapping_document(self, span: LexicalSpan,
-                                 copy_deep: bool = False) -> FeatureDocument:
+    def get_overlapping_document(self, span: LexicalSpan) -> FeatureDocument:
         """Get the portion of the document that overlaps ``span``.  For sentences that
         are completely enclosed in the span, the sentences are copied.
         Otherwise, new sentences are created from those tokens that overlap the
@@ -526,17 +561,10 @@ class FeatureDocument(TokenContainer):
 
         :param span: indicates the portion of the document to retain
 
-        :param copy_deep: whether or not to deep copy this document instance
-                          before setting the overlapping sentences as text;
-                          otherwise use a shallow copy using :meth:`copy.copy`
-
         :return: a new document that contains the 0 index offset of ``span``
 
         """
-        if copy_deep:
-            doc = copy.deepcopy(self)
-        else:
-            doc = copy.copy(self)
+        doc = self.clone()
         if span != self.lexspan:
             doc_text: str = self.text
             sents: List[FeatureSentence] = []
@@ -563,7 +591,7 @@ class FeatureDocument(TokenContainer):
                         clone.norm = tok.norm[hang:]
                         clone.text = tok.text[hang:]
                         toks[0] = clone
-                    sent = FeatureSentence(toks, text)
+                    sent = sent.clone(sent_tokens=toks, text=text)
                 sents.append(sent)
             text: str = doc_text[span.begin:span.end+1]
             doc.sents = sents

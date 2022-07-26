@@ -20,10 +20,18 @@ class TestToDoc(TestCase):
         self.assertTrue(isinstance(fdoc, FeatureDocument))
         self.assertTrue(isinstance(sdoc, Doc))
         self.assertEqual(list(fdoc.norm_token_iter()), [t.orth_ for t in sdoc])
-        self.assertEqual(fdoc.norm, sdoc.text.strip())
+        self.assertEqual(' '.join(fdoc.norm_token_iter()), sdoc.text.strip())
         self.assertEqual([t.tag_ for t in fdoc.token_iter()],
                          [t.tag_ for t in sdoc])
         self.assertEqual([t.lemma_ for t in fdoc.token_iter()],
                          [t.lemma_ for t in sdoc])
         self.assertEqual([t.dep_ for t in fdoc.token_iter()],
                          [t.dep_ for t in sdoc])
+
+    def test_norm(self):
+        ss = ("""Apple will bring back the ‘Plus’ moniker, which is a top seller.""",
+              """Apple's phones [have] (the largest) market and doesn't share it.""",
+              """I'll see the ives in the morning. I wouldn't be remiss.""",
+              """He called: look below! Then a twenty-one headed--dog.""")
+        for s in ss:
+            self.assertEqual(s, self.doc_parser(s).norm)
