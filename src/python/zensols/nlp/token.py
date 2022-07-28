@@ -141,7 +141,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         return self._is_none(self.norm)
 
     @classmethod
-    def _is_none(cls, targ: str) -> bool:
+    def _is_none(cls, targ: Any) -> bool:
         return targ is None or targ == cls.NONE or targ == 0
 
     def get_value(self, attr: str) -> Optional[Any]:
