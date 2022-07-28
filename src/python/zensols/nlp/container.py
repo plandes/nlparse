@@ -182,6 +182,23 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         assert cnt == self.token_len
         return frozendict(by_idx)
 
+    @property
+    @persisted('_tokens_by_i', transient=True)
+    def tokens_by_i(self) -> Dict[int, FeatureToken]:
+        """A map of tokens with keys as their position offset and values as tokens.
+
+        :see: :obj:`zensols.nlp.FeatureToken.i`
+
+        """
+        by_i = {}
+        cnt = 0
+        tok: FeatureToken
+        for tok in self.token_iter():
+            by_i[tok.i] = tok
+            cnt += 1
+        assert cnt == self.token_len
+        return frozendict(by_i)
+
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = True, include_normalized: bool = True,
               n_tokens: int = sys.maxsize):
@@ -266,6 +283,30 @@ class FeatureSentence(TokenContainer):
     @property
     def token_len(self) -> int:
         return len(self.sent_tokens)
+
+    @property
+    @persisted('_tokens_by_i_sent', transient=True)
+    def tokens_by_i_sent(self) -> Dict[int, FeatureToken]:
+        """A map of tokens with keys as their sentanal position offset and values as
+        tokens.
+
+        :see: :obj:`zensols.nlp.FeatureToken.i`
+
+        """
+        by_i_sent = {}
+        cnt = 0
+        tok: FeatureToken
+        for tok in self.token_iter():
+            by_i_sent[tok.i_sent] = tok
+            cnt += 1
+        assert cnt == self.token_len
+
+        ent_span: Tuple[FeatureToken]
+        for ent_span in self.entities:
+            t: FeatureToken
+            for six, t in enumerate(ent_span):
+                by_i_sent[t.i_sent + six] = t
+        return frozendict(by_i_sent)
 
     def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
         return self
@@ -359,11 +400,20 @@ class FeatureDocument(TokenContainer):
             self.text = ''.join(map(lambda s: s.text, self.sent_iter()))
 
     def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
+        """
+        :param kwargs: if `copy_spacy` is ``True``, the spacy document is
+                       copied to the clone in addition parameters passed to new
+                       clone initializer
+        """
         params = dict(kwargs)
         if 'sents' not in params:
             params['sents'] = [s.clone() for s in self.sents]
         if 'text' not in params:
             params['text'] = self.text
+        if params.pop('copy_spacy', False):
+            for ss, cs in zip(self.sents, params['sents']):
+                cs.spacy_sent = ss.spacy_sent
+            params['spacy_doc'] = self.spacy_doc
         return super().clone(cls, **params)
 
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
