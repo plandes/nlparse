@@ -65,11 +65,10 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
             contracts = self._CONTRACTIONS
             ncontract = self._LONGEST_CONTRACTION
             sio = StringIO()
-            tlen_min_1 = tlen - 1
             last_avoid = False
             for tix, tok in enumerate(toks):
                 norm = tok.norm
-                if tix > 0 and tix < tlen_min_1:
+                if tix > 0 and tix < tlen:
                     do_space_skip = False
                     nlen = len(norm)
                     if nlen == 1:
