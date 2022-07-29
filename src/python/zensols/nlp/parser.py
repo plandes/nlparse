@@ -1,3 +1,4 @@
+from  __future__ import annotations
 """Parse documents and generate features in an organized taxonomy.
 
 """
@@ -81,6 +82,16 @@ class _DictableDoc(Dictable):
                 'ents': [(str(e), e.label_,) for e in self.doc.ents]}
 
 
+class ComponentInitializer(ABC):
+    """Called by :class:`.Component` to do post spaCy initialization.
+
+    """
+    @abstractmethod
+    def init_nlp_model(self, model: Language, component: Component):
+        """Do any post spaCy initialization on the the referred framework."""
+        pass
+
+
 @dataclass
 class Component(object):
     """A pipeline component to be added to the spaCy model.  There are a list of
@@ -111,6 +122,9 @@ class Component(object):
     loaded.
 
     """
+    initializers: Tuple[ComponentInitializer] = field(default=())
+    """Instances to initialize upon this object's initialization."""
+
     def __post_init__(self):
         if self.pipe_name is None:
             self.pipe_name = self.name
@@ -141,6 +155,8 @@ class Component(object):
         else:
             model.add_pipe(self.pipe_name, config=self.pipe_config,
                            **self.pipe_add_kwargs)
+        for to_init in self.initializers:
+            to_init.init_nlp_model(model, self)
 
 
 @dataclass
@@ -266,6 +282,17 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     remove_empty_sentences: bool = field(default=False)
     """If ``True``, remove sentences that only have space tokens."""
 
+    reload_components: bool = field(default=None)
+    """Removes, then re-adds components for cached models.  This is helpful for
+    when there are component configurations that change on reruns with a
+    difference application context but in the same Python interpreter session.
+
+    A spaCy component can get other instances via :obj:`config_factory`, but if
+    this is ``False`` it will be paired with the first instance of this class
+    and not the new ones created with a new configuration factory.
+
+    """
+
     def __post_init__(self):
         super().__post_init__()
         self._model = PersistedWork('_model', self)
@@ -297,8 +324,14 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                         logger.debug(f'{comp} already registered--skipping')
                 else:
                     if logger.isEnabledFor(logging.DEBUG):
-                        logger.debug(f'adding {comp} to the pipeline')
+                        logger.debug(f'adding {comp} ({id(comp)}) to pipeline')
                     comp.init(nlp)
+
+    def _remove_components(self, nlp: Language):
+        for comp in self.components:
+            name, comp = nlp.remove_pipe(comp.pipe_name)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'removed {name} ({id(comp)})')
 
     @property
     @persisted('_model')
@@ -329,6 +362,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         else:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'cached model: {mkey} ({self.model_name})')
+            if self.reload_components or True:
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f're-adding components to {id(self)}')
+                nlp.doc_parser = self
+                self._remove_components(nlp)
+                self._add_components(nlp)
         if self.token_normalizer is None:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug('adding default tokenizer')
@@ -339,6 +378,11 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 logger.debug(f'adding special token: {stok} with rule: {rule}')
             nlp.tokenizer.add_special_case(stok, rule)
         return nlp
+
+    @classmethod
+    def clear_models(self):
+        """Clears all cached models."""
+        self._MODELS.clear()
 
     def parse_spacy_doc(self, text: str) -> Doc:
         """Parse ``text`` in to a Spacy document.
