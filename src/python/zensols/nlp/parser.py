@@ -220,11 +220,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     lang: str = field(default='en')
     """The natural language the identify the model."""
 
-    """The Spacy model name (defualts to ``en_core_web_sm``); this is ignored
-    model_name: str = field(default=None)
-    if ``model`` is not ``None``.
-
-    """
     model_name: str = field(default=None)
     """The Spacy model name (defualts to ``en_core_web_sm``); this is ignored
     if ``model`` is not ``None``.
