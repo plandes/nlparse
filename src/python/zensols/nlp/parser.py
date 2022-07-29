@@ -282,7 +282,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     remove_empty_sentences: bool = field(default=False)
     """If ``True``, remove sentences that only have space tokens."""
 
-    reload_components: bool = field(default=None)
+    reload_components: bool = field(default=False)
     """Removes, then re-adds components for cached models.  This is helpful for
     when there are component configurations that change on reruns with a
     difference application context but in the same Python interpreter session.
@@ -292,7 +292,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     and not the new ones created with a new configuration factory.
 
     """
-
     def __post_init__(self):
         super().__post_init__()
         self._model = PersistedWork('_model', self)
@@ -362,7 +361,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         else:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'cached model: {mkey} ({self.model_name})')
-            if self.reload_components or True:
+            if self.reload_components:
                 if logger.isEnabledFor(logging.DEBUG):
                     logger.debug(f're-adding components to {id(self)}')
                 nlp.doc_parser = self
