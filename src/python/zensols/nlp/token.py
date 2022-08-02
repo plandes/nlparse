@@ -285,6 +285,10 @@ class FeatureToken(PersistableContainer, TextContainer):
 
 @dataclass(init=False)
 class SpacyFeatureToken(FeatureToken):
+    """Contains and provides the same features as a spaCy
+    :class:`~spacy.tokens.Token`.
+
+    """
     spacy_token: Union[Token, Span] = field(repr=False, compare=False)
     """The parsed spaCy token (or span if entity) this feature set is based.
 
