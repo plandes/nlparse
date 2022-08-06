@@ -8,14 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.3.0] - 2022-08-06
+### Added
+- Token indexing mappings accounting for (named entity) multi-word tokens.
+- IOB (`iob_`, `iob`) features.
+- Re-loadable components and component initializers.
+
 ### Changed
 - Upgraded to spaCy 3.1.3
 - Add spaCy tokens to spaCy feature tokens.
 - Bug fixes in combining and overlapping sentences.
-
-### Added
-- Token indexing mappings accounting for (named entity) multi-word tokens.
-- IOB (`iob_`, `iob`) features.
+- Switched to shallow copy of document in overlapping sentence doc methods.
 
 
 ## [1.2.0] - 2022-06-16
@@ -267,7 +270,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/plandes/nlparse/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/plandes/nlparse/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/plandes/nlparse/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/plandes/nlparse/compare/v1.1.0...v1.1.1
