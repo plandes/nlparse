@@ -85,7 +85,7 @@ class TestParse(unittest.TestCase):
         # since spacy 3.1, warnings are thrown when certain components are
         # disabled in the pipline
         with warnings.catch_warnings():
-            warnings.filterwarnings('ignore', message=r"^\[W108\] The rule-based lemmatizer did not find POS annotation for the token.*Check that your pipeline")
+            warnings.filterwarnings('ignore', message=r"^\[W108\] The rule-based lemmatizer did not find POS annotation for")
             #lr = self.lr
             dis_dp = self.fac('disable_tagger_doc_parser')
             doc = self.doc_parser.parse_spacy_doc(self.sent)

@@ -27,8 +27,8 @@ class TestParse(unittest.TestCase):
         text = 'John <registered> her on [**01-01-2020**] becuase <they> were <in> Chicago.'
         fd: FeatureDocument = self._parser('pat', text)
         doc: Doc = fd.spacy_doc
-        self.assertEqual(4, len(doc.ents))
-        self.assertEqual('John <registered> [**01-01-2020**] <in>'.split(),
+        self.assertEqual(5, len(doc.ents))
+        self.assertEqual('John <registered> [**01-01-2020**] <in> Chicago'.split(),
                          list(map(lambda e: e.orth_, doc.ents)))
-        self.assertEqual('PERSON MASK_VERB MASK_DATE MASK_VERB'.split(),
+        self.assertEqual('PERSON MASK_VERB MASK_DATE MASK_VERB GPE'.split(),
                          list(map(lambda e: e.label_, doc.ents)))
