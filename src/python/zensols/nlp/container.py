@@ -15,8 +15,7 @@ import itertools as it
 import copy
 from io import TextIOBase, StringIO
 from frozendict import frozendict
-from spacy.tokens.doc import Doc
-from spacy.tokens.span import Span
+from spacy.tokens import Doc, Span, Token
 from zensols.persist import PersistableContainer, persisted
 from . import TextContainer, FeatureToken, LexicalSpan
 
@@ -169,6 +168,13 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     def tokens_by_idx(self) -> Dict[int, FeatureToken]:
         """A map of tokens with keys as their character offset and values as tokens.
 
+        **Limitations**: Multi-word entities will have have a mapping only for
+        the first word of that entity if tokens were split by spaces (for
+        example with :class:`~zensols.nlp.SplitTokenMapper`).  However,
+        :obj:`tokens_by_i` does not have this limitation.
+
+        :see: obj:`tokens_by_i`
+
         :see: :obj:`zensols.nlp.FeatureToken.idx`
 
         """
@@ -185,18 +191,32 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     @persisted('_tokens_by_i', transient=True)
     def tokens_by_i(self) -> Dict[int, FeatureToken]:
         """A map of tokens with keys as their position offset and values as tokens.
+        The entries also include named entity tokens that are grouped as
+        multi-word tokens.  This is helpful for multi-word entities that were
+        split (for example with :class:`~zensols.nlp.SplitTokenMapper`), and
+        thus, have many-to-one mapped indexes.
 
         :see: :obj:`zensols.nlp.FeatureToken.i`
 
         """
-        by_i = {}
-        cnt = 0
-        tok: FeatureToken
-        for tok in self.token_iter():
-            by_i[tok.i] = tok
-            cnt += 1
-        assert cnt == self.token_len
-        return frozendict(by_i)
+        return frozendict(self._get_tokens_by_i())
+
+    @abstractmethod
+    def _get_tokens_by_i(self) -> Dict[int, FeatureToken]:
+        pass
+
+    def update_indexes(self):
+        """Update all :obj:`.FeatureToken.i` attributes to those provided by
+        :obj:`tokens_by_i`.  This corrects the many-to-one token index mapping
+        for split multi-word named entities.
+
+        :see: :obj:`tokens_by_i`
+
+        """
+        i: int
+        ft: FeatureToken
+        for i, ft in self.tokens_by_i.items():
+            ft.i = i
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = True, include_normalized: bool = True,
@@ -299,13 +319,31 @@ class FeatureSentence(TokenContainer):
             by_i_sent[tok.i_sent] = tok
             cnt += 1
         assert cnt == self.token_len
-
+        # add indexes for multi-word entities that otherwise have mappings for
+        # only the first word of the entity
         ent_span: Tuple[FeatureToken]
         for ent_span in self.entities:
             t: FeatureToken
             for six, t in enumerate(ent_span):
                 by_i_sent[t.i_sent + six] = t
         return frozendict(by_i_sent)
+
+    def _get_tokens_by_i(self) -> Dict[int, FeatureToken]:
+        by_i = {}
+        cnt = 0
+        tok: FeatureToken
+        for tok in self.token_iter():
+            by_i[tok.i] = tok
+            cnt += 1
+        assert cnt == self.token_len
+        # add indexes for multi-word entities that otherwise have mappings for
+        # only the first word of the entity
+        ent_span: Tuple[FeatureToken]
+        for ent_span in self.entities:
+            t: FeatureToken
+            for six, t in enumerate(ent_span):
+                by_i[t.i + six] = t
+        return by_i
 
     def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
         return self
@@ -398,6 +436,21 @@ class FeatureDocument(TokenContainer):
         if self.text is None:
             self.text = ''.join(map(lambda s: s.text, self.sent_iter()))
 
+    def set_spacy_doc(self, doc: Doc):
+        ft_to_i: Dict[int, FeatureToken] = self.tokens_by_i
+        st_to_i: Dict[int, Token] = {st.i: st for st in doc}
+        i: int
+        ft: FeatureToken
+        for i, ft in ft_to_i.items():
+            st: Token = st_to_i.get(i)
+            if st is not None:
+                ft.spacy_token = st
+        fs: FeatureSentence
+        ss: Span
+        for ft, ss in zip(self.sents, doc.sents):
+            ft.spacy_sent = ss
+        self.spacy_doc = doc
+
     def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
         """
         :param kwargs: if `copy_spacy` is ``True``, the spacy document is
@@ -459,6 +512,12 @@ class FeatureDocument(TokenContainer):
             for tok in sent:
                 id_to_sent[tok.idx] = six
         return id_to_sent
+
+    def _get_tokens_by_i(self) -> Dict[int, FeatureToken]:
+        by_i = {}
+        for sent in self.sents:
+            by_i.update(sent.tokens_by_i)
+        return by_i
 
     def sentence_index_for_token(self, token: FeatureToken) -> int:
         """Return index of the parent sentence having ``token``."""

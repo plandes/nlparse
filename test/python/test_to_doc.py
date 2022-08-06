@@ -32,6 +32,10 @@ class TestToDoc(TestCase):
         ss = ("""Apple will bring back the ‘Plus’ moniker, which is a top seller.""",
               """Apple's phones [have] (the largest) market and doesn't share it.""",
               """I'll see the ives in the morning. I wouldn't be remiss.""",
-              """He called: look below! Then a twenty-one headed--dog.""")
+              """He called: look below! Then a twenty-one headed--dog.""",
+              ("""Barack Hussein Obama II is an American politician who served as """ +
+               """the 44th president of the United States from 2009 to 2017. """ +
+               """A member of the Democratic Party, he was the first """ +
+               """African-American president of the United States."""))
         for s in ss:
             self.assertEqual(s, self.doc_parser(s).norm)
