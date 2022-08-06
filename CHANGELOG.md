@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changed
+- Upgraded to spaCy 3.1.3
+- Add spaCy tokens to spaCy feature tokens.
+- Bug fixes in combining and overlapping sentences.
+
+### Added
+- Token indexing mappings accounting for (named entity) multi-word tokens.
+- IOB (`iob_`, `iob`) features.
+
+
 ## [1.2.0] - 2022-06-16
 ### Removed
 - Remove resource library `regular_expression_escape:dollar` configuration.
