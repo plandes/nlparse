@@ -28,3 +28,4 @@ modeldeps:
 .PHONY:			uninstalldeps
 uninstalldeps:
 			$(PYTHON_BIN) -m pip freeze | grep spacy | sed 's/\([^= ]*\).*/\1/' | xargs pip uninstall -y
+
