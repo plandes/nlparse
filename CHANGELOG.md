@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Re-loadable components and component initializers.
 
 ### Changed
-- Upgraded to spaCy 3.1.3
+- Upgraded to spaCy 3.2
 - Add spaCy tokens to spaCy feature tokens.
 - Bug fixes in combining and overlapping sentences.
 - Switched to shallow copy of document in overlapping sentence doc methods.
