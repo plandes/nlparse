@@ -27,7 +27,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     """
     _SPACE_SKIP = set("""`‘“[({<""")
-    _CONTRACTIONS = set("'s n't 'll 'm".split())
+    _CONTRACTIONS = set("'s n't 'll 'm 've 'd 're".split())
     _LONGEST_CONTRACTION = max(map(len, _CONTRACTIONS))
 
     @abstractmethod
