@@ -13,7 +13,6 @@ class TestDocStash(unittest.TestCase):
         self.sent = 'Dan throws the ball.'
 
     def test_parse(self):
-        print()
         stash = self.doc_stash
         self.assertTrue(isinstance(stash, Stash))
         self.assertEqual(0, len(stash))
