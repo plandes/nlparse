@@ -103,8 +103,11 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """The document indexed lexical span using :obj:`idx`.
 
         """
-        toks = self.tokens
-        return LexicalSpan(toks[0].lexspan.begin, toks[-1].lexspan.end)
+        toks: Tuple[FeatureToken] = self.tokens
+        if len(toks) == 0:
+            return LexicalSpan.EMPTY_SPAN
+        else:
+            return LexicalSpan(toks[0].lexspan.begin, toks[-1].lexspan.end)
 
     def get_overlapping_tokens(self, span: LexicalSpan) -> \
             Iterable[FeatureToken]:
