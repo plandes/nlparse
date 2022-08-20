@@ -30,6 +30,7 @@ class LexicalSpan(Dictable):
 
     """
     _DICTABLE_ATTRIBUTES = {'begin', 'end'}
+    EMPTY_SPAN: LexicalSpan
 
     def __init__(self, begin: int, end: int):
         """Initialize the interval.
@@ -132,6 +133,9 @@ class LexicalSpan(Dictable):
 
     def __repr__(self):
         return self.__str__()
+
+
+LexicalSpan.EMPTY_SPAN = LexicalSpan(0, 0)
 
 
 class TextContainer(Dictable, metaclass=ABCMeta):
