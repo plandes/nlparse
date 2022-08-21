@@ -600,16 +600,23 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
         self.hasher.update(text)
         return self.hasher()
 
-    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+    def _load_or_parse(self, text: str, dump: bool, *args, **kwargs) -> \
+            Tuple[FeatureDocument, str, bool]:
         key: str = self._hash_text(text)
         doc: FeatureDocument = None
+        loaded: bool = False
         if self.stash is not None:
             doc = self.stash.load(key)
         if doc is None:
             doc = self.delegate.parse(text, *args, **kwargs)
-            if self.stash is not None:
+            if dump and self.stash is not None:
                 self.stash.dump(key, doc)
-        return doc
+        else:
+            loaded = True
+        return doc, key, loaded
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        return self._load_or_parse(text, True, *args, **kwargs)[0]
 
     def clear(self):
         """Clear the caching stash."""
