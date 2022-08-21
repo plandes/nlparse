@@ -610,3 +610,8 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
             if self.stash is not None:
                 self.stash.dump(key, doc)
         return doc
+
+    def clear(self):
+        """Clear the caching stash."""
+        if self.stash is not None:
+            self.stash.clear()
