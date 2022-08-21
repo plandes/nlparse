@@ -579,15 +579,19 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 @dataclass
 class CachingFeatureDocumentParser(FeatureDocumentParser):
     """A document parser that persists previous parses using the hash of the
-    text as a key.
+    text as a key.  Caching is optional given the value of :obj:`stash`, which
+    is useful in cases this class is extended using other use cases other than
+    just caching.
 
     """
     delegate: FeatureDocumentParser = field()
     """Used to parse in to documents on cache misses."""
 
-    stash: Stash = field()
-    """The stash that persists the feature document instances."""
+    stash: Stash = field(default=None)
+    """The stash that persists the feature document instances.  If this is not
+    provided, no caching will happen.
 
+    """
     hasher: Hasher = field(default_factory=Hasher)
     """Used to hash the natural langauge text in to string keys."""
 
@@ -598,8 +602,11 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         key: str = self._hash_text(text)
-        doc: FeatureDocument = self.stash.load(key)
+        doc: FeatureDocument = None
+        if self.stash is not None:
+            self.stash.load(key)
         if doc is None:
             doc = self.delegate.parse(text, *args, **kwargs)
-            self.stash.dump(key, doc)
+            if self.stash is not None:
+                self.stash.dump(key, doc)
         return doc
