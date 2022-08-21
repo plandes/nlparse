@@ -604,7 +604,7 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
         key: str = self._hash_text(text)
         doc: FeatureDocument = None
         if self.stash is not None:
-            self.stash.load(key)
+            doc = self.stash.load(key)
         if doc is None:
             doc = self.delegate.parse(text, *args, **kwargs)
             if self.stash is not None:
