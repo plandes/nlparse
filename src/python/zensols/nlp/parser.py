@@ -17,7 +17,10 @@ import spacy
 from spacy.symbols import ORTH
 from spacy.tokens import Doc, Span, Token
 from spacy.language import Language
-from zensols.persist import persisted, PersistedWork, PersistableContainer
+from zensols.util import Hasher
+from zensols.persist import (
+    persisted, PersistedWork, PersistableContainer, Stash
+)
 from zensols.config import Dictable, ConfigFactory
 from . import (
     ParseError, TokenNormalizer, FeatureToken, SpacyFeatureToken,
@@ -571,3 +574,32 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     def __repr__(self):
         return self.__str__()
+
+
+@dataclass
+class CachingFeatureDocumentParser(FeatureDocumentParser):
+    """A document parser that persists previous parses using the hash of the
+    text as a key.
+
+    """
+    delegate: FeatureDocumentParser = field()
+    """Used to parse in to documents on cache misses."""
+
+    stash: Stash = field()
+    """The stash that persists the feature document instances."""
+
+    hasher: Hasher = field(default_factory=Hasher)
+    """Used to hash the natural langauge text in to string keys."""
+
+    def _hash_text(self, text: str) -> str:
+        self.hasher.reset()
+        self.hasher.update(text)
+        return self.hasher()
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        key: str = self._hash_text(text)
+        doc: FeatureDocument = self.stash.load(key)
+        if doc is None:
+            doc = self.delegate.parse(text, *args, **kwargs)
+            self.stash.dump(key, doc)
+        return doc
