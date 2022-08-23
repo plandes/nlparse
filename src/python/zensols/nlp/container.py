@@ -729,6 +729,8 @@ class FeatureDocument(TokenContainer):
 
         :param start: the 0-based exclusive end index
 
+        :param deep: whether or not to clone the sentences as well
+
         """
         sents = self.sents[start:end]
         if deep:
