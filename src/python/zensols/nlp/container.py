@@ -548,10 +548,10 @@ class FeatureDocument(TokenContainer):
                            cls: Type[FeatureDocument],
                            concat_tokens: bool,
                            **kwargs) -> FeatureDocument:
-        """Override if there are any fields in your dataclass.  In most cases, the only
-        time this is called is by an embedding vectorizer to batch muultiple
-        sentences in to a single document, so the only feature that matter are
-        the sentence level.
+        """Override if there are any fields in your dataclass.  In most cases,
+        the only time this is called is by an embedding vectorizer to batch
+        muultiple sentences in to a single document, so the only feature that
+        matter are the sentence level.
 
         :param docs: the documents to combine in to one
 
@@ -619,8 +619,11 @@ class FeatureDocument(TokenContainer):
 
     def combine_sentences(self, sents: Iterable[FeatureSentence] = None) -> \
             FeatureDocument:
-        """Combine all the sentences in this document in to a new document with a
+        """Combine the sentences in this document in to a new document with a
         single sentence.
+
+        :param sents: the sentences to combine in the new document or all if
+                      ``None``
 
         """
         if sents is None:
@@ -704,7 +707,7 @@ class FeatureDocument(TokenContainer):
                         toks[0] = clone
                     sent = sent.clone(sent_tokens=toks, text=text)
                 sents.append(sent)
-            text: str = doc_text[span.begin:span.end+1]
+            text: str = doc_text[span.begin:span.end + 1]
             doc.sents = sents
             doc.text = text
             body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
