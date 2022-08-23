@@ -721,6 +721,19 @@ class FeatureDocument(TokenContainer):
             assert body_len == doc.token_len
         return doc
 
+    def slice(self, start: int, end: int) -> FeatureDocument:
+        """Return a slice of sentences using range ``[start, end)``.
+
+        :param start: the 0-based inclusive start index
+
+        :param start: the 0-based exclusive end index
+
+        """
+        sents = self.sents[start:end]
+        clone = self.clone(sents=sents)
+        clone.spacy_doc = None
+        return clone
+
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               n_sents: int = sys.maxsize, n_tokens: int = 0):
         """Write the document and optionally sentence features.
