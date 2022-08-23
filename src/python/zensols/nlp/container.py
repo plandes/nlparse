@@ -731,6 +731,7 @@ class FeatureDocument(TokenContainer):
         """
         sents = self.sents[start:end]
         clone = self.clone(sents=sents)
+        clone.text = ' '.join(map(lambda s: s.text, sents))
         clone.spacy_doc = None
         return clone
 
