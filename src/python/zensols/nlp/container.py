@@ -17,7 +17,7 @@ from io import TextIOBase, StringIO
 from frozendict import frozendict
 from spacy.tokens import Doc, Span, Token
 from zensols.persist import PersistableContainer, persisted
-from . import TextContainer, FeatureToken, LexicalSpan
+from . import NLPError, TextContainer, FeatureToken, LexicalSpan
 
 logger = logging.getLogger(__name__)
 
@@ -267,6 +267,9 @@ class FeatureSentence(TokenContainer):
             self.text = ' '.join(map(lambda t: t.text, self.sent_tokens))
         self._ents: List[Tuple[int, int]] = []
         self._set_entity_spans()
+        if not isinstance(self.sent_tokens, tuple):
+            raise NLPError('Expecting tuple of sentences, ' +
+                           f'but got {type(self.sent_tokens)}')
 
     def _set_entity_spans(self):
         if self.spacy_sent is not None:
@@ -285,7 +288,8 @@ class FeatureSentence(TokenContainer):
     def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
         params = dict(kwargs)
         if 'sent_tokens' not in params:
-            params['sent_tokens'] = [t.clone() for t in self.sent_tokens]
+            params['sent_tokens'] = tuple(
+                map(lambda t: t.clone(), self.sent_tokens))
         if 'text' not in params:
             params['text'] = self.text
         clone = super().clone(cls, **params)
@@ -352,7 +356,7 @@ class FeatureSentence(TokenContainer):
         return self
 
     def to_document(self) -> FeatureDocument:
-        return FeatureDocument([self])
+        return FeatureDocument((self,))
 
     def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken],
                 tid_to_idx: Dict[int, int]) -> \
@@ -421,7 +425,7 @@ class FeatureDocument(TokenContainer):
     _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_doc'}
     """Don't serialize the spacy document on persistance pickling."""
 
-    sents: List[FeatureSentence] = field()
+    sents: Tuple[FeatureSentence] = field()
     """The sentences that make up the document."""
 
     text: str = field(default=None)
@@ -438,6 +442,9 @@ class FeatureDocument(TokenContainer):
         super().__init__()
         if self.text is None:
             self.text = ''.join(map(lambda s: s.text, self.sent_iter()))
+        if not isinstance(self.sents, tuple):
+            raise NLPError(
+                f'Expecting tuple of sentences, but got {type(self.sents)}')
 
     def set_spacy_doc(self, doc: Doc):
         ft_to_i: Dict[int, FeatureToken] = self.tokens_by_i
@@ -462,7 +469,7 @@ class FeatureDocument(TokenContainer):
         """
         params = dict(kwargs)
         if 'sents' not in params:
-            params['sents'] = [s.clone() for s in self.sents]
+            params['sents'] = tuple(map(lambda s: s.clone(), self.sents))
         if 'text' not in params:
             params['text'] = self.text
         if params.pop('copy_spacy', False):
@@ -567,10 +574,10 @@ class FeatureDocument(TokenContainer):
 
         """
         if concat_tokens:
-            sents = list(chain.from_iterable(
+            sents = tuple(chain.from_iterable(
                 map(lambda d: d.combine_sentences(), docs)))
         else:
-            sents = list(chain.from_iterable(docs))
+            sents = tuple(chain.from_iterable(docs))
         if 'text' not in kwargs:
             kwargs = dict(kwargs)
             kwargs['text'] = ' '.join(map(lambda d: d.text, docs))
@@ -629,7 +636,7 @@ class FeatureDocument(TokenContainer):
         if sents is None:
             return self._combine_all_sentences()
         else:
-            return self.__class__(list(sents))
+            return self.__class__(tuple(sents))
 
     def _reconstruct_sents_iter(self) -> Iterable[FeatureSentence]:
         for sent in self.sents:
@@ -637,13 +644,13 @@ class FeatureDocument(TokenContainer):
             ip_sent = -1
             for tok in sent:
                 if tok.i_sent < ip_sent:
-                    sent = FeatureSentence(stoks)
+                    sent = FeatureSentence(tuple(stoks))
                     stoks = []
                     yield sent
                 stoks.append(tok)
                 ip_sent = tok.i_sent
         if len(stoks) > 0:
-            yield FeatureSentence(stoks)
+            yield FeatureSentence(tuple(stoks))
 
     def uncombine_sentences(self) -> FeatureDocument:
         """Reconstruct the sentence structure that we combined in
@@ -689,7 +696,7 @@ class FeatureDocument(TokenContainer):
                 elif len(toks) == len(sent):
                     pass
                 else:
-                    text: str = doc_text[toks[0].idx:toks[-1].idx+1]
+                    text: str = doc_text[toks[0].idx:toks[-1].idx + 1]
                     hang = (span.end + 1) - toks[-1].lexspan.end
                     if hang < 0:
                         tok = toks[-1]
@@ -705,10 +712,10 @@ class FeatureDocument(TokenContainer):
                         clone.norm = tok.norm[hang:]
                         clone.text = tok.text[hang:]
                         toks[0] = clone
-                    sent = sent.clone(sent_tokens=toks, text=text)
+                    sent = sent.clone(sent_tokens=tuple(toks), text=text)
                 sents.append(sent)
             text: str = doc_text[span.begin:span.end + 1]
-            doc.sents = sents
+            doc.sents = tuple(sents)
             doc.text = text
             body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
             assert body_len == doc.token_len
@@ -795,6 +802,6 @@ class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
             sents = chain.from_iterable(docs)
             text = ' '.join(chain.from_iterable(map(lambda s: s.text, docs)))
             anns = chain.from_iterable(map(lambda s: s.annotations, self))
-            doc = cls(list(sents), text)
+            doc = cls(tuple(sents), text)
             doc.sents[0].annotations = tuple(anns)
             return doc

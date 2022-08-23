@@ -501,7 +501,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         text = doc.text if text is None else text
         sents: List[FeatureSentence] = self._create_sents(doc)
         try:
-            return self.doc_class(sents, text, doc, *args, **kwargs)
+            return self.doc_class(tuple(sents), text, doc, *args, **kwargs)
         except Exception as e:
             raise ParseError(
                 f'Could not parse <{text}> for {self.doc_class} ' +

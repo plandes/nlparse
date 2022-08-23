@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- A document stash caching parser `CachingFeatureDocumentParser`.
+
+### Changed
+- `FeatureDocument.sents` changed from a `list` to a `tuple`.
+- Add checks for `FeatureDocument.sents` and `FeatureSentence.sent_tokens` as
+  tuples.
+- Better (English) normalization of text by adding more apostrophe/contraction
+  syntax.
+
+
 ## [1.3.0] - 2022-08-06
 ### Added
 - Token indexing mappings accounting for (named entity) multi-word tokens.
