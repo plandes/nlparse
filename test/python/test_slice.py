@@ -25,8 +25,8 @@ class TestSlice(unittest.TestCase):
         self.assertEqual(FeatureDocument, type(s1))
         self.assertEqual(2, len(s1))
 
-        self.assertEqual(doc[1], s1[0])
-        self.assertEqual(doc[2], s1[1])
+        self.assertEqual(id(doc[1]), id(s1[0]))
+        self.assertEqual(id(doc[2]), id(s1[1]))
 
         s2: FeatureDocument = doc.slice(0, 4)
         self.assertEqual(FeatureDocument, type(s2))

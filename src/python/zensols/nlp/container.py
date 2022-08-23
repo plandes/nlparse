@@ -721,7 +721,8 @@ class FeatureDocument(TokenContainer):
             assert body_len == doc.token_len
         return doc
 
-    def slice(self, start: int, end: int) -> FeatureDocument:
+    def slice(self, start: int, end: int, deep: bool = False) -> \
+            FeatureDocument:
         """Return a slice of sentences using range ``[start, end)``.
 
         :param start: the 0-based inclusive start index
@@ -730,6 +731,8 @@ class FeatureDocument(TokenContainer):
 
         """
         sents = self.sents[start:end]
+        if deep:
+            sents = tuple(map(lambda s: s.clone(), sents))
         clone = self.clone(sents=sents)
         clone.text = ' '.join(map(lambda s: s.text, sents))
         clone.spacy_doc = None
