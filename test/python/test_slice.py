@@ -24,7 +24,6 @@ class TestSlice(unittest.TestCase):
         s1: FeatureDocument = doc.slice(1, 3)
         self.assertEqual(FeatureDocument, type(s1))
         self.assertEqual(2, len(s1))
-
         self.assertEqual(id(doc[1]), id(s1[0]))
         self.assertEqual(id(doc[2]), id(s1[1]))
 
@@ -33,3 +32,9 @@ class TestSlice(unittest.TestCase):
         self.assertEqual(4, len(s2))
         self.assertNotEqual(id(doc), id(s2))
         self.assertEqual(doc, s2)
+
+        s3: FeatureDocument = doc.slice(1, 3, deep=True)
+        self.assertEqual(FeatureDocument, type(s3))
+        self.assertEqual(2, len(s3))
+        self.assertNotEqual(id(doc[1]), id(s3[0]))
+        self.assertEqual(doc[1], s3[0])
