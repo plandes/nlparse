@@ -721,18 +721,17 @@ class FeatureDocument(TokenContainer):
             assert body_len == doc.token_len
         return doc
 
-    def slice(self, start: int, end: int, deep: bool = False) -> \
-            FeatureDocument:
-        """Return a slice of sentences using range ``[start, end)``.
+    def from_sentences(self, sents: Iterable[FeatureSentence],
+                       deep: bool = False) -> FeatureDocument:
+        """Return a new cloned document using the given sentences.
 
-        :param start: the 0-based inclusive start index
+        :param sents: the sentences to add to the new cloned document
 
-        :param start: the 0-based exclusive end index
+        :param deep: whether or not to clone the sentences
 
-        :param deep: whether or not to clone the sentences as well
+        :see: :meth:`clone`
 
         """
-        sents = self.sents[start:end]
         if deep:
             sents = tuple(map(lambda s: s.clone(), sents))
         clone = self.clone(sents=sents)
