@@ -150,9 +150,15 @@ class TextContainer(Dictable, metaclass=ABCMeta):
             self._write_line(self.text, depth + 1, writer)
         else:
             if include_original:
-                self._write_line(f'original: {self.text}', depth + 1, writer)
+                s = self.text
+                if include_normalized:
+                    s = f'original: {self.text}'
+                self._write_line(s, depth + 1, writer)
             if include_normalized:
-                self._write_line(f'normalized: {self.norm}', depth + 1, writer)
+                s = self.text
+                if include_original:
+                    s = f'normalized: {self.text}'
+                self._write_line(s, depth + 1, writer)
 
     def __str__(self):
         return f'<{self.norm[:79]}>'
