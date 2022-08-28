@@ -507,10 +507,13 @@ class FeatureDocument(TokenContainer):
         return cls
 
     def to_sentence(self, *args, **kwargs) -> FeatureSentence:
-        sents = self.sent_iter(*args, **kwargs)
-        toks = chain.from_iterable(map(lambda s: s.tokens, sents))
-        cls = self._sent_class()
-        return cls(tuple(toks), self.text)
+        sents: Tuple[FeatureSentence] = tuple(self.sent_iter(*args, **kwargs))
+        toks: Iterable[FeatureToken] = chain.from_iterable(
+            map(lambda s: s.tokens, sents))
+        cls: Type = self._sent_class()
+        sent: FeatureSentence = cls(sent_tokens=tuple(toks), text=self.text)
+        sent._ents = list(chain.from_iterable(map(lambda s: s._ents, sents)))
+        return sent
 
     def to_document(self) -> FeatureDocument:
         return self
