@@ -111,6 +111,9 @@ class LexicalSpan(Dictable):
         :retun: a span so that beginning is maximized and end is minimized
 
         """
+        if not self.overlaps_with(other):
+            raise APIError(
+                f'Spans must overlap to be narrowed: {self} <-> {other}')
         beg = max(self.begin, other.begin)
         end = min(self.end, other.end)
         nar: LexicalSpan

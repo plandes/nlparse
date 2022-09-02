@@ -1,7 +1,7 @@
 from unittest import TestCase
-from zensols.nlp import LexicalSpan
+from zensols.util import APIError
 from zensols.config import ImportConfigFactory
-from zensols.nlp import FeatureDocumentParser, FeatureDocument
+from zensols.nlp import LexicalSpan, FeatureDocumentParser, FeatureDocument
 from config import AppConfig
 
 
@@ -110,3 +110,8 @@ Dan throws the ball. He throws it quite often.'
         s1 = LexicalSpan(11, 27)
         s2 = LexicalSpan(13, 31)
         self.assertEqual((13, 27), s1.narrow(s2).astuple)
+
+        s1 = LexicalSpan(2, 5)
+        s2 = LexicalSpan(13, 31)
+        with self.assertRaisesRegex(APIError, r"^Spans must overlap to be narrowed"):
+            self.assertEqual((13, 27), s1.narrow(s2).astuple)
