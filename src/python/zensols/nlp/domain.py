@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 from abc import ABCMeta
 import sys
 from io import TextIOBase
@@ -102,27 +102,26 @@ class LexicalSpan(Dictable):
         return self.overlaps(
             self.begin, self.end, other.begin, other.end, inclusive)
 
-    def narrow(self, other: LexicalSpan) -> LexicalSpan:
+    def narrow(self, other: LexicalSpan) -> Optional[LexicalSpan]:
         """Return the shortest span that inclusively fits in both this and
         ``other``.
 
         :param other: the second span to narrow with this span
 
-        :retun: a span so that beginning is maximized and end is minimized
+        :retun: a span so that beginning is maximized and end is minimized or
+                ``None`` if the two spans do not overlap
 
         """
-        if not self.overlaps_with(other):
-            raise APIError(
-                f'Spans must overlap to be narrowed: {self} <-> {other}')
-        beg = max(self.begin, other.begin)
-        end = min(self.end, other.end)
-        nar: LexicalSpan
-        if beg == self.begin and end == self.end:
-            nar = self
-        elif beg == other.begin and end == other.end:
-            nar = other
-        else:
-            nar = LexicalSpan(beg, end)
+        nar: LexicalSpan = None
+        if self.overlaps_with(other):
+            beg = max(self.begin, other.begin)
+            end = min(self.end, other.end)
+            if beg == self.begin and end == self.end:
+                nar = self
+            elif beg == other.begin and end == other.end:
+                nar = other
+            else:
+                nar = LexicalSpan(beg, end)
         return nar
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):

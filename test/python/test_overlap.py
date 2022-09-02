@@ -113,5 +113,5 @@ Dan throws the ball. He throws it quite often.'
 
         s1 = LexicalSpan(2, 5)
         s2 = LexicalSpan(13, 31)
-        with self.assertRaisesRegex(APIError, r"^Spans must overlap to be narrowed"):
-            self.assertEqual((13, 27), s1.narrow(s2).astuple)
+        self.assertTrue(s1.narrow(s2) is None)
+        self.assertTrue(s2.narrow(s1) is None)
