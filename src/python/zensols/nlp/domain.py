@@ -93,6 +93,26 @@ class LexicalSpan(Dictable):
         return self.overlaps(
             self.begin, self.end, other.begin, other.end, inclusive)
 
+    def narrow(self, other: LexicalSpan) -> LexicalSpan:
+        """Return the shortest span that inclusively fits in both this and
+        ``other``.
+
+        :param other: the second span to narrow with this span
+
+        :retun: a span so that beginning is maximized and end is minimized
+
+        """
+        beg = max(self.begin, other.begin)
+        end = min(self.end, other.end)
+        nar: LexicalSpan
+        if beg == self.begin and end == self.end:
+            nar = self
+        elif beg == other.begin and end == other.end:
+            nar = other
+        else:
+            nar = LexicalSpan(beg, end)
+        return nar
+
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         self._write_line(str(self), depth, writer)
 

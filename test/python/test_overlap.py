@@ -90,3 +90,23 @@ Dan throws the ball. He throws it quite often.'
         self.assertEqual(2, len(doc2[1]))
         self.assertEqual('the ball . He thro'.split(),
                          list(doc2.norm_token_iter()))
+
+    def test_narrow(self):
+        s1 = LexicalSpan(11, 27)
+        s2 = LexicalSpan(5, 30)
+        self.assertEqual((11, 27), s1.narrow(s2).astuple)
+        self.assertEqual((11, 27), s2.narrow(s1).astuple)
+
+        s1 = LexicalSpan(11, 27)
+        s2 = LexicalSpan(13, 30)
+        self.assertEqual((13, 27), s1.narrow(s2).astuple)
+        self.assertEqual((13, 27), s2.narrow(s1).astuple)
+
+        s1 = LexicalSpan(11, 27)
+        s2 = LexicalSpan(13, 20)
+        self.assertEqual((13, 20), s1.narrow(s2).astuple)
+        self.assertEqual((13, 20), s2.narrow(s1).astuple)
+
+        s1 = LexicalSpan(11, 27)
+        s2 = LexicalSpan(13, 31)
+        self.assertEqual((13, 27), s1.narrow(s2).astuple)
