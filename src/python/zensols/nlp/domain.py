@@ -26,7 +26,16 @@ class ParseError(APIError):
 
 
 class LexicalSpan(Dictable):
-    """A lexical character span of text in a document.
+    """A lexical character span of text in a document.  The span has two
+    positions: :obj:`begin` and :obj:`end`, which is indexed respectively as an
+    operator as well..
+
+    One span is less than the other when the beginning position is less.  When
+    the beginnign positions are the same, the one with the smaller end position
+    is less.
+
+    The length of the span is the distance between the end and the beginning
+    positions.
 
     """
     _DICTABLE_ATTRIBUTES = {'begin', 'end'}
