@@ -110,7 +110,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         else:
             return LexicalSpan(toks[0].lexspan.begin, toks[-1].lexspan.end)
 
-    @persisted('_interlap')
+    @persisted('_interlap', transient=True)
     def _get_interlap(self) -> InterLap:
         """Create an interlap with all tokens of the container added."""
         il = InterLap()
