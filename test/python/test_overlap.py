@@ -1,6 +1,7 @@
 from unittest import TestCase
 from zensols.config import ImportConfigFactory
 from zensols.nlp import LexicalSpan, FeatureDocumentParser, FeatureDocument
+import random
 from config import AppConfig
 
 
@@ -137,3 +138,15 @@ Dan throws the ball. He throws it quite often.'
                          self._map_spans(doc, ((1, 2), (21, 30), ((34, 100)))))
         self.assertEqual(('Dan', 'He|throws|it', 'quite|often|.'),
                          self._map_spans(doc, ((1, 2), (21, 31), ((34, 100)))))
+
+    def test_set(self):
+        doc = self.doc
+        self.assertEqual(doc.token_len, len(set(doc.tokens)))
+
+    def test_sort(self):
+        doc = self.doc
+        ordered = list(doc.tokens)
+        for _ in range(5):
+            toks = list(doc.tokens)
+            random.shuffle(toks)
+            self.assertEqual(ordered, sorted(toks))

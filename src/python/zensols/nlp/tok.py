@@ -253,6 +253,9 @@ class FeatureToken(PersistableContainer, TextContainer):
             return a == b
         return False
 
+    def __lt__(self, other: FeatureToken) -> int:
+        return self.idx < other.idx
+
     def __hash__(self) -> int:
         return (self.i + 1) * (self.idx + 1) * (self.i_sent + 1) * 13
 
