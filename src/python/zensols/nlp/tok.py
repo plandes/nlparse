@@ -153,7 +153,6 @@ class FeatureToken(PersistableContainer, TextContainer):
         val = None
         if hasattr(self, attr):
             targ = getattr(self, attr)
-            #if targ is not None and targ != self.NONE and targ != 0:
             if not self._is_none(targ):
                 val = targ
         return val
@@ -255,7 +254,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         return False
 
     def __hash__(self) -> int:
-        return hash(self.i) * hash(self.i_sent)
+        return (self.i + 1) * (self.idx + 1) * (self.i_sent + 1) * 13
 
     def __str__(self) -> str:
         return TextContainer.__str__(self)

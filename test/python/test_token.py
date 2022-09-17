@@ -35,3 +35,19 @@ FeatureToken: norm=<cat>
         i_sent=3 (int)
         idx=2 (int)
         norm=cat (str)\n""", sio.getvalue())
+
+    def test_eq(self):
+        t = FeatureToken(1, 2, 3, 'cat')
+        t2 = FeatureToken(1, 2, 3, 'cat')
+        t3 = FeatureToken(1, 2, 4, 'cat')
+        self.assertEqual(t, t)
+        self.assertEqual(t, t2)
+        self.assertNotEqual(t, t3)
+
+    def test_hash(self):
+        t = FeatureToken(1, 2, 3, 'cat')
+        t2 = FeatureToken(1, 2, 3, 'cat')
+        t3 = FeatureToken(1, 2, 4, 'cat')
+        self.assertEqual(hash(t), hash(t2))
+        self.assertNotEqual(hash(t), hash(t3))
+        self.assertEqual(2, len(set((t, t2, 3))))
