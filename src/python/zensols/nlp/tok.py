@@ -244,6 +244,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         self.write_attributes(depth + 2, writer, include_type, feature_ids)
 
     def __eq__(self, other: FeatureToken) -> bool:
+        if id(self) == id(other):
+            return True
         if self.i == other.i and self.idx == other.idx:
             a = dict(self.__dict__)
             b = dict(other.__dict__)
