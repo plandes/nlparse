@@ -15,6 +15,7 @@ import itertools as it
 import copy
 from io import TextIOBase, StringIO
 from frozendict import frozendict
+from interlap import InterLap
 from spacy.tokens import Doc, Span, Token
 from zensols.persist import PersistableContainer, persisted
 from . import NLPError, TextContainer, FeatureToken, LexicalSpan
@@ -109,6 +110,31 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         else:
             return LexicalSpan(toks[0].lexspan.begin, toks[-1].lexspan.end)
 
+    @persisted('_interlap')
+    def _get_interlap(self) -> InterLap:
+        """Create an interlap with all tokens of the container added."""
+        il = InterLap()
+        # adding with tuple inline is ~3 times as fast than a list, and ~9 times
+        # faster than an individual add in a for loop
+        il.add(tuple(map(lambda t: (t.lexspan.begin, t.lexspan.end, t),
+                         self.token_iter())))
+        return il
+
+    def map_overlapping_tokens(self, spans: Iterable[LexicalSpan]) -> \
+            Iterable[Tuple[FeatureToken]]:
+        """Return a tuple of tokens, each tuple in the range given by the
+        respective span in ``spans``.
+
+        :param spans: the document 0-index character based spans to compare with
+                      :obj:`.FeatureToken.lexspan`
+
+        :return: a tuple of matching tokens for the respective ``span`` query
+
+        """
+        il = self._get_interlap()
+        return map(lambda s: tuple(map(lambda m: m[2], il.find(s.astuple))),
+                   spans)
+
     def get_overlapping_tokens(self, span: LexicalSpan) -> \
             Iterable[FeatureToken]:
         """Get all tokens that overlap lexical span ``span``.
@@ -118,8 +144,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         :return: a token sequence containing the 0 index offset of ``span``
 
         """
-        return filter(lambda t: t.lexspan.overlaps_with(span),
-                      self.token_iter())
+        return next(iter(self.map_overlapping_tokens((span,))))
 
     @abstractmethod
     def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:

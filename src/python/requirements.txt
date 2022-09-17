@@ -5,3 +5,4 @@ smart-open>=4.0.1
 nltk>=3.5
 python-Levenshtein
 zensols.util~=1.11.0
+interlap~=0.2.7

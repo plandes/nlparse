@@ -1,5 +1,4 @@
 from unittest import TestCase
-from zensols.util import APIError
 from zensols.config import ImportConfigFactory
 from zensols.nlp import LexicalSpan, FeatureDocumentParser, FeatureDocument
 from config import AppConfig
@@ -115,3 +114,26 @@ Dan throws the ball. He throws it quite often.'
         s2 = LexicalSpan(13, 31)
         self.assertTrue(s1.narrow(s2) is None)
         self.assertTrue(s2.narrow(s1) is None)
+
+    @staticmethod
+    def _map_spans(doc, tups):
+        spans = map(lambda x: LexicalSpan(*x), tups)
+        return tuple(map(lambda r: '|'.join(map(lambda t: t.text, r)),
+                         doc.map_overlapping_tokens(spans)))
+
+    def test_map(self):
+        doc = self.doc
+        self.assertEqual(('Dan', 'the|ball|.|He|throws'),
+                         self._map_spans(doc, ((0, 1), (11, 29))))
+        self.assertEqual(('Dan', 'the|ball|.|He|throws'),
+                         self._map_spans(doc, ((0, 2), (11, 29))))
+        self.assertEqual(('Dan', 'the|ball|.|He|throws'),
+                         self._map_spans(doc, ((1, 2), (11, 29))))
+        self.assertEqual(('Dan', 'quite|often|.'),
+                         self._map_spans(doc, ((1, 2), ((34, 100)))))
+        self.assertEqual(('Dan', 'He|throws', 'quite|often|.'),
+                         self._map_spans(doc, ((1, 2), (21, 29), ((34, 100)))))
+        self.assertEqual(('Dan', 'He|throws', 'quite|often|.'),
+                         self._map_spans(doc, ((1, 2), (21, 30), ((34, 100)))))
+        self.assertEqual(('Dan', 'He|throws|it', 'quite|often|.'),
+                         self._map_spans(doc, ((1, 2), (21, 31), ((34, 100)))))
