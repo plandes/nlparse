@@ -12,14 +12,14 @@ class TestDocCombine(TestBase):
         doc: Doc = doc_parser(self.sent_text2)
         toks = tuple(doc.norm_token_iter())
         should_ents = \
-            (('I', '<none>'), ('am', '<none>'), ('a', '<none>'),
-             ('citizen', '<none>'), ('of', '<none>'), ('the', 'GPE'),
+            (('I', '-<N>-'), ('am', '-<N>-'), ('a', '-<N>-'),
+             ('citizen', '-<N>-'), ('of', '-<N>-'), ('the', 'GPE'),
              ('United', 'GPE'), ('States', 'GPE'), ('of', 'GPE'),
-             ('America', 'GPE'), ('.', '<none>'),
+             ('America', 'GPE'), ('.', '-<N>-'),
              # sent 2
-             ('My', '<none>'), ('name', '<none>'),
-             ('is', '<none>'), ('Paul', 'PERSON'), ('Landes', 'PERSON'),
-             ('.', '<none>'))
+             ('My', '-<N>-'), ('name', '-<N>-'),
+             ('is', '-<N>-'), ('Paul', 'PERSON'), ('Landes', 'PERSON'),
+             ('.', '-<N>-'))
         should = tuple(map(lambda x: x[0], should_ents))
         self.assertEqual(should, tuple(toks))
         tents = tuple(map(lambda t: (t.norm, t.ent_),
@@ -32,14 +32,14 @@ class TestDocCombine(TestBase):
         doc_parser: FeatureDocumentParser = self.fac.instance('doc_parser_combiner')
         doc: FeatureDocument = doc_parser(self.sent_text2)
         should = \
-            ((0, 'I', '<none>'), (2, 'am', '<none>'), (5, 'a', '<none>'),
-             (7, 'citizen', '<none>'), (15, 'of', '<none>'), (18, 'the', 'GPE'),
+            ((0, 'I', '-<N>-'), (2, 'am', '-<N>-'), (5, 'a', '-<N>-'),
+             (7, 'citizen', '-<N>-'), (15, 'of', '-<N>-'), (18, 'the', 'GPE'),
              (22, 'United', 'GPE'), (29, 'States', 'GPE'), (36, 'of', 'GPE'),
-             (39, 'America', 'GPE'), (46, '.', '<none>'),
+             (39, 'America', 'GPE'), (46, '.', '-<N>-'),
              # sent 2
-             (48, 'My', '<none>'), (51, 'name', '<none>'),
-             (56, 'is', '<none>'), (59, 'Paul', 'PERSON'),
-             (64, 'Landes', 'PERSON'), (70, '.', '<none>'))
+             (48, 'My', '-<N>-'), (51, 'name', '-<N>-'),
+             (56, 'is', '-<N>-'), (59, 'Paul', 'PERSON'),
+             (64, 'Landes', 'PERSON'), (70, '.', '-<N>-'))
         toks = tuple(map(lambda t: (t.idx, t.norm, t.ent_), doc.token_iter()))
         if 0:
             print()
@@ -57,14 +57,14 @@ class TestDocCombine(TestBase):
         doc_parser: FeatureDocumentParser = self.fac.instance('doc_parser_combiner_reverse')
         doc: FeatureDocument = doc_parser(self.sent_text2)
         should = \
-            ((0, 'I', '<none>'), (2, 'am', '<none>'), (5, 'a', '<none>'),
-             (7, 'citizen', '<none>'), (15, 'of', '<none>'),
+            ((0, 'I', '-<N>-'), (2, 'am', '-<N>-'), (5, 'a', '-<N>-'),
+             (7, 'citizen', '-<N>-'), (15, 'of', '-<N>-'),
              (18, 'the', 'GPE'), (22, 'United', 'GPE'),
              (29, 'States', 'GPE'), (36, 'of', 'GPE'), (39, 'America', 'GPE'),
-             (46, '.', '<none>'),
+             (46, '.', '-<N>-'),
              # sent 2
-             (48, 'My', '<none>'), (51, 'name', '<none>'), (56, 'is', '<none>'),
-             (59, 'Paul', 'PERSON'), (64, 'Landes', 'PERSON'), (70, '.', '<none>'))
+             (48, 'My', '-<N>-'), (51, 'name', '-<N>-'), (56, 'is', '-<N>-'),
+             (59, 'Paul', 'PERSON'), (64, 'Landes', 'PERSON'), (70, '.', '-<N>-'))
         toks = tuple(map(lambda t: (t.idx, t.norm, t.ent_), doc.token_iter()))
         if 0:
             print()

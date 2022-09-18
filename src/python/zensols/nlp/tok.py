@@ -67,7 +67,7 @@ class FeatureToken(PersistableContainer, TextContainer):
     """Feature IDs that are dumped on :meth:`write` and :meth:`write_attributes`.
 
     """
-    NONE: ClassVar[str] = '<none>'
+    NONE: ClassVar[str] = '-<N>-'
     """Default string for *not a feature*, or missing features."""
 
     i: int = field()

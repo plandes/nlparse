@@ -79,7 +79,7 @@ This code snippet iterates through all the tokens of the document producing:
 ```
 FeatureToken: org=<He>, norm=<He>
     attributes:
-        ent_=<none> (str)
+        ent_=-<N>- (str)
         i=0 (int)
         i_sent=0 (int)
         idx=0 (int)
@@ -87,7 +87,7 @@ FeatureToken: org=<He>, norm=<He>
         tag_=PRP (str)
 FeatureToken: org=<was>, norm=<was>
     attributes:
-        ent_=<none> (str)
+        ent_=-<N>- (str)
         i=1 (int)
         i_sent=1 (int)
         idx=3 (int)
