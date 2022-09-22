@@ -9,6 +9,7 @@
         "is_superlative": false,
         "i": 0,
         "norm": "I",
+	"norm_len": 1,
         "children": [],
         "lemma_": "I",
         "ent_": "-<N>-",
@@ -41,6 +42,7 @@
         "is_superlative": false,
         "i": 1,
         "norm": "am",
+	"norm_len": 2,
         "children": [
             0,
             3,
@@ -77,6 +79,7 @@
         "is_superlative": false,
         "i": 2,
         "norm": "a",
+	"norm_len": 1,
         "children": [],
         "lemma_": "a",
         "ent_": "-<N>-",
@@ -109,6 +112,7 @@
         "is_superlative": false,
         "i": 3,
         "norm": "citizen",
+	"norm_len": 7,
         "children": [
             2,
             4
@@ -144,6 +148,7 @@
         "is_superlative": false,
         "i": 4,
         "norm": "of",
+	"norm_len": 2,
         "children": [
             7
         ],
@@ -178,6 +183,7 @@
         "is_superlative": false,
         "i": 5,
         "norm": "the United States of America",
+	"norm_len": 28,
         "children": [],
         "lemma_": "the United States of America",
         "ent_": "GPE",
@@ -210,6 +216,7 @@
         "is_superlative": false,
         "i": 10,
         "norm": ".",
+	"norm_len": 1,
         "children": [],
         "lemma_": ".",
         "ent_": "-<N>-",
