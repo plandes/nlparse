@@ -265,7 +265,20 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
 
 @dataclass(eq=True)
-class FeatureSentence(TokenContainer):
+class FeatureSpan(TokenContainer):
+    """A span of tokens as a :class:`.TokenContainer`, much like
+    :class:`spacy.tokens.Span`.
+
+    """
+    sent_tokens: Tuple[FeatureToken] = field()
+    """The tokens that make up the sentence."""
+
+    def __post_init__(self):
+        super().__init__()
+
+
+@dataclass(eq=True)
+class FeatureSentence(FeatureSpan):
     """A container class of tokens that make a sentence.  Instances of this class
     iterate over :class:`.FeatureToken` instances, and can create documents
     with :meth:`to_document`.
@@ -273,9 +286,6 @@ class FeatureSentence(TokenContainer):
     """
     _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_sent'}
     """Don't serialize the spacy document on persistance pickling."""
-
-    sent_tokens: Tuple[FeatureToken] = field()
-    """The tokens that make up the sentence."""
 
     text: str = field(default=None)
     """The original raw text of the sentence."""
@@ -287,7 +297,7 @@ class FeatureSentence(TokenContainer):
 
     """
     def __post_init__(self):
-        super().__init__()
+        super().__post_init__()
         if self.text is None:
             self.text = ' '.join(map(lambda t: t.text, self.sent_tokens))
         self._ents: List[Tuple[int, int]] = []
