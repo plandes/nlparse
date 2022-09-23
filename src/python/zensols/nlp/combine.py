@@ -99,12 +99,6 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     def _complete_merge_doc(self):
         pass
 
-    def _merge_entities_by_sentence(self):
-        for tsent, ssent in zip(self._target_doc, self._source_doc):
-            skips = set(tsent._ents)
-            to_add = filter(lambda e: e not in skips, ssent._ents)
-            tsent._ents.extend(to_add)
-
     def _merge_doc(self):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging docs: {self._source_doc} -> ' +
@@ -120,7 +114,7 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                 del self._target_sent
                 del self._source_sent
                 self._complete_merge_doc()
-        self._merge_entities_by_sentence()
+        self._target_doc._combine_update(self._source_doc)
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         target_doc = self.target_parser.parse(text, *args, **kwargs)
@@ -209,6 +203,7 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                          f'-> {self._target_sent.tokens}')
         rmp: Dict[int, Tuple[FeatureToken, Token]] = self._source_token_mapping
         self._merge_token_containers(self._target_sent, rmp)
+        self._target_doc._combine_update(self._source_doc)
 
     def _prepare_merge_doc(self):
         if self.merge_sentences:
@@ -227,3 +222,4 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                              f'{self._target_doc}')
             source_token_mapping = self._source_doc.tokens_by_idx
             self._merge_token_containers(self._target_doc, source_token_mapping)
+            self._target_doc._combine_update(self._source_doc)

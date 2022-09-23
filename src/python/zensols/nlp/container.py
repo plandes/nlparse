@@ -540,6 +540,21 @@ class FeatureDocument(TokenContainer):
         sent._ents = list(chain.from_iterable(map(lambda s: s._ents, sents)))
         return sent
 
+    def _combine_update(self, other: FeatureDocument):
+        """Update internal data structures from another combined document.  This
+        includes merging entities.
+
+        :see :class:`.CombinerFeatureDocumentParser`
+
+        :see: :class:`.MappingCombinerFeatureDocumentParser`
+
+        """
+        ss: FeatureSentence
+        ts: FeatureSentence
+        for ss, ts in zip(other, self):
+            ents = set(ss._ents) | set(ts._ents)
+            ts._ents = sorted(ents, key=lambda x: x[0])
+
     def to_document(self) -> FeatureDocument:
         return self
 
