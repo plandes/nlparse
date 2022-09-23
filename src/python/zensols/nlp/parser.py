@@ -208,6 +208,15 @@ class SpacyFeatureTokenDecorator(ABC):
         pass
 
 
+class SpacyFeatureSentenceDecorator(ABC):
+    """Implementations can add, remove or modify features on a sentence.
+
+    """
+    @abstractmethod
+    def decorate(self, spacy_sent: Span, feature_sent: FeatureSentence):
+        pass
+
+
 @dataclass
 class SpacyFeatureDocumentParser(FeatureDocumentParser):
     """This langauge resource parses text in to Spacy documents.  Loaded spaCy
@@ -256,6 +265,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     token_decorators: Sequence[SpacyFeatureTokenDecorator] = field(default=())
     """A list of decorators that can add, remove or modify features on a token.
+
+    """
+    sentence_decorators: Sequence[SpacyFeatureSentenceDecorator] = field(
+        default=())
+    """A list of decorators that can add, remove or modify features on a
+    sentence.
 
     """
     disable_component_names: Sequence[str] = field(default=None)
@@ -440,9 +455,16 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             logger.debug(f'detaching using features: {self.token_feature_ids}')
         return ft.detach(self.token_feature_ids)
 
+    def _decorate_sent(self, spacy_sent: Span, feature_sent: FeatureSentence):
+        decorator: SpacyFeatureSentenceDecorator
+        for decorator in self.sentence_decorators:
+            decorator.decorate(spacy_sent, feature_sent)
+
     def _create_sent(self, spacy_sent: Span, stoks: Iterable[FeatureToken],
                      text: str) -> FeatureSentence:
-        return self.sent_class(tuple(stoks), text, spacy_sent)
+        sent: FeatureSentence = self.sent_class(tuple(stoks), text, spacy_sent)
+        self._decorate_sent(spacy_sent, sent)
+        return sent
 
     def _filter_sent(self, sent: Span, fsent: FeatureSentence) -> \
             List[FeatureSentence]:
