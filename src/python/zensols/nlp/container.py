@@ -181,14 +181,14 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     @property
     @persisted('_entities', transient=True)
-    def entities(self) -> Tuple[Tuple[FeatureToken]]:
+    def entities(self) -> Tuple[FeatureSpan]:
         """The named entities of the container with each multi-word entity as elements.
 
         """
         return self._get_entities()
 
     @abstractmethod
-    def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
+    def _get_entities(self) -> Tuple[FeatureSpan]:
         pass
 
     @property
@@ -264,51 +264,40 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         return TextContainer.__repr__(self)
 
 
-@dataclass(eq=True)
+@dataclass(eq=True, repr=False)
 class FeatureSpan(TokenContainer):
     """A span of tokens as a :class:`.TokenContainer`, much like
     :class:`spacy.tokens.Span`.
 
     """
-    sent_tokens: Tuple[FeatureToken] = field()
-    """The tokens that make up the sentence."""
-
-    def __post_init__(self):
-        super().__init__()
-
-
-@dataclass(eq=True)
-class FeatureSentence(FeatureSpan):
-    """A container class of tokens that make a sentence.  Instances of this class
-    iterate over :class:`.FeatureToken` instances, and can create documents
-    with :meth:`to_document`.
-
-    """
-    _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_sent'}
+    _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_span'}
     """Don't serialize the spacy document on persistance pickling."""
 
-    text: str = field(default=None)
-    """The original raw text of the sentence."""
+    span_tokens: Tuple[FeatureToken] = field()
+    """The tokens that make up the span."""
 
-    spacy_sent: Span = field(default=None, repr=False, compare=False)
-    """The parsed spaCy sentence this feature set is based.
+    text: str = field(default=None)
+    """The original raw text of the span."""
+
+    spacy_span: Span = field(default=None, repr=False, compare=False)
+    """The parsed spaCy span this feature set is based.
 
     :see: :meth:`.FeatureDocument.spacy_doc`
 
     """
     def __post_init__(self):
-        super().__post_init__()
+        super().__init__()
+        if not isinstance(self.span_tokens, tuple):
+            raise NLPError(
+                f'Expecting tuple of tokens, but got {type(self.span_tokens)}')
         if self.text is None:
-            self.text = ' '.join(map(lambda t: t.text, self.sent_tokens))
+            self.text = ' '.join(map(lambda t: t.text, self.span_tokens))
         self._ents: List[Tuple[int, int]] = []
         self._set_entity_spans()
-        if not isinstance(self.sent_tokens, tuple):
-            raise NLPError('Expecting tuple of sentences, ' +
-                           f'but got {type(self.sent_tokens)}')
 
     def _set_entity_spans(self):
-        if self.spacy_sent is not None:
-            for ents in self.spacy_sent.ents:
+        if self.spacy_span is not None:
+            for ents in self.spacy_span.ents:
                 start, end = None, None
                 ents = iter(ents)
                 try:
@@ -320,11 +309,20 @@ class FeatureSentence(FeatureSpan):
                 if start is not None:
                     self._ents.append((start.idx, end.idx))
 
+    def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
+        if limit == 0:
+            return iter(())
+        else:
+            return self.clone(FeatureSentence)
+
+    def to_document(self) -> FeatureDocument:
+        return FeatureDocument(self.to_sentence(),)
+
     def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
         params = dict(kwargs)
-        if 'sent_tokens' not in params:
-            params['sent_tokens'] = tuple(
-                map(lambda t: t.clone(), self.sent_tokens))
+        if 'span_tokens' not in params:
+            params['span_tokens'] = tuple(
+                map(lambda t: t.clone(), self.span_tokens))
         if 'text' not in params:
             params['text'] = self.text
         clone = super().clone(cls, **params)
@@ -333,17 +331,17 @@ class FeatureSentence(FeatureSpan):
 
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         if len(args) == 0:
-            return iter(self.sent_tokens)
+            return iter(self.span_tokens)
         else:
-            return it.islice(self.sent_tokens, *args, **kwargs)
+            return it.islice(self.span_tokens, *args, **kwargs)
 
     @property
     def tokens(self) -> Tuple[FeatureToken]:
-        return self.sent_tokens
+        return self.span_tokens
 
     @property
     def token_len(self) -> int:
-        return len(self.sent_tokens)
+        return len(self.span_tokens)
 
     @property
     @persisted('_tokens_by_i_sent', transient=True)
@@ -387,12 +385,6 @@ class FeatureSentence(FeatureSpan):
                 by_i[t.i + six] = t
         return by_i
 
-    def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
-        return self
-
-    def to_document(self) -> FeatureDocument:
-        return FeatureDocument((self,))
-
     def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken],
                 tid_to_idx: Dict[int, int]) -> \
             Dict[FeatureToken, List[FeatureToken]]:
@@ -418,7 +410,7 @@ class FeatureSentence(FeatureSpan):
         else:
             return {}
 
-    def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
+    def _get_entities(self) -> Tuple[FeatureSpan]:
         ents = []
         for start, end in self._ents:
             ent = []
@@ -426,7 +418,7 @@ class FeatureSentence(FeatureSpan):
                 if tok.idx >= start and tok.idx <= end:
                     ent.append(tok)
             if len(ent) > 0:
-                ents.append(tuple(ent))
+                ents.append(FeatureSpan(tuple(ent)))
         return tuple(ents)
 
     def _from_dictable(self, recurse: bool, readable: bool,
@@ -444,7 +436,27 @@ class FeatureSentence(FeatureSpan):
         return self.token_iter()
 
 
-@dataclass
+@dataclass(eq=True, repr=False)
+class FeatureSentence(FeatureSpan):
+    """A container class of tokens that make a sentence.  Instances of this class
+    iterate over :class:`.FeatureToken` instances, and can create documents
+    with :meth:`to_document`.
+
+    """
+    def __post_init__(self):
+        super().__post_init__()
+
+    def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
+        if limit == 0:
+            return iter(())
+        else:
+            return self
+
+    def to_document(self) -> FeatureDocument:
+        return FeatureDocument((self,))
+
+
+@dataclass(eq=True, repr=False)
 class FeatureDocument(TokenContainer):
     """A container class of tokens that make a document.  This class contains a one
     to many of sentences.  However, it can be treated like any
@@ -493,7 +505,7 @@ class FeatureDocument(TokenContainer):
         fs: FeatureSentence
         ss: Span
         for ft, ss in zip(self.sents, doc.sents):
-            ft.spacy_sent = ss
+            ft.spacy_span = ss
         self.spacy_doc = doc
 
     def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
@@ -509,7 +521,7 @@ class FeatureDocument(TokenContainer):
             params['text'] = self.text
         if params.pop('copy_spacy', False):
             for ss, cs in zip(self.sents, params['sents']):
-                cs.spacy_sent = ss.spacy_sent
+                cs.spacy_span = ss.spacy_span
             params['spacy_doc'] = self.spacy_doc
         return super().clone(cls, **params)
 
@@ -546,7 +558,7 @@ class FeatureDocument(TokenContainer):
         toks: Iterable[FeatureToken] = chain.from_iterable(
             map(lambda s: s.tokens, sents))
         cls: Type = self._sent_class()
-        sent: FeatureSentence = cls(sent_tokens=tuple(toks), text=self.text)
+        sent: FeatureSentence = cls(span_tokens=tuple(toks), text=self.text)
         sent._ents = list(chain.from_iterable(map(lambda s: s._ents, sents)))
         return sent
 
@@ -716,7 +728,7 @@ class FeatureDocument(TokenContainer):
         else:
             return self
 
-    def _get_entities(self) -> Tuple[Tuple[FeatureToken]]:
+    def _get_entities(self) -> Tuple[FeatureSpan]:
         return tuple(chain.from_iterable(
             map(lambda s: s.entities, self.sents)))
 
@@ -765,7 +777,7 @@ class FeatureDocument(TokenContainer):
                         clone.norm = tok.norm[hang:]
                         clone.text = tok.text[hang:]
                         toks[0] = clone
-                    sent = sent.clone(sent_tokens=tuple(toks), text=text)
+                    sent = sent.clone(span_tokens=tuple(toks), text=text)
                 sents.append(sent)
             text: str = doc_text[span.begin:span.end + 1]
             doc.sents = tuple(sents)

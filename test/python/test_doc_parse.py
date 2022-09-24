@@ -142,7 +142,7 @@ the United States of America."""
         doc = parser.parse(self.sent_text2)
         ents = doc.entities
         self.assertEqual(len(ents), 2)
-        should = '((<the>, <United>, <States>, <of>, <America>), (<Paul>, <Landes>))'
+        should = '(<the United States of America>, <Paul Landes>)'
         self.assertEqual(should, str(ents))
 
     def test_entity_pickled(self):
@@ -155,5 +155,5 @@ the United States of America."""
         doc2 = pickle.load(bio)
         ents = doc2.entities
         self.assertEqual(len(ents), 2)
-        should = '((<the>, <United>, <States>, <of>, <America>), (<Paul>, <Landes>))'
+        should = '(<the United States of America>, <Paul Landes>)'
         self.assertEqual(should, str(ents))

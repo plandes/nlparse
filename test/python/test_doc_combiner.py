@@ -47,7 +47,7 @@ class TestDocCombine(TestBase):
         self.assertEqual(should, toks)
 
         ents = doc.entities
-        should = '((<the>, <United>, <States>, <of>, <America>), (<Paul>, <Landes>))'
+        should = '(<the United States of America>, <Paul Landes>)'
         if 0:
             print()
             print(ents)
