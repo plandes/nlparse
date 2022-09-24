@@ -38,4 +38,4 @@ class SplitTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
                 split_toks.append(ftok)
             else:
                 split_toks.extend(self._split_tok(ftok, tnorms))
-        feature_sent.sent_tokens = tuple(split_toks)
+        feature_sent.tokens = tuple(split_toks)

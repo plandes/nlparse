@@ -273,7 +273,7 @@ class FeatureSpan(TokenContainer):
     _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_span'}
     """Don't serialize the spacy document on persistance pickling."""
 
-    span_tokens: Tuple[FeatureToken] = field()
+    tokens: Tuple[FeatureToken] = field()
     """The tokens that make up the span."""
 
     text: str = field(default=None)
@@ -288,20 +288,23 @@ class FeatureSpan(TokenContainer):
     def __post_init__(self):
         super().__init__()
         if self.text is None:
-            self.text = ' '.join(map(lambda t: t.text, self.span_tokens))
-        self._ents: List[Tuple[int, int]] = []
+            self.text = ' '.join(map(lambda t: t.text, self.tokens))
+        # the _tokens setter is called to set the tokens before the the
+        # spacy_span set; so call it again since now we have spacy_span set
         self._set_entity_spans()
 
     @property
-    def _span_tokens(self) -> Tuple[FeatureToken]:
-        return self._span_tokens_val
+    def _tokens(self) -> Tuple[FeatureToken]:
+        return self._tokens_val
 
-    @_span_tokens.setter
-    def _span_tokens(self, span_tokens: Tuple[FeatureToken]):
-        if not isinstance(span_tokens, tuple):
+    @_tokens.setter
+    def _tokens(self, tokens: Tuple[FeatureToken]):
+        if not isinstance(tokens, tuple):
             raise NLPError(
-                f'Expecting tuple of tokens, but got {type(span_tokens)}')
-        self._span_tokens_val = span_tokens
+                f'Expecting tuple of tokens, but got {type(tokens)}')
+        self._tokens_val = tokens
+        self._ents: List[Tuple[int, int]] = []
+        self._set_entity_spans()
 
     def _set_entity_spans(self):
         if self.spacy_span is not None:
@@ -328,9 +331,9 @@ class FeatureSpan(TokenContainer):
 
     def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
         params = dict(kwargs)
-        if 'span_tokens' not in params:
-            params['span_tokens'] = tuple(
-                map(lambda t: t.clone(), self._span_tokens_val))
+        if 'tokens' not in params:
+            params['tokens'] = tuple(
+                map(lambda t: t.clone(), self._tokens_val))
         if 'text' not in params:
             params['text'] = self.text
         clone = super().clone(cls, **params)
@@ -339,17 +342,13 @@ class FeatureSpan(TokenContainer):
 
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         if len(args) == 0:
-            return iter(self._span_tokens_val)
+            return iter(self._tokens_val)
         else:
-            return it.islice(self._span_tokens_val, *args, **kwargs)
-
-    @property
-    def tokens(self) -> Tuple[FeatureToken]:
-        return self._span_tokens_val
+            return it.islice(self._tokens_val, *args, **kwargs)
 
     @property
     def token_len(self) -> int:
-        return len(self._span_tokens_val)
+        return len(self._tokens_val)
 
     @property
     @persisted('_tokens_by_i_sent', transient=True)
@@ -445,7 +444,7 @@ class FeatureSpan(TokenContainer):
 
 
 # keep the dataclass semantics, but allow for a setter
-FeatureSpan.span_tokens = FeatureSpan._span_tokens
+FeatureSpan.tokens = FeatureSpan._tokens
 
 
 @dataclass(eq=True, repr=False)
@@ -570,7 +569,7 @@ class FeatureDocument(TokenContainer):
         toks: Iterable[FeatureToken] = chain.from_iterable(
             map(lambda s: s.tokens, sents))
         cls: Type = self._sent_class()
-        sent: FeatureSentence = cls(span_tokens=tuple(toks), text=self.text)
+        sent: FeatureSentence = cls(tokens=tuple(toks), text=self.text)
         sent._ents = list(chain.from_iterable(map(lambda s: s._ents, sents)))
         return sent
 
@@ -789,7 +788,7 @@ class FeatureDocument(TokenContainer):
                         clone.norm = tok.norm[hang:]
                         clone.text = tok.text[hang:]
                         toks[0] = clone
-                    sent = sent.clone(span_tokens=tuple(toks), text=text)
+                    sent = sent.clone(tokens=tuple(toks), text=text)
                 sents.append(sent)
             text: str = doc_text[span.begin:span.end + 1]
             doc.sents = tuple(sents)
