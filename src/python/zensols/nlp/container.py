@@ -287,13 +287,21 @@ class FeatureSpan(TokenContainer):
     """
     def __post_init__(self):
         super().__init__()
-        if not isinstance(self.span_tokens, tuple):
-            raise NLPError(
-                f'Expecting tuple of tokens, but got {type(self.span_tokens)}')
         if self.text is None:
             self.text = ' '.join(map(lambda t: t.text, self.span_tokens))
         self._ents: List[Tuple[int, int]] = []
         self._set_entity_spans()
+
+    @property
+    def _span_tokens(self) -> Tuple[FeatureToken]:
+        return self._span_tokens_val
+
+    @_span_tokens.setter
+    def _span_tokens(self, span_tokens: Tuple[FeatureToken]):
+        if not isinstance(span_tokens, tuple):
+            raise NLPError(
+                f'Expecting tuple of tokens, but got {type(span_tokens)}')
+        self._span_tokens_val = span_tokens
 
     def _set_entity_spans(self):
         if self.spacy_span is not None:
@@ -322,7 +330,7 @@ class FeatureSpan(TokenContainer):
         params = dict(kwargs)
         if 'span_tokens' not in params:
             params['span_tokens'] = tuple(
-                map(lambda t: t.clone(), self.span_tokens))
+                map(lambda t: t.clone(), self._span_tokens_val))
         if 'text' not in params:
             params['text'] = self.text
         clone = super().clone(cls, **params)
@@ -331,17 +339,17 @@ class FeatureSpan(TokenContainer):
 
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
         if len(args) == 0:
-            return iter(self.span_tokens)
+            return iter(self._span_tokens_val)
         else:
-            return it.islice(self.span_tokens, *args, **kwargs)
+            return it.islice(self._span_tokens_val, *args, **kwargs)
 
     @property
     def tokens(self) -> Tuple[FeatureToken]:
-        return self.span_tokens
+        return self._span_tokens_val
 
     @property
     def token_len(self) -> int:
-        return len(self.span_tokens)
+        return len(self._span_tokens_val)
 
     @property
     @persisted('_tokens_by_i_sent', transient=True)
@@ -434,6 +442,10 @@ class FeatureSpan(TokenContainer):
 
     def __iter__(self):
         return self.token_iter()
+
+
+# keep the dataclass semantics, but allow for a setter
+FeatureSpan.span_tokens = FeatureSpan._span_tokens
 
 
 @dataclass(eq=True, repr=False)
