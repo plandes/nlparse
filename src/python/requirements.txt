@@ -4,5 +4,5 @@ msgpack-numpy>=0.4.7.1
 smart-open>=4.0.1
 nltk>=3.5
 python-Levenshtein
-zensols.util~=1.11.0
+zensols.util~=1.11.1
 interlap~=0.2.7
