@@ -8,8 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.4.0] - 2022-09-30
+
 ### Added
 - A document stash caching parser `CachingFeatureDocumentParser`.
+- The [InterLap](https://pypi.org/project/interlap/) library to speed up
+  overlapping token queries.
+- Sentence decorator and sentence split space decorator.
 
 ### Changed
 - `FeatureDocument.sents` changed from a `list` to a `tuple`.
@@ -17,6 +22,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   tuples.
 - Better (English) normalization of text by adding more apostrophe/contraction
   syntax.
+- The `FeatureToken.NONE` constant changed from `<none>` to `-<N>-`.
+- Speed up `FeatureToken` equals.
+
+### Removed
+- Removed `stemmer` module from default imports.  Use `import
+  zensols.nlp.stemmer`.
 
 
 ## [1.3.0] - 2022-08-06
@@ -281,7 +292,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/plandes/nlparse/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/plandes/nlparse/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/plandes/nlparse/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/plandes/nlparse/compare/v1.1.1...v1.1.2
