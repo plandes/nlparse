@@ -371,8 +371,8 @@ class FeatureSpan(TokenContainer):
         ent_span: Tuple[FeatureToken]
         for ent_span in self.entities:
             t: FeatureToken
-            for six, t in enumerate(ent_span):
-                by_i_sent[t.i_sent + six] = t
+            for t in ent_span:
+                by_i_sent[t.i_sent] = t
         return frozendict(by_i_sent)
 
     def _get_tokens_by_i(self) -> Dict[int, FeatureToken]:
@@ -388,8 +388,8 @@ class FeatureSpan(TokenContainer):
         ent_span: Tuple[FeatureToken]
         for ent_span in self.entities:
             t: FeatureToken
-            for six, t in enumerate(ent_span):
-                by_i[t.i + six] = t
+            for t in ent_span:
+                by_i[t.i] = t
         return by_i
 
     def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken],
