@@ -10,8 +10,8 @@ import dataclasses
 from abc import ABCMeta, abstractmethod
 import sys
 import logging
-from itertools import chain
 import itertools as it
+from itertools import chain
 import copy
 from io import TextIOBase, StringIO
 from frozendict import frozendict
@@ -350,6 +350,16 @@ class FeatureSpan(TokenContainer):
     def token_len(self) -> int:
         return len(self._tokens_val)
 
+    @persisted('_is_mwe_pw')
+    def _is_mwe(self) -> bool:
+        """True when this is a span with the same indexes because it was parsed
+        as a single token in to a multi-word expressions (i.e. entity).
+
+        """
+        if self.token_len > 1:
+            return self._tokens_val[0].i != self._tokens_val[1].i
+        return False
+
     @property
     @persisted('_tokens_by_i_sent', transient=True)
     def tokens_by_i_sent(self) -> Dict[int, FeatureToken]:
@@ -359,8 +369,8 @@ class FeatureSpan(TokenContainer):
         :see: :obj:`zensols.nlp.FeatureToken.i`
 
         """
-        by_i_sent = {}
-        cnt = 0
+        by_i_sent: Dict[int, FeatureToken] = {}
+        cnt: int = 0
         tok: FeatureToken
         for tok in self.token_iter():
             by_i_sent[tok.i_sent] = tok
@@ -368,16 +378,17 @@ class FeatureSpan(TokenContainer):
         assert cnt == self.token_len
         # add indexes for multi-word entities that otherwise have mappings for
         # only the first word of the entity
-        ent_span: Tuple[FeatureToken]
+        ent_span: FeatureSpan
         for ent_span in self.entities:
+            im: int = 0 if ent_span._is_mwe() else 1
             t: FeatureToken
-            for t in ent_span:
-                by_i_sent[t.i_sent] = t
+            for i, t in enumerate(ent_span):
+                by_i_sent[t.i_sent + (im * i)] = t
         return frozendict(by_i_sent)
 
     def _get_tokens_by_i(self) -> Dict[int, FeatureToken]:
-        by_i = {}
-        cnt = 0
+        by_i: Dict[int, FeatureToken] = {}
+        cnt: int = 0
         tok: FeatureToken
         for tok in self.token_iter():
             by_i[tok.i] = tok
@@ -387,10 +398,33 @@ class FeatureSpan(TokenContainer):
         # only the first word of the entity
         ent_span: Tuple[FeatureToken]
         for ent_span in self.entities:
+            im: int = 0 if ent_span._is_mwe() else 1
             t: FeatureToken
-            for t in ent_span:
-                by_i[t.i] = t
+            for i, t in enumerate(ent_span):
+                by_i[t.i + (im * i)] = t
         return by_i
+
+    def _get_entities(self) -> Tuple[FeatureSpan]:
+        ents: List[FeatureSpan] = []
+        for start, end in self._ents:
+            ent: List[FeatureToken] = []
+            tok: FeatureToken
+            for tok in self.token_iter():
+                if tok.idx >= start and tok.idx <= end:
+                    ent.append(tok)
+            if len(ent) > 0:
+                span = FeatureSpan(
+                    tokens=tuple(ent),
+                    text=' '.join(map(lambda t: t.norm, ent)))
+                ents.append(span)
+        return tuple(ents)
+
+    def update_indexes(self):
+        super().update_indexes()
+        i_sent: int
+        ft: FeatureToken
+        for i_sent, ft in self.tokens_by_i_sent.items():
+            ft.i_sent = i_sent
 
     def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken],
                 tid_to_idx: Dict[int, int]) -> \
@@ -416,17 +450,6 @@ class FeatureSpan(TokenContainer):
             return {root[0]: self._branch(root[0], toks, tid_to_idx)}
         else:
             return {}
-
-    def _get_entities(self) -> Tuple[FeatureSpan]:
-        ents = []
-        for start, end in self._ents:
-            ent = []
-            for tok in self.token_iter():
-                if tok.idx >= start and tok.idx <= end:
-                    ent.append(tok)
-            if len(ent) > 0:
-                ents.append(FeatureSpan(tuple(ent)))
-        return tuple(ents)
 
     def _from_dictable(self, recurse: bool, readable: bool,
                        class_name_param: str = None) -> Dict[str, Any]:
@@ -454,9 +477,6 @@ class FeatureSentence(FeatureSpan):
     with :meth:`to_document`.
 
     """
-    def __post_init__(self):
-        super().__post_init__()
-
     def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
         if limit == 0:
             return iter(())
@@ -604,6 +624,10 @@ class FeatureDocument(TokenContainer):
         for sent in self.sents:
             by_i.update(sent.tokens_by_i)
         return by_i
+
+    def update_indexes(self):
+        for sent in self.sents:
+            sent.update_indexes()
 
     def sentence_index_for_token(self, token: FeatureToken) -> int:
         """Return index of the parent sentence having ``token``."""

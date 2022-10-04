@@ -1,3 +1,4 @@
+from typing import List
 from util import TestBase
 from zensols.nlp import FeatureDocument, FeatureDocumentParser
 
@@ -7,7 +8,9 @@ class TestIndex(TestBase):
         super().setUp()
         self.sent = 'Chapter 1. Once when I was six years old I saw a magnificent picture in a book.'
 
-    def _test_sent_index(self, doc_parser):
+    def _test_sent_index(self, doc_parser , should_toks: List[str] = None):
+        if should_toks is None:
+            should_toks = 'Once when I was six years old I saw a'.split()
         doc = doc_parser.parse(self.sent)
         sent = doc[1]
         self.assertEqual(1, len(sent.entities))
@@ -16,14 +19,16 @@ class TestIndex(TestBase):
         if 0:
             for k, v in sorted(tbs.items(), key=lambda x: x[0]):
                 print(k, v)
-        self.assertEqual('Once when I was six years old I saw a'.split(),
-                         list(map(lambda i: tbs[i].text, range(10))))
+        self.assertEqual(should_toks, list(
+            map(lambda i: tbs[i].norm, range(len(should_toks)))))
 
     def test_sent_index(self):
         doc_parser: FeatureDocumentParser
         doc_parser = self.fac.instance('doc_parser_split_ents')
         self._test_sent_index(doc_parser)
         doc_parser = self.fac.instance('doc_parser_no_embed_ents')
+        self._test_sent_index(doc_parser)
+        doc_parser = self.fac.instance('doc_parser_split_space')
         self._test_sent_index(doc_parser)
 
     def test_embed(self):
@@ -35,9 +40,9 @@ class TestIndex(TestBase):
             for k, v in sorted(tbs.items(), key=lambda x: x[0]):
                 print(k, v)
         self.assertEqual(('Once', 'when', 'I', 'was', 'six years old'),
-                         tuple(map(lambda i: tbs[i].text, range(5))))
+                         tuple(map(lambda i: tbs[i].norm, range(5))))
         self.assertEqual(('I', 'saw'),
-                         tuple(map(lambda i: tbs[i].text, range(7, 9))))
+                         tuple(map(lambda i: tbs[i].norm, range(7, 9))))
 
     def _test_char_index(self, doc_parser):
         doc: FeatureDocument = doc_parser.parse(self.sent)
