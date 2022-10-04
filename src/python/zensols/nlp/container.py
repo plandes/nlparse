@@ -27,9 +27,9 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     """Each instance has the following attributes:
 
     """
-    _POST_SPACE_SKIP: ClassVar[Set[str]] = frozenset("""`‘“[({<""")
+    _POST_SPACE_SKIP: ClassVar[Set[str]] = frozenset("""`‘“[({<-""")
     _PRE_SPACE_SKIP: ClassVar[Set[str]] = frozenset(
-        "'s n't 'll 'm 've 'd 're".split())
+        "'s n't 'll 'm 've 'd 're -".split())
     _LONGEST_PRE_SPACE_SKIP: ClassVar[int] = max(map(len, _PRE_SPACE_SKIP))
 
     @abstractmethod

@@ -1,22 +1,17 @@
-from unittest import TestCase
-import sys
 from spacy.tokens import Doc
-from zensols.config import ImportConfigFactory
 from zensols.nlp import FeatureDocument
-from config import AppConfig
+from util import TestBase
 
 
-class TestToDoc(TestCase):
+class TestToDoc(TestBase):
     def setUp(self):
-        self.config = AppConfig()
-        self.fac = ImportConfigFactory(self.config, shared=False)
-        self.doc_parser = self.fac('default_doc_parser')
-        self.maxDiff = sys.maxsize
+        super().setUp()
+        self.parsers = 'doc_parser_default doc_parser_split_ents doc_parser_no_embed_ents doc_parser_split_space'.split()
 
-    def test_to_doc(self):
+    def _test_to_doc(self, doc_parser):
         s = """Apple is rumored to bring back the ‘Plus’ moniker after five years, as the last time the company used this branding was back in 2017 when it officially unveiled the iPhone 8 Plus, alongside the regular iPhone 8 and the iPhone X."""
-        fdoc: FeatureDocument = self.doc_parser(s)
-        sdoc: Doc = self.doc_parser.to_spacy_doc(fdoc)
+        fdoc: FeatureDocument = doc_parser(s)
+        sdoc: Doc = doc_parser.to_spacy_doc(fdoc)
         self.assertTrue(isinstance(fdoc, FeatureDocument))
         self.assertTrue(isinstance(sdoc, Doc))
         self.assertEqual(list(fdoc.norm_token_iter()), [t.orth_ for t in sdoc])
@@ -28,7 +23,11 @@ class TestToDoc(TestCase):
         self.assertEqual([t.dep_ for t in fdoc.token_iter()],
                          [t.dep_ for t in sdoc])
 
-    def test_norm(self):
+    def test_to_doc(self):
+        for name in self.parsers:
+            self._test_to_doc(self.fac(name))
+
+    def _test_norm(self, doc_parser):
         ss = ("""Apple will bring back the ‘Plus’ moniker, which is a top seller.""",
               """Apple's phones [have] (the largest) market and doesn't share it.""",
               """I'll see the ives in the morning. I wouldn't be remiss.""",
@@ -38,4 +37,8 @@ class TestToDoc(TestCase):
                """A member of the Democratic Party, he was the first """ +
                """African-American president of the United States."""))
         for s in ss:
-            self.assertEqual(s, self.doc_parser(s).norm)
+            self.assertEqual(s, doc_parser(s).norm)
+
+    def test_norm(self):
+        for name in self.parsers:
+            self._test_norm(self.fac(name))
