@@ -350,7 +350,6 @@ class FeatureSpan(TokenContainer):
     def token_len(self) -> int:
         return len(self._tokens_val)
 
-    @persisted('_is_mwe_pw')
     def _is_mwe(self) -> bool:
         """True when this is a span with the same indexes because it was parsed
         as a single token in to a multi-word expressions (i.e. entity).
