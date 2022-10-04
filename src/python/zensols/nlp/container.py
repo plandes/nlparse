@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Iterable, Dict, Type, Any
+from typing import List, Tuple, Iterable, Dict, Type, Any, ClassVar, Set
 from dataclasses import dataclass, field
 import dataclasses
 from abc import ABCMeta, abstractmethod
@@ -27,9 +27,10 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     """Each instance has the following attributes:
 
     """
-    _SPACE_SKIP = set("""`‘“[({<""")
-    _CONTRACTIONS = set("'s n't 'll 'm 've 'd 're".split())
-    _LONGEST_CONTRACTION = max(map(len, _CONTRACTIONS))
+    _POST_SPACE_SKIP: ClassVar[Set[str]] = frozenset("""`‘“[({<""")
+    _PRE_SPACE_SKIP: ClassVar[Set[str]] = frozenset(
+        "'s n't 'll 'm 've 'd 're".split())
+    _LONGEST_PRE_SPACE_SKIP: ClassVar[int] = max(map(len, _PRE_SPACE_SKIP))
 
     @abstractmethod
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
@@ -61,23 +62,23 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         tlen = len(toks)
         has_punc = tlen > 0 and hasattr(toks[0], 'is_punctuation')
         if has_punc:
-            space_skip = self._SPACE_SKIP
-            contracts = self._CONTRACTIONS
-            ncontract = self._LONGEST_CONTRACTION
+            post_space_skip = self._POST_SPACE_SKIP
+            pre_space_skip = self._PRE_SPACE_SKIP
+            n_pre_space_skip = self._LONGEST_PRE_SPACE_SKIP
             sio = StringIO()
             last_avoid = False
             for tix, tok in enumerate(toks):
                 norm = tok.norm
                 if tix > 0 and tix < tlen:
-                    do_space_skip = False
+                    do_post_space_skip = False
                     nlen = len(norm)
                     if nlen == 1:
-                        do_space_skip = norm in space_skip
-                    if (not tok.is_punctuation or do_space_skip) and \
+                        do_post_space_skip = norm in post_space_skip
+                    if (not tok.is_punctuation or do_post_space_skip) and \
                        not last_avoid and \
-                       not (nlen <= ncontract and norm in contracts):
+                       not (nlen <= n_pre_space_skip and norm in pre_space_skip):
                         sio.write(' ')
-                    last_avoid = do_space_skip or tok.norm == '--'
+                    last_avoid = do_post_space_skip or tok.norm == '--'
                 sio.write(norm)
             nsent = sio.getvalue()
         else:
