@@ -617,6 +617,10 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
     hasher: Hasher = field(default_factory=Hasher)
     """Used to hash the natural langauge text in to string keys."""
 
+    @property
+    def token_feature_ids(self) -> Set[str]:
+        return self.delegate.token_feature_ids
+
     def _hash_text(self, text: str) -> str:
         self.hasher.reset()
         self.hasher.update(text)

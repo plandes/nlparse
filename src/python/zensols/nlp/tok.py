@@ -190,7 +190,8 @@ class FeatureToken(PersistableContainer, TextContainer):
     def write_attributes(self, depth: int = 0, writer: TextIOBase = sys.stdout,
                          include_type: bool = True,
                          feature_ids: Iterable[str] = None,
-                         inline: bool = False):
+                         inline: bool = False,
+                         include_none: bool = True):
         """Write feature attributes.
 
         :param depth: the starting indentation depth
@@ -215,6 +216,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         for i, k in enumerate(sorted(dct.keys())):
             val: str = dct[k]
             ptype: str = None
+            if not include_none and self._is_none(val):
+                continue
             if include_type:
                 ptype = self.TYPES_BY_FEATURE_ID.get(k)
                 if ptype is not None:
