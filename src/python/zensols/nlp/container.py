@@ -249,14 +249,29 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = True, include_normalized: bool = True,
-              n_tokens: int = sys.maxsize):
+              n_tokens: int = sys.maxsize, inline: bool = False):
+        """Write the text container.
+
+        :param include_original: whether to include the original text
+
+        :param include_normalized: whether to include the normalized text
+
+        :param n_tokens: the number of tokens to write
+
+        :param inline: whether to print the tokens on one line each
+
+        """
         super().write(depth, writer,
                       include_original=include_original,
                       include_normalized=include_normalized)
         if n_tokens > 0:
             self._write_line('tokens:', depth + 1, writer)
             for t in it.islice(self.token_iter(), n_tokens):
-                t.write(depth + 2, writer)
+                if inline:
+                    t.write_attributes(depth + 2, writer,
+                                       inline=True, include_type=False)
+                else:
+                    t.write(depth + 2, writer)
 
     def __str__(self):
         return TextContainer.__str__(self)
@@ -840,19 +855,27 @@ class FeatureDocument(TokenContainer):
         return clone
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
-              n_sents: int = sys.maxsize, n_tokens: int = 0):
+              n_sents: int = sys.maxsize, n_tokens: int = 0,
+              include_original: bool = True,
+              include_normalized: bool = True):
         """Write the document and optionally sentence features.
 
         :param n_sents: the number of sentences to write
 
         :param n_tokens: the number of tokens to print across all sentences
 
+        :param include_original: whether to include the original text
+
+        :param include_normalized: whether to include the normalized text
+
         """
-        TextContainer.write(self, depth, writer)
+        TextContainer.write(self, depth, writer,
+                            include_original=include_original)
         self._write_line('sentences:', depth + 1, writer)
         s: FeatureSentence
         for s in it.islice(self.sents, n_sents):
-            s.write(depth + 2, writer, n_tokens=n_tokens)
+            s.write(depth + 2, writer, n_tokens=n_tokens,
+                    include_original=include_original)
 
     def _from_dictable(self, recurse: bool, readable: bool,
                        class_name_param: str = None) -> Dict[str, Any]:
