@@ -5,7 +5,7 @@ from __future__ import annotations
 __author__ = 'Paul Landes'
 
 from typing import (
-    Tuple, Union, Optional, Any, Set, Iterable, Dict, Sequence, ClassVar
+    Tuple, Union, Optional, Any, Set, Iterable, Dict, Sequence, ClassVar, Type
 )
 from dataclasses import dataclass, field
 from functools import reduce
@@ -94,20 +94,26 @@ class FeatureToken(PersistableContainer, TextContainer):
         self._detatched_feature_ids = None
 
     def detach(self, feature_ids: Set[str] = None,
-               skip_missing: bool = False) -> FeatureToken:
+               skip_missing: bool = False,
+               cls: Type[FeatureToken] = None) -> FeatureToken:
         """Create a detected token (i.e. from spaCy artifacts).
 
         :param feature_ids: the features to write, which defaults to
                           :obj:`FEATURE_IDS`
 
+        :param skip_missing: whether to only keep ``feature_ids``
+
+        :param cls: the type of the new instance
+
         """
+        cls = FeatureToken if cls is None else cls
         if feature_ids is None:
             feature_ids = set(self.FEATURE_IDS)
         else:
             feature_ids = set(feature_ids)
         feature_ids.update(self._REQUIRED_FEATURE_IDS)
         feats: Dict[str, Any] = self.get_features(feature_ids, skip_missing)
-        clone = FeatureToken.__new__(FeatureToken)
+        clone = FeatureToken.__new__(cls)
         clone.__dict__.update(feats)
         if hasattr(self, '_text'):
             clone.text = self._text
@@ -115,8 +121,10 @@ class FeatureToken(PersistableContainer, TextContainer):
             clone._detatched_feature_ids = feature_ids
         return clone
 
-    def clone(self) -> FeatureToken:
-        return self.detach(self._detatched_feature_ids)
+    def clone(self, cls: Type = None, **kwargs) -> FeatureToken:
+        clone = self.detach(self._detatched_feature_ids, cls=cls)
+        clone.__dict__.update(kwargs)
+        return clone
 
     @property
     def text(self) -> str:
@@ -163,6 +171,8 @@ class FeatureToken(PersistableContainer, TextContainer):
 
         :param feature_ids: the features to write, which defaults to
                           :obj:`FEATURE_IDS`
+
+        :param skip_missing: whether to only keep ``feature_ids``
 
         """
         feature_ids = self.FEATURE_IDS if feature_ids is None else feature_ids
