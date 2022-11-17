@@ -4,10 +4,11 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Union, Optional
+from typing import Tuple, Union, Optional, ClassVar, Set
 from abc import ABCMeta
 import sys
 from io import TextIOBase
+import textwrap as tw
 from spacy.tokens import Token
 from spacy.tokens import Span
 from spacy.tokens import Doc
@@ -38,8 +39,9 @@ class LexicalSpan(Dictable):
     positions.
 
     """
-    _DICTABLE_ATTRIBUTES = {'begin', 'end'}
-    EMPTY_SPAN: LexicalSpan
+    _DICTABLE_ATTRIBUTES: ClassVar[Set[str]] = {'begin', 'end'}
+
+    EMPTY_SPAN: ClassVar[LexicalSpan]
 
     def __init__(self, begin: int, end: int):
         """Initialize the interval.
@@ -174,6 +176,9 @@ class TextContainer(Dictable, metaclass=ABCMeta):
     subclasses need a ``norm`` attribute or property.
 
     """
+    _DEFAULT_TOSTR_LEN: ClassVar[str] = 80
+    """Default length of string when rendering :meth:`__str__`."""
+
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = True, include_normalized: bool = True):
         self._write_line(f'{self.__class__.__name__}:', depth, writer)
@@ -186,7 +191,7 @@ class TextContainer(Dictable, metaclass=ABCMeta):
                 self._write_line(f'normalized: {self.norm}', depth + 1, writer)
 
     def __str__(self):
-        return f'<{self.norm[:79]}>'
+        return f'<{tw.shorten(self.norm, width=self._DEFAULT_TOSTR_LEN-2)}>'
 
     def __repr__(self):
         return self.__str__()
