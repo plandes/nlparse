@@ -122,6 +122,15 @@ class FeatureToken(PersistableContainer, TextContainer):
         return clone
 
     def clone(self, cls: Type = None, **kwargs) -> FeatureToken:
+        """Clone an instance of this token.
+
+        :param cls: the type of the new instance
+
+        :param kwargs: arguments to add to as attributes to the clone
+
+        :return: the cloned instance of this instance
+
+        """
         clone = self.detach(self._detatched_feature_ids, cls=cls)
         clone.__dict__.update(kwargs)
         return clone
