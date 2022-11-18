@@ -118,8 +118,10 @@ the United States of America."""
         text = "I'm Paul Landes and I live in the United States. I'm done."
         self._test_sent_parsing(text, 'doc_parser', 2, False)
         text = "I'm Paul Landes and I live in the United States.  I'm done."
+        parser = self.fac('doc_parser')
+        parser.write()
         self._test_sent_parsing(text, 'doc_parser', 2, True)
-        self._test_sent_parsing(text, 'doc_parser_no_remove_sents', 2, True)
+        #self._test_sent_parsing(text, 'doc_parser_no_remove_sents', 2, True)
 
     def test_feature_subset(self):
         parser = self.fac('doc_parser_default')
