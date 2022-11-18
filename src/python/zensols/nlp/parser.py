@@ -12,6 +12,7 @@ from abc import abstractmethod, ABCMeta, ABC
 import logging
 import itertools as it
 import sys
+import re
 from io import TextIOBase
 import spacy
 from spacy.symbols import ORTH
@@ -648,3 +649,25 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
         """Clear the caching stash."""
         if self.stash is not None:
             self.stash.clear()
+
+
+@dataclass
+class WhiteSpaceTokenizerFeatureDocumentParser(SpacyFeatureDocumentParser):
+    """This class parses text in to instances of :class:`.FeatureDocument`
+    instances using :meth:`parse`.  This parser does no sentence chunking so
+    documents have one and only one sentence for each parse.
+
+    """
+    _TOK_REGEX: ClassVar[re.Pattern] = re.compile(r'\S+')
+    """The whitespace regular expression for splitting tokens."""
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        toks: List[FeatureToken] = []
+        m: re.Match
+        for i, m in zip(it.count(), re.finditer(self._TOK_REGEX, text)):
+            tok = FeatureToken(i, m.start(), 0, m.group(0))
+            tok.default_detached_feature_ids = \
+                FeatureToken.REQUIRED_FEATURE_IDS
+            toks.append(tok)
+        sent = self.sent_class(tokens=tuple(toks), text=text)
+        return self.doc_class(sents=(sent,), text=text, *args, **kwargs)
