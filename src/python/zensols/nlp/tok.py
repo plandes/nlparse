@@ -34,7 +34,7 @@ class FeatureToken(PersistableContainer, TextContainer):
     _DICTABLE_WRITABLE_DESCENDANTS = True
     """Use write method."""
 
-    _REQUIRED_FEATURE_IDS: ClassVar[Set[str]] = frozenset(
+    REQUIRED_FEATURE_IDS: ClassVar[Set[str]] = frozenset(
         'i idx i_sent norm'.split())
     """Features retained regardless of configuration for basic functionality.
 
@@ -111,7 +111,7 @@ class FeatureToken(PersistableContainer, TextContainer):
             feature_ids = set(self.FEATURE_IDS)
         else:
             feature_ids = set(feature_ids)
-        feature_ids.update(self._REQUIRED_FEATURE_IDS)
+        feature_ids.update(self.REQUIRED_FEATURE_IDS)
         feats: Dict[str, Any] = self.get_features(feature_ids, skip_missing)
         clone = FeatureToken.__new__(cls)
         clone.__dict__.update(feats)
@@ -120,6 +120,22 @@ class FeatureToken(PersistableContainer, TextContainer):
         if feature_ids is not None:
             clone._detatched_feature_ids = feature_ids
         return clone
+
+    @property
+    def default_detached_feature_ids(self) -> Optional[Set[str]]:
+        """The default set of feature IDs used when cloning or detaching
+        with :meth:`clone` or :meth:`detatch`.
+
+        """
+        return self._detatched_feature_ids
+
+    @default_detached_feature_ids.setter
+    def default_detached_feature_ids(self, feature_ids: Set[str]):
+        """The default set of feature IDs used when cloning or detaching
+        with :meth:`clone` or :meth:`detatch`.
+
+        """
+        self._detatched_feature_ids = feature_ids
 
     def clone(self, cls: Type = None, **kwargs) -> FeatureToken:
         """Clone an instance of this token.
