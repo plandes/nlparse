@@ -192,7 +192,7 @@ class FeatureToken(PersistableContainer, TextContainer):
 
     def get_features(self, feature_ids: Iterable[str] = None,
                      skip_missing: bool = False) -> Dict[str, Any]:
-        """Get both as a `:class:`dict`.
+        """Get features as a :class:`dict`.
 
         :param feature_ids: the features to write, which defaults to
                           :obj:`FEATURE_IDS`
