@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class TokenNormalizer(object):
-    """Base token extractor returns tuples of tokens and their normalized version.
+    """Base token extractor returns tuples of tokens and their normalized
+    version.
 
     Configuration example::
 
@@ -244,7 +245,7 @@ class SplitEntityTokenMapper(TokenMapper):
     token_unit_type: bool = field(default=False)
     """Whether to generate tokens for each split span or a one token span."""
 
-    copy_attributes: Tuple[str] = field(default=('label', 'label_'))
+    copy_attributes: Tuple[str, ...] = field(default=('label', 'label_'))
 
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:

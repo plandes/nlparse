@@ -33,7 +33,7 @@ class SplitTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
         split_toks: List[FeatureToken] = []
         tok: FeatureToken
         for ftok in feature_sent.token_iter():
-            tnorms: Tuple[str] = tuple(re.finditer(r'\S+', ftok.norm))
+            tnorms: Tuple[str, ...] = tuple(re.finditer(r'\S+', ftok.norm))
             if len(tnorms) == 1:
                 split_toks.append(ftok)
             else:

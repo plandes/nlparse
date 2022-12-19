@@ -30,16 +30,18 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     """The parser in to which data and features are merged."""
 
     source_parsers: List[FeatureDocumentParser] = field(default=None)
-    """The language resource used to parse documents and create token attributes.
+    """The language resource used to parse documents and create token
+    attributes.
 
     """
     validate_features: Set[str] = field(default_factory=set)
-    """A set of features to compare across all tokens when copying.  If any of the
-    given features don't match, an mismatch token error is raised.
+    """A set of features to compare across all tokens when copying.  If any of
+    the given features don't match, an mismatch token error is raised.
 
     """
     yield_features: List[str] = field(default_factory=list)
-    """A list of features to be copied (in order) if the target token is not set.
+    """A list of features to be copied (in order) if the target token is not
+    set.
 
     """
     overwrite_features: List[str] = field(default_factory=list)
@@ -151,14 +153,14 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
 
     """
     validate_features: Set[str] = field(default=frozenset({'norm'}))
-    """A set of features to compare across all tokens when copying.  If any of the
-    given features don't match, an mismatch token error is raised.
+    """A set of features to compare across all tokens when copying.  If any of
+    the given features don't match, an mismatch token error is raised.
 
     """
 
     clone_and_norm_source_token: bool = field(default=True)
-    """If ``True``, clone the source token and clobber the ``norm`` field with the
-    text of the spaCy token.
+    """If ``True``, clone the source token and clobber the ``norm`` field with
+    the text of the spaCy token.
 
     """
     merge_sentences: bool = field(default=True)

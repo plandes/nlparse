@@ -76,7 +76,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                         do_post_space_skip = norm in post_space_skip
                     if (not tok.is_punctuation or do_post_space_skip) and \
                        not last_avoid and \
-                       not (nlen <= n_pre_space_skip and norm in pre_space_skip):
+                       not (nlen <= n_pre_space_skip and
+                            norm in pre_space_skip):
                         sio.write(' ')
                     last_avoid = do_post_space_skip or tok.norm == '--'
                 sio.write(norm)
@@ -87,7 +88,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     @property
     @persisted('_tokens', transient=True)
-    def tokens(self) -> Tuple[FeatureToken]:
+    def tokens(self) -> Tuple[FeatureToken, ...]:
         """Return the token features as a tuple.
 
         """
@@ -105,7 +106,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """The document indexed lexical span using :obj:`idx`.
 
         """
-        toks: Tuple[FeatureToken] = self.tokens
+        toks: Tuple[FeatureToken, ...] = self.tokens
         if len(toks) == 0:
             return LexicalSpan.EMPTY_SPAN
         else:
@@ -122,7 +123,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         return il
 
     def map_overlapping_tokens(self, spans: Iterable[LexicalSpan]) -> \
-            Iterable[Tuple[FeatureToken]]:
+            Iterable[Tuple[FeatureToken, ...]]:
         """Return a tuple of tokens, each tuple in the range given by the
         respective span in ``spans``.
 
@@ -182,20 +183,22 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     @property
     @persisted('_entities', transient=True)
-    def entities(self) -> Tuple[FeatureSpan]:
-        """The named entities of the container with each multi-word entity as elements.
+    def entities(self) -> Tuple[FeatureSpan, ...]:
+        """The named entities of the container with each multi-word entity as
+        elements.
 
         """
         return self._get_entities()
 
     @abstractmethod
-    def _get_entities(self) -> Tuple[FeatureSpan]:
+    def _get_entities(self) -> Tuple[FeatureSpan, ...]:
         pass
 
     @property
     @persisted('_tokens_by_idx', transient=True)
     def tokens_by_idx(self) -> Dict[int, FeatureToken]:
-        """A map of tokens with keys as their character offset and values as tokens.
+        """A map of tokens with keys as their character offset and values as
+        tokens.
 
         **Limitations**: Multi-word entities will have have a mapping only for
         the first word of that entity if tokens were split by spaces (for
@@ -219,9 +222,9 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     @property
     @persisted('_tokens_by_i', transient=True)
     def tokens_by_i(self) -> Dict[int, FeatureToken]:
-        """A map of tokens with keys as their position offset and values as tokens.
-        The entries also include named entity tokens that are grouped as
-        multi-word tokens.  This is helpful for multi-word entities that were
+        """A map of tokens with keys as their position offset and values as
+        tokens.  The entries also include named entity tokens that are grouped
+        as multi-word tokens.  This is helpful for multi-word entities that were
         split (for example with :class:`~zensols.nlp.SplitTokenMapper`), and
         thus, have many-to-one mapped indexes.
 
@@ -289,7 +292,7 @@ class FeatureSpan(TokenContainer):
     _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_span'}
     """Don't serialize the spacy document on persistance pickling."""
 
-    tokens: Tuple[FeatureToken] = field()
+    tokens: Tuple[FeatureToken, ...] = field()
     """The tokens that make up the span."""
 
     text: str = field(default=None)
@@ -310,11 +313,11 @@ class FeatureSpan(TokenContainer):
         self._set_entity_spans()
 
     @property
-    def _tokens(self) -> Tuple[FeatureToken]:
+    def _tokens(self) -> Tuple[FeatureToken, ...]:
         return self._tokens_val
 
     @_tokens.setter
-    def _tokens(self, tokens: Tuple[FeatureToken]):
+    def _tokens(self, tokens: Tuple[FeatureToken, ...]):
         if not isinstance(tokens, tuple):
             raise NLPError(
                 f'Expecting tuple of tokens, but got {type(tokens)}')
@@ -378,8 +381,8 @@ class FeatureSpan(TokenContainer):
     @property
     @persisted('_tokens_by_i_sent', transient=True)
     def tokens_by_i_sent(self) -> Dict[int, FeatureToken]:
-        """A map of tokens with keys as their sentanal position offset and values as
-        tokens.
+        """A map of tokens with keys as their sentanal position offset and
+        values as tokens.
 
         :see: :obj:`zensols.nlp.FeatureToken.i`
 
@@ -411,7 +414,7 @@ class FeatureSpan(TokenContainer):
         assert cnt == self.token_len
         # add indexes for multi-word entities that otherwise have mappings for
         # only the first word of the entity
-        ent_span: Tuple[FeatureToken]
+        ent_span: Tuple[FeatureToken, ...]
         for ent_span in self.entities:
             im: int = 0 if ent_span._is_mwe() else 1
             t: FeatureToken
@@ -419,7 +422,7 @@ class FeatureSpan(TokenContainer):
                 by_i[t.i + (im * i)] = t
         return by_i
 
-    def _get_entities(self) -> Tuple[FeatureSpan]:
+    def _get_entities(self) -> Tuple[FeatureSpan, ...]:
         ents: List[FeatureSpan] = []
         for start, end in self._ents:
             ent: List[FeatureToken] = []
@@ -441,7 +444,7 @@ class FeatureSpan(TokenContainer):
         for i_sent, ft in self.tokens_by_i_sent.items():
             ft.i_sent = i_sent
 
-    def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken],
+    def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken, ...],
                 tid_to_idx: Dict[int, int]) -> \
             Dict[FeatureToken, List[FeatureToken]]:
         clds = {}
@@ -504,8 +507,8 @@ class FeatureSentence(FeatureSpan):
 
 @dataclass(eq=True, repr=False)
 class FeatureDocument(TokenContainer):
-    """A container class of tokens that make a document.  This class contains a one
-    to many of sentences.  However, it can be treated like any
+    """A container class of tokens that make a document.  This class contains a
+    one to many of sentences.  However, it can be treated like any
     :class:`.TokenContainer` to fetch tokens.  Instances of this class iterate
     over :class:`.FeatureSentence` instances.
 
@@ -518,7 +521,7 @@ class FeatureDocument(TokenContainer):
     _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_doc'}
     """Don't serialize the spacy document on persistance pickling."""
 
-    sents: Tuple[FeatureSentence] = field()
+    sents: Tuple[FeatureSentence, ...] = field()
     """The sentences that make up the document."""
 
     text: str = field(default=None)
@@ -600,7 +603,8 @@ class FeatureDocument(TokenContainer):
         return cls
 
     def to_sentence(self, *args, **kwargs) -> FeatureSentence:
-        sents: Tuple[FeatureSentence] = tuple(self.sent_iter(*args, **kwargs))
+        sents: Tuple[FeatureSentence, ...] = \
+            tuple(self.sent_iter(*args, **kwargs))
         toks: Iterable[FeatureToken] = chain.from_iterable(
             map(lambda s: s.tokens, sents))
         cls: Type = self._sent_class()
@@ -653,8 +657,8 @@ class FeatureDocument(TokenContainer):
         six: int = self.sentence_index_for_token(token)
         return self.sents[six]
 
-    def sentences_for_tokens(self, tokens: Tuple[FeatureToken]) -> \
-            Tuple[FeatureSentence]:
+    def sentences_for_tokens(self, tokens: Tuple[FeatureToken, ...]) -> \
+            Tuple[FeatureSentence, ...]:
         """Find sentences having a set of tokens.
 
         :param tokens: the query used to finding containing sentences
@@ -666,7 +670,7 @@ class FeatureDocument(TokenContainer):
         sent_ids = sorted(set(map(lambda t: id_to_sent[t.idx], tokens)))
         return tuple(map(lambda six: self[six], sent_ids))
 
-    def _combine_documents(self, docs: Tuple[FeatureDocument],
+    def _combine_documents(self, docs: Tuple[FeatureDocument, ...],
                            cls: Type[FeatureDocument],
                            concat_tokens: bool,
                            **kwargs) -> FeatureDocument:
@@ -702,8 +706,8 @@ class FeatureDocument(TokenContainer):
     def combine_documents(cls, docs: Iterable[FeatureDocument],
                           concat_tokens: bool = True,
                           **kwargs) -> FeatureDocument:
-        """Coerce a tuple of token containers (either documents or sentences) in to one
-        synthesized document.
+        """Coerce a tuple of token containers (either documents or sentences) in
+        to one synthesized document.
 
         :param docs: the documents to combine in to one
 
@@ -778,7 +782,7 @@ class FeatureDocument(TokenContainer):
         else:
             return self
 
-    def _get_entities(self) -> Tuple[FeatureSpan]:
+    def _get_entities(self) -> Tuple[FeatureSpan, ...]:
         return tuple(chain.from_iterable(
             map(lambda s: s.entities, self.sents)))
 
@@ -790,10 +794,10 @@ class FeatureDocument(TokenContainer):
                 yield sent
 
     def get_overlapping_document(self, span: LexicalSpan) -> FeatureDocument:
-        """Get the portion of the document that overlaps ``span``.  For sentences that
-        are completely enclosed in the span, the sentences are copied.
-        Otherwise, new sentences are created from those tokens that overlap the
-        span.
+        """Get the portion of the document that overlaps ``span``.  For
+        sentences that are completely enclosed in the span, the sentences are
+        copied.  Otherwise, new sentences are created from those tokens that
+        overlap the span.
 
         :param span: indicates the portion of the document to retain
 
@@ -897,7 +901,7 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
     """A feature sentence that contains token annotations.
 
     """
-    annotations: Tuple[Any] = field(default=())
+    annotations: Tuple[Any, ...] = field(default=())
     """A token level annotation, which is one-to-one to tokens."""
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
@@ -918,8 +922,8 @@ class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
     """
     @persisted('_combine_sentences', transient=True)
     def combine_sentences(self) -> FeatureDocument:
-        """Combine all the sentences in this document in to a new document with a
-        single sentence.
+        """Combine all the sentences in this document in to a new document with
+        a single sentence.
 
         """
         if len(self.sents) == 1:
@@ -934,7 +938,7 @@ class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
             doc._combined = True
             return doc
 
-    def _combine_documents(self, docs: Tuple[FeatureDocument],
+    def _combine_documents(self, docs: Tuple[FeatureDocument, ...],
                            cls: Type[FeatureDocument],
                            concat_tokens: bool) -> FeatureDocument:
         if concat_tokens:

@@ -61,7 +61,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         reduce(lambda res, x: res | x, FEATURE_IDS_BY_TYPE.values()))
     """All default available feature IDs."""
 
-    WRITABLE_FEATURE_IDS: ClassVar[Tuple[str]] = tuple(
+    WRITABLE_FEATURE_IDS: ClassVar[Tuple[str, ...]] = tuple(
         ('text norm idx sent_i i i_sent tag pos ' +
          'is_wh entity dep children').split())
     """Feature IDs that are dumped on :meth:`write` and :meth:`write_attributes`.

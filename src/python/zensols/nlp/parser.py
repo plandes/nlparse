@@ -126,7 +126,7 @@ class Component(object):
     loaded.
 
     """
-    initializers: Tuple[ComponentInitializer] = field(default=())
+    initializers: Tuple[ComponentInitializer, ...] = field(default=())
     """Instances to initialize upon this object's initialization."""
 
     def __post_init__(self):
@@ -437,7 +437,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             logger.debug(f'normalizing features in {doc_text}')
             logger.debug(f'args: <{args}>')
             logger.debug(f'kwargs: <{kwargs}>')
-        tokens: Tuple[FeatureToken] = \
+        tokens: Tuple[FeatureToken, ...] = \
             map(lambda tup: self._create_token(*tup, *args, **kwargs),
                 self.token_normalizer.normalize(doc))
         return tokens
@@ -482,7 +482,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     def _create_sents(self, doc: Doc) -> List[FeatureSentence]:
         """Create sentences from a spaCy doc."""
-        toks: Tuple[FeatureToken] = tuple(self._normalize_tokens(doc))
+        toks: Tuple[FeatureToken, ...] = tuple(self._normalize_tokens(doc))
         sents: List[FeatureSentence] = []
         ntoks = len(toks)
         tix = 0

@@ -20,7 +20,7 @@ class FeatureDataFrameFactory(object):
     token_feature_ids: Set[str] = field(default=FeatureToken.FEATURE_IDS)
     """The feature IDs to add to the :class:`pandas.DataFrame`."""
 
-    priority_feature_ids: Tuple[str] = field(
+    priority_feature_ids: Tuple[str, ...] = field(
         default=FeatureToken.WRITABLE_FEATURE_IDS)
     """Feature IDs that are used first in the column order in the output
     :class:`pandas.DataFrame`.

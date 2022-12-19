@@ -45,7 +45,7 @@ class Serialized(Dictable, metaclass=ABCMeta):
     includes: Set[Include] = field()
     """The things to be included at the level of the subclass serializer."""
 
-    feature_ids: Tuple[str] = field()
+    feature_ids: Tuple[str, ...] = field()
     """The feature IDs used when serializing tokens."""
 
     @abstractmethod
@@ -131,7 +131,7 @@ class SerializedTokenContainerFactory(Dictable):
     document_includes: Set[Union[Include, str]] = field()
     """The things to be included in documents."""
 
-    feature_ids: Tuple[str] = field(default=None)
+    feature_ids: Tuple[str, ...] = field(default=None)
     """The feature IDs used when serializing tokens."""
 
     def __post_init__(self):
