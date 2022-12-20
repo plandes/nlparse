@@ -149,10 +149,18 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         return next(iter(self.map_overlapping_tokens((span,))))
 
     @abstractmethod
-    def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
-        """Coerce this instance to a single sentence.
+    def to_sentence(self, limit: int = sys.maxsize,
+                    contiguous_i_sent: bool = False) -> FeatureSentence:
+        """Coerce this instance to a single sentence.  No tokens data is updated
+        so :obj:`.FeatureToken.i_sent` keep their original indexes.  These
+        sentence indexes will be inconsistent when called on
+        :class:`.FeatureDocument` unless contiguous_i_sent is set to ``True``.
 
         :param limit: the max number of sentences to create (only starting kept)
+
+        :param contiguous_i_sent: ensures all tokens have
+                                  :obj:`.FeatureToken.i_sent` value that is
+                                  contiguous for the returned instance
 
         :return: an instance of ``FeatureSentence`` that represents this token
                  sequence
@@ -339,7 +347,8 @@ class FeatureSpan(TokenContainer):
                 if start is not None:
                     self._ents.append((start.idx, end.idx))
 
-    def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
+    def to_sentence(self, limit: int = sys.maxsize,
+                    contiguous_i_sent: bool = False) -> FeatureSentence:
         if limit == 0:
             return iter(())
         else:
@@ -602,13 +611,18 @@ class FeatureDocument(TokenContainer):
             cls = FeatureSentence
         return cls
 
-    def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
+    def to_sentence(self, limit: int = sys.maxsize,
+                    contiguous_i_sent: bool = False) -> FeatureSentence:
         sents: Tuple[FeatureSentence, ...] = tuple(self.sent_iter(limit))
         toks: Iterable[FeatureToken] = chain.from_iterable(
             map(lambda s: s.tokens, sents))
         cls: Type = self._sent_class()
         sent: FeatureSentence = cls(tokens=tuple(toks), text=self.text)
         sent._ents = list(chain.from_iterable(map(lambda s: s._ents, sents)))
+        if contiguous_i_sent:
+            st: FeatureToken
+            for st, tok in zip(self.token_iter(), sent.token_iter()):
+                tok.i_sent = st.i
         return sent
 
     def _combine_update(self, other: FeatureDocument):
@@ -757,10 +771,14 @@ class FeatureDocument(TokenContainer):
             return self.__class__(tuple(sents))
 
     def _reconstruct_sents_iter(self) -> Iterable[FeatureSentence]:
+        sent: FeatureSentence
         for sent in self.sents:
-            stoks = []
-            ip_sent = -1
+            stoks: List[FeatureToken] = []
+            ip_sent: int = -1
+            tok: FeatureToken
             for tok in sent:
+                # when the token's sentence index goes back to 0, we have a full
+                # sentence
                 if tok.i_sent < ip_sent:
                     sent = FeatureSentence(tuple(stoks))
                     stoks = []

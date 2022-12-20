@@ -78,6 +78,48 @@ the United States of America."""
                   'VBZ', 'NNP', '.')
         self.assertEqual(should, tuple(map(lambda t: t.tag_, doc.tokens)))
 
+    def test_sentence_reindex(self):
+        #       0    1   2   3   4   6         8   9 (no pronouns)
+        #       0    1   2   3     5 6      7  8     (no punctuation)
+        #       0    1   2   3   4 5 6      7  8   9 (all tokens)
+        text = 'John hit the ball. He moved it fast.'
+        mapper = self.fac('sent_idx_token_mapper')
+        dp = self.fac('sent_idx_doc_parser')
+
+        mapper.remove_pronouns = False
+        mapper.remove_punctuation = False
+        doc = dp(text)
+        doc_should = (0, 1, 2, 3, 4, 0, 1, 2, 3, 4)
+        self.assertEqual(doc_should,
+                         tuple(map(lambda t: t.i_sent, doc.token_iter())))
+        sent = doc.to_sentence()
+        self.assertEqual(doc_should,
+                         tuple(map(lambda t: t.i_sent, sent.token_iter())))
+        sent = doc.to_sentence(contiguous_i_sent=True)
+        self.assertEqual((0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+                         tuple(map(lambda t: t.i_sent, sent.token_iter())))
+
+        mapper.remove_pronouns = True
+        mapper.remove_punctuation = False
+        doc = dp(text)
+        doc_should = (0, 1, 2, 3, 4, 1, 3, 4)
+        self.assertEqual(doc_should,
+                         tuple(map(lambda t: t.i_sent, doc.token_iter())))
+        sent = doc.to_sentence()
+        self.assertEqual(doc_should,
+                         tuple(map(lambda t: t.i_sent, sent.token_iter())))
+
+        sent = doc.to_sentence(contiguous_i_sent=True)
+        self.assertEqual((0, 1, 2, 3, 4, 6, 8, 9),
+                         tuple(map(lambda t: t.i_sent, sent.token_iter())))
+
+        mapper.remove_pronouns = False
+        mapper.remove_punctuation = True
+        doc = dp(text)
+        sent = doc.to_sentence(contiguous_i_sent=True)
+        self.assertEqual((0, 1, 2, 3, 5, 6, 7, 8),
+                         tuple(map(lambda t: t.i_sent, sent.token_iter())))
+
     def test_token_iteration(self):
         parser = self.fac('doc_parser')
         doc = parser.parse(self.sent_text2)
