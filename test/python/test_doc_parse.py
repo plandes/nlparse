@@ -54,14 +54,14 @@ the United States of America."""
         self.assertEqual(FeatureSentence, type(sent))
         self.assertEqual(should, tuple(sent.norm_token_iter()))
 
-        sent = doc.to_sentence(1)
+        sent = doc.to_sentence(limit=1)
         self.assertEqual(should_s1, tuple(sent.norm_token_iter()))
 
-        sent = doc.to_sentence(9999)
+        sent = doc.to_sentence(limit=9999)
         self.assertEqual(should, tuple(sent.norm_token_iter()))
 
-        sent = doc.to_sentence(1, 2)
-        self.assertEqual(should_s2, tuple(sent.norm_token_iter()))
+        # sent = doc.to_sentence(1, 2)
+        # self.assertEqual(should_s2, tuple(sent.norm_token_iter()))
 
         for i in range(len(should_s1)):
             self.assertEqual(should_s1[:i], tuple(doc.sents[0].norm_token_iter(i)))

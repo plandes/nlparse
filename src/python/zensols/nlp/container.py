@@ -152,7 +152,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
         """Coerce this instance to a single sentence.
 
-        :param limit: the limit in the number of chunks to return
+        :param limit: the max number of sentences to create (only starting kept)
 
         :return: an instance of ``FeatureSentence`` that represents this token
                  sequence
@@ -602,9 +602,8 @@ class FeatureDocument(TokenContainer):
             cls = FeatureSentence
         return cls
 
-    def to_sentence(self, *args, **kwargs) -> FeatureSentence:
-        sents: Tuple[FeatureSentence, ...] = \
-            tuple(self.sent_iter(*args, **kwargs))
+    def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
+        sents: Tuple[FeatureSentence, ...] = tuple(self.sent_iter(limit))
         toks: Iterable[FeatureToken] = chain.from_iterable(
             map(lambda s: s.tokens, sents))
         cls: Type = self._sent_class()
