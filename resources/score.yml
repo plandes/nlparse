@@ -1,0 +1,33 @@
+# description: scorer configuration
+
+
+## Scorer
+#
+nlp_bleu_score_method:
+  class_name: zensols.nlp.score.BleuScoreMethod
+
+nlp_rouge_score_method:
+  class_name: zensols.nlp.score.RougeScoreMethod
+
+nlp_sent_scorer_methods:
+  bleu: >-
+    'bleu': 'nlp_bleu_score_method',
+  rouge: >-
+    'rouge1': 'nlp_rouge_score_method',
+    'rouge2': 'nlp_rouge_score_method',
+    'rouge3': 'nlp_rouge_score_method',
+    'rouge4': 'nlp_rouge_score_method',
+    'rouge5': 'nlp_rouge_score_method',
+    'rouge6': 'nlp_rouge_score_method',
+    'rouge7': 'nlp_rouge_score_method',
+    'rouge8': 'nlp_rouge_score_method',
+    'rouge9': 'nlp_rouge_score_method',
+    'rougeL': 'nlp_rouge_score_method',
+
+nlp_sent_scorer:
+  class_name: zensols.nlp.score.Scorer
+  methods: >-
+    instance: dict: {
+      ${nlp_sent_scorer_methods:bleu}
+      ${nlp_sent_scorer_methods:rouge}
+      }
