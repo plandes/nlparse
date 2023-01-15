@@ -2,7 +2,6 @@ spacy~=3.2.0
 msgpack>=1.0.0
 msgpack-numpy>=0.4.7.1
 smart-open>=4.0.1
-nltk>=3.5
-python-Levenshtein
+nltk~=3.7
 zensols.util~=1.11.1
 interlap~=0.2.7
