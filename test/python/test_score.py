@@ -8,7 +8,7 @@ class TestScore(unittest.TestCase):
         config = ImportIniConfig('test-resources/score.conf')
         self.fac = ImportConfigFactory(config)
         self.doc_parser = self.fac('doc_parser')
-        self.scorer = self.fac('nlp_sent_scorer')
+        self.scorer = self.fac('nlp_scorer')
 
     def test_score(self):
         s1 = self.doc_parser('Dan threw the ball.')
@@ -25,14 +25,14 @@ class TestScore(unittest.TestCase):
         self.assertTrue(isinstance(r1, dict))
         self.assertEqual(len(meths), len(r1))
         bleu = r1['bleu']
-        self.assertEqual(0.51, round(bleu, 2))
+        self.assertEqual(0.51, round(bleu.value, 2))
         if rouge_avail:
             self.assertEqual(0.73, round(r1['rouge1'].f_score, 2))
 
-        self.assertEqual(0.47, round(res[1]['bleu'], 2))
+        self.assertEqual(0.47, round(res[1]['bleu'].value, 2))
         if rouge_avail:
             self.assertEqual(0.8, round(res[1]['rouge1'].f_score, 2))
 
-        self.assertEqual(0.48, round(res[2]['bleu'], 2))
+        self.assertEqual(0.48, round(res[2]['bleu'].value, 2))
         if rouge_avail:
             self.assertEqual(0.8, round(res[1]['rouge1'].f_score, 2))

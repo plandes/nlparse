@@ -9,7 +9,7 @@ nlp_bleu_score_method:
 nlp_rouge_score_method:
   class_name: zensols.nlp.score.RougeScoreMethod
 
-nlp_sent_scorer_methods:
+nlp_scorer_methods:
   bleu: >-
     'bleu': 'nlp_bleu_score_method',
   rouge: >-
@@ -24,10 +24,10 @@ nlp_sent_scorer_methods:
     'rouge9': 'nlp_rouge_score_method',
     'rougeL': 'nlp_rouge_score_method',
 
-nlp_sent_scorer:
+nlp_scorer:
   class_name: zensols.nlp.score.Scorer
   methods: >-
     instance: dict: {
-      ${nlp_sent_scorer_methods:bleu}
-      ${nlp_sent_scorer_methods:rouge}
+      ${nlp_scorer_methods:bleu}
+      ${nlp_scorer_methods:rouge}
       }

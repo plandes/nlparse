@@ -3,18 +3,43 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Set, Dict, Any, Iterable, List
+from typing import Tuple, Set, Dict, Iterable, List
 from dataclasses import dataclass, field
-from abc import ABC, abstractmethod
+from abc import ABCMeta, ABC, abstractmethod
 import sys
 from io import TextIOBase
+import numpy as np
 from zensols.config import Dictable
-from . import NLPError, FeatureSentence
+from . import NLPError, TokenContainer
 
 
 @dataclass
-class Score(Dictable):
+class Score(Dictable, metaclass=ABCMeta):
     """Individual scores returned from :class:`.ScoreMethod'.
+
+    """
+    def asrow(self, meth: str) -> Dict[str, float]:
+        return {f'{meth}_{x[0]}': x[1] for x in self.asdict().items()}
+
+
+@dataclass
+class FloatScore(Score):
+    """Float container.  This is needed to create the flat result container
+    structure.  Object creation becomes less import since most clients will use
+    :meth:`.ScoreSet.asnumpy`.
+
+    """
+    value: float = field()
+    """The value of score."""
+
+    def asrow(self, meth: str) -> Dict[str, float]:
+        return {meth: self.value}
+
+
+@dataclass
+class HarmonicMeanScore(Score):
+    """A score having a precision, recall and the harmonic mean of the two,
+    F-score.'
 
     """
     precision: float = field()
@@ -27,7 +52,7 @@ class ScoreSet(Dictable):
     """All scores returned from :class:`.Scorer'.
 
     """
-    scores: Tuple[Dict[str, Tuple[Any]]] = field()
+    scores: Tuple[Dict[str, Tuple[Score]]] = field()
     """A tuple with each element having the results of the respective sentence
     pair in :obj:`.ScoreContext.sents`.  Each elemnt is a dictionary with the
     method are the keys with results as the values as output of the
@@ -37,11 +62,45 @@ class ScoreSet(Dictable):
     def __len__(self) -> int:
         return len(self.scores)
 
-    def __iter__(self) -> Iterable[Dict[str, Tuple[Any]]]:
+    def __iter__(self) -> Iterable[Dict[str, Tuple[Score]]]:
         return iter(self.scores)
 
-    def __getitem__(self, i: int) -> Dict[str, Tuple[Any]]:
+    def __getitem__(self, i: int) -> Dict[str, Tuple[Score]]:
         return self.scores[i]
+
+    def as_numpy(self) -> Tuple[List[str], np.ndarray]:
+        """Return the Numpy array with column descriptors of the scores.  Spacy
+        depends on Numpy, so this package will always be availale.
+
+        """
+        cols: Set[str] = set()
+        score: Dict[str, Score]
+        rows: List[Dict[str, float]] = []
+        for score in self.scores:
+            row: Dict[str, float] = {}
+            rows.append(row)
+            meth: str
+            result: Score
+            for meth, result in score.items():
+                rdat: Dict[str, float] = result.asrow(meth)
+                row.update(rdat)
+                cols.update(rdat.keys())
+        cols: List[str] = sorted(cols)
+        nd_rows: List[np.ndarray] = []
+        for row in rows:
+            nd_rows.append(np.array(tuple(map(row.get, cols))))
+        arr = np.stack(nd_rows)
+        return cols, arr
+
+    def as_dataframe(self) -> 'pandas.DataFrame':
+        """This gets data from :meth:`as_numpy` and returns it as a Pandas dataframe.
+
+        :return: an instance of :class:`pandas.DataFrame` of the scores
+
+        """
+        import pandas as pd
+        cols, arr = self.as_numpy()
+        return pd.DataFrame(arr, columns=cols)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         self._write_line('scores:', depth, writer)
@@ -53,9 +112,9 @@ class ScoreContext(Dictable):
     """Input needed to create score(s) using :class:`.Scorer'.
 
     """
-    pairs: Tuple[Tuple[FeatureSentence, FeatureSentence]] = field()
-    """Sentence pairs to score (order matters for some scoring methods such as
-    rouge).
+    pairs: Tuple[Tuple[TokenContainer, TokenContainer]] = field()
+    """Sentence, span or document pairs to score (order matters for some scoring
+    methods such as rouge).
 
     """
     methods: Set[str] = field(default=None)
@@ -73,7 +132,7 @@ class ScoreMethod(ABC):
 
     """
     @abstractmethod
-    def score(self, meth: str, context: ScoreContext) -> Any:
+    def score(self, meth: str, context: ScoreContext) -> Score:
         """Score the sentences in ``context`` using method identifer ``meth``.
 
         :param meth: the identifer such as ``bleu``
@@ -88,8 +147,8 @@ class ScoreMethod(ABC):
 
     def _tokenize(self, context: ScoreContext) -> \
             Iterable[Tuple[Tuple[str], Tuple[str]]]:
-        s1: FeatureSentence
-        s2: FeatureSentence
+        s1: TokenContainer
+        s2: TokenContainer
         for s1, s2 in context.pairs:
             s1t: Tuple[str]
             s2t: Tuple[str]
@@ -110,7 +169,7 @@ class BleuScoreMethod(ScoreMethod):
     def score(self, meth: str, context: ScoreContext) -> Iterable[float]:
         import nltk.translate.bleu_score as bleu
         for s1t, s2t in self._tokenize(context):
-            yield bleu.sentence_bleu([s1t], s2t)
+            yield FloatScore(bleu.sentence_bleu([s1t], s2t))
 
 
 @dataclass
@@ -119,7 +178,7 @@ class RougeScoreMethod(ScoreMethod):
 
     """
     feature_tokenizer: bool = field(default=True)
-    """Whether to use the :class:`.FeatureSentence` tokenization, otherwise use
+    """Whether to use the :class:`.TokenContainer` tokenization, otherwise use
     the :mod:`rouge_score` package.
 
     """
@@ -131,29 +190,30 @@ class RougeScoreMethod(ScoreMethod):
         except ModuleNotFoundError:
             return False
 
-    def score(self, meth: str, context: ScoreContext) -> Iterable[Score]:
+    def score(self, meth: str, context: ScoreContext) -> \
+            Iterable[HarmonicMeanScore]:
         from rouge_score import rouge_scorer
 
         class Tokenizer(object):
             @staticmethod
-            def tokenize(sent: FeatureSentence) -> Tuple[str]:
+            def tokenize(sent: TokenContainer) -> Tuple[str]:
                 return sents[id(sent)]
 
         if self.feature_tokenizer:
             scorer = rouge_scorer.RougeScorer([meth], tokenizer=Tokenizer)
-            s1: FeatureSentence
-            s2: FeatureSentence
+            s1: TokenContainer
+            s2: TokenContainer
             pairs = zip(context.pairs, self._tokenize(context))
             for (s1, s2), (s1t, s2t) in pairs:
                 sents = {id(s1): s1t, id(s2): s2t}
-                res: Dict[str, Any] = scorer.score(s1, s2)
-                yield Score(*res[meth])
+                res: Dict[str, Score] = scorer.score(s1, s2)
+                yield HarmonicMeanScore(*res[meth])
         else:
             scorer = rouge_scorer.RougeScorer([meth])
             for s1t, s2t in context.pairs:
-                res: Dict[str, Any] = scorer.score(
+                res: Dict[str, Score] = scorer.score(
                     context.s1.text, context.s2.text)
-                yield Score(*res[meth])
+                yield HarmonicMeanScore(*res[meth])
 
 
 @dataclass
@@ -175,8 +235,8 @@ class Scorer(object):
         :return: the results for each method indicated in ``context``
 
         """
-        by_meth: Dict[str, Tuple[Any]] = {}
-        by_res: List[Dict[str, Any]] = []
+        by_meth: Dict[str, Tuple[Score]] = {}
+        by_res: List[Dict[str, Score]] = []
         meths: Iterable[str] = context.methods
         if meths is None:
             meths = self.methods.keys()
@@ -187,13 +247,13 @@ class Scorer(object):
                 raise NLPError(f"No scoring method: '{meth}'")
             by_meth[meth] = tuple(smeth.score(meth, context))
         for i in range(len(context.pairs)):
-            item_res: Dict[str, Any] = {}
+            item_res: Dict[str, Score] = {}
             by_res.append(item_res)
             meth: str
-            res_tup: Tuple[Any]
+            res_tup: Tuple[Score]
             for meth, res_tup in by_meth.items():
                 item_res[meth] = res_tup[i]
-        return ScoreSet(tuple(by_res))
+        return ScoreSet(scores=tuple(by_res))
 
     def __call__(self, context: ScoreContext) -> ScoreSet:
         """See :meth:`score`."""
