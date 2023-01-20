@@ -6,11 +6,15 @@ __author__ = 'Paul Landes'
 from typing import Tuple, Set, Dict, Iterable, List
 from dataclasses import dataclass, field
 from abc import ABCMeta, ABC, abstractmethod
+import logging
 import sys
 from io import TextIOBase
+import nltk.translate.bleu_score as bleu
 import numpy as np
 from zensols.config import Dictable
 from . import NLPError, TokenContainer
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -114,7 +118,8 @@ class ScoreContext(Dictable):
     """
     pairs: Tuple[Tuple[TokenContainer, TokenContainer]] = field()
     """Sentence, span or document pairs to score (order matters for some scoring
-    methods such as rouge).
+    methods such as rouge).  For summarization use cases, the ordering of the
+    sentence pairs should be ``(<source>, <summary>)``.
 
     """
     methods: Set[str] = field(default=None)
@@ -131,7 +136,14 @@ class ScoreMethod(ABC):
     """An abstract base class for scoring methods (bleu, rouge, etc).
 
     """
+    reverse_sents: bool = field(default=False)
+    """Whether to reverse the order of the sentences."""
+
     @abstractmethod
+    def _score(self, meth: str, context: ScoreContext) -> Score:
+        """See :meth:`score`"""
+        pass
+
     def score(self, meth: str, context: ScoreContext) -> Score:
         """Score the sentences in ``context`` using method identifer ``meth``.
 
@@ -143,7 +155,19 @@ class ScoreMethod(ABC):
                  :class:`.Score`
 
         """
-        pass
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'scoring meth: {meth}, ' +
+                         f'reverse: {self.reverse_sents}')
+        if self.reverse_sents:
+            prev_pairs = context.pairs
+            try:
+                context.pairs = tuple(map(
+                    lambda x: (x[1], x[0]), context.pairs))
+                return tuple(self._score(meth, context))
+            finally:
+                context.pairs = prev_pairs
+        else:
+            return self._score(meth, context)
 
     def _tokenize(self, context: ScoreContext) -> \
             Iterable[Tuple[Tuple[str], Tuple[str]]]:
@@ -166,10 +190,26 @@ class BleuScoreMethod(ScoreMethod):
     """The BLEU scoring method using the :mod:`nltk` package.
 
     """
-    def score(self, meth: str, context: ScoreContext) -> Iterable[float]:
-        import nltk.translate.bleu_score as bleu
+    smoothing_function: bleu.SmoothingFunction = field(default=None)
+    """This is an implementation of the smoothing techniques for segment-level
+    BLEU scores that was presented in Boxing Chen and Collin Cherry (2014) A
+    Systematic Comparison of Smoothing Techniques for Sentence-Level BLEU. In
+    WMT14.  http://acl2014.org/acl2014/W14-33/pdf/W14-3346.pdf
+
+    """
+    weights: Tuple[float, ...] = field(default=(0.25, 0.25, 0.25, 0.25))
+    """Weights for each n-gram.  For example: a tuple of float weights for
+    unigrams, bigrams, trigrams and so on can be given: ``weights = (0.1, 0.3,
+    0.5, 0.1)``.
+
+    """
+    def _score(self, meth: str, context: ScoreContext) -> Iterable[float]:
         for s1t, s2t in self._tokenize(context):
-            yield FloatScore(bleu.sentence_bleu([s1t], s2t))
+            val: float = bleu.sentence_bleu(
+                [s1t], s2t,
+                weights=self.weights,
+                smoothing_function=self.smoothing_function)
+            yield FloatScore(val)
 
 
 @dataclass
@@ -190,7 +230,7 @@ class RougeScoreMethod(ScoreMethod):
         except ModuleNotFoundError:
             return False
 
-    def score(self, meth: str, context: ScoreContext) -> \
+    def _score(self, meth: str, context: ScoreContext) -> \
             Iterable[HarmonicMeanScore]:
         from rouge_score import rouge_scorer
 
