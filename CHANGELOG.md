@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.5.0] - 2023-01-23
+### Changed
+- Fix `TokenContainer` indexing bug with edge case on split on space.
+
+### Added
+- Scoring framework.  This includes Bleu via NLTK by default, and optionally
+  ROUGE via optional package support.
+- Contiguous sentence index (i_sent) in `FeatureDocument.to_sentece`.
+- Default feature ID set to `FeatureToken`.
+
+### Removed:
+- Unused Levenshtein dependency.
+
+
 ## [1.4.1] - 2022-10-02
 ### Changed
 - Fixed token indexing bug
@@ -296,7 +310,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/plandes/nlparse/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/plandes/nlparse/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/plandes/nlparse/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/plandes/nlparse/compare/v1.2.0...v1.3.0
