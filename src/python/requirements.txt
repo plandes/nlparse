@@ -3,5 +3,5 @@ msgpack>=1.0.0
 msgpack-numpy>=0.4.7.1
 smart-open>=4.0.1
 nltk~=3.7
-zensols.util~=1.12.0
+zensols.util~=1.12.1
 interlap~=0.2.7

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.5.0] - 2023-01-23
 ### Changed
 - Fix `TokenContainer` indexing bug with edge case on split on space.
+- Updated [zensols.util] to 1.12.1.
 
 ### Added
 - Scoring framework.  This includes Bleu via NLTK by default, and optionally
