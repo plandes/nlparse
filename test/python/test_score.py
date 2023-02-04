@@ -1,16 +1,44 @@
+from typing import Iterable
+from dataclasses import dataclass
 import unittest
+import pickle
+from io import BytesIO
+import numpy as np
 from zensols.config import ImportIniConfig, ImportConfigFactory
-from zensols.nlp.score import ScoreContext, RougeScoreMethod
+from zensols.nlp.score import (
+    ScoreContext, RougeScoreMethod, ScoreMethod, ScoreSet
+)
+
+
+@dataclass
+class ErrorScoreMethod(ScoreMethod):
+    def _score(self, meth: str, context: ScoreContext) -> Iterable[float]:
+        raise ValueError('Artificial error')
+
+
+@dataclass
+class NonErrorScoreMethod(ScoreMethod):
+    def _score(self, meth: str, context: ScoreContext) -> Iterable[float]:
+        from zensols.nlp.score import FloatScore
+        yield FloatScore(-1)
 
 
 class TestScore(unittest.TestCase):
-    def setUp(self):
-        config = ImportIniConfig('test-resources/score.conf')
+    def _init(self, name: str):
+        config = ImportIniConfig(f'test-resources/{name}.conf')
         self.fac = ImportConfigFactory(config)
         self.doc_parser = self.fac('doc_parser')
         self.scorer = self.fac('nlp_scorer')
 
+    def _ser_test(self, ss: ScoreSet):
+        bio = BytesIO()
+        pickle.dump(ss, bio)
+        bio.seek(0)
+        ss2 = pickle.load(bio)
+        self.assertEqual(ss, ss2)
+
     def test_score(self):
+        self._init('score')
         s1 = self.doc_parser('Dan threw the ball.')
         s2 = self.doc_parser('The boy threw the ball.')
         s3 = self.doc_parser('The boy threw the ball and then ran.')
@@ -36,3 +64,23 @@ class TestScore(unittest.TestCase):
         self.assertEqual(0.48, round(res[2]['bleu'].value, 2))
         if rouge_avail:
             self.assertEqual(0.8, round(res[1]['rouge1'].f_score, 2))
+
+        self._ser_test(res)
+
+    def test_score_err(self):
+        self._init('score-error')
+        s1 = self.doc_parser('Dan threw the ball.')
+        s2 = self.doc_parser('The boy threw the ball.')
+        res = self.scorer(ScoreContext([[s1, s2]]))
+        r1 = res[0]
+        bleu = r1['bleu']
+        self.assertEqual(0.51, round(bleu.value, 2))
+        err = r1['err']
+        self.assertEqual('Artificial error', str(err.exception))
+        non_err = r1['nonerr']
+        self.assertEqual(-1, non_err.value)
+        cols, arr = res.as_numpy()
+        self.assertEqual(['bleu', 'err', 'nonerr'], cols)
+        should = np.float64(np.array([[0.51, np.nan, -1.]]))
+        self.assertTrue(np.array_equal(should, arr.round(2), equal_nan=True))
+        self._ser_test(res)

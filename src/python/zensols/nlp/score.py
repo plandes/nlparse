@@ -26,6 +26,25 @@ class Score(Dictable, metaclass=ABCMeta):
         return {f'{meth}_{x[0]}': x[1] for x in self.asdict().items()}
 
 
+@dataclass(eq=False)
+class ErrorScore(Score):
+    """A replacement instance when scoring fails from a raised exception.
+
+    """
+    method: str = field(repr=False)
+    """The method of the :class:`.ScoreMethod` that raised the exception."""
+
+    exception: Exception = field()
+    """The exception that was raised."""
+
+    def asrow(self, meth: str) -> Dict[str, float]:
+        return {self.method: np.nan}
+
+    def __eq___(self, other) -> bool:
+        return self.method == other.method and \
+            str(self.exception) == str(other.exeption)
+
+
 @dataclass
 class FloatScore(Score):
     """Float container.  This is needed to create the flat result container
@@ -140,11 +159,11 @@ class ScoreMethod(ABC):
     """Whether to reverse the order of the sentences."""
 
     @abstractmethod
-    def _score(self, meth: str, context: ScoreContext) -> Score:
+    def _score(self, meth: str, context: ScoreContext) -> Iterable[Score]:
         """See :meth:`score`"""
         pass
 
-    def score(self, meth: str, context: ScoreContext) -> Score:
+    def score(self, meth: str, context: ScoreContext) -> Iterable[Score]:
         """Score the sentences in ``context`` using method identifer ``meth``.
 
         :param meth: the identifer such as ``bleu``
@@ -155,19 +174,26 @@ class ScoreMethod(ABC):
                  :class:`.Score`
 
         """
+        scores: Iterable[Score]
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'scoring meth: {meth}, ' +
                          f'reverse: {self.reverse_sents}')
-        if self.reverse_sents:
-            prev_pairs = context.pairs
-            try:
-                context.pairs = tuple(map(
-                    lambda x: (x[1], x[0]), context.pairs))
-                return tuple(self._score(meth, context))
-            finally:
-                context.pairs = prev_pairs
-        else:
-            return self._score(meth, context)
+        try:
+            if self.reverse_sents:
+                prev_pairs = context.pairs
+                try:
+                    context.pairs = tuple(map(
+                        lambda x: (x[1], x[0]), context.pairs))
+                    scores = self._score(meth, context)
+                finally:
+                    context.pairs = prev_pairs
+            else:
+                scores = self._score(meth, context)
+            # force generators to realize scores and force any raised exceptions
+            scores = tuple(scores)
+        except Exception as e:
+            scores = (ErrorScore(meth, e),)
+        return scores
 
     def _tokenize(self, context: ScoreContext) -> \
             Iterable[Tuple[Tuple[str], Tuple[str]]]:
@@ -203,7 +229,7 @@ class BleuScoreMethod(ScoreMethod):
     0.5, 0.1)``.
 
     """
-    def _score(self, meth: str, context: ScoreContext) -> Iterable[float]:
+    def _score(self, meth: str, context: ScoreContext) -> Iterable[FloatScore]:
         for s1t, s2t in self._tokenize(context):
             val: float = bleu.sentence_bleu(
                 [s1t], s2t,

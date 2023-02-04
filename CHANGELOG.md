@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- Error handling in generating scores.
+
+
 ## [1.5.0] - 2023-01-23
 ### Changed
 - Fix `TokenContainer` indexing bug with edge case on split on space.

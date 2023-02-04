@@ -1,0 +1,18 @@
+err_score_method:
+  class_name: test_score.ErrorScoreMethod
+
+non_err_score_method:
+  class_name: test_score.NonErrorScoreMethod
+
+nlp_scorer_methods:
+  err: >-
+    'err': 'err_score_method',
+    'nonerr': 'non_err_score_method',
+
+nlp_scorer:
+  class_name: zensols.nlp.score.Scorer
+  methods: >-
+    instance: dict: {
+      ${nlp_scorer_methods:bleu}
+      ${nlp_scorer_methods:err}
+      }
