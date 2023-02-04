@@ -1,9 +1,10 @@
+from __future__ import annotations
 """Produces matching scores.
 
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Set, Dict, Iterable, List
+from typing import Tuple, Set, Dict, Iterable, List, ClassVar
 from dataclasses import dataclass, field
 from abc import ABCMeta, ABC, abstractmethod
 import logging
@@ -37,7 +38,14 @@ class ErrorScore(Score):
     exception: Exception = field()
     """The exception that was raised."""
 
+    replace_score: Score = field(default=None)
+    """The score to use in place of this score.  Otherwise :meth:`asrow` return
+    a single :obj:`numpy.nan` like :class:`.FloatScore`.
+
+    """
     def asrow(self, meth: str) -> Dict[str, float]:
+        if self.replace_score is not None:
+            return self.replace_score.asrow(self.method)
         return {self.method: np.nan}
 
     def __eq___(self, other) -> bool:
@@ -65,9 +73,14 @@ class HarmonicMeanScore(Score):
     F-score.'
 
     """
+    NAN_INSTANCE: ClassVar[HarmonicMeanScore]
     precision: float = field()
     recall: float = field()
     f_score: float = field()
+
+
+# used to add to ErrorScore for harmonic means replacements
+HarmonicMeanScore.NAN_INSTANCE = HarmonicMeanScore(np.nan, np.nan, np.nan)
 
 
 @dataclass
@@ -192,7 +205,7 @@ class ScoreMethod(ABC):
             # force generators to realize scores and force any raised exceptions
             scores = tuple(scores)
         except Exception as e:
-            scores = (ErrorScore(meth, e),)
+            scores = tuple([ErrorScore(meth, e)] * len(context.pairs))
         return scores
 
     def _tokenize(self, context: ScoreContext) -> \
@@ -229,6 +242,19 @@ class BleuScoreMethod(ScoreMethod):
     0.5, 0.1)``.
 
     """
+    silence_warnings: bool = field(default=False)
+    """Silence the BLEU warning of n-grams not matching ``The hypothesis
+    contains 0 counts of 3-gram overlaps...``
+
+    """
+    def __post_init__(self):
+        if self.silence_warnings:
+            import warnings
+            # silence the BLEU warning of n-grams not matching
+            # The hypothesis contains 0 counts of 3-gram overlaps...
+            warnings.filterwarnings(
+                'ignore', message='[.\n]+The hypothesis contains 0 counts.*')
+
     def _score(self, meth: str, context: ScoreContext) -> Iterable[FloatScore]:
         for s1t, s2t in self._tokenize(context):
             val: float = bleu.sentence_bleu(
@@ -317,6 +343,7 @@ class Scorer(object):
             by_res.append(item_res)
             meth: str
             res_tup: Tuple[Score]
+            # for each scored pair
             for meth, res_tup in by_meth.items():
                 item_res[meth] = res_tup[i]
         return ScoreSet(scores=tuple(by_res))

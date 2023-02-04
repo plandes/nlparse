@@ -1,8 +1,13 @@
 err_score_method:
   class_name: test_score.ErrorScoreMethod
+  raise_ex: true
 
 non_err_score_method:
-  class_name: test_score.NonErrorScoreMethod
+  class_name: test_score.ErrorScoreMethod
+  raise_ex: false
+
+nlp_bleu_score_method:
+  silence_warnings: true
 
 nlp_scorer_methods:
   err: >-
