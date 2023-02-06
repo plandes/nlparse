@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ### Added
-- Error handling in generating scores.
+- Backwards compatible scoring: error handling and correlation IDs.
 
 
 ## [1.5.0] - 2023-01-23

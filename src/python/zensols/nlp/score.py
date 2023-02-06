@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Set, Dict, Iterable, List, ClassVar
+from typing import Tuple, Set, Dict, Iterable, List, ClassVar, Union
 from dataclasses import dataclass, field
 from abc import ABCMeta, ABC, abstractmethod
 import logging
@@ -84,40 +84,76 @@ HarmonicMeanScore.NAN_INSTANCE = HarmonicMeanScore(np.nan, np.nan, np.nan)
 
 
 @dataclass
+class ScoreResult(Dictable):
+    scores: Dict[str, Tuple[Score]] = field()
+    correlation_id: str = field(default=None)
+
+    def __len__(self) -> int:
+        return len(self.scores)
+
+    def __getitem__(self, k: str) -> Dict[str, Tuple[Score]]:
+        return self.scores[k]
+
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
+        dct = super().asdict()
+        del dct['correlation_id']
+        if self.correlation_id is None:
+            self._write_dict(dct, depth, writer)
+        else:
+            self._write_line(f'correlation ID: {self.correlation_id}',
+                             depth, writer)
+            self._write_dict(dct, depth + 1, writer)
+
+
+@dataclass
 class ScoreSet(Dictable):
     """All scores returned from :class:`.Scorer'.
 
     """
-    scores: Tuple[Dict[str, Tuple[Score]]] = field()
+    results: Tuple[ScoreResult] = field()
     """A tuple with each element having the results of the respective sentence
     pair in :obj:`.ScoreContext.sents`.  Each elemnt is a dictionary with the
     method are the keys with results as the values as output of the
     :class:`.ScoreMethod`.  This is created in :class:`.Scorer`.
 
     """
+    correlation_id_col: str = field(default='id')
+    """The column name for the :obj:`.ScoreResult.correlation_id` added to Numpy
+    arrays and Pandas dataframes.
+
+    """
     def __len__(self) -> int:
-        return len(self.scores)
+        return len(self.results)
 
     def __iter__(self) -> Iterable[Dict[str, Tuple[Score]]]:
-        return iter(self.scores)
+        return iter(self.results)
 
     def __getitem__(self, i: int) -> Dict[str, Tuple[Score]]:
-        return self.scores[i]
+        return self.results[i]
 
-    def as_numpy(self) -> Tuple[List[str], np.ndarray]:
-        """Return the Numpy array with column descriptors of the scores.  Spacy
+    @property
+    def has_correlation_id(self) -> bool:
+        """Whether the results have correlation IDs."""
+        return len(self.results) > 0 and \
+            self.results[0].correlation_id is not None
+
+    def as_numpy(self, add_correlation: bool = True) -> \
+            Tuple[List[str], np.ndarray]:
+        """Return the Numpy array with column descriptors of the results.  Spacy
         depends on Numpy, so this package will always be availale.
+
+        :param add_correlation: whether to add the correlation ID (if there is
+                                one), using :obj:`correlation_id_col`
 
         """
         cols: Set[str] = set()
-        score: Dict[str, Score]
         rows: List[Dict[str, float]] = []
-        for score in self.scores:
+        result: ScoreResult
+        for result in self.results:
             row: Dict[str, float] = {}
             rows.append(row)
             meth: str
-            result: Score
-            for meth, result in score.items():
+            for meth, result in result.scores.items():
                 rdat: Dict[str, float] = result.asrow(meth)
                 row.update(rdat)
                 cols.update(rdat.keys())
@@ -126,21 +162,35 @@ class ScoreSet(Dictable):
         for row in rows:
             nd_rows.append(np.array(tuple(map(row.get, cols))))
         arr = np.stack(nd_rows)
+        if add_correlation and self.has_correlation_id:
+            ids = np.array(tuple(map(lambda r: r.correlation_id, self.results)))
+            ids = np.expand_dims(ids, 1)
+            arr = np.append(arr, ids, axis=1)
+            cols.append(self.correlation_id_col)
         return cols, arr
 
-    def as_dataframe(self) -> 'pandas.DataFrame':
-        """This gets data from :meth:`as_numpy` and returns it as a Pandas dataframe.
+    def as_dataframe(self, add_correlation: bool = True) -> 'pandas.DataFrame':
+        """This gets data from :meth:`as_numpy` and returns it as a Pandas
+        dataframe.
 
-        :return: an instance of :class:`pandas.DataFrame` of the scores
+        :param add_correlation: whether to add the correlation ID (if there is
+                                one), using :obj:`correlation_id_col`
+
+        :return: an instance of :class:`pandas.DataFrame` of the results
 
         """
         import pandas as pd
-        cols, arr = self.as_numpy()
-        return pd.DataFrame(arr, columns=cols)
+        cols, arr = self.as_numpy(add_correlation=False)
+        df = pd.DataFrame(arr, columns=cols)
+        if add_correlation and self.has_correlation_id:
+            # add as a dataframe, otherwise string correlation IDs cast the
+            # numpy array to a string
+            df['id'] = tuple(map(lambda r: r.correlation_id, self.results))
+        return df
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
-        self._write_line('scores:', depth, writer)
-        self._write_iterable(self.scores, depth + 1, writer, include_index=True)
+        self._write_line('results:', depth, writer)
+        self._write_iterable(self.results, depth + 1, writer)
 
 
 @dataclass
@@ -161,6 +211,21 @@ class ScoreContext(Dictable):
     """
     norm: bool = field(default=True)
     """Whether to use the normalized tokens, otherwise use the original text."""
+
+    correlation_ids: Tuple[Union[int, str]] = field(default=None)
+    """The IDs to correlate with each sentence pair, or ``None`` to skip
+    correlating them.  The length of this tuple must be that of :obj:`pairs`.
+
+    """
+    def __post_init__(self):
+        self.validate()
+
+    def validate(self):
+        if self.correlation_ids is not None and \
+           len(self.pairs) != len(self.correlation_ids):
+            raise NLPError(
+                'Expecting same length pairs to correlation IDs but got: ' +
+                f'{len(self.pairs)} != {len(self.correlation_ids)}')
 
 
 @dataclass
@@ -328,7 +393,7 @@ class Scorer(object):
 
         """
         by_meth: Dict[str, Tuple[Score]] = {}
-        by_res: List[Dict[str, Score]] = []
+        by_res: List[ScoreResult] = []
         meths: Iterable[str] = context.methods
         if meths is None:
             meths = self.methods.keys()
@@ -340,13 +405,16 @@ class Scorer(object):
             by_meth[meth] = tuple(smeth.score(meth, context))
         for i in range(len(context.pairs)):
             item_res: Dict[str, Score] = {}
-            by_res.append(item_res)
+            corr_id: str = None
             meth: str
+            if context.correlation_ids is not None:
+                corr_id = context.correlation_ids[i]
             res_tup: Tuple[Score]
             # for each scored pair
             for meth, res_tup in by_meth.items():
                 item_res[meth] = res_tup[i]
-        return ScoreSet(scores=tuple(by_res))
+            by_res.append(ScoreResult(item_res, correlation_id=corr_id))
+        return ScoreSet(results=tuple(by_res))
 
     def __call__(self, context: ScoreContext) -> ScoreSet:
         """See :meth:`score`."""
