@@ -13,7 +13,8 @@ from io import TextIOBase
 import nltk.translate.bleu_score as bleu
 import numpy as np
 from zensols.config import Dictable
-from . import NLPError, TokenContainer
+from zensols.nlp import TokenContainer
+from . import NLPError
 
 logger = logging.getLogger(__name__)
 
