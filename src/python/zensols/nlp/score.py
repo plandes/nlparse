@@ -186,7 +186,11 @@ class ScoreSet(Dictable):
         if add_correlation and self.has_correlation_id:
             # add as a dataframe, otherwise string correlation IDs cast the
             # numpy array to a string
-            df['id'] = tuple(map(lambda r: r.correlation_id, self.results))
+            cid: str = self.correlation_id_col
+            cols: List[str] = df.columns.tolist()
+            df[cid] = tuple(map(lambda r: r.correlation_id, self.results))
+            cols.insert(0, cid)
+            df = df[cols]
         return df
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):

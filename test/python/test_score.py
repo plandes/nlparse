@@ -124,5 +124,5 @@ class TestScore(unittest.TestCase):
             pass
         if has_pandas:
             df = res.as_dataframe()
-            self.assertEqual(['bleu', 'id'], df.columns.tolist())
-            self.assertEqual([0.51, 0.47], df.iloc[:, 0].round(2).tolist())
+            self.assertEqual(['id', 'bleu'], df.columns.tolist())
+            self.assertEqual([0.51, 0.47], df.iloc[:, 1].round(2).tolist())
