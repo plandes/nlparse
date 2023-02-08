@@ -61,11 +61,19 @@ class FloatScore(Score):
     :meth:`.ScoreSet.asnumpy`.
 
     """
+    NAN_INSTANCE: ClassVar[FloatScore] = None
+    """Used to add to ErrorScore for harmonic means replacements.
+
+    """
+
     value: float = field()
     """The value of score."""
 
     def asrow(self, meth: str) -> Dict[str, float]:
         return {meth: self.value}
+
+
+FloatScore.NAN_INSTANCE = FloatScore(np.nan)
 
 
 @dataclass
@@ -74,13 +82,15 @@ class HarmonicMeanScore(Score):
     F-score.'
 
     """
-    NAN_INSTANCE: ClassVar[HarmonicMeanScore]
+    NAN_INSTANCE: ClassVar[HarmonicMeanScore] = None
+    """Used to add to ErrorScore for harmonic means replacements.
+
+    """
     precision: float = field()
     recall: float = field()
     f_score: float = field()
 
 
-# used to add to ErrorScore for harmonic means replacements
 HarmonicMeanScore.NAN_INSTANCE = HarmonicMeanScore(np.nan, np.nan, np.nan)
 
 
