@@ -284,6 +284,9 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                 else:
                     t.write(depth + 2, writer)
 
+    def __hash__(self) -> int:
+        return hash(self.norm)
+
     def __str__(self):
         return TextContainer.__str__(self)
 
@@ -492,6 +495,9 @@ class FeatureSpan(TokenContainer):
     def __iter__(self):
         return self.token_iter()
 
+    def __hash__(self) -> int:
+        return hash(self.norm)
+
 
 # keep the dataclass semantics, but allow for a setter
 FeatureSpan.tokens = FeatureSpan._tokens
@@ -512,6 +518,9 @@ class FeatureSentence(FeatureSpan):
 
     def to_document(self) -> FeatureDocument:
         return FeatureDocument((self,))
+
+    def __hash__(self) -> int:
+        return hash(self.norm)
 
 
 @dataclass(eq=True, repr=False)
@@ -912,6 +921,9 @@ class FeatureDocument(TokenContainer):
     def __iter__(self):
         return self.sent_iter()
 
+    def __hash__(self) -> int:
+        return hash(self.norm)
+
 
 @dataclass
 class TokenAnnotatedFeatureSentence(FeatureSentence):
@@ -927,6 +939,9 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
         n_ann = len(self.annotations)
         self._write_line(f'annotations ({n_ann}): {self.annotations}',
                          depth, writer)
+
+    def __hash__(self) -> int:
+        return hash(self.norm)
 
 
 @dataclass
@@ -967,3 +982,6 @@ class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
             doc = cls(tuple(sents), text)
             doc.sents[0].annotations = tuple(anns)
             return doc
+
+    def __hash__(self) -> int:
+        return hash(self.norm)
