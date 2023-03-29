@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Set, Dict, Iterable, List, ClassVar, Union
+from typing import Tuple, Set, Dict, Iterable, List, ClassVar, Union, Optional
 from dataclasses import dataclass, field
 from abc import ABCMeta, ABC, abstractmethod
 import logging
@@ -96,8 +96,14 @@ HarmonicMeanScore.NAN_INSTANCE = HarmonicMeanScore(np.nan, np.nan, np.nan)
 
 @dataclass
 class ScoreResult(Dictable):
+    """A result of scores created by a :class:`.ScoreMethod`.
+
+    """
     scores: Dict[str, Tuple[Score]] = field()
-    correlation_id: str = field(default=None)
+    """The scores by method name."""
+
+    correlation_id: Optional[str] = field(default=None)
+    """An ID for correlating back to the :class:`.TokenContainer`."""
 
     def __len__(self) -> int:
         return len(self.scores)
