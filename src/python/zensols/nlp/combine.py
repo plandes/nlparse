@@ -64,18 +64,25 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                       source_tok: FeatureToken,
                       context_container: TokenContainer):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merging tokens: {source_tok} -> {target_tok}')
+            logger.debug(f'merging tokens: {source_tok} ({type(source_tok)}) '
+                         f'-> {target_tok} ({type(target_tok)})')
         self._validate_features(target_tok, source_tok, context_container)
         for f in self.yield_features:
             targ = target_tok.get_value(f)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'yield feature: {f}, target={targ}')
             if targ is None:
                 src = source_tok.get_value(f)
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f'yield feature: {f}, src={src}')
                 if src is not None:
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'{src} -> {target_tok.text}.{f}')
                     setattr(target_tok, f, src)
         for f in self.overwrite_features:
             src = source_tok.get_value(f)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'overwrite feature: {f}, src={src}')
             if src is not None:
                 if logger.isEnabledFor(logging.DEBUG):
                     logger.debug(f'{src} -> {target_tok.text}.{f}')
@@ -155,12 +162,6 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
     validate_features: Set[str] = field(default=frozenset({'norm'}))
     """A set of features to compare across all tokens when copying.  If any of
     the given features don't match, an mismatch token error is raised.
-
-    """
-
-    clone_and_norm_source_token: bool = field(default=True)
-    """If ``True``, clone the source token and clobber the ``norm`` field with
-    the text of the spaCy token.
 
     """
     merge_sentences: bool = field(default=True)
