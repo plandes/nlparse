@@ -397,7 +397,7 @@ class RougeScoreMethod(ScoreMethod):
 @dataclass
 class Scorer(object):
     """A class that scores sentences using a set of registered methods
-    (:ob:`methods`).
+    (:obj:`methods`).
 
     """
     methods: Dict[str, ScoreMethod] = field(default=None)
