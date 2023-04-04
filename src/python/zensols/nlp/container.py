@@ -93,7 +93,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         :param args: the arguments given to :meth:`itertools.islice`
 
         """
-        return map(lambda t: t.norm, self.strip_token_iter(*args, **kwargs))
+        return map(lambda t: t.norm, self.token_iter(*args, **kwargs))
 
     @property
     @persisted('_norm', transient=True)
