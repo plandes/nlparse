@@ -41,13 +41,59 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """
         pass
 
+    @staticmethod
+    def strip_tokens(token_iter: Iterable[FeatureToken]) -> \
+            Iterable[FeatureToken]:
+        """Strip beginning and ending whitespace.  This uses
+        :obj:`~.tok.SpacyFeatureToken.is_space`, which is ``True`` for spaces,
+        tabs and newlines.
+
+        :param token_iter: an stream of tokens
+
+        :return: non-whitespace middle tokens
+
+        """
+        first_tok: bool = False
+        space_toks: List[FeatureToken] = []
+        tok: FeatureToken
+        for tok in token_iter:
+            if tok.is_space:
+                if first_tok:
+                    space_toks.append(tok)
+            else:
+                first_tok = True
+                stok: FeatureToken
+                for stok in space_toks:
+                    yield stok
+                space_toks.clear()
+                yield tok
+
+    def strip_token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
+        """Strip beginning and ending whitespace (see :meth:`strip_tokens`)
+        using :meth:`token_iter`.
+
+        """
+        return self.strip_tokens(self.token_iter(*args, **kwargs))
+
+    def strip(self):
+        """Strip beginning and ending whitespace (see :meth:`strip_tokens`) and
+        :obj:`text`.
+
+        """
+        self._clear_persistable_state()
+        self._strip()
+
+    @abstractmethod
+    def _strip(self):
+        pass
+
     def norm_token_iter(self, *args, **kwargs) -> Iterable[str]:
         """Return a list of normalized tokens.
 
         :param args: the arguments given to :meth:`itertools.islice`
 
         """
-        return map(lambda t: t.norm, self.token_iter(*args, **kwargs))
+        return map(lambda t: t.norm, self.strip_token_iter(*args, **kwargs))
 
     @property
     @persisted('_norm', transient=True)
@@ -350,6 +396,11 @@ class FeatureSpan(TokenContainer):
                 if start is not None:
                     self._ents.append((start.idx, end.idx))
 
+    def _strip(self):
+        self.tokens = tuple(self.strip_tokens(self.tokens))
+        self.text = self.text.strip()
+        self._set_entity_spans()
+
     def to_sentence(self, limit: int = sys.maxsize,
                     contiguous_i_sent: bool = False) -> FeatureSentence:
         if limit == 0:
@@ -574,6 +625,12 @@ class FeatureDocument(TokenContainer):
         for ft, ss in zip(self.sents, doc.sents):
             ft.spacy_span = ss
         self.spacy_doc = doc
+
+    def _strip(self):
+        sent: FeatureSentence
+        for sent in self.sents:
+            sent.strip()
+        self.text = self.text.strip()
 
     def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
         """

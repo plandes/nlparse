@@ -291,6 +291,7 @@ class ScoreMethod(ABC):
             # force generators to realize scores and force any raised exceptions
             scores = tuple(scores)
         except Exception as e:
+            logger.info(e, exc_info=True)
             scores = tuple([ErrorScore(meth, e)] * len(context.pairs))
         return scores
 

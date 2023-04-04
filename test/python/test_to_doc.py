@@ -42,3 +42,33 @@ class TestToDoc(TestBase):
     def test_norm(self):
         for name in self.parsers:
             self._test_norm(self.fac(name))
+
+    def _test_strip(self, should, text):
+        doc_parser = self.fac('doc_parser_default')
+        fdoc: FeatureDocument = doc_parser(text)
+        if self._test_tokens:
+            toks = list(map(lambda t: t.norm, fdoc[0].strip_token_iter()))
+        else:
+            fdoc.strip()
+            toks = list(map(lambda t: t.norm, fdoc[0].tokens))
+        self.assertEqual(should, toks)
+
+    def _test_strip_tests(self):
+        self._test_strip('He hit the'.split() + [' '] + 'ball .'.split(),
+                         """He hit the  ball.""")
+        self._test_strip('He hit the'.split() + [' '] + 'ball .'.split(),
+                         """ He hit the  ball. """)
+        self._test_strip('He hit the'.split() + [' '] + 'ball .'.split(),
+                         """ He hit the  ball.""")
+        self._test_strip('He hit the'.split() + 'ball .'.split(),
+                         """He hit the ball. """)
+        self._test_strip('He hit the'.split() + 'ball .'.split(),
+                         """   He hit the ball.""")
+        self._test_strip('He hit the'.split() + 'ball .'.split(),
+                         """He hit the ball.   """)
+
+    def test_strip(self):
+        self._test_tokens = True
+        self._test_strip_tests()
+        self._test_tokens = False
+        self._test_strip_tests()
