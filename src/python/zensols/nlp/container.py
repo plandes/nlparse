@@ -305,7 +305,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
             ft.i = i
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
-              include_original: bool = True, include_normalized: bool = True,
+              include_original: bool = False, include_normalized: bool = True,
               n_tokens: int = sys.maxsize, inline: bool = False):
         """Write the text container.
 
