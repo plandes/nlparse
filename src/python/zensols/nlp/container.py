@@ -909,6 +909,7 @@ class FeatureDocument(TokenContainer):
         :return: a new document that contains the 0 index offset of ``span``
 
         """
+        send: int = 1 if inclusive else 0
         doc = self.clone()
         if span != self.lexspan:
             doc_text: str = self.text
@@ -920,8 +921,8 @@ class FeatureDocument(TokenContainer):
                 elif len(toks) == len(sent):
                     pass
                 else:
-                    text: str = doc_text[toks[0].idx:toks[-1].idx + 1]
-                    hang = (span.end + 1) - toks[-1].lexspan.end
+                    text: str = doc_text[toks[0].idx:toks[-1].idx + send]
+                    hang = (span.end + send) - toks[-1].lexspan.end
                     if hang < 0:
                         tok = toks[-1]
                         clone = copy.deepcopy(tok)
@@ -938,7 +939,7 @@ class FeatureDocument(TokenContainer):
                         toks[0] = clone
                     sent = sent.clone(tokens=tuple(toks), text=text)
                 sents.append(sent)
-            text: str = doc_text[span.begin:span.end + 1]
+            text: str = doc_text[span.begin:span.end + send]
             doc.sents = tuple(sents)
             doc.text = text
             body_len = sum(

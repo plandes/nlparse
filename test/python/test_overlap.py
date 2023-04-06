@@ -11,7 +11,7 @@ class TestOverlap(TestCase):
         doc_parser: FeatureDocumentParser = fac('default_doc_parser')
         self.sent = '\
 Dan throws the ball. He throws it quite often.'
-#123456789012345678901234567890
+#12345678901234567890123456789012
         self.doc: FeatureDocument = doc_parser(self.sent)
 
     def test_complete(self):
@@ -90,6 +90,26 @@ Dan throws the ball. He throws it quite often.'
         self.assertEqual(2, len(doc2[1]))
         self.assertEqual('the ball . He thro'.split(),
                          list(doc2.norm_token_iter()))
+
+    def test_split_token_end_not_inclusive(self):
+        span = LexicalSpan(11, 27)
+        doc2 = self.doc.get_overlapping_document(span, inclusive=False)
+        self.assertEqual('the ball. He thr', doc2.text)
+        self.assertEqual(2, len(doc2))
+        self.assertEqual(3, len(doc2[0]))
+        self.assertEqual(2, len(doc2[1]))
+        self.assertEqual('the ball . He thr'.split(),
+                         list(doc2.norm_token_iter()))
+
+        span = LexicalSpan(11, 30)
+        doc2 = self.doc.get_overlapping_document(span, inclusive=False)
+        self.assertEqual('the ball. He throws', doc2.text)
+        self.assertEqual('the ball . He throws'.split(), list(doc2.norm_token_iter()))
+
+        span = LexicalSpan(11, 31)
+        doc2 = self.doc.get_overlapping_document(span, inclusive=False)
+        self.assertEqual('the ball. He throws ', doc2.text)
+        self.assertEqual('the ball . He throws'.split(), list(doc2.norm_token_iter()))
 
     def test_narrow(self):
         s1 = LexicalSpan(11, 27)
