@@ -184,6 +184,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """
         def map_span(s: LexicalSpan) -> Tuple[FeatureToken]:
             toks = map(lambda m: m[2], il.find(s.astuple))
+            # we have to manually check non-inclusive right intervals since
+            # InterLap includes it
             if not inclusive:
                 toks = filter(lambda t: t.lexspan.overlaps_with(s, False), toks)
             return tuple(toks)
@@ -584,6 +586,9 @@ class FeatureSentence(FeatureSpan):
 
     def __hash__(self) -> int:
         return hash(self.norm)
+
+
+FeatureSentence.EMPTY_SENTENCE = FeatureSentence(tokens=(), text='')
 
 
 @dataclass(eq=True, repr=False)
@@ -1004,6 +1009,9 @@ class FeatureDocument(TokenContainer):
 
     def __hash__(self) -> int:
         return hash(self.norm)
+
+
+FeatureDocument.EMPTY_DOCUMENT = FeatureDocument(sents=(), text='')
 
 
 @dataclass

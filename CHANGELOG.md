@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changed
+- Fixed type exception bug on `Feature.to_sentence`.
+
+### Added
+- Right lexical span inclusive parameter for all
+  `TokenContainer.get_overlapping*` methods.
+- Empty versions of `TokenContainer` subclasses.
+
+
 ## [1.6.0] - 2023-04-05
 ### Added
 - Backwards compatible scoring: error handling and correlation IDs.
