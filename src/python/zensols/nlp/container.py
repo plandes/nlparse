@@ -173,9 +173,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """Return a tuple of tokens, each tuple in the range given by the
         respective span in ``spans``.
 
-        :param spans: the document 0-index character based (left inclusive,
-                      right exclusive) spans to compare with
-                      :obj:`.FeatureToken.lexspan`
+        :param spans: the document 0-index character based inclusive spans to
+                      compare with :obj:`.FeatureToken.lexspan`
 
         :return: a tuple of matching tokens for the respective ``span`` query
 
@@ -188,7 +187,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
             Iterable[FeatureToken]:
         """Get all tokens that overlap lexical span ``span``.
 
-        :param span: indicates the portion of the document to retain
+        :param span: the document 0-index character based inclusive span to
+                     compare with :obj:`.FeatureToken.lexspan`
 
         :return: a token sequence containing the 0 index offset of ``span``
 

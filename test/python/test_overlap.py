@@ -128,11 +128,12 @@ Dan throws the ball. He throws it quite often.'
 #Dan throws the ball. He throws it quite often.
 #0123456789012345678901234567890
 
-        # left inclusive, right exclusive
         self.assertEqual(('Dan',),
                          self._map_spans(doc, ((0, 1),)))
         self.assertEqual(('Dan',),
                          self._map_spans(doc, ((0, 2),)))
+        self.assertEqual(('Dan',),
+                         self._map_spans(doc, ((0, 3),)))
         self.assertEqual(('Dan|throws',),
                          self._map_spans(doc, ((0, 9),)))
         self.assertEqual(('throws',),

@@ -8,8 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.6.0] - 2023-04-05
 ### Added
 - Backwards compatible scoring: error handling and correlation IDs.
+- More unit tests.
+- Handle errors during scoring and robustly provide scores when reporting.
+- Make token containers are hashable.
+
+### Changed
+- Fixed token overlap on left side of lexical spans.
 
 
 ## [1.5.0] - 2023-01-23
@@ -315,7 +322,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/plandes/nlparse/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/plandes/nlparse/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/plandes/nlparse/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/plandes/nlparse/compare/v1.3.0...v1.4.0
