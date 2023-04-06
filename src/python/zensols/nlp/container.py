@@ -168,7 +168,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                          self.token_iter())))
         return il
 
-    def map_overlapping_tokens(self, spans: Iterable[LexicalSpan]) -> \
+    def map_overlapping_tokens(self, spans: Iterable[LexicalSpan],
+                               inclusive: bool = True) -> \
             Iterable[Tuple[FeatureToken, ...]]:
         """Return a tuple of tokens, each tuple in the range given by the
         respective span in ``spans``.
@@ -176,24 +177,34 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         :param spans: the document 0-index character based inclusive spans to
                       compare with :obj:`.FeatureToken.lexspan`
 
+        :param inclusive: whether to check include +1 on the end component
+
         :return: a tuple of matching tokens for the respective ``span`` query
 
         """
-        il = self._get_interlap()
-        return map(lambda s: tuple(map(lambda m: m[2], il.find(s.astuple))),
-                   spans)
+        def map_span(s: LexicalSpan) -> Tuple[FeatureToken]:
+            toks = map(lambda m: m[2], il.find(s.astuple))
+            if not inclusive:
+                toks = filter(lambda t: t.lexspan.overlaps_with(s, False), toks)
+            return tuple(toks)
 
-    def get_overlapping_tokens(self, span: LexicalSpan) -> \
+        il = self._get_interlap()
+        return map(map_span, spans)
+
+    def get_overlapping_tokens(self, span: LexicalSpan,
+                               inclusive: bool = True) -> \
             Iterable[FeatureToken]:
         """Get all tokens that overlap lexical span ``span``.
 
         :param span: the document 0-index character based inclusive span to
                      compare with :obj:`.FeatureToken.lexspan`
 
+        :param inclusive: whether to check include +1 on the end component
+
         :return: a token sequence containing the 0 index offset of ``span``
 
         """
-        return next(iter(self.map_overlapping_tokens((span,))))
+        return next(iter(self.map_overlapping_tokens((span,), inclusive)))
 
     @abstractmethod
     def to_sentence(self, limit: int = sys.maxsize,
@@ -870,20 +881,30 @@ class FeatureDocument(TokenContainer):
         return tuple(chain.from_iterable(
             map(lambda s: s.entities, self.sents)))
 
-    def get_overlapping_sentences(self, span: LexicalSpan) -> \
+    def get_overlapping_sentences(self, span: LexicalSpan,
+                                  inclusive: bool = True) -> \
             Iterable[FeatureSentence]:
-        """Return sentences that overlaps with ``span`` from this document."""
+        """Return sentences that overlaps with ``span`` from this document.
+
+        :param span: indicates the portion of the document to retain
+
+        :param inclusive: whether to check include +1 on the end component
+
+        """
         for sent in self.sents:
             if sent.lexspan.overlaps_with(span):
                 yield sent
 
-    def get_overlapping_document(self, span: LexicalSpan) -> FeatureDocument:
+    def get_overlapping_document(self, span: LexicalSpan,
+                                 inclusive: bool = True) -> FeatureDocument:
         """Get the portion of the document that overlaps ``span``.  For
         sentences that are completely enclosed in the span, the sentences are
         copied.  Otherwise, new sentences are created from those tokens that
         overlap the span.
 
         :param span: indicates the portion of the document to retain
+
+        :param inclusive: whether to check include +1 on the end component
 
         :return: a new document that contains the 0 index offset of ``span``
 
@@ -893,7 +914,7 @@ class FeatureDocument(TokenContainer):
             doc_text: str = self.text
             sents: List[FeatureSentence] = []
             for sent in self.sent_iter():
-                toks = list(sent.get_overlapping_tokens(span))
+                toks = list(sent.get_overlapping_tokens(span, inclusive))
                 if len(toks) == 0:
                     continue
                 elif len(toks) == len(sent):
@@ -920,7 +941,8 @@ class FeatureDocument(TokenContainer):
             text: str = doc_text[span.begin:span.end + 1]
             doc.sents = tuple(sents)
             doc.text = text
-            body_len = sum(1 for _ in doc.get_overlapping_tokens(span))
+            body_len = sum(
+                1 for _ in doc.get_overlapping_tokens(span, inclusive))
             assert body_len == doc.token_len
         return doc
 
