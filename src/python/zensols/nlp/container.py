@@ -421,7 +421,7 @@ class FeatureSpan(TokenContainer):
             return self.clone(FeatureSentence)
 
     def to_document(self) -> FeatureDocument:
-        return FeatureDocument(self.to_sentence(),)
+        return FeatureDocument((self.to_sentence(),))
 
     def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
         params = dict(kwargs)
