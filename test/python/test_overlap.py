@@ -124,6 +124,33 @@ Dan throws the ball. He throws it quite often.'
 
     def test_map(self):
         doc = self.doc
+
+#Dan throws the ball. He throws it quite often.
+#0123456789012345678901234567890
+
+        # left inclusive, right exclusive
+        self.assertEqual(('Dan',),
+                         self._map_spans(doc, ((0, 1),)))
+        self.assertEqual(('Dan',),
+                         self._map_spans(doc, ((0, 2),)))
+        self.assertEqual(('Dan|throws',),
+                         self._map_spans(doc, ((0, 9),)))
+        self.assertEqual(('throws',),
+                         self._map_spans(doc, ((3, 9),)))
+
+        self.assertEqual(doc.tokens[0].lexspan, LexicalSpan(0, 3))
+        self.assertEqual('Dan', self.sent[0:3])
+        self.assertEqual(' throws', self.sent[3:10])
+        self.assertEqual(('throws',),
+                         self._map_spans(doc, ((3, 10),)))
+
+        self.assertEqual('throws', self.sent[4:10])
+        self.assertEqual(doc.tokens[1].lexspan, LexicalSpan(4, 10))
+        self.assertEqual(('throws',),
+                         self._map_spans(doc, ((4, 10),)))
+        self.assertEqual(('throws|the',),
+                         self._map_spans(doc, ((4, 11),)))
+
         self.assertEqual(('Dan', 'the|ball|.|He|throws'),
                          self._map_spans(doc, ((0, 1), (11, 29))))
         self.assertEqual(('Dan', 'the|ball|.|He|throws'),

@@ -164,7 +164,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         il = InterLap()
         # adding with tuple inline is ~3 times as fast than a list, and ~9 times
         # faster than an individual add in a for loop
-        il.add(tuple(map(lambda t: (t.lexspan.begin, t.lexspan.end, t),
+        il.add(tuple(map(lambda t: (t.lexspan.begin, t.lexspan.end - 1, t),
                          self.token_iter())))
         return il
 
@@ -173,7 +173,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """Return a tuple of tokens, each tuple in the range given by the
         respective span in ``spans``.
 
-        :param spans: the document 0-index character based spans to compare with
+        :param spans: the document 0-index character based (left inclusive,
+                      right exclusive) spans to compare with
                       :obj:`.FeatureToken.lexspan`
 
         :return: a tuple of matching tokens for the respective ``span`` query
