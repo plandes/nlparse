@@ -4,7 +4,7 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Union, Optional, ClassVar, Set
+from typing import Tuple, Union, Optional, ClassVar, Set, Iterable
 from abc import ABCMeta
 import sys
 from io import TextIOBase
@@ -125,6 +125,22 @@ class LexicalSpan(Dictable):
             else:
                 nar = LexicalSpan(beg, end)
         return nar
+
+    @staticmethod
+    def widen(others: Iterable[LexicalSpan]) -> Optional[LexicalSpan]:
+        """Take the span union by using the left most :obj:`begin` and the right
+        most :obj:`end`.
+
+        :param others: the spans to union
+
+        :return: the widest span that inclusively aggregates ``others``, or None
+                 if an empty sequence is passed
+
+        """
+        begs = sorted(others, key=lambda s: s.begin)
+        if len(begs) > 0:
+            ends = sorted(begs, key=lambda s: s.end)
+            return LexicalSpan(begs[0].begin, ends[-1].end)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         self._write_line(str(self), depth, writer)

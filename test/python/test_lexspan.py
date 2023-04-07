@@ -84,3 +84,16 @@ class TestOverlap(TestCase):
         # case 5: second proceeds: disjoint
         self.assertFalse(LexicalSpan(1254, 2565).overlaps_with(LexicalSpan(51, 1253)))
         self.assertFalse(LexicalSpan(1255, 2565).overlaps_with(LexicalSpan(51, 1253)))
+
+    def test_widen(self):
+        s = LexicalSpan
+        w = LexicalSpan.widen
+        self.assertEqual((1, 5), w([s(1, 5)]).astuple)
+        self.assertEqual((1, 6), LexicalSpan.widen([s(1, 5), s(3, 6)]).astuple)
+        self.assertEqual((1, 6), LexicalSpan.widen([s(3, 6), s(1, 5)]).astuple)
+        self.assertEqual((0, 5), LexicalSpan.widen([s(1, 5), s(0, 3)]).astuple)
+        self.assertEqual((0, 5), LexicalSpan.widen([s(0, 3), s(1, 5)]).astuple)
+        self.assertEqual((1, 8), LexicalSpan.widen([s(1, 5), s(7, 8)]).astuple)
+        self.assertEqual((1, 8), LexicalSpan.widen([s(1, 5), s(7, 8)]).astuple)
+        self.assertEqual((1, 8), LexicalSpan.widen([s(7, 8), s(1, 5)]).astuple)
+        self.assertEqual((0, 10), LexicalSpan.widen([s(7, 8), s(0, 10), s(1, 5)]).astuple)
