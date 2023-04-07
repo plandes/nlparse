@@ -139,7 +139,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     @persisted('_canonical', transient=True)
     def canonical(self) -> str:
         """A canonical representation of the container, which are non-space
-        tokens separated by :obj:`CANONICAL_DELIMITER`
+        tokens separated by :obj:`CANONICAL_DELIMITER`.
 
         """
         return self.CANONICAL_DELIMITER.join(
