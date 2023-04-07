@@ -27,6 +27,9 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     """Each instance has the following attributes:
 
     """
+    CANONICAL_DELIMITER: ClassVar[str] = '|'
+    """The token delimiter used in :obj:`canonical`."""
+
     _POST_SPACE_SKIP: ClassVar[Set[str]] = frozenset("""`‘“[({<-""")
     _PRE_SPACE_SKIP: ClassVar[Set[str]] = frozenset(
         "'s n't 'll 'm 've 'd 're -".split())
@@ -131,6 +134,17 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         else:
             nsent = ' '.join(self.norm_token_iter())
         return nsent
+
+    @property
+    @persisted('_canonical', transient=True)
+    def canonical(self) -> str:
+        """A canonical representation of the container, which are non-space
+        tokens separated by :obj:`CANONICAL_DELIMITER`
+
+        """
+        return self.CANONICAL_DELIMITER.join(
+            map(lambda t: t.text,
+                filter(lambda t: not t.is_space, self.token_iter())))
 
     @property
     @persisted('_tokens', transient=True)
@@ -575,6 +589,8 @@ class FeatureSentence(FeatureSpan):
     with :meth:`to_document`.
 
     """
+    EMPTY_SENTENCE: ClassVar[FeatureSentence]
+
     def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
         if limit == 0:
             return iter(())
@@ -604,6 +620,8 @@ class FeatureDocument(TokenContainer):
     .. automethod:: _combine_documents
 
     """
+    EMPTY_DOCUMENT: ClassVar[FeatureDocument]
+
     _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_doc'}
     """Don't serialize the spacy document on persistance pickling."""
 
