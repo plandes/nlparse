@@ -4,7 +4,9 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Union, Optional, ClassVar, Set, Iterable
+from typing import (
+    Tuple, Union, Optional, ClassVar, Set, Iterable, Sequence, List, Type
+)
 from abc import ABCMeta
 import sys
 from io import TextIOBase
@@ -58,6 +60,16 @@ class LexicalSpan(Dictable):
     def astuple(self) -> Tuple[int, int]:
         """The span as a ``(begin, end)`` tuple."""
         return (self.begin, self.end)
+
+    @classmethod
+    def from_tuples(cls: Type, tups: Iterable[Tuple[int, int]]) -> \
+            Iterable[LexicalSpan]:
+        """Create spans from tuples.
+
+        :param tups: an iterable of ``(<begin>, <end)`` tuples
+
+        """
+        return map(lambda t: cls(*t), tups)
 
     @classmethod
     def from_token(cls, tok: Union[Token, Span]) -> Tuple[int, int]:
@@ -141,6 +153,41 @@ class LexicalSpan(Dictable):
         if len(begs) > 0:
             ends = sorted(begs, key=lambda s: s.end)
             return LexicalSpan(begs[0].begin, ends[-1].end)
+
+    @staticmethod
+    def gaps(spans: Iterable[LexicalSpan], end: Optional[int] = None) -> \
+            List[LexicalSpan]:
+        """Return the spans for the "holes" in ``spans``.  For example, if
+        ``spans`` is ``((0, 5), (10, 12), (15, 17))``, then return ``((5, 10),
+        (12, 15))``.
+
+        :param spans: the spans used to find gaps
+
+        :param end: an end position for the last gap so that if the last item in
+                    ``spans`` end does not match, another is added
+
+        :return: a list of spans that "fill" any holes in ``spans``
+
+        """
+        spans: List[LexicalSpan] = sorted(spans)
+        gaps: List[LexicalSpan] = []
+        spiter: Iterable[LexicalSpan] = iter(spans)
+        last: LexicalSpan = next(spiter)
+        if last.begin > 0:
+            last = LexicalSpan(0, last.begin)
+            gaps.append(last)
+            spiter = iter(spans)
+        ns: LexicalSpan
+        for ns in spiter:
+            gap: int = ns.begin - last.end
+            if gap > 0:
+                gs = LexicalSpan(last.end, ns.begin)
+                gaps.append(gs)
+            last = ns
+        # add ending span if the last didn't cover it
+        if end is not None and last.end != end:
+            gaps.append(LexicalSpan(gaps[-1].end, end))
+        return gaps
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
         self._write_line(str(self), depth, writer)
