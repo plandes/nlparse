@@ -1,6 +1,6 @@
 from unittest import TestCase
 from zensols.config import ImportConfigFactory
-from zensols.nlp import LexicalSpan, FeatureDocumentParser, FeatureDocument
+from zensols.nlp import LexicalSpan, FeatureDocumentParser, FeatureDocument, FeatureSentence
 import random
 from config import AppConfig
 
@@ -95,6 +95,7 @@ Dan throws the ball. He throws it quite often.'
         span = LexicalSpan(11, 27)
         doc2 = self.doc.get_overlapping_document(span, inclusive=False)
         self.assertEqual('the ball. He thr', doc2.text)
+        self.assertEqual('the ball. He thr', self.sent[span.begin:span.end])
         self.assertEqual(2, len(doc2))
         self.assertEqual(3, len(doc2[0]))
         self.assertEqual(2, len(doc2[1]))
@@ -110,6 +111,17 @@ Dan throws the ball. He throws it quite often.'
         doc2 = self.doc.get_overlapping_document(span, inclusive=False)
         self.assertEqual('the ball. He throws ', doc2.text)
         self.assertEqual('the ball . He throws'.split(), list(doc2.norm_token_iter()))
+
+    def test_slice(self):
+        span = LexicalSpan(11, 27)
+        doc = self.doc
+        self.assertEqual('the ball. He thr', self.sent[span.begin:span.end])
+        self.assertEqual('the ball. He thr', doc[span].text)
+        self.assertEqual(('the', 'ball', '.', 'He', 'thr'),
+                         tuple(doc[span].norm_token_iter()))
+        sent = self.doc[0]
+        self.assertEqual(FeatureSentence, type(sent))
+        self.assertEqual('the ball.', sent[span].text)
 
     def test_narrow(self):
         s1 = LexicalSpan(11, 27)
@@ -152,15 +164,17 @@ Dan throws the ball. He throws it quite often.'
                          self._map_spans(doc, ((0, 1),)))
         self.assertEqual(('Dan',),
                          self._map_spans(doc, ((0, 2),)))
+
         self.assertEqual(('Dan',),
                          self._map_spans(doc, ((0, 3),)))
+        self.assertEqual('Dan', self.sent[0:3])
+
         self.assertEqual(('Dan|throws',),
                          self._map_spans(doc, ((0, 9),)))
         self.assertEqual(('throws',),
                          self._map_spans(doc, ((3, 9),)))
 
         self.assertEqual(doc.tokens[0].lexspan, LexicalSpan(0, 3))
-        self.assertEqual('Dan', self.sent[0:3])
         self.assertEqual(' throws', self.sent[3:10])
         self.assertEqual(('throws',),
                          self._map_spans(doc, ((3, 10),)))

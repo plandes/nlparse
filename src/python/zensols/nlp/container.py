@@ -1,10 +1,9 @@
-from __future__ import annotations
 """Domain objects that define features associated with text.
 
 """
+from __future__ import annotations
 __author__ = 'Paul Landes'
-
-from typing import List, Tuple, Iterable, Dict, Type, Any, ClassVar, Set
+from typing import List, Tuple, Iterable, Dict, Type, Any, ClassVar, Set, Union
 from dataclasses import dataclass, field
 import dataclasses
 from abc import ABCMeta, abstractmethod
@@ -222,6 +221,13 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """
         return next(iter(self.map_overlapping_tokens((span,), inclusive)))
 
+    def get_overlapping_span(self, span: LexicalSpan,
+                             inclusive: bool = True) -> TokenContainer:
+        """Return a feature span that includes the lexical scope of ``span``."""
+        sent = FeatureSentence(tokens=self.tokens, text=self.text)
+        doc = FeatureDocument(sents=(sent,), text=self.text)
+        return doc.get_overlapping_document(span, inclusive=inclusive)
+
     @abstractmethod
     def to_sentence(self, limit: int = sys.maxsize,
                     contiguous_i_sent: bool = False) -> FeatureSentence:
@@ -357,6 +363,12 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                                        inline=True, include_type=False)
                 else:
                     t.write(depth + 2, writer)
+
+    def __getitem__(self, key: Union[LexicalSpan, int]) -> \
+            Union[FeatureToken, TokenContainer]:
+        if isinstance(key, LexicalSpan):
+            return self.get_overlapping_span(key, inclusive=False)
+        return self.tokens[key]
 
     def __hash__(self) -> int:
         return hash(self.norm)
@@ -565,9 +577,6 @@ class FeatureSpan(TokenContainer):
         return {'text': self.text,
                 'tokens': self._from_object(self.tokens, recurse, readable)}
 
-    def __getitem__(self, key) -> FeatureToken:
-        return self.tokens[key]
-
     def __len__(self) -> int:
         return self.token_len
 
@@ -599,6 +608,11 @@ class FeatureSentence(FeatureSpan):
 
     def to_document(self) -> FeatureDocument:
         return FeatureDocument((self,))
+
+    def get_overlapping_span(self, span: LexicalSpan,
+                             inclusive: bool = True) -> TokenContainer:
+        doc = FeatureDocument(sents=(self,), text=self.text)
+        return doc.get_overlapping_document(span, inclusive=inclusive)
 
     def __hash__(self) -> int:
         return hash(self.norm)
@@ -904,6 +918,11 @@ class FeatureDocument(TokenContainer):
         return tuple(chain.from_iterable(
             map(lambda s: s.entities, self.sents)))
 
+    def get_overlapping_span(self, span: LexicalSpan,
+                             inclusive: bool = True) -> FeatureSpan:
+        """Return a feature span that includes the lexical scope of ``span``."""
+        return self.get_overlapping_document(span, inclusive=inclusive)
+
     def get_overlapping_sentences(self, span: LexicalSpan,
                                   inclusive: bool = True) -> \
             Iterable[FeatureSentence]:
@@ -1016,7 +1035,10 @@ class FeatureDocument(TokenContainer):
         return {'text': self.text,
                 'sentences': self._from_object(self.sents, recurse, readable)}
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: Union[LexicalSpan, int]) -> \
+            Union[FeatureSentence, TokenContainer]:
+        if isinstance(key, LexicalSpan):
+            return self.get_overlapping_span(key, inclusive=False)
         return self.sents[key]
 
     def __len__(self):
