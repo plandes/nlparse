@@ -177,8 +177,11 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         il = InterLap()
         # adding with tuple inline is ~3 times as fast than a list, and ~9 times
         # faster than an individual add in a for loop
-        il.add(tuple(map(lambda t: (t.lexspan.begin, t.lexspan.end - 1, t),
-                         self.token_iter())))
+        spans: Tuple[Tuple[int, int]] = tuple(
+            map(lambda t: (t.lexspan.begin, t.lexspan.end - 1, t),
+                self.token_iter()))
+        if len(spans) > 0:
+            il.add(spans)
         return il
 
     def map_overlapping_tokens(self, spans: Iterable[LexicalSpan],
