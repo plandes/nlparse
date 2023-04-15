@@ -367,6 +367,27 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                 else:
                     t.write(depth + 2, writer)
 
+    def write_text(self, depth: int = 0, writer: TextIOBase = sys.stdout,
+                   include_original: bool = False,
+                   include_normalized: bool = True):
+        """Write only the text of the container.
+
+        :param include_original: whether to include the original text
+
+        :param include_normalized: whether to include the normalized text
+
+        """
+        inc_both: bool = include_original and include_normalized
+        add_depth = 1 if inc_both else 0
+        if include_original:
+            if inc_both:
+                self._write_line('original:', depth, writer)
+            self._write_wrap(self.text, depth + add_depth, writer)
+        if include_normalized:
+            if inc_both:
+                self._write_line('normalized:', depth, writer)
+            self._write_wrap(self.norm, depth + add_depth, writer)
+
     def __getitem__(self, key: Union[LexicalSpan, int]) -> \
             Union[FeatureToken, TokenContainer]:
         if isinstance(key, LexicalSpan):
