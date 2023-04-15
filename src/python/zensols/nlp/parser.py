@@ -24,7 +24,7 @@ from zensols.persist import (
 )
 from zensols.config import Dictable, ConfigFactory
 from . import (
-    ParseError, TokenNormalizer, FeatureToken, SpacyFeatureToken,
+    NLPError, ParseError, TokenNormalizer, FeatureToken, SpacyFeatureToken,
     FeatureSentence, FeatureDocument,
 )
 
@@ -639,6 +639,9 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
             if dump and self.stash is not None:
                 self.stash.dump(key, doc)
         else:
+            if doc.text != text:
+                raise NLPError(
+                    f'Document text does not match: <{text}> != >{doc.text}>')
             loaded = True
         return doc, key, loaded
 
