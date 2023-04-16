@@ -13,12 +13,13 @@ import logging
 import itertools as it
 import sys
 import re
-from io import TextIOBase
+from io import TextIOBase, StringIO
 import spacy
 from spacy.symbols import ORTH
 from spacy.tokens import Doc, Span, Token
 from spacy.language import Language
 from zensols.util import Hasher
+from zensols.config import ImportIniConfig, ImportConfigFactory
 from zensols.persist import (
     persisted, PersistedWork, PersistableContainer, Stash
 )
@@ -175,6 +176,18 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
     def __post_init__(self):
         super().__init__()
 
+    @staticmethod
+    def default_instance() -> FeatureDocumentParser:
+        """Create the parser as configured in the resource library of the
+        package.
+
+        """
+        config: str = (
+            '[import]\n' +
+            'config_file = resource(zensols.nlp): resources/obj.conf')
+        factory = ImportConfigFactory(ImportIniConfig(StringIO(config)))
+        return factory('doc_parser')
+
     @abstractmethod
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         """Parse text or a text as a list of sentences.
@@ -198,6 +211,12 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
 
         """
         return self.parse(text, *args, **kwargs)
+
+        def __str__(self):
+            return f'model_name: {self.model_name}, lang: {self.lang}'
+
+        def __repr__(self):
+            return self.__str__()
 
 
 class SpacyFeatureTokenDecorator(ABC):
@@ -591,12 +610,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             if hasattr(tok, 'ent_') and 'ent' in add_features:
                 params['ents'] = [conv_iob(t) for t in doc.token_iter()]
         return Doc(**params)
-
-    def __str__(self):
-        return f'model_name: {self.model_name}, lang: {self.lang}'
-
-    def __repr__(self):
-        return self.__str__()
 
 
 @dataclass

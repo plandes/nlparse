@@ -31,24 +31,22 @@ Other features include:
 
 ## Usage
 
-An example that provides ways to configure the parser is given
-[here](example/config).  See the `makefile` or `./run.py -h` for command line
-usage.
+A parser using the default configuration can be obtained by:
+```python
+from zensols.nlp import FeatureDocumentParser
+parser: FeatureDocumentParser = FeatureDocumentParser.default_instance()
+```
 
-A very [simple](example/simple.py) example is given below:
+However, minimal effort is needed to configure the parser using [resource library]:
 ```python
 from io import StringIO
 from zensols.config import ImportIniConfig, ImportConfigFactory
 from zensols.nlp import FeatureDocument, FeatureDocumentParser
 
 CONFIG = """
-[import]
-sections = list: imp_conf
-
 # import the `zensols.nlp` library
-[imp_conf]
-type = importini
-config_files = list: resource(zensols.nlp): resources/obj.conf
+[import]
+config_file = resource(zensols.nlp): resources/obj.conf
 
 # override the parse to keep only the norm, ent
 [doc_parser]
@@ -65,7 +63,8 @@ if (__name__ == '__main__'):
 ```
 
 This uses a [resource library] to source in the configuration from this package
-so minimal configuration is necessary.
+so minimal configuration is necessary.  More advanced configuration [examples]
+are also available.
 
 See the [feature documents] for more information.
 
@@ -126,6 +125,8 @@ Copyright (c) 2020 - 2021 Paul Landes
 [python310-link]: https://www.python.org/downloads/release/python-310
 [build-badge]: https://github.com/plandes/nlparse/workflows/CI/badge.svg
 [build-link]: https://github.com/plandes/nlparse/actions
+
+[examples]: https://github.com/plandes/nlparse/tree/master/example/config
 
 [hierarchy]: https://plandes.github.io/nlparse/api/zensols.nlp.html#zensols.nlp.container.FeatureDocument
 [Parse and normalize]: https://plandes.github.io/nlparse/doc/parse.html
