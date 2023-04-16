@@ -10,11 +10,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Fixed type exception bug on `Feature.to_sentence`.
+- Fix raised exception for overlapped methods on 0-length documents.
 
 ### Added
 - Right lexical span inclusive parameter for all
   `TokenContainer.get_overlapping*` methods.
 - Empty versions of `TokenContainer` subclasses.
+- Added a default instance of a `FeatureDocumentParser` that does not require a
+  resource library configuration.
+- A `TokenContainer.canonical` that provides a canonical representation of the
+  token container.
+- A right inclusive flag on `TokenContainer` overlapping methods.
 
 
 ## [1.6.0] - 2023-04-05
