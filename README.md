@@ -37,7 +37,7 @@ from zensols.nlp import FeatureDocumentParser
 parser: FeatureDocumentParser = FeatureDocumentParser.default_instance()
 ```
 
-However, minimal effort is needed to configure the parser using [resource library]:
+However, minimal effort is needed to configure the parser using a [resource library]:
 ```python
 from io import StringIO
 from zensols.config import ImportIniConfig, ImportConfigFactory
