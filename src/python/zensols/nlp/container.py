@@ -463,7 +463,6 @@ class FeatureSpan(TokenContainer):
     def _strip(self):
         self.tokens = tuple(self.strip_tokens(self.tokens))
         self.text = self.text.strip()
-        self._set_entity_spans()
 
     def to_sentence(self, limit: int = sys.maxsize,
                     contiguous_i_sent: bool = False) -> FeatureSentence:
