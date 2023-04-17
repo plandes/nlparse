@@ -39,3 +39,13 @@ class SplitTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
             else:
                 split_toks.extend(self._split_tok(ftok, tnorms))
         feature_sent.tokens = tuple(split_toks)
+
+
+class StripSpacyFeatureSentenceDecorator(SpacyFeatureSentenceDecorator):
+    """A decorator that strips whitespace from sentences.
+
+    :see: :meth:`.TokenContainer.strip`
+
+    """
+    def decorate(self, spacy_sent: Span, feature_sent: FeatureSentence):
+        feature_sent.strip()
