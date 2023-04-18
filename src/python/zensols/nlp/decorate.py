@@ -72,4 +72,3 @@ class FilterSentenceFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
         nlen: int = len(fsents)
         if olen != nlen:
             feature_doc.sents = fsents
-            feature_doc.text = None
