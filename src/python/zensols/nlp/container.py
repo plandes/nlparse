@@ -657,7 +657,8 @@ class FeatureDocument(TokenContainer):
     .. automethod:: _combine_documents
 
     """
-    EMPTY_DOCUMENT: ClassVar[FeatureDocument]
+    EMPTY_DOCUMENT: ClassVar[FeatureDocument] = None
+    """A zero length document."""
 
     _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_doc'}
     """Don't serialize the spacy document on persistance pickling."""
