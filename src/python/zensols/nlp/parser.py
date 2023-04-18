@@ -237,6 +237,15 @@ class SpacyFeatureSentenceDecorator(ABC):
         pass
 
 
+class SpacyFeatureDocumentDecorator(ABC):
+    """Implementations can add, remove or modify features on a document.
+
+    """
+    @abstractmethod
+    def decorate(self, spacy_doc: Doc, feature_doc: FeatureDocument):
+        pass
+
+
 @dataclass
 class SpacyFeatureDocumentParser(FeatureDocumentParser):
     """This langauge resource parses text in to Spacy documents.  Loaded spaCy
@@ -293,6 +302,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     sentence.
 
     """
+    document_decorators: Sequence[SpacyFeatureDocumentDecorator] = field(
+        default=())
+    """A list of decorators that can add, remove or modify features on a
+    document.
+
+    """
     disable_component_names: Sequence[str] = field(default=None)
     """Components to disable in the spaCy model when creating documents in
     :meth:`parse`.
@@ -312,13 +327,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     token_class: Type[FeatureToken] = field(default=SpacyFeatureToken)
     """The type of document instances to create."""
-
-    sentence_filters: List[str] = field(default_factory=list)
-    """A list of functions that return a boolean used to filter sentences.
-
-    """
-    remove_empty_sentences: bool = field(default=False)
-    """If ``True``, remove sentences that only have space tokens."""
 
     reload_components: bool = field(default=False)
     """Removes, then re-adds components for cached models.  This is helpful for
@@ -486,19 +494,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         self._decorate_sent(spacy_sent, sent)
         return sent
 
-    def _filter_sent(self, sent: Span, fsent: FeatureSentence) -> \
-            List[FeatureSentence]:
-        def remove_empty_sentences(sent, fsent) -> bool:
-            return len(sent) > 0 and not all(map(lambda t: t.is_space, sent))
-
-        filters = list(map(eval, self.sentence_filters))
-        if self.remove_empty_sentences:
-            filters.append(remove_empty_sentences)
-        if len(filters) == 0:
-            return True
-        else:
-            return all(map(lambda f: f(sent, fsent), filters))
-
     def _create_sents(self, doc: Doc) -> List[FeatureSentence]:
         """Create sentences from a spaCy doc."""
         toks: Tuple[FeatureToken, ...] = tuple(self._normalize_tokens(doc))
@@ -517,8 +512,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                     break
                 tix += 1
             fsent: FeatureSentence = self._create_sent(sent, stoks, sent.text)
-            if not self._filter_sent(sent, fsent):
-                continue
             sents.append(fsent)
         return sents
 
@@ -549,12 +542,20 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 f'Could not parse <{text}> for {self.doc_class} ' +
                 f"with args {args} for parser '{self.name}'") from e
 
+    def _decorate_doc(self, spacy_doc: Span, feature_doc: FeatureDocument):
+        decorator: SpacyFeatureDocumentDecorator
+        for decorator in self.document_decorators:
+            decorator.decorate(spacy_doc, feature_doc)
+
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         if not isinstance(text, str):
             raise ParseError(
                 f'Expecting string text but got: {text} ({type(str)})')
-        doc: Doc = self.parse_spacy_doc(text)
-        return self.from_spacy_doc(doc, *args, text=text, **kwargs)
+        sdoc: Doc = self.parse_spacy_doc(text)
+        fdoc: FeatureDocument = self.from_spacy_doc(
+            sdoc, *args, text=text, **kwargs)
+        self._decorate_doc(sdoc, fdoc)
+        return fdoc
 
     def to_spacy_doc(self, doc: FeatureDocument, norm: bool = True,
                      add_features: Set[str] = None) -> Doc:

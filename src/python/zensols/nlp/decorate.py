@@ -4,11 +4,12 @@
 __author__ = 'Paul Landes'
 
 from typing import List, Tuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import re
-from spacy.tokens import Span
+from spacy.tokens import Span, Doc
 from . import (
-    LexicalSpan, FeatureToken, FeatureSentence, SpacyFeatureSentenceDecorator
+    LexicalSpan, FeatureToken, FeatureSentence, FeatureDocument,
+    SpacyFeatureSentenceDecorator, SpacyFeatureDocumentDecorator
 )
 
 
@@ -49,3 +50,26 @@ class StripSpacyFeatureSentenceDecorator(SpacyFeatureSentenceDecorator):
     """
     def decorate(self, spacy_sent: Span, feature_sent: FeatureSentence):
         feature_sent.strip()
+
+
+class FilterSentenceFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
+    """Filter zero length sentences.
+
+    """
+    filter_space: bool = field(default=True)
+    """Whether to filter space tokens when comparing zero length sentences."""
+
+    def _filter_empty_sentences(self, fsent: FeatureSentence) -> bool:
+        toks: Tuple[FeatureToken] = fsent.tokens
+        if self.filter_space:
+            toks = tuple(filter(lambda t: not t.is_space, fsent.token_iter()))
+        return len(toks) > 0
+
+    def decorate(self, spacy_doc: Doc, feature_doc: FeatureDocument):
+        olen: int = len(feature_doc)
+        fsents: Tuple[FeatureSentence] = tuple(filter(
+            self._filter_empty_sentences, feature_doc.sents))
+        nlen: int = len(fsents)
+        if olen != nlen:
+            feature_doc.sents = fsents
+            feature_doc.text = None
