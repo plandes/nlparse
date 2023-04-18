@@ -61,6 +61,9 @@ class FeatureToken(PersistableContainer, TextContainer):
         reduce(lambda res, x: res | x, FEATURE_IDS_BY_TYPE.values()))
     """All default available feature IDs."""
 
+    SKIP_COMPARE_FEATURE_IDS: ClassVar[Set[str]] = set()
+    """A set of feature IDs to avoid comparing in :meth:`__eq__`."""
+
     WRITABLE_FEATURE_IDS: ClassVar[Tuple[str, ...]] = tuple(
         ('text norm idx sent_i i i_sent tag pos ' +
          'is_wh entity dep children').split())
@@ -288,6 +291,9 @@ class FeatureToken(PersistableContainer, TextContainer):
             b = dict(other.__dict__)
             del a['_detatched_feature_ids']
             del b['_detatched_feature_ids']
+            for attr in self.SKIP_COMPARE_FEATURE_IDS:
+                a.pop(attr)
+                b.pop(attr)
             return a == b
         return False
 
