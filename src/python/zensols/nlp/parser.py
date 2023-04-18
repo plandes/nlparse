@@ -328,6 +328,11 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     token_class: Type[FeatureToken] = field(default=SpacyFeatureToken)
     """The type of document instances to create."""
 
+    remove_empty_sentences: bool = field(default=None)
+    """Deprecated and will be removed from future versions.  Use
+    :class:`.FilterSentenceFeatureDocumentDecorator` instead.
+
+    """
     reload_components: bool = field(default=False)
     """Removes, then re-adds components for cached models.  This is helpful for
     when there are component configurations that change on reruns with a
@@ -341,6 +346,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     def __post_init__(self):
         super().__post_init__()
         self._model = PersistedWork('_model', self)
+        if self.remove_empty_sentences is not None:
+            import warnings
+            warnings.warn(
+                'remove_empty_sentences is deprecated (use ' +
+                'FilterSentenceFeatureDocumentDecorator instead',
+                DeprecationWarning)
 
     def _create_model_key(self) -> str:
         """Create a unique key used for storing expensive-to-create spaCy language
