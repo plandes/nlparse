@@ -246,6 +246,7 @@ class SplitEntityTokenMapper(TokenMapper):
     """Whether to generate tokens for each split span or a one token span."""
 
     copy_attributes: Tuple[str, ...] = field(default=('label', 'label_'))
+    """Attributes to copy from the span to the split token."""
 
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
@@ -256,7 +257,7 @@ class SplitEntityTokenMapper(TokenMapper):
                 span = tup[0]
                 for tix in range(span.end - span.start):
                     if not token_unit_type:
-                        tok = span[tix:tix+1]
+                        tok = span[tix:tix + 1]
                     else:
                         tok = span[tix]
                     for attr in cp_attribs:

@@ -5,7 +5,7 @@ from  __future__ import annotations
 __author__ = 'Paul Landes'
 
 from typing import (
-    Tuple, Dict, Any, Sequence, Set, List, Iterable, Type, ClassVar
+    Tuple, Dict, Any, Sequence, Set, List, Iterable, Type, ClassVar, Union
 )
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABCMeta, ABC
@@ -622,6 +622,54 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             if hasattr(tok, 'ent_') and 'ent' in add_features:
                 params['ents'] = [conv_iob(t) for t in doc.token_iter()]
         return Doc(**params)
+
+
+@dataclass
+class PostSpacyDecoratedFeatureDocumentParser(FeatureDocumentParser):
+    """This class adapts the spaCy parser adaptors to the general case using a
+    GoF decorator pattern.  This is useful for any post processing needed on
+    existing configured document parsers.
+
+    """
+    delegate: FeatureDocumentParser = field()
+    """Used to create the feature documents."""
+
+    token_decorators: Sequence[SpacyFeatureTokenDecorator] = field(default=())
+    """A list of decorators that can add, remove or modify features on a token.
+
+    """
+    sentence_decorators: Sequence[SpacyFeatureSentenceDecorator] = field(
+        default=())
+    """A list of decorators that can add, remove or modify features on a
+    sentence.
+
+    """
+    document_decorators: Sequence[SpacyFeatureDocumentDecorator] = field(
+        default=())
+    """A list of decorators that can add, remove or modify features on a
+    document.
+
+    """
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        doc: FeatureDocument = self.delegate.parse(text, *args, **kwargs)
+        td: SpacyFeatureTokenDecorator
+        for td in self.token_decorators:
+            tok: FeatureToken
+            for tok in doc.token_iter():
+                spacy_token: Union[Token, Span] = None
+                if isinstance(tok, SpacyFeatureToken):
+                    spacy_token = tok.spacy_token
+                td.decorate(spacy_token, tok)
+        sd: SpacyFeatureSentenceDecorator
+        for sd in self.sentence_decorators:
+            sent: FeatureSentence
+            for sent in doc.sents:
+                sd.decorate(sent.spacy_span, sent)
+        dd: SpacyFeatureDocumentDecorator
+        for dd in self.document_decorators:
+            dd.decorate(doc.spacy_doc, doc)
+        return doc
 
 
 @dataclass

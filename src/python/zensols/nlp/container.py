@@ -36,6 +36,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     def __post_init__(self):
         super().__init__()
+        self._norm = PersistedWork('_norm', self, transient=True)
         self._entities = PersistedWork('_entities', self, transient=True)
 
     @abstractmethod
@@ -102,7 +103,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         return map(lambda t: t.norm, self.token_iter(*args, **kwargs))
 
     @property
-    @persisted('_norm', transient=True)
+    @persisted('_norm')
     def norm(self) -> str:
         """The normalized version of the sentence."""
         return self._calc_norm()
@@ -445,7 +446,7 @@ class FeatureSpan(TokenContainer):
 
     """
     def __post_init__(self):
-        super().__init__()
+        super().__post_init__()
         if self.text is None:
             self.text = ' '.join(map(lambda t: t.text, self.tokens))
         # the _tokens setter is called to set the tokens before the the
@@ -464,6 +465,9 @@ class FeatureSpan(TokenContainer):
         self._tokens_val = tokens
         self._ents: List[Tuple[int, int]] = []
         self._set_entity_spans()
+        if hasattr(self, '_norm'):
+            # the __post_init__ is called after this setter for EMPTY_SENTENCE
+            self._norm.clear()
 
     def _set_entity_spans(self):
         if self.spacy_span is not None:

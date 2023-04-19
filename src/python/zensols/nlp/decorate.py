@@ -39,11 +39,12 @@ class SplitTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
                 split_toks.append(ftok)
             else:
                 split_toks.extend(self._split_tok(ftok, tnorms))
-        feature_sent.tokens = tuple(split_toks)
+        if feature_sent.token_len != len(split_toks):
+            feature_sent.tokens = tuple(split_toks)
 
 
 @dataclass
-class StripSpacyFeatureSentenceDecorator(SpacyFeatureSentenceDecorator):
+class StripSentenceDecorator(SpacyFeatureSentenceDecorator):
     """A decorator that strips whitespace from sentences.
 
     :see: :meth:`.TokenContainer.strip`
@@ -54,7 +55,35 @@ class StripSpacyFeatureSentenceDecorator(SpacyFeatureSentenceDecorator):
 
 
 @dataclass
-class FilterSentenceFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
+class FilterTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
+    """A decorator that strips whitespace from sentences.
+
+    :see: :meth:`.TokenContainer.strip`
+
+    """
+    remove_stop: bool = field(default=False)
+    remove_space: bool = field(default=False)
+    remove_pronouns: bool = field(default=False)
+    remove_punctuation: bool = field(default=False)
+    remove_determiners: bool = field(default=False)
+    remove_empty: bool = field(default=False)
+
+    def decorate(self, spacy_sent: Span, feature_sent: FeatureSentence):
+        def filter_tok(t: FeatureToken) -> bool:
+            return \
+                (not self.remove_stop or not t.is_stop) and \
+                (not self.remove_space or not t.is_space) and \
+                (not self.remove_pronouns or not t.pos_ == 'PRON') and \
+                (not self.remove_punctuation or not t.is_punct) and \
+                (not self.remove_determiners or not t.tag_ == 'DT') and \
+                (not self.remove_empty or len(t.norm) > 0)
+        toks: Tuple[FeatureToken] = tuple(filter(filter_tok, feature_sent))
+        if feature_sent.token_len != len(toks):
+            feature_sent.tokens = toks
+
+
+@dataclass
+class FilterEmptySentenceDocumentDecorator(SpacyFeatureDocumentDecorator):
     """Filter zero length sentences.
 
     """
@@ -77,7 +106,7 @@ class FilterSentenceFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
 
 
 @dataclass
-class UpdateFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
+class UpdateDocumentDecorator(SpacyFeatureDocumentDecorator):
     """Updates document indexes and spans (see fields).
 
     """
