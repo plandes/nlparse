@@ -419,8 +419,7 @@ class SubstituteTokenMapper(TokenMapper):
     def map_tokens(self, token_tups: Iterable[Tuple[Token, str]]) -> \
             Iterable[Tuple[Token, str]]:
         return (map(lambda x: (x[0], re.sub(
-            self.regex, self.replace_char, x[1])),
-                    token_tups),)
+            self.regex, self.replace_char, x[1])), token_tups),)
 
 
 @dataclass
