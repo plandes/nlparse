@@ -74,7 +74,7 @@ class FilterTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
                 (not self.remove_stop or not t.is_stop) and \
                 (not self.remove_space or not t.is_space) and \
                 (not self.remove_pronouns or not t.pos_ == 'PRON') and \
-                (not self.remove_punctuation or not t.is_punct) and \
+                (not self.remove_punctuation or not t.is_punctuation) and \
                 (not self.remove_determiners or not t.tag_ == 'DT') and \
                 (not self.remove_empty or len(t.norm) > 0)
         toks: Tuple[FeatureToken] = tuple(filter(filter_tok, feature_sent))
