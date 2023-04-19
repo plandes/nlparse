@@ -992,7 +992,7 @@ class FeatureDocument(TokenContainer):
             map(lambda s: s.entities, self.sents)))
 
     def get_overlapping_span(self, span: LexicalSpan,
-                             inclusive: bool = True) -> FeatureSpan:
+                             inclusive: bool = True) -> TokenContainer:
         """Return a feature span that includes the lexical scope of ``span``."""
         return self.get_overlapping_document(span, inclusive=inclusive)
 
