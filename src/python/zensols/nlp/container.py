@@ -35,7 +35,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     _LONGEST_PRE_SPACE_SKIP: ClassVar[int] = max(map(len, _PRE_SPACE_SKIP))
 
     def __post_init__(self):
-        super().__post_init__()
+        super().__init__()
         self._entities = PersistedWork('_entities', self, transient=True)
 
     @abstractmethod
@@ -591,16 +591,16 @@ class FeatureSpan(TokenContainer):
 
     def update_entity_spans(self, include_idx: bool = True):
         split_ents: List[Tuple[int, int]] = []
-        text: str = self.text
         fspan: FeatureSpan
         for fspan in self.entities:
             beg: int = fspan[0].idx
+            tok: FeatureToken
             for tok in fspan:
+                ls: LexicalSpan = tok.lexspan
                 end: int = beg + len(tok.norm)
-                ls = LexicalSpan(beg, end)
-                ts = text[ls.begin:ls.end]
-                assert tok.norm == ts
-                tok.lexspan = ls
+                if ls.begin != beg or ls.end != end:
+                    ls = LexicalSpan(beg, end)
+                    tok.lexspan = ls
                 if include_idx:
                     tok.idx = beg
                 split_ents.append((beg, beg))
@@ -715,7 +715,7 @@ class FeatureDocument(TokenContainer):
 
     """
     def __post_init__(self):
-        super().__init__()
+        super().__post_init__()
         if self.text is None:
             self.text = ''.join(map(lambda s: s.text, self.sent_iter()))
         if not isinstance(self.sents, tuple):

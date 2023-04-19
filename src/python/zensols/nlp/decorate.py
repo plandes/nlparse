@@ -42,6 +42,7 @@ class SplitTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
         feature_sent.tokens = tuple(split_toks)
 
 
+@dataclass
 class StripSpacyFeatureSentenceDecorator(SpacyFeatureSentenceDecorator):
     """A decorator that strips whitespace from sentences.
 
@@ -52,6 +53,7 @@ class StripSpacyFeatureSentenceDecorator(SpacyFeatureSentenceDecorator):
         feature_sent.strip()
 
 
+@dataclass
 class FilterSentenceFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
     """Filter zero length sentences.
 
@@ -74,6 +76,7 @@ class FilterSentenceFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
             feature_doc.sents = fsents
 
 
+@dataclass
 class UpdateFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
     """Updates document indexes and spans (see fields).
 
