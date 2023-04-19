@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - A `TokenContainer.canonical` that provides a canonical representation of the
   token container.
 - A right inclusive flag on `TokenContainer` overlapping methods.
+- Container methods to update token spans for split entities and a decorator.
 
 
 ## [1.6.0] - 2023-04-05
