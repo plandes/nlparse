@@ -1,13 +1,17 @@
+from unittest import TestCase
 from typing import Tuple
 import logging
 import re
-from zensols.nlp import FeatureSentence, FeatureDocument, FeatureDocumentParser
+from zensols.config import ImportIniConfig, ImportConfigFactory
+from zensols.nlp import (
+    FeatureToken, FeatureSentence, FeatureDocument, FeatureDocumentParser
+)
 from util import TestBase
 
 logger = logging.getLogger(__name__)
 
 
-class _TestSentenceDecorate(TestBase):
+class TestSentenceDecorate(TestBase):
     CONFIG = 'test-resources/decorate.conf'
 
     def test_decorate_sentences(self):
@@ -70,10 +74,12 @@ class TestDocumentDecorate(TestBase):
 
         doc = self._assert_whitespace(
             'Dan throws the ball.  He throws it quite often.', doc_parser, 1)
+        self.assertEqual(2, len(doc.sents))
         self.assertEqual(' He throws it quite often.', doc[1].text)
 
         doc = self._assert_whitespace(
             ' Dan throws the ball.  He throws it quite often.', doc_parser, 2)
+        self.assertEqual(2, len(doc.sents))
 
         doc = self._assert_whitespace(
             ' Dan throws the ball.  He throws it quite often. ', doc_parser, 2)
@@ -124,3 +130,20 @@ class TestDocumentDecorate(TestBase):
         self.assertEqual(2, len(doc.sents))
         self.assertEqual('Dan throws the ball.', doc[0].text)
         self.assertEqual('He throws it quite often.', doc[1].text)
+
+
+class TestDecorateMatchOriginal(TestCase):
+    CONFIG = 'test-resources/decorate-original.conf'
+
+    def test_org_spans(self):
+        conf = ImportIniConfig('test-resources/decorate-original.conf')
+        fac = ImportConfigFactory(conf)
+        doc_parser: FeatureDocumentParser = fac.instance('post_doc_parser')
+        with open('test-resources/whitespace.txt') as f:
+            content = f.read()
+        doc: FeatureDocument = doc_parser(content)
+        tok: FeatureToken
+        for tok in doc.token_iter():
+            ts = tok.lexspan
+            org = content[ts.begin:ts.end]
+            self.assertEqual(org, tok.norm)
