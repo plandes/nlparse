@@ -245,14 +245,13 @@ class TextContainer(Dictable, metaclass=ABCMeta):
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = True, include_normalized: bool = True):
-        self._write_line(f'{self.__class__.__name__}:', depth, writer)
         if (include_original or include_normalized) and self.text == self.norm:
-            self._write_line(self.text, depth + 1, writer)
+            self._write_line(self.text, depth, writer)
         else:
             if include_original:
-                self._write_line(f'original: {self.text}', depth + 1, writer)
+                self._write_line(f'original: {self.text}', depth, writer)
             if include_normalized:
-                self._write_line(f'normalized: {self.norm}', depth + 1, writer)
+                self._write_line(f'normalized: {self.norm}', depth, writer)
 
     def __str__(self):
         return f'<{tw.shorten(self.norm, width=self._DEFAULT_TOSTR_LEN-2)}>'

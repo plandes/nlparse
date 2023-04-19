@@ -379,13 +379,13 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                       include_original=include_original,
                       include_normalized=include_normalized)
         if n_tokens > 0:
-            self._write_line('tokens:', depth + 1, writer)
+            self._write_line('tokens:', depth, writer)
             for t in it.islice(self.token_iter(), n_tokens):
                 if inline:
-                    t.write_attributes(depth + 2, writer,
+                    t.write_attributes(depth + 1, writer,
                                        inline=True, include_type=False)
                 else:
-                    t.write(depth + 2, writer)
+                    t.write(depth + 1, writer)
 
     def write_text(self, depth: int = 0, writer: TextIOBase = sys.stdout,
                    include_original: bool = False,
@@ -1097,10 +1097,10 @@ class FeatureDocument(TokenContainer):
         """
         TextContainer.write(self, depth, writer,
                             include_original=include_original)
-        self._write_line('sentences:', depth + 1, writer)
+        self._write_line('sentences:', depth, writer)
         s: FeatureSentence
         for s in it.islice(self.sents, n_sents):
-            s.write(depth + 2, writer, n_tokens=n_tokens,
+            s.write(depth + 1, writer, n_tokens=n_tokens,
                     include_original=include_original)
 
     def _from_dictable(self, recurse: bool, readable: bool,
