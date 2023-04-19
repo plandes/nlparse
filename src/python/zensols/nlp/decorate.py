@@ -72,3 +72,24 @@ class FilterSentenceFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
         nlen: int = len(fsents)
         if olen != nlen:
             feature_doc.sents = fsents
+
+
+class UpdateFeatureDocumentDecorator(SpacyFeatureDocumentDecorator):
+    """Updates document indexes and spans (see fields).
+
+    """
+    update_indexes: bool = field(default=True)
+    """Whether to update the document indexes with
+    :meth:`.FeatureDocument.update_indexes`.
+
+    """
+    update_entity_spans: bool = field(default=True)
+    """Whether to update the document indexes with
+    :meth:`.FeatureDocument.update_entity_spans`.
+
+    """
+    def decorate(self, spacy_doc: Doc, feature_doc: FeatureDocument):
+        if self.update_indexes:
+            feature_doc.update_indexes()
+        if self.update_entity_spans:
+            feature_doc.update_entity_spans()

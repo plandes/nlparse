@@ -16,7 +16,7 @@ from io import TextIOBase, StringIO
 from frozendict import frozendict
 from interlap import InterLap
 from spacy.tokens import Doc, Span, Token
-from zensols.persist import PersistableContainer, persisted
+from zensols.persist import PersistableContainer, persisted, PersistedWork
 from . import NLPError, TextContainer, FeatureToken, LexicalSpan
 
 logger = logging.getLogger(__name__)
@@ -33,6 +33,10 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     _PRE_SPACE_SKIP: ClassVar[Set[str]] = frozenset(
         "'s n't 'll 'm 've 'd 're -".split())
     _LONGEST_PRE_SPACE_SKIP: ClassVar[int] = max(map(len, _PRE_SPACE_SKIP))
+
+    def __post_init__(self):
+        super().__post_init__()
+        self._entities = PersistedWork('_entities', self, transient=True)
 
     @abstractmethod
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
@@ -273,7 +277,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         return cls(**kwargs)
 
     @property
-    @persisted('_entities', transient=True)
+    @persisted('_entities')
     def entities(self) -> Tuple[FeatureSpan, ...]:
         """The named entities of the container with each multi-word entity as
         elements.
@@ -340,6 +344,21 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         ft: FeatureToken
         for i, ft in self.tokens_by_i.items():
             ft.i = i
+
+    @abstractmethod
+    def update_entity_spans(self, include_idx: bool = True):
+        """Update token entity to :obj:`norm` text.  This is helpful when
+        entities are embedded after splitting text, which becomes
+        :obj:`.FeatureToken.norm` values.  However, the token spans still index
+        the original entities that are multi-word, which leads to norms that are
+        not equal to the text spans.  This synchronizes the token span indexes
+        with the norms.
+
+        :param include_idx: whether to update :obj:`.SpacyFeatureToken.idx` as
+                            well
+
+        """
+        pass
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = False, include_normalized: bool = True,
@@ -570,6 +589,25 @@ class FeatureSpan(TokenContainer):
         for i_sent, ft in self.tokens_by_i_sent.items():
             ft.i_sent = i_sent
 
+    def update_entity_spans(self, include_idx: bool = True):
+        split_ents: List[Tuple[int, int]] = []
+        text: str = self.text
+        fspan: FeatureSpan
+        for fspan in self.entities:
+            beg: int = fspan[0].idx
+            for tok in fspan:
+                end: int = beg + len(tok.norm)
+                ls = LexicalSpan(beg, end)
+                ts = text[ls.begin:ls.end]
+                assert tok.norm == ts
+                tok.lexspan = ls
+                if include_idx:
+                    tok.idx = beg
+                split_ents.append((beg, beg))
+                beg = end + 1
+        self._ents = split_ents
+        self._entities.clear()
+
     def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken, ...],
                 tid_to_idx: Dict[int, int]) -> \
             Dict[FeatureToken, List[FeatureToken]]:
@@ -797,8 +835,15 @@ class FeatureDocument(TokenContainer):
         return by_i
 
     def update_indexes(self):
+        sent: FeatureSentence
         for sent in self.sents:
             sent.update_indexes()
+
+    def update_entity_spans(self, include_idx: bool = True):
+        sent: FeatureSentence
+        for sent in self.sents:
+            sent.update_entity_spans(include_idx)
+        self._entities.clear()
 
     def sentence_index_for_token(self, token: FeatureToken) -> int:
         """Return index of the parent sentence having ``token``."""
