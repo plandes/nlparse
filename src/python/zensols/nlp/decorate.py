@@ -9,12 +9,12 @@ import re
 from spacy.tokens import Span, Doc
 from . import (
     LexicalSpan, FeatureToken, FeatureSentence, FeatureDocument,
-    SpacyFeatureSentenceDecorator, SpacyFeatureDocumentDecorator
+    FeatureSentenceDecorator, FeatureDocumentDecorator
 )
 
 
 @dataclass
-class SplitTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
+class SplitTokenSentenceDecorator(FeatureSentenceDecorator):
     """A decorator that splits feature tokens by white space.
 
     """
@@ -30,32 +30,32 @@ class SplitTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
             toks.append(ctok)
         return toks
 
-    def decorate(self, spacy_sent: Span, feature_sent: FeatureSentence):
+    def decorate(self, sent: FeatureSentence):
         split_toks: List[FeatureToken] = []
         tok: FeatureToken
-        for ftok in feature_sent.token_iter():
+        for ftok in sent.token_iter():
             tnorms: Tuple[str, ...] = tuple(re.finditer(r'\S+', ftok.norm))
             if len(tnorms) == 1:
                 split_toks.append(ftok)
             else:
                 split_toks.extend(self._split_tok(ftok, tnorms))
-        if feature_sent.token_len != len(split_toks):
-            feature_sent.tokens = tuple(split_toks)
+        if sent.token_len != len(split_toks):
+            sent.tokens = tuple(split_toks)
 
 
 @dataclass
-class StripSentenceDecorator(SpacyFeatureSentenceDecorator):
+class StripSentenceDecorator(FeatureSentenceDecorator):
     """A decorator that strips whitespace from sentences.
 
     :see: :meth:`.TokenContainer.strip`
 
     """
-    def decorate(self, spacy_sent: Span, feature_sent: FeatureSentence):
-        feature_sent.strip()
+    def decorate(self, sent: FeatureSentence):
+        sent.strip()
 
 
 @dataclass
-class FilterTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
+class FilterTokenSentenceDecorator(FeatureSentenceDecorator):
     """A decorator that strips whitespace from sentences.
 
     :see: :meth:`.TokenContainer.strip`
@@ -68,7 +68,7 @@ class FilterTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
     remove_determiners: bool = field(default=False)
     remove_empty: bool = field(default=False)
 
-    def decorate(self, spacy_sent: Span, feature_sent: FeatureSentence):
+    def decorate(self, sent: FeatureSentence):
         def filter_tok(t: FeatureToken) -> bool:
             return \
                 (not self.remove_stop or not t.is_stop) and \
@@ -77,13 +77,13 @@ class FilterTokenSentenceDecorator(SpacyFeatureSentenceDecorator):
                 (not self.remove_punctuation or not t.is_punctuation) and \
                 (not self.remove_determiners or not t.tag_ == 'DT') and \
                 (not self.remove_empty or len(t.norm) > 0)
-        toks: Tuple[FeatureToken] = tuple(filter(filter_tok, feature_sent))
-        if feature_sent.token_len != len(toks):
-            feature_sent.tokens = toks
+        toks: Tuple[FeatureToken] = tuple(filter(filter_tok, sent))
+        if sent.token_len != len(toks):
+            sent.tokens = toks
 
 
 @dataclass
-class FilterEmptySentenceDocumentDecorator(SpacyFeatureDocumentDecorator):
+class FilterEmptySentenceDocumentDecorator(FeatureDocumentDecorator):
     """Filter zero length sentences.
 
     """
@@ -96,17 +96,17 @@ class FilterEmptySentenceDocumentDecorator(SpacyFeatureDocumentDecorator):
             toks = tuple(filter(lambda t: not t.is_space, fsent.token_iter()))
         return len(toks) > 0
 
-    def decorate(self, spacy_doc: Doc, feature_doc: FeatureDocument):
-        olen: int = len(feature_doc)
+    def decorate(self, doc: FeatureDocument):
+        olen: int = len(doc)
         fsents: Tuple[FeatureSentence] = tuple(filter(
-            self._filter_empty_sentences, feature_doc.sents))
+            self._filter_empty_sentences, doc.sents))
         nlen: int = len(fsents)
         if olen != nlen:
-            feature_doc.sents = fsents
+            doc.sents = fsents
 
 
 @dataclass
-class UpdateDocumentDecorator(SpacyFeatureDocumentDecorator):
+class UpdateDocumentDecorator(FeatureDocumentDecorator):
     """Updates document indexes and spans (see fields).
 
     """
@@ -120,8 +120,8 @@ class UpdateDocumentDecorator(SpacyFeatureDocumentDecorator):
     :meth:`.FeatureDocument.update_entity_spans`.
 
     """
-    def decorate(self, spacy_doc: Doc, feature_doc: FeatureDocument):
+    def decorate(self, doc: FeatureDocument):
         if self.update_indexes:
-            feature_doc.update_indexes()
+            doc.update_indexes()
         if self.update_entity_spans:
-            feature_doc.update_entity_spans()
+            doc.update_entity_spans()

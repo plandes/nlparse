@@ -219,30 +219,30 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
             return self.__str__()
 
 
-class SpacyFeatureTokenDecorator(ABC):
+class FeatureTokenDecorator(ABC):
     """Implementations can add, remove or modify features on a token.
 
     """
     @abstractmethod
-    def decorate(self, spacy_tok: Token, feature_token: FeatureToken):
+    def decorate(self, token: FeatureToken):
         pass
 
 
-class SpacyFeatureSentenceDecorator(ABC):
+class FeatureSentenceDecorator(ABC):
     """Implementations can add, remove or modify features on a sentence.
 
     """
     @abstractmethod
-    def decorate(self, spacy_sent: Span, feature_sent: FeatureSentence):
+    def decorate(self, sent: FeatureSentence):
         pass
 
 
-class SpacyFeatureDocumentDecorator(ABC):
+class FeatureDocumentDecorator(ABC):
     """Implementations can add, remove or modify features on a document.
 
     """
     @abstractmethod
-    def decorate(self, spacy_doc: Doc, feature_doc: FeatureDocument):
+    def decorate(self, doc: FeatureDocument):
         pass
 
 
@@ -292,17 +292,17 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     components: Sequence[Component] = field(default=())
     """Additional Spacy components to add to the pipeline."""
 
-    token_decorators: Sequence[SpacyFeatureTokenDecorator] = field(default=())
+    token_decorators: Sequence[FeatureTokenDecorator] = field(default=())
     """A list of decorators that can add, remove or modify features on a token.
 
     """
-    sentence_decorators: Sequence[SpacyFeatureSentenceDecorator] = field(
+    sentence_decorators: Sequence[FeatureSentenceDecorator] = field(
         default=())
     """A list of decorators that can add, remove or modify features on a
     sentence.
 
     """
-    document_decorators: Sequence[SpacyFeatureDocumentDecorator] = field(
+    document_decorators: Sequence[FeatureDocumentDecorator] = field(
         default=())
     """A list of decorators that can add, remove or modify features on a
     document.
@@ -481,9 +481,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         return tokens
 
     def _decorate_token(self, spacy_tok: Token, feature_token: FeatureToken):
-        decorator: SpacyFeatureTokenDecorator
+        decorator: FeatureTokenDecorator
         for decorator in self.token_decorators:
-            decorator.decorate(spacy_tok, feature_token)
+            decorator.decorate(feature_token)
 
     def _create_token(self, tok: Token, norm: Tuple[Token, str],
                       *args, **kwargs) -> FeatureToken:
@@ -495,9 +495,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         return ft.detach(self.token_feature_ids)
 
     def _decorate_sent(self, spacy_sent: Span, feature_sent: FeatureSentence):
-        decorator: SpacyFeatureSentenceDecorator
+        decorator: FeatureSentenceDecorator
         for decorator in self.sentence_decorators:
-            decorator.decorate(spacy_sent, feature_sent)
+            decorator.decorate(feature_sent)
 
     def _create_sent(self, spacy_sent: Span, stoks: Iterable[FeatureToken],
                      text: str) -> FeatureSentence:
@@ -554,9 +554,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 f"with args {args} for parser '{self.name}'") from e
 
     def _decorate_doc(self, spacy_doc: Span, feature_doc: FeatureDocument):
-        decorator: SpacyFeatureDocumentDecorator
+        decorator: FeatureDocumentDecorator
         for decorator in self.document_decorators:
-            decorator.decorate(spacy_doc, feature_doc)
+            decorator.decorate(feature_doc)
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
         if not isinstance(text, str):
@@ -625,7 +625,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
 
 @dataclass
-class PostSpacyDecoratedFeatureDocumentParser(FeatureDocumentParser):
+class DecoratedFeatureDocumentParser(FeatureDocumentParser):
     """This class adapts the spaCy parser adaptors to the general case using a
     GoF decorator pattern.  This is useful for any post processing needed on
     existing configured document parsers.
@@ -634,41 +634,40 @@ class PostSpacyDecoratedFeatureDocumentParser(FeatureDocumentParser):
     delegate: FeatureDocumentParser = field()
     """Used to create the feature documents."""
 
-    token_decorators: Sequence[SpacyFeatureTokenDecorator] = field(default=())
+    token_decorators: Sequence[FeatureTokenDecorator] = field(default=())
     """A list of decorators that can add, remove or modify features on a token.
 
     """
-    sentence_decorators: Sequence[SpacyFeatureSentenceDecorator] = field(
+    sentence_decorators: Sequence[FeatureSentenceDecorator] = field(
         default=())
     """A list of decorators that can add, remove or modify features on a
     sentence.
 
     """
-    document_decorators: Sequence[SpacyFeatureDocumentDecorator] = field(
+    document_decorators: Sequence[FeatureDocumentDecorator] = field(
         default=())
     """A list of decorators that can add, remove or modify features on a
     document.
 
     """
-
-    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
-        doc: FeatureDocument = self.delegate.parse(text, *args, **kwargs)
-        td: SpacyFeatureTokenDecorator
+    def decorate(self, doc: FeatureDocument):
+        td: FeatureTokenDecorator
         for td in self.token_decorators:
             tok: FeatureToken
             for tok in doc.token_iter():
-                spacy_token: Union[Token, Span] = None
-                if isinstance(tok, SpacyFeatureToken):
-                    spacy_token = tok.spacy_token
-                td.decorate(spacy_token, tok)
-        sd: SpacyFeatureSentenceDecorator
+                td.decorate(tok)
+        sd: FeatureSentenceDecorator
         for sd in self.sentence_decorators:
             sent: FeatureSentence
             for sent in doc.sents:
-                sd.decorate(sent.spacy_span, sent)
-        dd: SpacyFeatureDocumentDecorator
+                sd.decorate(sent)
+        dd: FeatureDocumentDecorator
         for dd in self.document_decorators:
-            dd.decorate(doc.spacy_doc, doc)
+            dd.decorate(doc)
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        doc: FeatureDocument = self.delegate.parse(text, *args, **kwargs)
+        self.decorate(doc)
         return doc
 
 

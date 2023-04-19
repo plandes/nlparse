@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Fixed type exception bug on `Feature.to_sentence`.
 - Fix raised exception for overlapped methods on 0-length documents.
+- Remove spaCy artifacts from parser decorators
+  (i.e. `SpacyFeatureDocumentDecorator` -> `FeatureDocumentDecorator`) to
+  generalize to non-spaCy document parsers and other components (`deepnlp`
+  transformer embedding populators).
 
 ### Added
 - Right lexical span inclusive parameter for all
