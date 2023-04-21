@@ -141,7 +141,8 @@ class ScoreSet(Dictable):
     """
     correlation_id_col: str = field(default='id')
     """The column name for the :obj:`.ScoreResult.correlation_id` added to Numpy
-    arrays and Pandas dataframes.
+    arrays and Pandas dataframes.  If ``None``, then the correlation IDS are
+    used as the index.
 
     """
     def __len__(self) -> int:
@@ -208,10 +209,15 @@ class ScoreSet(Dictable):
             # add as a dataframe, otherwise string correlation IDs cast the
             # numpy array to a string
             cid: str = self.correlation_id_col
-            cols: List[str] = df.columns.tolist()
-            df[cid] = tuple(map(lambda r: r.correlation_id, self.results))
-            cols.insert(0, cid)
-            df = df[cols]
+            cids: Tuple[Union[str, int]] = tuple(
+                map(lambda r: r.correlation_id, self.results))
+            if cid is None:
+                df.index = cids
+            else:
+                cols: List[str] = df.columns.tolist()
+                df[cid] = cids
+                cols.insert(0, cid)
+                df = df[cols]
         return df
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
