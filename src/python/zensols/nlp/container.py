@@ -9,6 +9,7 @@ import dataclasses
 from abc import ABCMeta, abstractmethod
 import sys
 import logging
+import textwrap as tw
 import itertools as it
 from itertools import chain
 import copy
@@ -389,12 +390,15 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     def write_text(self, depth: int = 0, writer: TextIOBase = sys.stdout,
                    include_original: bool = False,
-                   include_normalized: bool = True):
+                   include_normalized: bool = True,
+                   limit: int = sys.maxsize):
         """Write only the text of the container.
 
         :param include_original: whether to include the original text
 
         :param include_normalized: whether to include the normalized text
+
+        :param limit: the max number of characters to print
 
         """
         inc_both: bool = include_original and include_normalized
@@ -402,11 +406,13 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         if include_original:
             if inc_both:
                 self._write_line('original:', depth, writer)
-            self._write_wrap(self.text, depth + add_depth, writer)
+            text: str = tw.shorten(self.text, limit)
+            self._write_wrap(text, depth + add_depth, writer)
         if include_normalized:
             if inc_both:
                 self._write_line('normalized:', depth, writer)
-            self._write_wrap(self.norm, depth + add_depth, writer)
+            norm: str = tw.shorten(self.norm, limit)
+            self._write_wrap(norm, depth + add_depth, writer)
 
     def __getitem__(self, key: Union[LexicalSpan, int]) -> \
             Union[FeatureToken, TokenContainer]:

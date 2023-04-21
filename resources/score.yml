@@ -1,13 +1,23 @@
 # description: scorer configuration
 
 
-## Scorer
+## Score methods
 #
 nlp_bleu_score_method:
   class_name: zensols.nlp.score.BleuScoreMethod
 
 nlp_rouge_score_method:
   class_name: zensols.nlp.score.RougeScoreMethod
+
+nlp_semeval_score_method:
+  class_name: zensols.nlp.nerscore.SemEvalScoreMethod
+
+
+## Method groupings
+#
+nlp_ner_scorer_methods:
+  semeval: >-
+    'semeval': 'nlp_semeval_score_method'
 
 nlp_scorer_methods:
   bleu: >-
@@ -23,6 +33,19 @@ nlp_scorer_methods:
     'rouge8': 'nlp_rouge_score_method',
     'rouge9': 'nlp_rouge_score_method',
     'rougeL': 'nlp_rouge_score_method',
+
+
+## Scorer
+#
+
+nlp_scorer:
+  class_name: zensols.nlp.score.Scorer
+  methods: >-
+    instance: dict: {
+      ${nlp_scorer_methods:bleu}
+      ${nlp_scorer_methods:rouge}
+      ${dsprov_semeval_scorer_methods:semeval}
+      }
 
 nlp_scorer:
   class_name: zensols.nlp.score.Scorer

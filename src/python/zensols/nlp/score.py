@@ -19,6 +19,11 @@ from . import NLPError
 logger = logging.getLogger(__name__)
 
 
+class ScorerError(NLPError):
+    """Raised for any scoring errors (this module)."""
+    pass
+
+
 @dataclass
 class Score(Dictable, metaclass=ABCMeta):
     """Individual scores returned from :class:`.ScoreMethod'.
@@ -222,7 +227,8 @@ class ScoreContext(Dictable):
     pairs: Tuple[Tuple[TokenContainer, TokenContainer]] = field()
     """Sentence, span or document pairs to score (order matters for some scoring
     methods such as rouge).  For summarization use cases, the ordering of the
-    sentence pairs should be ``(<source>, <summary>)``.
+    sentence pairs should be ``(<source>, <summary>)``, or
+    ``(<gold>, <prediction>)``.
 
     """
     methods: Set[str] = field(default=None)
@@ -244,7 +250,7 @@ class ScoreContext(Dictable):
     def validate(self):
         if self.correlation_ids is not None and \
            len(self.pairs) != len(self.correlation_ids):
-            raise NLPError(
+            raise ScorerError(
                 'Expecting same length pairs to correlation IDs but got: ' +
                 f'{len(self.pairs)} != {len(self.correlation_ids)}')
 
@@ -277,6 +283,12 @@ class ScoreMethod(ABC):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'scoring meth: {meth}, ' +
                          f'reverse: {self.reverse_sents}')
+        if not isinstance(context.pairs[0][0], TokenContainer):
+            raise ScorerError(f'Wrong type: {type(context.pairs[0][0])} ' +
+                              f' for first item, expecting {TokenContainer}')
+        if not isinstance(context.pairs[0][1], TokenContainer):
+            raise ScorerError(f'Wrong type: {type(context.pairs[0][0])} ' +
+                              f' for second item, expecting {TokenContainer}')
         try:
             if self.reverse_sents:
                 prev_pairs = context.pairs
@@ -423,7 +435,7 @@ class Scorer(object):
         for meth in meths:
             smeth: ScoreMethod = self.methods.get(meth)
             if smeth is None:
-                raise NLPError(f"No scoring method: '{meth}'")
+                raise ScorerError(f"No scoring method: '{meth}'")
             by_meth[meth] = tuple(smeth.score(meth, context))
         for i in range(len(context.pairs)):
             item_res: Dict[str, Score] = {}
