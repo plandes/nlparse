@@ -30,10 +30,11 @@ From the `David Batista`_ blog post:
 """
 from __future__ import annotations
 __author__ = 'Paul Landes'
-from typing import Tuple, Dict, Set, List, Optional, Any, Iterable, ClassVar
+from typing import (
+    Tuple, Dict, Set, List, Optional, Any, Iterable, ClassVar, Type
+)
 from dataclasses import dataclass, field, fields
 import numpy as np
-from nervaluate import Evaluator
 from zensols.nlp import TokenContainer, FeatureSpan
 from zensols.nlp.score import (
     Score, ErrorScore, ScoreMethod, ScoreContext, HarmonicMeanScore
@@ -130,8 +131,14 @@ class SemEvalScoreMethod(ScoreMethod):
     under a (stubbed tag) label.
 
     """
+    @classmethod
+    def _get_external_modules(cls: Type) -> Tuple[str, ...]:
+        return ('nervaluate',)
+
     def _score_pair(self, gold: TokenContainer, pred: TokenContainer) -> \
             SemEvalScore:
+        from nervaluate import Evaluator
+
         def nolab(c: TokenContainer, label: str) -> Tuple[Dict[str, Any], ...]:
             return tuple(map(
                 lambda t: dict(label=label, start=t.lexspan.begin,

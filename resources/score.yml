@@ -37,16 +37,6 @@ nlp_scorer_methods:
 
 ## Scorer
 #
-
-nlp_scorer:
-  class_name: zensols.nlp.score.Scorer
-  methods: >-
-    instance: dict: {
-      ${nlp_scorer_methods:bleu}
-      ${nlp_scorer_methods:rouge}
-      ${dsprov_semeval_scorer_methods:semeval}
-      }
-
 nlp_scorer:
   class_name: zensols.nlp.score.Scorer
   methods: >-

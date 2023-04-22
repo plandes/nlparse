@@ -4,7 +4,9 @@ from __future__ import annotations
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Set, Dict, Iterable, List, ClassVar, Union, Optional
+from typing import (
+    Tuple, Set, Dict, Iterable, List, ClassVar, Union, Optional, Type
+)
 from dataclasses import dataclass, field
 from abc import ABCMeta, ABC, abstractmethod
 import logging
@@ -12,7 +14,9 @@ import sys
 from io import TextIOBase
 import nltk.translate.bleu_score as bleu
 import numpy as np
+from zensols.introspect import ClassImporter
 from zensols.config import Dictable
+from zensols.persist import persisted
 from zensols.nlp import TokenContainer
 from . import NLPError
 
@@ -269,6 +273,28 @@ class ScoreMethod(ABC):
     reverse_sents: bool = field(default=False)
     """Whether to reverse the order of the sentences."""
 
+    @classmethod
+    def _get_external_modules(cls: Type) -> Tuple[str, ...]:
+        """Return a list of external module names needed by this method."""
+        return ()
+
+    @classmethod
+    def missing_modules(cls: Type) -> Tuple[str]:
+        """Return a list of missing modules neede by this score method."""
+        missing: List[str] = []
+        mod: str
+        for mod in cls._get_external_modules():
+            try:
+                ClassImporter.get_module(mod)
+            except ModuleNotFoundError:
+                missing.append(mod)
+        return missing
+
+    @classmethod
+    def is_available(cls: Type) -> bool:
+        """Whether or not this method is available on this system."""
+        return len(cls.missing_modules()) == 0
+
     @abstractmethod
     def _score(self, meth: str, context: ScoreContext) -> Iterable[Score]:
         """See :meth:`score`"""
@@ -379,13 +405,9 @@ class RougeScoreMethod(ScoreMethod):
     the :mod:`rouge_score` package.
 
     """
-    @staticmethod
-    def is_available() -> bool:
-        try:
-            import rouge_score
-            return True
-        except ModuleNotFoundError:
-            return False
+    @classmethod
+    def _get_external_modules(cls: Type) -> Tuple[str, ...]:
+        return ('rouge_score',)
 
     def _score(self, meth: str, context: ScoreContext) -> \
             Iterable[HarmonicMeanScore]:
@@ -424,6 +446,23 @@ class Scorer(object):
     :obj:`.ScoreContext.meth`.
 
     """
+    @persisted('_get_missing_modules_pw', cache_global=True)
+    def _get_missing_modules(self) -> Tuple[str]:
+        missing: List[str] = []
+        not_avail: List[str] = []
+        name: str
+        meth: ScoreMethod
+        for name, meth in self.methods.items():
+            missing_mods: Tuple[str] = meth.missing_modules()
+            if len(missing_mods) > 0:
+                logger.warning(f'method {meth} is not available: ' +
+                               f'missing {missing_mods}')
+                not_avail.append(name)
+                missing.extend(missing_mods)
+        for name in not_avail:
+            del self.methods[name]
+        return tuple(missing_mods)
+
     def score(self, context: ScoreContext) -> ScoreSet:
         """Score the sentences in ``context``.
 
@@ -437,6 +476,7 @@ class Scorer(object):
         meths: Iterable[str] = context.methods
         if meths is None:
             meths = self.methods.keys()
+        self._get_missing_modules()
         meth: str
         for meth in meths:
             smeth: ScoreMethod = self.methods.get(meth)
