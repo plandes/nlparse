@@ -24,7 +24,10 @@ logger = logging.getLogger(__name__)
 
 
 class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
-    """Each instance has the following attributes:
+    """A base class for token container classes such as
+    :class:`.FeatureSentence` and :class:`.FeatureDocument`.  In addition to the
+    defined methods, each instance has a ``text`` attribute, which is the
+    original text of the document.
 
     """
     CANONICAL_DELIMITER: ClassVar[str] = '|'

@@ -509,12 +509,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         """Create sentences from a spaCy doc."""
         toks: Tuple[FeatureToken, ...] = tuple(self._normalize_tokens(doc))
         sents: List[FeatureSentence] = []
-        ntoks = len(toks)
-        tix = 0
+        ntoks: int = len(toks)
+        tix: int = 0
         sent: Span
         for sent in doc.sents:
-            e = sent[-1].i
-            stoks = []
+            e: int = sent[-1].i
+            stoks: List[FeatureToken] = []
             while tix < ntoks:
                 tok = toks[tix]
                 if tok.i <= e:
