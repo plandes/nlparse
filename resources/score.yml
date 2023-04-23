@@ -3,6 +3,9 @@
 
 ## Score methods
 #
+nlp_exact_match_score_method:
+  class_name: zensols.nlp.score.ExactMatchScoreMethod
+
 nlp_bleu_score_method:
   class_name: zensols.nlp.score.BleuScoreMethod
 
@@ -15,11 +18,9 @@ nlp_semeval_score_method:
 
 ## Method groupings
 #
-nlp_ner_scorer_methods:
-  semeval: >-
-    'semeval': 'nlp_semeval_score_method'
-
 nlp_scorer_methods:
+  exact_match: >-
+    'exact_match': 'nlp_exact_match_score_method',
   bleu: >-
     'bleu': 'nlp_bleu_score_method',
   rouge: >-
@@ -34,6 +35,10 @@ nlp_scorer_methods:
     'rouge9': 'nlp_rouge_score_method',
     'rougeL': 'nlp_rouge_score_method',
 
+nlp_ner_scorer_methods:
+  semeval: >-
+    'semeval': 'nlp_semeval_score_method'
+
 
 ## Scorer
 #
@@ -41,6 +46,7 @@ nlp_scorer:
   class_name: zensols.nlp.score.Scorer
   methods: >-
     instance: dict: {
+      ${nlp_scorer_methods:exact_match}
       ${nlp_scorer_methods:bleu}
       ${nlp_scorer_methods:rouge}
       }

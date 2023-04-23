@@ -356,6 +356,39 @@ class ScoreMethod(ABC):
 
 
 @dataclass
+class ExactMatchScoreMethod(ScoreMethod):
+    """A scoring method that return 1 for exact matches and 0 otherwise.
+
+    """
+    equality_measure: str = field(default='norm')
+    """The method by which to compare, which is one of:
+
+        * ``norm``: compare with :meth:`.TokenContainer.norm`
+
+        * ``text``: compare with :meth:`.TokenContainer.text`
+
+        * ``equal``: compare using a Python object ``__eq__`` equal compare,
+                     which also compares the token values
+
+    """
+    def _score(self, meth: str, context: ScoreContext) -> Iterable[FloatScore]:
+        s1: TokenContainer
+        s2: TokenContainer
+        for s1t, s2t in context.pairs:
+            val: float
+            if self.equality_measure == 'norm':
+                val = 1. if s1t.norm == s2t.norm else 0.
+            elif self.equality_measure == 'text':
+                val = 1. if s1t.text == s2t.text else 0.
+            elif self.equality_measure == 'equal':
+                val = 1. if s1t == s2t else 0.
+            else:
+                raise ScorerError(
+                    f"No equality measure: '{self.equality_measure}'")
+            yield FloatScore(val)
+
+
+@dataclass
 class BleuScoreMethod(ScoreMethod):
     """The BLEU scoring method using the :mod:`nltk` package.
 
@@ -387,6 +420,8 @@ class BleuScoreMethod(ScoreMethod):
                 'ignore', message='[.\n]+The hypothesis contains 0 counts.*')
 
     def _score(self, meth: str, context: ScoreContext) -> Iterable[FloatScore]:
+        s1: TokenContainer
+        s2: TokenContainer
         for s1t, s2t in self._tokenize(context):
             val: float = bleu.sentence_bleu(
                 [s1t], s2t,
@@ -418,10 +453,10 @@ class RougeScoreMethod(ScoreMethod):
             def tokenize(sent: TokenContainer) -> Tuple[str]:
                 return sents[id(sent)]
 
+        s1: TokenContainer
+        s2: TokenContainer
         if self.feature_tokenizer:
             scorer = rouge_scorer.RougeScorer([meth], tokenizer=Tokenizer)
-            s1: TokenContainer
-            s2: TokenContainer
             pairs = zip(context.pairs, self._tokenize(context))
             for (s1, s2), (s1t, s2t) in pairs:
                 sents = {id(s1): s1t, id(s2): s2t}
