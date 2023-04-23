@@ -6,6 +6,9 @@
 nlp_exact_match_score_method:
   class_name: zensols.nlp.score.ExactMatchScoreMethod
 
+nlp_levenshtein_score_method:
+  class_name: zensols.nlp.score.LevenshteinDistanceScoreMethod
+
 nlp_bleu_score_method:
   class_name: zensols.nlp.score.BleuScoreMethod
 
@@ -21,6 +24,8 @@ nlp_semeval_score_method:
 nlp_scorer_methods:
   exact_match: >-
     'exact_match': 'nlp_exact_match_score_method',
+  levenshtein: >-
+    'levenshtein': 'nlp_levenshtein_score_method',
   bleu: >-
     'bleu': 'nlp_bleu_score_method',
   rouge: >-
@@ -47,6 +52,7 @@ nlp_scorer:
   methods: >-
     instance: dict: {
       ${nlp_scorer_methods:exact_match}
+      ${nlp_scorer_methods:levenshtein}
       ${nlp_scorer_methods:bleu}
       ${nlp_scorer_methods:rouge}
       }

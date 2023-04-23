@@ -365,7 +365,7 @@ class ExactMatchScoreMethod(ScoreMethod):
 
         * ``norm``: compare with :meth:`.TokenContainer.norm`
 
-        * ``text``: compare with :meth:`.TokenContainer.text`
+        * ``text``: compare with :obj:`.TokenContainer.text`
 
         * ``equal``: compare using a Python object ``__eq__`` equal compare,
                      which also compares the token values
@@ -385,6 +385,61 @@ class ExactMatchScoreMethod(ScoreMethod):
             else:
                 raise ScorerError(
                     f"No equality measure: '{self.equality_measure}'")
+            yield FloatScore(val)
+
+
+@dataclass
+class LevenshteinDistanceScoreMethod(ScoreMethod):
+    """A scoring method that computes the Levenshtein distance.
+
+    """
+    form: str = field(default='canon')
+    """The form of the of the text used for the evaluation, which is one of:
+
+        * ``text``: the original text with :obj:`.TokenContainer.text`
+
+        * ``norm``: the normalized text using :meth:`.TokenContainer.norm`
+
+        * ``canon``: :obj:`.TokenContainer.canonical` to normalize out
+          whitespace for better comparisons
+
+    """
+    normalize: bool = field(default=True)
+    """Whether to normalize  the return value as the *distince  / the max length
+    of both sentences*.
+
+    """
+    @classmethod
+    def _get_external_modules(cls: Type) -> Tuple[str, ...]:
+        return ('editdistance',)
+
+    def _score(self, meth: str, context: ScoreContext) -> Iterable[FloatScore]:
+        import editdistance
+
+        def container_to_str(container: TokenContainer) -> str:
+            return container.norm if self.use_norm else container.text
+
+        s1: TokenContainer
+        s2: TokenContainer
+        for s1t, s2t in context.pairs:
+            t1: str
+            t2: str
+            if self.form == 'text':
+                # use the normalized canonical form
+                t1, t2 = s1t.text, s2t.text
+            elif self.form == 'norm':
+                # use the normalized canonical form
+                t1, t2 = s1t.norm, s2t.norm
+            elif self.form == 'canon':
+                # use the normalized canonical form
+                t1, t2 = s1t.canonical, s2t.canonical
+            else:
+                raise ScorerError(f"No form: '{self.form}'")
+            val: int = editdistance.eval(t1, t2)
+            if self.normalize:
+                text_len: int = max(len(t1), len(t2))
+                val = 1. - (val / text_len)
+            val: float = val
             yield FloatScore(val)
 
 
@@ -481,6 +536,11 @@ class Scorer(object):
     :obj:`.ScoreContext.meth`.
 
     """
+    default_methods: Set[str] = field(default=None)
+    """Methods (keys from :obj:`methods`) to use when none are provided in the
+    :obj:`.ScoreContext.meth` in the call to :meth:`score`.
+
+    """
     @persisted('_get_missing_modules_pw', cache_global=True)
     def _get_missing_modules(self) -> Tuple[str]:
         missing: List[str] = []
@@ -510,7 +570,10 @@ class Scorer(object):
         by_res: List[ScoreResult] = []
         meths: Iterable[str] = context.methods
         if meths is None:
-            meths = self.methods.keys()
+            if self.default_methods is None:
+                meths = self.methods.keys()
+            else:
+                meths = self.default_methods
         self._get_missing_modules()
         meth: str
         for meth in meths:
