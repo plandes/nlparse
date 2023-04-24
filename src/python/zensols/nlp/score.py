@@ -30,7 +30,7 @@ class ScorerError(NLPError):
 
 @dataclass
 class Score(Dictable, metaclass=ABCMeta):
-    """Individual scores returned from :class:`.ScoreMethod'.
+    """Individual scores returned from :class:`.ScoreMethod`.
 
     """
     def asrow(self, meth: str) -> Dict[str, float]:
@@ -236,9 +236,17 @@ class ScoreContext(Dictable):
     """
     pairs: Tuple[Tuple[TokenContainer, TokenContainer]] = field()
     """Sentence, span or document pairs to score (order matters for some scoring
-    methods such as rouge).  For summarization use cases, the ordering of the
-    sentence pairs should be ``(<source>, <summary>)``, or
-    ``(<gold>, <prediction>)``.
+    methods such as rouge).  Depending on the scoring method the ordering of the
+    sentence pairs should be:
+
+      * ``(<summary>, <source>)``
+
+      * ``(<gold>, <prediction>)``
+
+      * ``(<references>, <candidates>)``
+
+    See :class:`.ScoreMethod` implementations for more information about pair
+    ordering.
 
     """
     methods: Set[str] = field(default=None)
@@ -445,14 +453,21 @@ class LevenshteinDistanceScoreMethod(ScoreMethod):
 
 @dataclass
 class BleuScoreMethod(ScoreMethod):
-    """The BLEU scoring method using the :mod:`nltk` package.
+    """The BLEU scoring method using the :mod:`nltk` package.  The first
+    sentences are the references and the second are the hypothesis.
 
     """
     smoothing_function: bleu.SmoothingFunction = field(default=None)
     """This is an implementation of the smoothing techniques for segment-level
-    BLEU scores that was presented in Boxing Chen and Collin Cherry (2014) A
-    Systematic Comparison of Smoothing Techniques for Sentence-Level BLEU. In
-    WMT14.  http://acl2014.org/acl2014/W14-33/pdf/W14-3346.pdf
+    BLEU scores.
+
+    Citation:
+
+    .. code:: none
+
+      Boxing Chen and Collin Cherry (2014) A Systematic Comparison of Smoothing
+      Techniques for Sentence-Level BLEU. In WMT14.
+      http://acl2014.org/acl2014/W14-33/pdf/W14-3346.pdf
 
     """
     weights: Tuple[float, ...] = field(default=(0.25, 0.25, 0.25, 0.25))

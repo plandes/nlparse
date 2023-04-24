@@ -123,7 +123,7 @@ SemEvalScore.NAN_INSTANCE = SemEvalScore(
 class SemEvalScoreMethod(ScoreMethod):
     """A Semeval-2013 Task 9.1 scor (see module :mod:`zensols.nlp.nerscore`
     docs).  This score has four harmonic means providing various levels of
-    accuracy.
+    accuracy.  Sentence pairs are ordered as ``(<gold>, <prediction>)``.
 
     """
     labels: Optional[Set[str]] = field(default=None)
