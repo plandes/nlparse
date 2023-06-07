@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.6.1] - 2023-06-07
 ### Changed
 - Fixed type exception bug on `Feature.to_sentence`.
 - Fix raised exception for overlapped methods on 0-length documents.
@@ -26,6 +27,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   token container.
 - A right inclusive flag on `TokenContainer` overlapping methods.
 - Container methods to update token spans for split entities and a decorator.
+- Levenshtein edit distance based scoring module.
+- Exact match scoring module.
+- SemEval-2013 Task 9.1 scoring module.
 
 
 ## [1.6.0] - 2023-04-05
@@ -342,7 +346,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/plandes/nlparse/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/plandes/nlparse/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/plandes/nlparse/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/plandes/nlparse/compare/v1.4.0...v1.4.1
