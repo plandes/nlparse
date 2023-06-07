@@ -20,7 +20,12 @@ Other features include:
 * Configuration drive parsing and token normalization using [configuration
   factories].
 * Pretty print functionality for easy natural language feature selection.
-
+* A comprehensive [scoring module] including following scoring methods:
+  * [Rouge]
+  * [Bleu]
+  * [SemEval-2013 Task 9.1]
+  * [Levenshtein distance] (optionally normalized)
+  * Exact match
 
 ## Documentation
 
@@ -146,3 +151,8 @@ Copyright (c) 2020 - 2021 Paul Landes
 
 [configuration factories]: https://plandes.github.io/util/doc/config.html#configuration-factory
 [feature documents]: https://plandes.github.io/nlparse/doc/feature-doc.html
+[scoring module]: https://plandes.github.io/nlparse/api/zensols.nlp.html#zensols-nlp-score
+[Rouge]: https://aclanthology.org/W04-1013
+[Bleu]: https://aclanthology.org/P02-1040
+[SemEval-2013 Task 9.1]: https://web.archive.org/web/20150131105418/https://www.cs.york.ac.uk/semeval-2013/task9/data/uploads/semeval_2013-task-9_1-evaluation-metrics.pdf
+[Levenshtein distance]: https://en.wikipedia.org/wiki/Levenshtein_distance
