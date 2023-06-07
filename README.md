@@ -24,7 +24,7 @@ Other features include:
   * [Rouge]
   * [Bleu]
   * [SemEval-2013 Task 9.1]
-  * [Levenshtein distance] (optionally normalized)
+  * [Levenshtein distance]
   * Exact match
 
 ## Documentation
