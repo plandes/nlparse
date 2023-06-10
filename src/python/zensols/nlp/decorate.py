@@ -6,7 +6,6 @@ __author__ = 'Paul Landes'
 from typing import List, Tuple
 from dataclasses import dataclass, field
 import re
-from spacy.tokens import Span, Doc
 from . import (
     LexicalSpan, FeatureToken, FeatureSentence, FeatureDocument,
     FeatureSentenceDecorator, FeatureDocumentDecorator

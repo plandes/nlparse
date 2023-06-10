@@ -1,9 +1,8 @@
-from __future__ import annotations
 """Produces matching scores.
 
 """
+from __future__ import annotations
 __author__ = 'Paul Landes'
-
 from typing import (
     Tuple, Set, Dict, Iterable, List, ClassVar, Union, Optional, Type
 )

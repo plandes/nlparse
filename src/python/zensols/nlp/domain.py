@@ -1,12 +1,9 @@
-from __future__ import annotations
 """Interfaces, contracts and errors.
 
 """
+from __future__ import annotations
 __author__ = 'Paul Landes'
-
-from typing import (
-    Tuple, Union, Optional, ClassVar, Set, Iterable, Sequence, List, Type
-)
+from typing import Tuple, Union, Optional, ClassVar, Set, Iterable, List, Type
 from abc import ABCMeta
 import sys
 from io import TextIOBase

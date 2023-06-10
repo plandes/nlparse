@@ -1,11 +1,10 @@
-from  __future__ import annotations
 """Parse documents and generate features in an organized taxonomy.
 
 """
+from __future__ import annotations
 __author__ = 'Paul Landes'
-
 from typing import (
-    Tuple, Dict, Any, Sequence, Set, List, Iterable, Type, ClassVar, Union
+    Tuple, Dict, Any, Sequence, Set, List, Iterable, Type, ClassVar
 )
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABCMeta, ABC
