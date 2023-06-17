@@ -48,6 +48,9 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     """A list of features to be copied/overwritten in order given in the list.
 
     """
+    overwrite_nones: bool = field(default=False)
+    """Whether to write ``None`` for missing :obj:`overwrite_features`."""
+
     def _validate_features(self, target_tok: FeatureToken,
                            source_tok: FeatureToken,
                            context_container: TokenContainer):
@@ -63,6 +66,7 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     def _merge_tokens(self, target_tok: FeatureToken,
                       source_tok: FeatureToken,
                       context_container: TokenContainer):
+        overwrite_nones: bool = self.overwrite_nones
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging tokens: {source_tok} ({type(source_tok)}) '
                          f'-> {target_tok} ({type(target_tok)})')
@@ -80,7 +84,10 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                         logger.debug(f'{src} -> {target_tok.text}.{f}')
                     setattr(target_tok, f, src)
         for f in self.overwrite_features:
-            src = source_tok.get_value(f)
+            if overwrite_nones:
+                src = getattr(source_tok, f)
+            else:
+                src = source_tok.get_value(f)
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'overwrite feature: {f}, src={src}')
             if src is not None:

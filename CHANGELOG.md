@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- Feature to add `None` values to missing overwritten features in
+  `CombinerFeatureDocumentParser`.
+
+
 ## [1.7.0] - 2023-06-07
 ### Changed
 - Fixed type exception bug on `Feature.to_sentence`.
