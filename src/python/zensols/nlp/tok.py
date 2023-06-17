@@ -31,7 +31,7 @@ class FeatureToken(PersistableContainer, TextContainer):
     :meth:`.FeatureDocument.uncombine_sentences`), and alwyas included.
 
     """
-    _DICTABLE_WRITABLE_DESCENDANTS = True
+    _DICTABLE_WRITABLE_DESCENDANTS: ClassVar[bool] = True
     """Use write method."""
 
     REQUIRED_FEATURE_IDS: ClassVar[Set[str]] = frozenset(
