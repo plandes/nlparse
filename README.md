@@ -34,12 +34,26 @@ Other features include:
 * [List Token Normalizers and Mappers]
 
 
+## Obtaining / Installing
+
+The easiest way to install the command line program is via the `pip`
+installer.  Since the package needs at least one spaCy module, the second
+command downloads the smallest model.
+```bash
+pip3 install --use-deprecated=legacy-resolver zensols.nlp
+python -m spacy download en_core_web_sm
+```
+
+Binaries are also available on [pypi].
+
+
 ## Usage
 
 A parser using the default configuration can be obtained by:
 ```python
 from zensols.nlp import FeatureDocumentParser
 parser: FeatureDocumentParser = FeatureDocumentParser.default_instance()
+doc = parser('Obama was the 44th president of the United States.')
 for tok in doc.tokens:
     print(tok.norm, tok.pos_, tok.tag_)
 print(doc.entities)
@@ -86,15 +100,6 @@ so minimal configuration is necessary.  More advanced configuration [examples]
 are also available.
 
 See the [feature documents] for more information.
-
-
-## Obtaining / Installing
-
-1. The easist way to install the command line program is via the `pip`
-   installer: `pip3 install --use-deprecated=legacy-resolver zensols.nlp`
-2. Install at least one spaCy model: `python -m spacy download en_core_web_sm`
-
-Binaries are also available on [pypi].
 
 
 ## Attribution
