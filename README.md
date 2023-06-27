@@ -40,6 +40,20 @@ A parser using the default configuration can be obtained by:
 ```python
 from zensols.nlp import FeatureDocumentParser
 parser: FeatureDocumentParser = FeatureDocumentParser.default_instance()
+for tok in doc.tokens:
+    print(tok.norm, tok.pos_, tok.tag_)
+print(doc.entities)
+
+>>>
+Obama PROPN NNP
+was AUX VBD
+the DET DT
+45th ADJ JJ
+president NOUN NN
+of ADP IN
+the United States DET DT
+. PUNCT .
+(<Obama>, <45th>, <the United States>)
 ```
 
 However, minimal effort is needed to configure the parser using a [resource library]:
