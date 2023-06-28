@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.7.2] - 2023-06-27
+### Changed
+- Move spaCy parser and supporting classes to a separate module.
+- Feature to auto load any missing spaCy models at runtime.  This feature
+  `doc_parser.auto_install_model` must be turned on to be used.
+
+
 ## [1.7.1] - 2023-06-20
 ### Added
 - Feature to add `None` values to missing overwritten features in
@@ -352,7 +359,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.7.1...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.7.2...HEAD
+[1.7.2]: https://github.com/plandes/nlparse/compare/v1.7.1...v1.7.2
 [1.7.1]: https://github.com/plandes/nlparse/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/plandes/nlparse/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/plandes/nlparse/compare/v1.5.0...v1.6.0
