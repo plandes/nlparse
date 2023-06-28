@@ -180,6 +180,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     and not the new ones created with a new configuration factory.
 
     """
+    auto_install_model: bool = field(default=False)
+    """Whether to install models not already available.  Note that this uses the
+    pip command to download model requirements, which might have an adverse
+    effect of replacing currently installed Python packages.
+
+    """
     def __post_init__(self):
         super().__post_init__()
         self._model = PersistedWork('_model', self)
@@ -189,6 +195,12 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 'remove_empty_sentences is deprecated (use ' +
                 'FilterSentenceFeatureDocumentDecorator instead',
                 DeprecationWarning)
+
+    def _assert_model(self, model_name: str):
+        import spacy.util
+        import spacy.cli
+        if not spacy.util.is_package(model_name):
+            spacy.cli.download(model_name)
 
     def _create_model_key(self) -> str:
         """Create a unique key used for storing expensive-to-create spaCy language
@@ -202,6 +214,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     def _create_model(self) -> Language:
         """Load, configure and return a new spaCy model instance."""
+        if self.auto_install_model:
+            self._assert_model(self.model_name)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'loading model: {self.model_name}')
         nlp = spacy.load(self.model_name)
