@@ -51,6 +51,14 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     overwrite_nones: bool = field(default=False)
     """Whether to write ``None`` for missing :obj:`overwrite_features`."""
 
+    include_detached_features: bool = field(default=True)
+    """Whether to include copied (yielded or overwritten) features as listed
+    detected features.  This controls what is compared, cloned and for printed
+    in :meth:`~zensols.config.writable.Writable.write`.
+
+    :see: :obj:`.FeatureToken.default_detached_feature_ids`
+
+    """
     def _validate_features(self, target_tok: FeatureToken,
                            source_tok: FeatureToken,
                            context_container: TokenContainer):
@@ -67,10 +75,12 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                       source_tok: FeatureToken,
                       context_container: TokenContainer):
         overwrite_nones: bool = self.overwrite_nones
+        include_detached: bool = self.include_detached_features
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging tokens: {source_tok} ({type(source_tok)}) '
                          f'-> {target_tok} ({type(target_tok)})')
         self._validate_features(target_tok, source_tok, context_container)
+        f: str
         for f in self.yield_features:
             targ = target_tok.get_value(f)
             if logger.isEnabledFor(logging.DEBUG):
@@ -83,6 +93,9 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'{src} -> {target_tok.text}.{f}')
                     setattr(target_tok, f, src)
+                    if include_detached and \
+                       target_tok._detatched_feature_ids is not None:
+                        target_tok._detatched_feature_ids.add(f)
         for f in self.overwrite_features:
             if overwrite_nones:
                 src = getattr(source_tok, f)
@@ -94,6 +107,9 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                 if logger.isEnabledFor(logging.DEBUG):
                     logger.debug(f'{src} -> {target_tok.text}.{f}')
                 setattr(target_tok, f, src)
+                if include_detached and \
+                   target_tok._detatched_feature_ids is not None:
+                    target_tok._detatched_feature_ids.add(f)
 
     def _debug_sentence(self, sent: FeatureSentence, name: str):
         logger.debug(f'{name}:')
