@@ -44,7 +44,8 @@ class FeatureToken(PersistableContainer, TextContainer):
                            'is_superlative is_pronoun').split()),
         'int': frozenset(('i idx i_sent sent_i is_punctuation tag ' +
                           'ent ent_iob dep shape norm_len').split()),
-        'str': frozenset('norm lemma_ tag_ pos_ ent_ ent_iob_ dep_ shape_'.split()),
+        'str': frozenset(('norm lemma_ tag_ pos_ ent_ ent_iob_ ' +
+                          'dep_ shape_').split()),
         'list': frozenset('children'.split()),
         'object': frozenset('lexspan'.split())})
     """Map of class type to set of feature IDs."""
