@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changed
+- `TokenContainer.norm` removes newlines of the normalized text.
+
+
 ## [1.7.3] - 2023-06-29
 ### Changed
 - `FeatureToken` detached features are transmitted by the

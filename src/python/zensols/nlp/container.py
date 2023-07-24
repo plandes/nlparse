@@ -115,7 +115,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     def _calc_norm(self) -> str:
         """Create a string that follows English spacing rules."""
         nsent: str
-        toks = self.tokens
+        toks = tuple(filter(lambda t: t.text != '\n', self.token_iter()))
         tlen = len(toks)
         has_punc = tlen > 0 and hasattr(toks[0], 'is_punctuation')
         if has_punc:
