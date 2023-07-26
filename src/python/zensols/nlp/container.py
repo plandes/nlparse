@@ -205,8 +205,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     @abstractmethod
     def to_sentence(self, limit: int = sys.maxsize,
-                    contiguous_i_sent: Union[str, bool] = False) -> \
-            FeatureSentence:
+                    contiguous_i_sent: Union[str, bool] = False,
+                    delim: str = '') -> FeatureSentence:
         """Coerce this instance to a single sentence.  No tokens data is updated
         so :obj:`.FeatureToken.i_sent` keep their original indexes.  These
         sentence indexes will be inconsistent when called on
@@ -219,6 +219,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                                   contiguous for the returned instance; if this
                                   value is ``reset``, the token indicies start
                                   from 0
+
+        :param delim: a string added between each constituent sentence
 
         :return: an instance of ``FeatureSentence`` that represents this token
                  sequence
@@ -483,8 +485,8 @@ class FeatureSpan(TokenContainer):
         self.text = self.text.strip()
 
     def to_sentence(self, limit: int = sys.maxsize,
-                    contiguous_i_sent: Union[str, bool] = False) -> \
-            FeatureSentence:
+                    contiguous_i_sent: Union[str, bool] = False,
+                    delim: str = '') -> FeatureSentence:
         if limit == 0:
             return iter(())
         else:
@@ -665,8 +667,8 @@ class FeatureSentence(FeatureSpan):
     EMPTY_SENTENCE: ClassVar[FeatureSentence]
 
     def to_sentence(self, limit: int = sys.maxsize,
-                    contiguous_i_sent: Union[str, bool] = False) -> \
-            FeatureSentence:
+                    contiguous_i_sent: Union[str, bool] = False,
+                    delim: str = '') -> FeatureSentence:
         if limit == 0:
             return iter(())
         else:
@@ -801,12 +803,12 @@ class FeatureDocument(TokenContainer):
         return cls
 
     def to_sentence(self, limit: int = sys.maxsize,
-                    contiguous_i_sent: Union[str, bool] = False) -> \
-            FeatureSentence:
+                    contiguous_i_sent: Union[str, bool] = False,
+                    delim: str = '') -> FeatureSentence:
         sents: Tuple[FeatureSentence, ...] = tuple(self.sent_iter(limit))
         toks: Iterable[FeatureToken] = chain.from_iterable(
             map(lambda s: s.tokens, sents))
-        stext: str = ''.join(map(lambda s: s.text, sents))
+        stext: str = delim.join(map(lambda s: s.text, sents))
         cls: Type = self._sent_class()
         sent: FeatureSentence = cls(tokens=tuple(toks), text=stext)
         sent._ents = list(chain.from_iterable(map(lambda s: s._ents, sents)))
