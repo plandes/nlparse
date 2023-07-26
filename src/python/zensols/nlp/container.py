@@ -13,12 +13,13 @@ import textwrap as tw
 import itertools as it
 from itertools import chain
 import copy
-from io import TextIOBase, StringIO
+from io import TextIOBase
 from frozendict import frozendict
 from interlap import InterLap
 from spacy.tokens import Doc, Span, Token
 from zensols.persist import PersistableContainer, persisted, PersistedWork
 from . import NLPError, TextContainer, FeatureToken, LexicalSpan
+from .spannorm import SpanNormalizer, DEFAULT_FEATURE_TOKEN_NORMALIZER
 
 logger = logging.getLogger(__name__)
 
@@ -30,18 +31,13 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     original text of the document.
 
     """
-    CANONICAL_DELIMITER: ClassVar[str] = '|'
-    """The token delimiter used in :obj:`canonical`."""
-
-    _POST_SPACE_SKIP: ClassVar[Set[str]] = frozenset("""`‘“[({<-""")
-    _PRE_SPACE_SKIP: ClassVar[Set[str]] = frozenset(
-        "'s n't 'll 'm 've 'd 're -".split())
-    _LONGEST_PRE_SPACE_SKIP: ClassVar[int] = max(map(len, _PRE_SPACE_SKIP))
+    _PERSITABLE_TRANSIENT_ATTRIBUTES: ClassVar[Set[str]] = {'_token_norm'}
 
     def __post_init__(self):
         super().__init__()
         self._norm = PersistedWork('_norm', self, transient=True)
         self._entities = PersistedWork('_entities', self, transient=True)
+        self._token_norm: SpanNormalizer = DEFAULT_FEATURE_TOKEN_NORMALIZER
 
     @abstractmethod
     def token_iter(self, *args, **kwargs) -> Iterable[FeatureToken]:
@@ -110,38 +106,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     @persisted('_norm')
     def norm(self) -> str:
         """The normalized version of the sentence."""
-        return self._calc_norm()
-
-    def _calc_norm(self) -> str:
-        """Create a string that follows English spacing rules."""
-        nsent: str
-        toks = tuple(filter(lambda t: t.text != '\n', self.token_iter()))
-        tlen = len(toks)
-        has_punc = tlen > 0 and hasattr(toks[0], 'is_punctuation')
-        if has_punc:
-            post_space_skip = self._POST_SPACE_SKIP
-            pre_space_skip = self._PRE_SPACE_SKIP
-            n_pre_space_skip = self._LONGEST_PRE_SPACE_SKIP
-            sio = StringIO()
-            last_avoid = False
-            for tix, tok in enumerate(toks):
-                norm = tok.norm
-                if tix > 0 and tix < tlen:
-                    do_post_space_skip = False
-                    nlen = len(norm)
-                    if nlen == 1:
-                        do_post_space_skip = norm in post_space_skip
-                    if (not tok.is_punctuation or do_post_space_skip) and \
-                       not last_avoid and \
-                       not (nlen <= n_pre_space_skip and
-                            norm in pre_space_skip):
-                        sio.write(' ')
-                    last_avoid = do_post_space_skip or tok.norm == '--'
-                sio.write(norm)
-            nsent = sio.getvalue()
-        else:
-            nsent = ' '.join(self.norm_token_iter())
-        return nsent
+        return self._token_norm.get_norm(self.token_iter())
 
     @property
     @persisted('_canonical', transient=True)
@@ -150,9 +115,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         tokens separated by :obj:`CANONICAL_DELIMITER`.
 
         """
-        return self.CANONICAL_DELIMITER.join(
-            map(lambda t: t.text,
-                filter(lambda t: not t.is_space, self.token_iter())))
+        return self._token_norm.get_canonical(self.token_iter())
 
     @property
     @persisted('_tokens', transient=True)
@@ -242,7 +205,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     @abstractmethod
     def to_sentence(self, limit: int = sys.maxsize,
-                    contiguous_i_sent: bool = False) -> FeatureSentence:
+                    contiguous_i_sent: Union[str, bool] = False) -> \
+            FeatureSentence:
         """Coerce this instance to a single sentence.  No tokens data is updated
         so :obj:`.FeatureToken.i_sent` keep their original indexes.  These
         sentence indexes will be inconsistent when called on
@@ -250,15 +214,32 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
         :param limit: the max number of sentences to create (only starting kept)
 
-        :param contiguous_i_sent: ensures all tokens have
+        :param contiguous_i_sent: if ``True``, ensures all tokens have
                                   :obj:`.FeatureToken.i_sent` value that is
-                                  contiguous for the returned instance
+                                  contiguous for the returned instance; if this
+                                  value is ``reset``, the token indicies start
+                                  from 0
 
         :return: an instance of ``FeatureSentence`` that represents this token
                  sequence
 
         """
         pass
+
+    def _set_contiguous_tokens(self, contiguous_i_sent: Union[str, bool],
+                               reference: TokenContainer):
+        if contiguous_i_sent is False:
+            pass
+        elif contiguous_i_sent == 'reset':
+            for i, tok in enumerate(self.token_iter()):
+                tok.i_sent = i
+        elif contiguous_i_sent is True:
+            st: FeatureToken
+            for ref_tok, tok in zip(self.token_iter(), reference.token_iter()):
+                tok.i_sent = ref_tok.i
+        else:
+            raise ValueError(
+                f'Bad value for contiguous_i_sent: {contiguous_i_sent}')
 
     @abstractmethod
     def to_document(self, limit: int = sys.maxsize) -> FeatureDocument:
@@ -423,6 +404,10 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
             return self.get_overlapping_span(key, inclusive=False)
         return self.tokens[key]
 
+    def __setstate__(self, state: Dict[str, Any]):
+        super().__setstate__(state)
+        self._token_norm: SpanNormalizer = DEFAULT_FEATURE_TOKEN_NORMALIZER
+
     def __hash__(self) -> int:
         return hash(self.norm)
 
@@ -439,7 +424,8 @@ class FeatureSpan(TokenContainer):
     :class:`spacy.tokens.Span`.
 
     """
-    _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_span'}
+    _PERSITABLE_TRANSIENT_ATTRIBUTES: ClassVar[Set[str]] = \
+        TokenContainer._PERSITABLE_TRANSIENT_ATTRIBUTES | {'spacy_span'}
     """Don't serialize the spacy document on persistance pickling."""
 
     tokens: Tuple[FeatureToken, ...] = field()
@@ -497,11 +483,15 @@ class FeatureSpan(TokenContainer):
         self.text = self.text.strip()
 
     def to_sentence(self, limit: int = sys.maxsize,
-                    contiguous_i_sent: bool = False) -> FeatureSentence:
+                    contiguous_i_sent: Union[str, bool] = False) -> \
+            FeatureSentence:
         if limit == 0:
             return iter(())
         else:
-            return self.clone(FeatureSentence)
+            clone = self.clone(FeatureSentence)
+            if contiguous_i_sent:
+                self._set_contiguous_tokens(contiguous_i_sent, clone)
+            return clone
 
     def to_document(self) -> FeatureDocument:
         return FeatureDocument((self.to_sentence(),))
@@ -674,11 +664,18 @@ class FeatureSentence(FeatureSpan):
     """
     EMPTY_SENTENCE: ClassVar[FeatureSentence]
 
-    def to_sentence(self, limit: int = sys.maxsize) -> FeatureSentence:
+    def to_sentence(self, limit: int = sys.maxsize,
+                    contiguous_i_sent: Union[str, bool] = False) -> \
+            FeatureSentence:
         if limit == 0:
             return iter(())
         else:
-            return self
+            if not contiguous_i_sent:
+                return self
+            else:
+                clone = self.clone(FeatureSentence)
+                self._set_contiguous_tokens('reset', clone)
+                return clone
 
     def to_document(self) -> FeatureDocument:
         return FeatureDocument((self,))
@@ -711,7 +708,9 @@ class FeatureDocument(TokenContainer):
     EMPTY_DOCUMENT: ClassVar[FeatureDocument] = None
     """A zero length document."""
 
-    _PERSITABLE_TRANSIENT_ATTRIBUTES = {'spacy_doc'}
+    _PERSITABLE_TRANSIENT_ATTRIBUTES: ClassVar[Set[str]] = \
+        TokenContainer._PERSITABLE_TRANSIENT_ATTRIBUTES | {'spacy_doc'}
+
     """Don't serialize the spacy document on persistance pickling."""
 
     sents: Tuple[FeatureSentence, ...] = field()
@@ -802,17 +801,16 @@ class FeatureDocument(TokenContainer):
         return cls
 
     def to_sentence(self, limit: int = sys.maxsize,
-                    contiguous_i_sent: bool = False) -> FeatureSentence:
+                    contiguous_i_sent: Union[str, bool] = False) -> \
+            FeatureSentence:
         sents: Tuple[FeatureSentence, ...] = tuple(self.sent_iter(limit))
         toks: Iterable[FeatureToken] = chain.from_iterable(
             map(lambda s: s.tokens, sents))
+        stext: str = ''.join(map(lambda s: s.text, sents))
         cls: Type = self._sent_class()
-        sent: FeatureSentence = cls(tokens=tuple(toks), text=self.text)
+        sent: FeatureSentence = cls(tokens=tuple(toks), text=stext)
         sent._ents = list(chain.from_iterable(map(lambda s: s._ents, sents)))
-        if contiguous_i_sent:
-            st: FeatureToken
-            for st, tok in zip(self.token_iter(), sent.token_iter()):
-                tok.i_sent = st.i
+        sent._set_contiguous_tokens(contiguous_i_sent, self)
         return sent
 
     def _combine_update(self, other: FeatureDocument):
@@ -1091,7 +1089,7 @@ class FeatureDocument(TokenContainer):
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               n_sents: int = sys.maxsize, n_tokens: int = 0,
-              include_original: bool = True,
+              include_original: bool = False,
               include_normalized: bool = True):
         """Write the document and optionally sentence features.
 
@@ -1105,12 +1103,14 @@ class FeatureDocument(TokenContainer):
 
         """
         TextContainer.write(self, depth, writer,
-                            include_original=include_original)
+                            include_original=include_original,
+                            include_normalized=include_normalized)
         self._write_line('sentences:', depth, writer)
         s: FeatureSentence
         for s in it.islice(self.sents, n_sents):
             s.write(depth + 1, writer, n_tokens=n_tokens,
-                    include_original=include_original)
+                    include_original=include_original,
+                    include_normalized=include_normalized)
 
     def _from_dictable(self, recurse: bool, readable: bool,
                        class_name_param: str = None) -> Dict[str, Any]:

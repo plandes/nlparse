@@ -83,6 +83,8 @@ class TestDocCompose(TestBase):
         self.assertFalse(doc.sents[0] is doc2.sents[0])
         self.assertTrue(doc.sents[0] == doc2.sents[0])
         self.assertTrue(doc == doc2)
+        self.assertTrue(doc.text == doc2.text)
+        self.assertTrue(doc.norm == doc2.norm)
 
         bio = BytesIO()
         comb = doc.combine_sentences()
