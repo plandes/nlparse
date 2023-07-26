@@ -302,7 +302,9 @@ class FeatureToken(PersistableContainer, TextContainer):
         return self.idx < other.idx
 
     def __hash__(self) -> int:
-        return (self.i + 1) * (self.idx + 1) * (self.i_sent + 1) * 13
+        return ((self.i + 1) * 13) + \
+            ((self.idx + 1) * 29) + \
+            ((self.i_sent + 1) * 71)
 
     def __str__(self) -> str:
         return TextContainer.__str__(self)
