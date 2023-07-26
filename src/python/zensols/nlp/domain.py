@@ -243,7 +243,7 @@ class TextContainer(Dictable, metaclass=ABCMeta):
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = True, include_normalized: bool = True):
         if (include_original or include_normalized) and self.text == self.norm:
-            self._write_line(self.text, depth, writer)
+            self._write_line(f'text: {self.text}', depth, writer)
         else:
             if include_original:
                 self._write_line(f'original: {self.text}', depth, writer)
