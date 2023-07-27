@@ -12,7 +12,6 @@ import logging
 import textwrap as tw
 import itertools as it
 from itertools import chain
-import copy
 from io import TextIOBase
 from frozendict import frozendict
 from interlap import InterLap
@@ -1031,10 +1030,9 @@ class FeatureDocument(TokenContainer):
 
     def get_overlapping_document(self, span: LexicalSpan,
                                  inclusive: bool = True) -> FeatureDocument:
-        """Get the portion of the document that overlaps ``span``.  For
-        sentences that are completely enclosed in the span, the sentences are
-        copied.  Otherwise, new sentences are created from those tokens that
-        overlap the span.
+        """Get the portion of the document that overlaps ``span``.  Sentences
+        completely enclosed in a span are copied.  Otherwise, new sentences are
+        created from those tokens that overlap the span.
 
         :param span: indicates the portion of the document to retain
 
@@ -1049,17 +1047,18 @@ class FeatureDocument(TokenContainer):
             doc_text: str = self.text
             sents: List[FeatureSentence] = []
             for sent in self.sent_iter():
-                toks = list(sent.get_overlapping_tokens(span, inclusive))
+                toks: List[FeatureToken] = list(
+                    sent.get_overlapping_tokens(span, inclusive))
                 if len(toks) == 0:
                     continue
                 elif len(toks) == len(sent):
                     pass
                 else:
                     text: str = doc_text[toks[0].idx:toks[-1].idx + send]
-                    hang = (span.end + send) - toks[-1].lexspan.end
+                    hang: int = (span.end + send) - toks[-1].lexspan.end
                     if hang < 0:
-                        tok = toks[-1]
-                        clone = copy.deepcopy(tok)
+                        tok: FeatureToken = toks[-1]
+                        clone = tok.clone()
                         clone.norm = tok.norm[:hang]
                         clone.text = tok.text[:hang]
                         toks[-1] = clone
@@ -1067,7 +1066,7 @@ class FeatureDocument(TokenContainer):
                     if hang < 0:
                         hang *= -1
                         tok = toks[0]
-                        clone = copy.deepcopy(tok)
+                        clone = tok.clone()
                         clone.norm = tok.norm[hang:]
                         clone.text = tok.text[hang:]
                         toks[0] = clone
