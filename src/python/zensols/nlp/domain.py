@@ -243,12 +243,12 @@ class TextContainer(Dictable, metaclass=ABCMeta):
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = True, include_normalized: bool = True):
         if (include_original or include_normalized) and self.text == self.norm:
-            self._write_line(f'text: {self.text}', depth, writer)
+            self._write_line(f'[T]: {self.text}', depth, writer)
         else:
             if include_original:
-                self._write_line(f'original: {self.text}', depth, writer)
+                self._write_line(f'[O]: {self.text}', depth, writer)
             if include_normalized:
-                self._write_line(f'normalized: {self.norm}', depth, writer)
+                self._write_line(f'[N]: {self.norm}', depth, writer)
 
     def __str__(self):
         return f'<{tw.shorten(self.norm, width=self._DEFAULT_TOSTR_LEN-2)}>'
