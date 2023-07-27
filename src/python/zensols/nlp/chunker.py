@@ -140,8 +140,7 @@ class ParagraphChunker(Chunker):
     def _create_container(self, span: LexicalSpan) -> Optional[TokenContainer]:
         overlap_doc = self.doc.get_overlapping_document(span)
         sents = filter(lambda s: len(s) > 0,
-                       map(lambda st: st.strip(),
-                           overlap_doc.get_overlapping_sentences(span)))
+                       map(lambda st: st.strip(), overlap_doc))
         merged_doc = FeatureDocument(tuple(sents))
         if len(merged_doc) > 0:
             return merged_doc.strip()
