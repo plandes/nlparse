@@ -239,7 +239,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
                 tok.i_sent = i
         elif contiguous_i_sent is True:
             st: FeatureToken
-            for ref_tok, tok in zip(self.token_iter(), reference.token_iter()):
+            for ref_tok, tok in zip(reference.token_iter(), self.token_iter()):
                 tok.i_sent = ref_tok.i
         else:
             raise ValueError(
@@ -393,12 +393,12 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         add_depth = 1 if inc_both else 0
         if include_original:
             if inc_both:
-                self._write_line('original:', depth, writer)
+                self._write_line('[O]:', depth, writer)
             text: str = tw.shorten(self.text, limit)
             self._write_wrap(text, depth + add_depth, writer)
         if include_normalized:
             if inc_both:
-                self._write_line('normalized:', depth, writer)
+                self._write_line('[N]:', depth, writer)
             norm: str = tw.shorten(self.norm, limit)
             self._write_wrap(norm, depth + add_depth, writer)
 
@@ -494,7 +494,7 @@ class FeatureSpan(TokenContainer):
         else:
             clone = self.clone(FeatureSentence)
             if contiguous_i_sent:
-                self._set_contiguous_tokens(contiguous_i_sent, clone)
+                clone._set_contiguous_tokens(contiguous_i_sent, self)
             return clone
 
     def to_document(self) -> FeatureDocument:
@@ -678,7 +678,7 @@ class FeatureSentence(FeatureSpan):
                 return self
             else:
                 clone = self.clone(FeatureSentence)
-                self._set_contiguous_tokens('reset', clone)
+                clone._set_contiguous_tokens(contiguous_i_sent, self)
                 return clone
 
     def to_document(self) -> FeatureDocument:
