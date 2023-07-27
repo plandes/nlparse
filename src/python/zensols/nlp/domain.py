@@ -194,7 +194,9 @@ class LexicalSpan(Dictable):
         # prettier printing
         return dict(super()._from_dictable(*args, **kwargs))
 
-    def __eq__(self, other):
+    def __eq__(self, other: LexicalSpan) -> bool:
+        if self is other:
+            return True
         return isinstance(other, LexicalSpan) and \
             self.begin == other.begin and self.end == other.end
 

@@ -412,8 +412,22 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         super().__setstate__(state)
         self._token_norm: SpanNormalizer = DEFAULT_FEATURE_TOKEN_NORMALIZER
 
+    def __eq__(self, other: TokenContainer) -> bool:
+        if self is other:
+            return True
+        else:
+            a: FeatureToken
+            b: FeatureToken
+            for a, b in zip(self.token_iter(), other.token_iter()):
+                if a != b:
+                    return False
+            return self.token_len == other.token_len and self.text == other.text
+
+    def __lt__(self, other: FeatureToken) -> int:
+        return self.norm < other.norm
+
     def __hash__(self) -> int:
-        return hash(self.norm)
+        return sum(map(hash, self.token_iter()))
 
     def __str__(self):
         return TextContainer.__str__(self)
@@ -422,7 +436,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         return TextContainer.__repr__(self)
 
 
-@dataclass(eq=True, repr=False)
+@dataclass(eq=False, repr=False)
 class FeatureSpan(TokenContainer):
     """A span of tokens as a :class:`.TokenContainer`, much like
     :class:`spacy.tokens.Span`.
@@ -651,15 +665,12 @@ class FeatureSpan(TokenContainer):
     def __iter__(self):
         return self.token_iter()
 
-    def __hash__(self) -> int:
-        return hash(self.norm)
-
 
 # keep the dataclass semantics, but allow for a setter
 FeatureSpan.tokens = FeatureSpan._tokens
 
 
-@dataclass(eq=True, repr=False)
+@dataclass(eq=False, repr=False)
 class FeatureSentence(FeatureSpan):
     """A container class of tokens that make a sentence.  Instances of this class
     iterate over :class:`.FeatureToken` instances, and can create documents
@@ -689,14 +700,11 @@ class FeatureSentence(FeatureSpan):
         doc = FeatureDocument(sents=(self,), text=self.text)
         return doc.get_overlapping_document(span, inclusive=inclusive)
 
-    def __hash__(self) -> int:
-        return hash(self.norm)
-
 
 FeatureSentence.EMPTY_SENTENCE = FeatureSentence(tokens=(), text='')
 
 
-@dataclass(eq=True, repr=False)
+@dataclass(eq=False, repr=False)
 class FeatureDocument(TokenContainer):
     """A container class of tokens that make a document.  This class contains a
     one to many of sentences.  However, it can be treated like any
@@ -1127,20 +1135,32 @@ class FeatureDocument(TokenContainer):
             return self.get_overlapping_span(key, inclusive=False)
         return self.sents[key]
 
+    def __eq__(self, other: FeatureDocument) -> bool:
+        if self is other:
+            return True
+        else:
+            a: FeatureSentence
+            b: FeatureSentence
+            for a, b in zip(self.sents, other.sents):
+                if a != b:
+                    return False
+            return len(self.sents) == len(other.sents) and \
+                self.text == other.text
+
+    def __hash__(self) -> int:
+        return sum(map(hash, self.sents))
+
     def __len__(self):
         return len(self.sents)
 
     def __iter__(self):
         return self.sent_iter()
 
-    def __hash__(self) -> int:
-        return hash(self.norm)
-
 
 FeatureDocument.EMPTY_DOCUMENT = FeatureDocument(sents=(), text='')
 
 
-@dataclass
+@dataclass(eq=False, repr=False)
 class TokenAnnotatedFeatureSentence(FeatureSentence):
     """A feature sentence that contains token annotations.
 
@@ -1155,11 +1175,8 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
         self._write_line(f'annotations ({n_ann}): {self.annotations}',
                          depth, writer)
 
-    def __hash__(self) -> int:
-        return hash(self.norm)
 
-
-@dataclass
+@dataclass(eq=False, repr=False)
 class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
     """A feature sentence that contains token annotations.  Sentences can be
     modeled with :class:`.TokenAnnotatedFeatureSentence` or just
@@ -1197,6 +1214,3 @@ class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
             doc = cls(tuple(sents), text)
             doc.sents[0].annotations = tuple(anns)
             return doc
-
-    def __hash__(self) -> int:
-        return hash(self.norm)
