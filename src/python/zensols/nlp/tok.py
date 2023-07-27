@@ -1,9 +1,8 @@
-from __future__ import annotations
 """Feature token and related base classes
 
 """
+from __future__ import annotations
 __author__ = 'Paul Landes'
-
 from typing import (
     Tuple, Union, Optional, Any, Set, Iterable, Dict, Sequence, ClassVar, Type
 )
