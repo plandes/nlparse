@@ -1,5 +1,7 @@
+"""The spaCy :class:`.FeatureDocumentParser` implementation.
+
 """
-"""
+__author__ = 'Paul Landes'
 
 from typing import (
     Type, Iterable, Sequence, Set, Dict, Any, List, Tuple, ClassVar
