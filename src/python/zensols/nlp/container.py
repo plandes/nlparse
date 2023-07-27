@@ -82,13 +82,15 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """
         return self.strip_tokens(self.token_iter(*args, **kwargs))
 
-    def strip(self):
+    def strip(self, in_place: bool = True) -> TokenContainer:
         """Strip beginning and ending whitespace (see :meth:`strip_tokens`) and
         :obj:`text`.
 
         """
         self._clear_persistable_state()
-        self._strip()
+        cont: TokenContainer = self if in_place else self.clone()
+        cont._strip()
+        return cont
 
     @abstractmethod
     def _strip(self):
