@@ -63,68 +63,98 @@ class Chunker(object, metaclass=ABCMeta):
             sh = f'<<{s}>>'
             return sh
 
-        conts = []
+        conts: List[TokenContainer] = []
         if self.sub_doc.token_len > 0:
+            # offset from the global document (if a subdoc from get_overlap...)
             coff: int = self._get_coff()
-            text: str = self.sub_doc.text
+            # the text to match on, or ``gtext`` if there is no subdoc
+            subdoc_text: str = self.sub_doc.text
+            # the global document
             gtext: str = self.doc.text
+            # all regular expression matches found in ``subdoc_text``
             matches: List[LexicalSpan] = \
-                list(map(match_to_span, self.pattern.finditer(text)))
+                list(map(match_to_span, self.pattern.finditer(subdoc_text)))
+            # guard on no-matches-found edge case
             if len(matches) > 0:
-                tl: int = len(text) + coff
+                subdoc_len: int = len(subdoc_text) + coff
                 start: int = matches[0].begin
                 end: int = matches[-1].end
                 if logger.isEnabledFor(logging.DEBUG):
                     logger.debug(f'coff: {coff}, start={start}, end={end}')
+                # add a start front content match when not match on first char
                 if start > coff:
                     fms = LexicalSpan(coff, start - 1)
                     matches.insert(0, fms)
                     if logger.isEnabledFor(logging.DEBUG):
-                        logger.debug(f'adding offset match: {start}, {coff}: ' +
+                        logger.debug(f'adding start match: {start}, {coff}: ' +
                                      f'{gtext[fms[0]:fms[1]]}')
-                if tl > end:
-                    matches.append(LexicalSpan(end, tl))
+                # and any trailing content when match doesn't include last char
+                if subdoc_len > end:
+                    matches.append(LexicalSpan(end, subdoc_len))
+                # treat matches as a LIFO stack
                 while len(matches) > 0:
+                    # pop the first match in the stack
                     span: LexicalSpan = matches.pop(0)
                     cont: TokenContainer = None
-                    empty: bool = False
                     if logger.isEnabledFor(logging.DEBUG):
                         st: str = trunc(gtext[span[0]:span[1]])
                         logger.debug(
                             f'span begin: {span.begin}, start: {start}, ' +
                             f'match {span}: {st}')
                     if span.begin > start:
+                        # when the match comes after the last ending marker,
+                        # added this content to the last match entry
                         cont = self._create_container(
                             LexicalSpan(start, span.begin - 1))
                         if logger.isEnabledFor(logging.DEBUG):
                             logger.debug(f'create (trailing): {cont}')
-                        empty = cont is None
-                        if not empty:
+                        # content exists if it's text we keep (ie non-space)
+                        if cont is not None:
                             if len(conts) > 0:
+                                # tack on to the last entry since it trailed
+                                # (probably after a newline)
                                 conts[-1] = self._merge_containers(
                                     conts[-1], cont)
                             else:
+                                # add a new entry
                                 conts.append(cont)
+                            # indcate we already added the content so we don't
+                            # double add it
                             cont = None
-                            empty = True
+                        # we dealt with the last trailling content from the
+                        # previous span, but we haven't taken care of this span
                         matches.insert(0, span)
-                    if not empty and cont is None:
+                    else:
+                        # create and add the content for the exact match (again,
+                        # we skip empty space etc.)
                         cont = self._create_container(span)
                         if logger.isEnabledFor(logging.DEBUG):
                             st: str = trunc(gtext[span[0]:span[1]])
                             logger.debug(f'create (not empty) {st} -> {cont}')
-                    if cont is not None:
-                        conts.append(cont)
+                        if cont is not None:
+                            conts.append(cont)
+                    # walk past this span to detect unmatched content for the
+                    # next iteration (if there is one)
                     start = span.end + 1
+        # adhere to iterable contract for potentially more dynamic subclasses
         return iter(conts)
+
+    def _merge_containers(self, a: TokenContainer, b: TokenContainer) -> \
+            TokenContainer:
+        """Merge two token containers into one, which is used for straggling
+        content tacked to previous entries for text between matches.
+
+        """
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'merging: {a}||{b}')
+        return FeatureDocument((a, b)).to_sentence()
 
     @abstractmethod
     def _create_container(self, span: LexicalSpan) -> Optional[TokenContainer]:
-        pass
+        """Create content from :obj:`doc` and :obj:`sub_doc` as a subdocument
+        for span ``span``.
 
-    @abstractmethod
-    def _merge_containers(self, a: TokenContainer, b: TokenContainer) -> \
-            TokenContainer:
+        """
         pass
 
     @abstractmethod
@@ -139,6 +169,8 @@ class Chunker(object, metaclass=ABCMeta):
 class ParagraphChunker(Chunker):
     """A :class:`.Chunker` that splits list item and enumerated lists into
     separate sentences.  Matched sentences are given if used as an iterable.
+    For this reason, this class will probably be used as an iterable since
+    clients will usually want just the separated paragraphs as documents
 
     """
     DEFAULT_SPAN_PATTERN: ClassVar[re.Pattern] = re.compile(
@@ -152,21 +184,33 @@ class ParagraphChunker(Chunker):
     :obj:`DEFAULT_SPAN_PATTERN`.
 
     """
-    def _create_container(self, span: LexicalSpan) -> Optional[TokenContainer]:
-        overlap_doc: FeatureDocument = self.doc.get_overlapping_document(span)
-        sents: Iterable[FeatureSentence] = \
-            filter(lambda s: len(s) > 0, map(lambda x: x.strip(), overlap_doc))
-        merged_doc = FeatureDocument(
-            sents=tuple(sents),
-            text=overlap_doc.text.strip())
-        if len(merged_doc) > 0:
-            return merged_doc.strip()
-
     def _merge_containers(self, a: TokenContainer, b: TokenContainer) -> \
             TokenContainer:
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'merging: {a}||{b}')
+        # return documents to keep as much of the sentence structure as possible
         return FeatureDocument.combine_documents((a, b))
 
+    def _create_container(self, span: LexicalSpan) -> Optional[TokenContainer]:
+        doc: FeatureDocument = self.doc.get_overlapping_document(span)
+        slen: int = len(doc.sents)
+        # remove double newline empty sentences, happens at beginning or ending
+        sents: Tuple[FeatureSentence] = tuple(
+            filter(lambda s: len(s) > 0, map(lambda x: x.strip(), doc)))
+        if slen != len(sents):
+            # when we find surrounding whitespace, create a (sentence) stripped
+            # document
+            doc = FeatureDocument(sents=tuple(sents), text=doc.text.strip())
+        if len(doc.sents) > 0:
+            # we still need to strip per sentence for whitespace added at the
+            # sentence level
+            return doc.strip()
+
     def to_document(self, conts: Iterable[TokenContainer]) -> FeatureDocument:
+        """It usually makes sense to use instances of this class as an iterable
+        rather than this (see class docs).
+
+        """
         return FeatureDocument.combine_documents(conts)
 
 
@@ -193,17 +237,13 @@ class ListItemChunker(Chunker):
     def _create_container(self, span: LexicalSpan) -> Optional[TokenContainer]:
         doc: FeatureDocument = self.doc.get_overlapping_document(span)
         sent: FeatureSentence = doc.to_sentence()
+        # skip empty sentences, usually (spaCy) sentence chunked from text with
+        # two newlines in a row
         sent.strip()
         if sent.token_len > 0:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'narrowed sent: <{sent.text}>')
             return sent
-
-    def _merge_containers(self, a: TokenContainer, b: TokenContainer) -> \
-            TokenContainer:
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merging: {a}||{b}')
-        return FeatureDocument((a, b)).to_sentence(delim='\n')
 
     def to_document(self, conts: Iterable[TokenContainer]) -> FeatureDocument:
         sents: Tuple[FeatureSentence] = tuple(conts)
