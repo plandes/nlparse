@@ -30,8 +30,9 @@ class Chunker(object, metaclass=ABCMeta):
 
     """
     sub_doc: FeatureDocument = field(default=None)
-    """A lexical span of :obj:`doc`, which defaults to the global
-    document.
+    """A lexical span created document of :obj:`doc`, which defaults to the
+    global document.  Providing this and :obj:`char_offset` allows use of a
+    document without having to use :meth:`.TokenContainer.reindex`.
 
     """
     char_offset: int = field(default=0)
