@@ -1,6 +1,6 @@
 import logging
 from zensols.nlp import LexicalSpan, FeatureDocument, FeatureDocumentParser
-from zensols.nlp.chunker import ParagraphChunker, ListChunker
+from zensols.nlp.chunker import ParagraphChunker, ListItemChunker
 from util import TestBase, TestParagraphBase
 
 logger = logging.getLogger(__name__)
@@ -90,7 +90,7 @@ My list of things to do. These are ordered by necessity:
         doc_parser: FeatureDocumentParser = self.fac.instance(
             'doc_parser_split_ents_keep_space')
         doc: FeatureDocument = doc_parser(text)
-        chunker = ListChunker(doc=doc)
+        chunker = ListItemChunker(doc=doc)
         items = tuple(map(lambda s: s.text, chunker()))
         if 0:
             print()

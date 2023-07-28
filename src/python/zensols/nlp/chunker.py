@@ -171,7 +171,7 @@ class ParagraphChunker(Chunker):
 
 
 @dataclass
-class ListChunker(Chunker):
+class ListItemChunker(Chunker):
     """A :class:`.Chunker` that splits list item and enumerated lists into
     separate sentences.  Matched sentences are given if used as an iterable.
     This is useful when spaCy sentence chunks lists incorrectly and finds lists
