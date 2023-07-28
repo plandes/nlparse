@@ -349,6 +349,49 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """
         pass
 
+    def reindex(self, reference_token: FeatureToken = None):
+        """Re-index tokens, which is useful for situtations where a 0-index
+        offset is assumed for sub-documents created with
+        :meth:`.FeatureDocument.get_overlapping_document` or
+        :meth:`.FeatureDocument.get_overlapping_sentences`.  The following data
+        are modified:
+
+          * :obj:`.FeatureToken.i`
+          * :obj:`.FeatureToken.idx`
+          * :obj:`.FeatureToken.i_sent`
+          * :obj:`.FeatureToken.sent_i` (see :obj:`.SpacyFeatureToken.sent_i`)
+          * :obj:`.FeatureToken.lexspan` (see :obj:`.SpacyFeatureToken.lexspan`)
+          * :obj:`entities`
+          * :obj:`lexspan`
+          * :obj:`tokens_by_i`
+          * :obj:`tokens_by_idx`
+          * :obj:`.FeatureSpan.tokens_by_i_sent`
+          * :obj:`.FeatureSpan.dependency_tree`
+
+        """
+        toks: Tuple[FeatureToken] = self.tokens
+        if len(toks) > 0:
+            if reference_token is None:
+                reference_token = toks[0]
+            self._reindex(reference_token.clone())
+
+    def _reindex(self, tok: FeatureToken):
+        offset_i, offset_idx = tok.i, tok.idx
+        sent_i = tok.sent_i if hasattr(tok, 'sent_i') else None
+        tok: FeatureToken
+        for tok in self.tokens:
+            idx: int = tok.idx - offset_idx
+            span = LexicalSpan(idx, idx + len(tok.text))
+            tok.i -= offset_i
+            tok.idx = idx
+            tok.lexspan = span
+        if sent_i is not None:
+            for tok in self.tokens:
+                tok.sent_i -= sent_i
+        for attr in '_lexspan _interlap _tokens_by_i _tokens_by_idx'.split():
+            if hasattr(self, attr):
+                getattr(self, attr).clear()
+
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = False, include_normalized: bool = True,
               n_tokens: int = sys.maxsize, inline: bool = False):
@@ -628,6 +671,17 @@ class FeatureSpan(TokenContainer):
         self._ents = split_ents
         self._entities.clear()
 
+    def _reindex(self, tok: FeatureToken):
+        offset_idx: int = tok.idx
+        super()._reindex(tok)
+        for i, tok in enumerate(self.tokens):
+            tok.i_sent = i
+        self._ents = list(map(
+            lambda t: (t[0] - offset_idx, t[1] - offset_idx), self._ents))
+        for attr in '_tokens_by_i_sent _dependency_tree'.split():
+            if hasattr(self, attr):
+                getattr(self, attr).clear()
+
     def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken, ...],
                 tid_to_idx: Dict[int, int]) -> \
             Dict[FeatureToken, List[FeatureToken]]:
@@ -866,6 +920,14 @@ class FeatureDocument(TokenContainer):
         for sent in self.sents:
             sent.update_entity_spans(include_idx)
         self._entities.clear()
+
+    def _reindex(self, *args):
+        sent: FeatureSentence
+        for sent in self.sents:
+            sent._reindex(*args)
+        for attr in '_combine_all_sentences_pw, _id_to_sent_pw'.split():
+            if hasattr(self, attr):
+                getattr(self, attr).clear()
 
     def sentence_index_for_token(self, token: FeatureToken) -> int:
         """Return index of the parent sentence having ``token``."""
