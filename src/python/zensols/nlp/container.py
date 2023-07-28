@@ -374,6 +374,7 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
             if reference_token is None:
                 reference_token = toks[0]
             self._reindex(reference_token.clone())
+        self.clear()
 
     def _reindex(self, tok: FeatureToken):
         offset_i, offset_idx = tok.i, tok.idx
@@ -388,9 +389,10 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         if sent_i is not None:
             for tok in self.tokens:
                 tok.sent_i -= sent_i
-        for attr in '_lexspan _interlap _tokens_by_i _tokens_by_idx'.split():
-            if hasattr(self, attr):
-                getattr(self, attr).clear()
+
+    def clear(self):
+        """Clear all cached state."""
+        self._clear_persistable_state()
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = False, include_normalized: bool = True,
@@ -678,9 +680,6 @@ class FeatureSpan(TokenContainer):
             tok.i_sent = i
         self._ents = list(map(
             lambda t: (t[0] - offset_idx, t[1] - offset_idx), self._ents))
-        for attr in '_tokens_by_i_sent _dependency_tree'.split():
-            if hasattr(self, attr):
-                getattr(self, attr).clear()
 
     def _branch(self, node: FeatureToken, toks: Tuple[FeatureToken, ...],
                 tid_to_idx: Dict[int, int]) -> \
@@ -925,9 +924,13 @@ class FeatureDocument(TokenContainer):
         sent: FeatureSentence
         for sent in self.sents:
             sent._reindex(*args)
-        for attr in '_combine_all_sentences_pw, _id_to_sent_pw'.split():
-            if hasattr(self, attr):
-                getattr(self, attr).clear()
+
+    def clear(self):
+        """Clear all cached state."""
+        super().clear()
+        sent: FeatureSentence
+        for sent in self.sents:
+            sent.clear()
 
     def sentence_index_for_token(self, token: FeatureToken) -> int:
         """Return index of the parent sentence having ``token``."""
