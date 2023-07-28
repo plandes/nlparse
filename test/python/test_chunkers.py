@@ -1,45 +1,12 @@
 import logging
-from io import StringIO
 from zensols.nlp import LexicalSpan, FeatureDocument, FeatureDocumentParser
 from zensols.nlp.chunker import ParagraphChunker
-from util import TestBase
+from util import TestParagraphBase
 
 logger = logging.getLogger(__name__)
 
 
-class TestFeatureDocParse(TestBase):
-    def setUp(self):
-        super().setUp()
-        self.para_forms = (
-            ('first', 'second', '1st'),
-            ('second', 'fifth', '2st'),
-            ('third', 'eight', '3rd'),
-            ('fourth', '11th', '4th'))
-
-    def _make_para(self, pname, sname, cname) -> str:
-        return f"""\
-{pname.capitalize()} paragraph. {sname.capitalize()} sentence.
-Second line {cname} paragraph.\
-"""
-
-    def _make_paras(self, n: int, n_newlines: int) -> str:
-        sio = StringIO()
-        for i, args in enumerate(self.para_forms[:n]):
-            if i > 0:
-                sio.write('\n' * n_newlines)
-            sio.write(self._make_para(*args))
-        return sio.getvalue()
-
-    def _make_should(self, pname, sname, cname) -> str:
-        return f"""\
-<{pname.capitalize()}|paragraph|.>#<{sname.capitalize()}|sentence|.>#\
-<Second|line|{cname}|paragraph|.>\
-"""
-
-    def _make_shoulds(self, n):
-        for args in self.para_forms[:n]:
-            yield self._make_should(*args)
-
+class TestFeatureDocParse(TestParagraphBase):
     def _test_multiple(self, plen: int, n_newlines: int = 2,
                        span: LexicalSpan = None, span_should: str = None,
                        span_should_idx: int = None):
@@ -68,8 +35,7 @@ Second line {cname} paragraph.\
         for doc in docs:
             self.assertEqual(3, len(doc))
         shoulds = tuple(self._make_shoulds(plen))
-        doc_strs = tuple(
-            map(lambda d: '#'.join(map(lambda s: f'<{s.canonical}>', d)), docs))
+        doc_strs = self._make_doc_strs(docs)
         if 0:
             for ds in doc_strs:
                 print(ds)
