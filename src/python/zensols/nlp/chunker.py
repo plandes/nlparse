@@ -1,4 +1,5 @@
-"""Utility classes.
+"""Clasess that segment text from :class:`.FeatureDocument` instances, but
+retain the original structure by preserving sentence and token indicies.
 
 """
 __author__ = 'Paul Landes'
@@ -167,3 +168,49 @@ class ParagraphChunker(Chunker):
 
     def to_document(self, conts: Iterable[TokenContainer]) -> FeatureDocument:
         return FeatureDocument.combine_documents(conts)
+
+
+@dataclass
+class ListChunker(Chunker):
+    """A :class:`.Chunker` that splits list item and enumerated lists into
+    separate sentences.  Matched sentences are given if used as an iterable.
+    This is useful when spaCy sentence chunks lists incorrectly and finds lists
+    using a regular expression to find lines that star with a decimal, or list
+    characters such as ``-`` and ``+``.
+
+    """
+    DEFAULT_SPAN_PATTERN: ClassVar[re.Pattern] = re.compile(
+        r'^((?:[0-9-+]+|[a-zA-Z]+:)[^\n]+)$', re.MULTILINE)
+    """The default list item regular expression, which uses an initial character
+    item notation or an initial enumeration digit.
+
+    """
+    pattern: re.Pattern = field(default=DEFAULT_SPAN_PATTERN)
+    """The list regular expression, which defaults to
+    :obj:`DEFAULT_SPAN_PATTERN`.
+
+    """
+    def _create_container(self, span: LexicalSpan) -> Optional[TokenContainer]:
+        doc: FeatureDocument = self.doc.get_overlapping_document(span)
+        sent: FeatureSentence = doc.to_sentence()
+        sent.strip()
+        if sent.token_len > 0:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'narrowed sent: <{sent.text}>')
+            return sent
+
+    def _merge_containers(self, a: TokenContainer, b: TokenContainer) -> \
+            TokenContainer:
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'merging: {a}||{b}')
+        return FeatureDocument((a, b)).to_sentence(delim='\n')
+
+    def to_document(self, conts: Iterable[TokenContainer]) -> FeatureDocument:
+        sents: Tuple[FeatureSentence] = tuple(conts)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('creating doc from:')
+            for s in sents:
+                logger.debug(f'  {s}')
+        return FeatureDocument(
+            sents=sents,
+            text='\n'.join(map(lambda s: s.text, sents)))

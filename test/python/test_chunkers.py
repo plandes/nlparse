@@ -1,12 +1,12 @@
 import logging
 from zensols.nlp import LexicalSpan, FeatureDocument, FeatureDocumentParser
-from zensols.nlp.chunker import ParagraphChunker
-from util import TestParagraphBase
+from zensols.nlp.chunker import ParagraphChunker, ListChunker
+from util import TestBase, TestParagraphBase
 
 logger = logging.getLogger(__name__)
 
 
-class TestFeatureDocParse(TestParagraphBase):
+class TestParagraphChunker(TestParagraphBase):
     def _test_multiple(self, plen: int, n_newlines: int = 2,
                        span: LexicalSpan = None, span_should: str = None,
                        span_should_idx: int = None):
@@ -78,3 +78,27 @@ class TestFeatureDocParse(TestParagraphBase):
             span=span,
             span_should=span_should,
             span_should_idx=1)
+
+
+class TestItemChunker(TestBase):
+    def test_item_chunking(self):
+        text = """\
+My list of things to do. These are ordered by necessity:
+- finish writing proposal
+- write more code
+- complete the results section in my large language model paper"""
+        doc_parser: FeatureDocumentParser = self.fac.instance(
+            'doc_parser_split_ents_keep_space')
+        doc: FeatureDocument = doc_parser(text)
+        chunker = ListChunker(doc=doc)
+        items = tuple(map(lambda s: s.text, chunker()))
+        if 0:
+            print()
+            print('\n'.join(items))
+        should = (
+            'My list of things to do.These are ordered by necessity:',
+            '- finish writing proposal',
+            '- write more code',
+            '- complete the results section in my large language model paper'
+        )
+        self.assertEqual(should, items)
