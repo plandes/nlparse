@@ -6,9 +6,10 @@ __author__ = 'Paul Landes'
 from typing import ClassVar, Tuple, List, Iterable, Optional
 from dataclasses import dataclass, field
 from abc import ABCMeta, abstractmethod
+import textwrap as tw
 import re
 import logging
-from . import LexicalSpan, TokenContainer, FeatureDocument
+from . import LexicalSpan, TokenContainer, FeatureSentence, FeatureDocument
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +57,11 @@ class Chunker(object, metaclass=ABCMeta):
             s: Tuple[int, int] = m.span(1)
             return LexicalSpan(s[0] + coff, s[1] + coff)
 
+        def trunc(s: str) -> str:
+            sh: str = tw.shorten(s, 50).replace('\n', '\\n')
+            sh = f'<<{s}>>'
+            return sh
+
         conts = []
         if self.sub_doc.token_len > 0:
             coff: int = self._get_coff()
@@ -74,7 +80,7 @@ class Chunker(object, metaclass=ABCMeta):
                     matches.insert(0, fms)
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'adding offset match: {start}, {coff}: ' +
-                                     f'<<{gtext[fms[0]:fms[1]]}>>')
+                                     f'{gtext[fms[0]:fms[1]]}')
                 if tl > end:
                     matches.append(LexicalSpan(end, tl))
                 while len(matches) > 0:
@@ -82,11 +88,15 @@ class Chunker(object, metaclass=ABCMeta):
                     cont: TokenContainer = None
                     empty: bool = False
                     if logger.isEnabledFor(logging.DEBUG):
+                        st: str = trunc(gtext[span[0]:span[1]])
                         logger.debug(
-                            f'match {span}: <{gtext[span[0]:span[1]]}>')
+                            f'span begin: {span.begin}, start: {start}, ' +
+                            f'match {span}: {st}')
                     if span.begin > start:
                         cont = self._create_container(
                             LexicalSpan(start, span.begin - 1))
+                        if logger.isEnabledFor(logging.DEBUG):
+                            logger.debug(f'create (trailing): {cont}')
                         empty = cont is None
                         if not empty:
                             if len(conts) > 0:
@@ -99,6 +109,9 @@ class Chunker(object, metaclass=ABCMeta):
                         matches.insert(0, span)
                     if not empty and cont is None:
                         cont = self._create_container(span)
+                        if logger.isEnabledFor(logging.DEBUG):
+                            st: str = trunc(gtext[span[0]:span[1]])
+                            logger.debug(f'create (not empty) {st} -> {cont}')
                     if cont is not None:
                         conts.append(cont)
                     start = span.end + 1
@@ -139,10 +152,12 @@ class ParagraphChunker(Chunker):
 
     """
     def _create_container(self, span: LexicalSpan) -> Optional[TokenContainer]:
-        overlap_doc = self.doc.get_overlapping_document(span)
-        sents = filter(lambda s: len(s) > 0,
-                       map(lambda st: st.strip(), overlap_doc))
-        merged_doc = FeatureDocument(tuple(sents))
+        overlap_doc: FeatureDocument = self.doc.get_overlapping_document(span)
+        sents: Iterable[FeatureSentence] = \
+            filter(lambda s: len(s) > 0, map(lambda x: x.strip(), overlap_doc))
+        merged_doc = FeatureDocument(
+            sents=tuple(sents),
+            text=overlap_doc.text.strip())
         if len(merged_doc) > 0:
             return merged_doc.strip()
 
