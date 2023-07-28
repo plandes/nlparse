@@ -25,8 +25,8 @@ class FeatureToken(PersistableContainer, TextContainer):
     :class:`.SpacyFeatureToken` extracts only a subset of features from the
     heavy Spacy C data structures and is hard/expensive to pickle.
 
-    **Feature note**: features ``i``, ``idx`` and ``i_sent`` are always added
-    to features tokens to be able to reconstruct sentences (see
+    **Feature note**: features :obj:`i`, :obj:`idx` and :obj:`i_sent` are always
+    added to features tokens to be able to reconstruct sentences (see
     :meth:`.FeatureDocument.uncombine_sentences`), and alwyas included.
 
     """
