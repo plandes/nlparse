@@ -1116,7 +1116,8 @@ class FeatureDocument(TokenContainer):
                 elif len(toks) == len(sent):
                     pass
                 else:
-                    text: str = doc_text[toks[0].idx:toks[-1].idx + send]
+                    text: str = doc_text[toks[0].lexspan.begin:
+                                         toks[-1].lexspan.end - 1 + send]
                     hang: int = (span.end + send) - toks[-1].lexspan.end
                     if hang < 0:
                         tok: FeatureToken = toks[-1]
