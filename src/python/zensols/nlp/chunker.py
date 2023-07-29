@@ -37,7 +37,7 @@ class Chunker(object, metaclass=ABCMeta):
     document without having to use :meth:`.TokenContainer.reindex`.
 
     """
-    char_offset: int = field(default=0)
+    char_offset: int = field(default=None)
     """The 0-index absolute character offset where :obj:`sub_doc` starts.
     However, if the value is -1, then the offset is used as the begging
     character offset of the first token in the :obj:`sub_doc`.
@@ -49,6 +49,8 @@ class Chunker(object, metaclass=ABCMeta):
 
     def _get_coff(self) -> int:
         coff: int = self.char_offset
+        if coff is None:
+            coff = self.doc.lexspan.begin
         if coff == -1:
             coff = next(self.sub_doc.token_iter()).lexspan.begin
         return coff
