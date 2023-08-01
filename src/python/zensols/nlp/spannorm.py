@@ -82,7 +82,7 @@ class EnglishSpanNormalizer(SpanNormalizer):
                 sio.write(norm)
             nsent = sio.getvalue()
         else:
-            nsent = ' '.join(toks)
+            nsent = ' '.join(map(lambda t: t.norm, toks))
         return nsent.strip()
 
     def get_canonical(self, tokens: Iterable[FeatureToken]) -> str:
