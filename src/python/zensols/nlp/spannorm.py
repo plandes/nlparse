@@ -13,7 +13,7 @@ from typing import Set, Iterable, Tuple
 from dataclasses import dataclass, field
 from abc import ABCMeta, abstractmethod
 from io import StringIO
-from . import FeatureToken
+from . import ParseError, FeatureToken
 
 
 class SpanNormalizer(metaclass=ABCMeta):
@@ -61,13 +61,17 @@ class EnglishSpanNormalizer(SpanNormalizer):
         tlen: int = len(toks)
         has_punc = tlen > 0 and hasattr(toks[0], 'is_punctuation')
         if has_punc:
-            post_space_skip = self.post_space_skip
-            pre_space_skip = self.pre_space_skip
-            n_pre_space_skip = self._longest_pre_space_skip
+            post_space_skip: Set[str] = self.post_space_skip
+            pre_space_skip: Set[str] = self.pre_space_skip
+            n_pre_space_skip: int = self._longest_pre_space_skip
             sio = StringIO()
             last_avoid = False
+            tix: int
+            tok: FeatureToken
             for tix, tok in enumerate(toks):
-                norm = tok.norm
+                norm: str = tok.norm
+                if norm is None:
+                    raise ParseError(f'Token {tok.text} has no norm')
                 if tix > 0 and tix < tlen:
                     do_post_space_skip = False
                     nlen = len(norm)
