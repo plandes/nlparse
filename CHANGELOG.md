@@ -9,8 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [1.8.0] - 2023-08-16
-Moderate risk update release that changes tree structured application
-configuration.
+Functional and downstream moderate risk update release.
 
 ### Changed
 - `TokenContainer.norm` removes newlines of the normalized text.
