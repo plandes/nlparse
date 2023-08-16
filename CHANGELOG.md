@@ -8,8 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.8.0] - 2023-08-16
+Moderate risk update release that changes tree structured application
+configuration.
+
 ### Changed
 - `TokenContainer.norm` removes newlines of the normalized text.
+- `FeatureToken` hash function.
+- Fix text mangling in sub-document `FeatureDocument.get_overlapping` method.
+- Refactor hash and equal compare methods in `TokenContainer`
+- Terse writing for `TokenContainer` and `FeatureToken`.
+
+### Added
+- Rule based paragraph and list item chunkers.
+- `FeatureDocument.reindex` and method to clear cached state with unit tests.
 
 
 ## [1.7.3] - 2023-06-29
@@ -369,7 +381,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.7.3...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/plandes/nlparse/compare/v1.7.3...v1.8.0
 [1.7.3]: https://github.com/plandes/nlparse/compare/v1.7.2...v1.7.3
 [1.7.2]: https://github.com/plandes/nlparse/compare/v1.7.1...v1.7.2
 [1.7.1]: https://github.com/plandes/nlparse/compare/v1.7.0...v1.7.1
