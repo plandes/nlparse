@@ -30,8 +30,7 @@ class ComponentInitializer(ABC):
 
 @dataclass
 class Component(object):
-    """A pipeline component to be added to the spaCy model.  There are a list of
-    these set in the :class:`.LanguageResource`.
+    """A pipeline component to be added to the spaCy model.
 
     """
     name: str = field()

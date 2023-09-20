@@ -9,6 +9,8 @@ import logging
 import re
 from itertools import chain
 import json
+import re
+from spacy.tokenizer import Tokenizer
 from spacy.language import Language
 from spacy.tokens.doc import Doc
 from spacy.matcher import Matcher
@@ -155,7 +157,7 @@ class PatternEntityRecognizer(EntityRecognizer):
                 logger.debug(f'label: {label}')
                 logger.debug(f'pattern: {patterns}')
             matcher = Matcher(self.nlp.vocab)
-            label = self._NULL_LABEL if label is None else label                
+            label = self._NULL_LABEL if label is None else label
             matcher.add(label, patterns, on_match=self._add_event_ent)
             self._labels[id(matcher)] = label
             self._matchers.append(matcher)
@@ -182,3 +184,10 @@ def create_patner_component(
         patterns: List[Tuple[Optional[str], List[List[Dict[str, Any]]]]],
         path: str = None):
     return PatternEntityRecognizer(nlp, name, path, list(patterns))
+
+
+@Language.factory('whitespace_tokenizer')
+def create_whitespace_tokenizer_component(nlp: Language, name: str):
+    nlp.tokenizer = Tokenizer(nlp.vocab, token_match=re.compile(r'\S+').match)
+    # this factory only configures the spaCy model, so return the identity
+    return lambda x: x
