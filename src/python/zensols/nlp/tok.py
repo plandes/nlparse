@@ -292,8 +292,8 @@ class FeatureToken(PersistableContainer, TextContainer):
             del a['_detatched_feature_ids']
             del b['_detatched_feature_ids']
             for attr in self.SKIP_COMPARE_FEATURE_IDS:
-                a.pop(attr)
-                b.pop(attr)
+                a.pop(attr, None)
+                b.pop(attr, None)
             return a == b
         return False
 
