@@ -8,7 +8,7 @@ SPACY_MODELS +=		sm md lg
 PIP_ARGS +=		--use-deprecated=legacy-resolver
 CLEAN_DEPS +=		pycleancache
 
-PY_SRC_TEST_PAT ?=	'test_white*.py'
+#PY_SRC_TEST_PAT ?=	'test_white*.py'
 
 include ./zenbuild/main.mk
 
