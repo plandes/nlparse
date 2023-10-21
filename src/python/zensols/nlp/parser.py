@@ -3,7 +3,9 @@
 """
 from __future__ import annotations
 __author__ = 'Paul Landes'
-from typing import Tuple, Dict, Any, Sequence, Set, ClassVar
+from typing import (
+    Tuple, Dict, List, Iterable, Any, Sequence, Set, ClassVar, Union
+)
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABCMeta, ABC
 import logging
@@ -276,3 +278,47 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
         """Clear the caching stash."""
         if self.stash is not None:
             self.stash.clear()
+
+
+@dataclass
+class FeatureSentenceFactory(object):
+    """Create a :class:`.FeatureSentence` out of single tokens or split on
+    whitespace.  This is a utility class to create data structures when only
+    single tokens are the source data.
+
+    For example, if you only have tokens that need to be scored with Unigram
+    Rouge-1, use this class to create sentences, which is a subclass of
+    :class:`.TokenContainer`.
+
+    """
+    token_decorators: Sequence[FeatureTokenDecorator] = field(default=())
+    """A list of decorators that can add, remove or modify features on a token.
+
+    """
+    def _decorate_token(self, feature_token: FeatureToken):
+        decorator: FeatureTokenDecorator
+        for decorator in self.token_decorators:
+            decorator.decorate(feature_token)
+
+    def create(self, tokens: Union[str, Iterable[str]]) -> FeatureSentence:
+        """Create a sentence from tokens.
+
+        :param tokens: if a string, then split on white space
+
+        """
+        toks: List[FeatureToken] = []
+        slen: int = 0
+        has_tok_decorators: bool = len(self.token_decorators) > 0
+        tokens = tokens.split() if isinstance(tokens, str) else tokens
+        tok: str
+        for i, tok in enumerate(tokens):
+            ftok = FeatureToken(i=i, idx=slen, i_sent=0, norm=tok)
+            if has_tok_decorators:
+                self._decorate_token(ftok)
+            toks.append(ftok)
+            slen += len(tok) + 1
+        return FeatureSentence(tokens=tuple(toks))
+
+    def __call__(self, tokens: Union[str, Iterable[str]]) -> FeatureSentence:
+        """See :meth:`.create`."""
+        return self.create(tokens)
