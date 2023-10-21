@@ -230,7 +230,7 @@ class ScoreSet(Dictable):
 
 @dataclass
 class ScoreContext(Dictable):
-    """Input needed to create score(s) using :class:`.Scorer'.
+    """Input needed to create score(s) using :class:`.Scorer`.
 
     """
     pairs: Tuple[Tuple[TokenContainer, TokenContainer]] = field()
