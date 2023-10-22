@@ -19,7 +19,6 @@ class SplitTokenSentenceDecorator(FeatureSentenceDecorator):
     """
     def _split_tok(self, ftok: FeatureToken, matches: Tuple[re.Match]):
         toks: List[FeatureToken] = []
-        norm: str
         for match in matches:
             ctok: FeatureToken = ftok.clone()
             ctok.norm = match.group(0)
@@ -31,7 +30,6 @@ class SplitTokenSentenceDecorator(FeatureSentenceDecorator):
 
     def decorate(self, sent: FeatureSentence):
         split_toks: List[FeatureToken] = []
-        tok: FeatureToken
         for ftok in sent.token_iter():
             tnorms: Tuple[str, ...] = tuple(re.finditer(r'\S+', ftok.norm))
             if len(tnorms) == 1:

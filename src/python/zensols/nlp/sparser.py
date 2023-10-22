@@ -205,8 +205,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             spacy.cli.download(model_name)
 
     def _create_model_key(self) -> str:
-        """Create a unique key used for storing expensive-to-create spaCy language
-        models in :obj:`_MODELS`.
+        """Create a unique key used for storing expensive-to-create spaCy
+        language models in :obj:`_MODELS`.
 
         """
         comps = sorted(map(lambda c: f'{c.pipe_name}:{hash(c)}',
@@ -319,8 +319,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     def _normalize_tokens(self, doc: Doc, *args, **kwargs) -> \
             Iterable[FeatureToken]:
-        """Generate an iterator of :class:`.FeatureToken` instances with features on a
-        per token level.
+        """Generate an iterator of :class:`.FeatureToken` instances with
+        features on a per token level.
 
         """
         if logger.isEnabledFor(logging.DEBUG):

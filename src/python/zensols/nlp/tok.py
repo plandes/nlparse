@@ -67,7 +67,8 @@ class FeatureToken(PersistableContainer, TextContainer):
     WRITABLE_FEATURE_IDS: ClassVar[Tuple[str, ...]] = tuple(
         ('text norm idx sent_i i i_sent tag pos ' +
          'is_wh entity dep children').split())
-    """Feature IDs that are dumped on :meth:`write` and :meth:`write_attributes`.
+    """Feature IDs that are dumped on :meth:`write` and
+    :meth:`write_attributes`.
 
     """
     NONE: ClassVar[str] = '-<N>-'
@@ -88,8 +89,8 @@ class FeatureToken(PersistableContainer, TextContainer):
 
     """
     norm: str = field()
-    """Normalized text, which is the text/orth or the named entity if tagged as a
-        named entity.
+    """Normalized text, which is the text/orth or the named entity if tagged as
+    a named entity.
 
     """
     def __post_init__(self):
@@ -407,11 +408,12 @@ class SpacyFeatureToken(FeatureToken):
 
     @property
     def lemma_(self) -> str:
-        """Return the string lemma or text of the named entitiy if tagged as a named
-        entity.
+        """Return the string lemma or text of the named entitiy if tagged as a
+        named entity.
 
         """
-        return self.spacy_token.orth_ if self.is_ent else self.spacy_token.lemma_
+        return self.spacy_token.orth_ if self.is_ent \
+            else self.spacy_token.lemma_
 
     @property
     def is_contraction(self) -> bool:
@@ -438,15 +440,16 @@ class SpacyFeatureToken(FeatureToken):
 
     @property
     def ent_(self) -> str:
-        """Return the entity string label or ``None`` if this token has no entity.
+        """Return the entity string label or ``None`` if this token has no
+        entity.
 
         """
         return self.spacy_token.label_ if self.is_ent else self.NONE
 
     @property
     def ent_iob(self) -> int:
-        """Return the entity IOB tag, which ``I`` for in, ```O`` for out, `B`` for
-        begin.
+        """Return the entity IOB tag, which ``I`` for in, ```O`` for out, `B``
+        for begin.
 
         """
         return self.token.ent_iob if self.is_ent else 0
@@ -483,9 +486,9 @@ class SpacyFeatureToken(FeatureToken):
 
     @property
     def sent_i(self) -> int:
-        """The index of the sentence to which the token belongs.  This is not to be
-        confused with the index of the token in the respective sentence, which
-        is :obj:`.FeatureToken.i_sent`.
+        """The index of the sentence to which the token belongs.  This is not to
+        be confused with the index of the token in the respective sentence,
+        which is :obj:`.FeatureToken.i_sent`.
 
         This attribute does not exist in a spaCy token, and was named as such
         to follow the naming conventions of their API.

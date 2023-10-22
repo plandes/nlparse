@@ -101,7 +101,8 @@ class LexicalSpan(Dictable):
 
     def overlaps_with(self, other: LexicalSpan,
                       inclusive: bool = True) -> bool:
-        """Return whether or not one text span overlaps non-inclusively with another.
+        """Return whether or not one text span overlaps non-inclusively with
+        another.
 
         :param other: the other location
 

@@ -237,7 +237,6 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
             for i, tok in enumerate(self.token_iter()):
                 tok.i_sent = i
         elif contiguous_i_sent is True:
-            st: FeatureToken
             for ref_tok, tok in zip(reference.token_iter(), self.token_iter()):
                 tok.i_sent = ref_tok.i
         else:
@@ -724,9 +723,9 @@ FeatureSpan.tokens = FeatureSpan._tokens
 
 @dataclass(eq=False, repr=False)
 class FeatureSentence(FeatureSpan):
-    """A container class of tokens that make a sentence.  Instances of this class
-    iterate over :class:`.FeatureToken` instances, and can create documents
-    with :meth:`to_document`.
+    """A container class of tokens that make a sentence.  Instances of this
+    class iterate over :class:`.FeatureToken` instances, and can create
+    documents with :meth:`to_document`.
 
     """
     EMPTY_SENTENCE: ClassVar[FeatureSentence]
@@ -807,7 +806,6 @@ class FeatureDocument(TokenContainer):
             st: Token = st_to_i.get(i)
             if st is not None:
                 ft.spacy_token = st
-        fs: FeatureSentence
         ss: Span
         for ft, ss in zip(self.sents, doc.sents):
             ft.spacy_span = ss
@@ -852,7 +850,8 @@ class FeatureDocument(TokenContainer):
 
     @property
     def max_sentence_len(self) -> int:
-        """Return the length of tokens from the longest sentence in the document.
+        """Return the length of tokens from the longest sentence in the
+        document.
 
         """
         return max(map(len, self.sent_iter()))

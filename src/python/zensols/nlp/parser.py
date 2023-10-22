@@ -54,9 +54,9 @@ class Component(object):
 
     """
     modules: Sequence[str] = field(default=())
-    """The module to import before adding component pipelines.  This will register
-    components mentioned in :obj:`components` when the resepctive module is
-    loaded.
+    """The module to import before adding component pipelines.  This will
+    register components mentioned in :obj:`components` when the resepctive
+    module is loaded.
 
     """
     initializers: Tuple[ComponentInitializer, ...] = field(default=())
@@ -74,8 +74,8 @@ class Component(object):
         return x
 
     def init(self, model: Language):
-        """Initialize the component and add it to the NLP pipe line.  This base class
-        implementation loads the :obj:`module`, then calls
+        """Initialize the component and add it to the NLP pipe line.  This base
+        class implementation loads the :obj:`module`, then calls
         :meth:`.Language.add_pipe`.
 
         :param model: the model to add the spaCy model (``nlp`` in their

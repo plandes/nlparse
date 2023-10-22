@@ -379,8 +379,8 @@ class ExactMatchScoreMethod(ScoreMethod):
 
     """
     def _score(self, meth: str, context: ScoreContext) -> Iterable[FloatScore]:
-        s1: TokenContainer
-        s2: TokenContainer
+        s1t: TokenContainer
+        s2t: TokenContainer
         for s1t, s2t in context.pairs:
             val: float
             if self.equality_measure == 'norm':
@@ -426,8 +426,8 @@ class LevenshteinDistanceScoreMethod(ScoreMethod):
         def container_to_str(container: TokenContainer) -> str:
             return container.norm if self.use_norm else container.text
 
-        s1: TokenContainer
-        s2: TokenContainer
+        s1t: TokenContainer
+        s2t: TokenContainer
         for s1t, s2t in context.pairs:
             t1: str
             t2: str
@@ -489,8 +489,8 @@ class BleuScoreMethod(ScoreMethod):
                 'ignore', message='[.\n]+The hypothesis contains 0 counts.*')
 
     def _score(self, meth: str, context: ScoreContext) -> Iterable[FloatScore]:
-        s1: TokenContainer
-        s2: TokenContainer
+        s1t: TokenContainer
+        s2t: TokenContainer
         for s1t, s2t in self._tokenize(context):
             val: float = bleu.sentence_bleu(
                 [s1t], s2t,

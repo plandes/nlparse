@@ -9,7 +9,6 @@ import logging
 import re
 from itertools import chain
 import json
-import re
 from spacy.tokenizer import Tokenizer
 from spacy.language import Language
 from spacy.tokens.doc import Doc
@@ -102,8 +101,9 @@ class EntityRecognizer(object):
 
 @dataclass
 class RegexEntityRecognizer(EntityRecognizer):
-    """Merges regular expression matches as a :class:`~spacy.tokens.Span`.  After
-    matches are found, re-tokenization merges them in to one token per match.
+    """Merges regular expression matches as a :class:`~spacy.tokens.Span`.
+    After matches are found, re-tokenization merges them in to one token per
+    match.
 
     """
     patterns: List[Tuple[str, Tuple[re.Pattern]]] = field()

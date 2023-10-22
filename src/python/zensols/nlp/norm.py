@@ -119,7 +119,8 @@ class TokenMapper(ABC):
 
 @dataclass
 class SplitTokenMapper(TokenMapper):
-    """Splits the normalized text on a per token basis with a regular expression.
+    """Splits the normalized text on a per token basis with a regular
+    expression.
 
     Configuration example::
 
@@ -144,17 +145,17 @@ class SplitTokenMapper(TokenMapper):
 
 @dataclass
 class JoinTokenMapper(object):
-    """Join tokens based on a regular expression.  It does this by creating spans
-    in the spaCy component (first in the tuple) and using the span text as the
-    normalized token.
+    """Join tokens based on a regular expression.  It does this by creating
+    spans in the spaCy component (first in the tuple) and using the span text as
+    the normalized token.
 
     """
     regex: Union[re.Pattern, str] = field(default=r'[ ]')
     """The regular expression to use for joining tokens"""
 
     separator: str = field(default=None)
-    """The string used to separate normalized tokens in matches.  If ``None``, use
-    the token text.
+    """The string used to separate normalized tokens in matches.  If ``None``,
+    use the token text.
 
     """
     def __post_init__(self):
@@ -457,8 +458,8 @@ class LambdaTokenMapper(TokenMapper):
 
 @dataclass
 class MapTokenNormalizer(TokenNormalizer):
-    """A normalizer that applies a sequence of :class:`.TokenMapper` instances to
-    transform the normalized token text.  The members of the
+    """A normalizer that applies a sequence of :class:`.TokenMapper` instances
+    to transform the normalized token text.  The members of the
     ``mapper_class_list`` are sections of the application configuration.
 
     Configuration example::
@@ -473,9 +474,9 @@ class MapTokenNormalizer(TokenNormalizer):
 
     """
     mapper_class_list: List[str] = field(default_factory=list)
-    """The configuration section names to create from the application configuration
-    factory, which is added to :obj:`mappers`.  This field settings is
-    deprecated; use :obj:`mappers` instead.
+    """The configuration section names to create from the application
+    configuration factory, which is added to :obj:`mappers`.  This field
+    settings is deprecated; use :obj:`mappers` instead.
 
     """
     def __post_init__(self):

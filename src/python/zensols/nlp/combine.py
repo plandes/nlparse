@@ -3,10 +3,9 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Set, List, Dict, Tuple
+from typing import Set, List, Dict
 from dataclasses import dataclass, field
 import logging
-from spacy.tokens.token import Token
 from . import (
     ParseError, TokenContainer, FeatureDocumentParser,
     FeatureDocument, FeatureSentence, FeatureToken,
