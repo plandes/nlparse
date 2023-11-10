@@ -486,7 +486,8 @@ class FeatureSpan(TokenContainer):
 
     """
     _PERSITABLE_TRANSIENT_ATTRIBUTES: ClassVar[Set[str]] = \
-        TokenContainer._PERSITABLE_TRANSIENT_ATTRIBUTES | {'spacy_span'}
+        TokenContainer._PERSITABLE_TRANSIENT_ATTRIBUTES | \
+        {'spacy_span', '_token_val'}
     """Don't serialize the spacy document on persistance pickling."""
 
     tokens: Tuple[FeatureToken, ...] = field()
