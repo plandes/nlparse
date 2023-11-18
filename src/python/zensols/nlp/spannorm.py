@@ -46,6 +46,9 @@ class EnglishSpanNormalizer(SpanNormalizer):
         "'s n't 'll 'm 've 'd 're -".split()))
     """Characters before whcih no space is added for span normalization."""
 
+    keep_space_skip: Set[str] = field(default=frozenset("""_"""))
+    """Characters after which no space is added for span normalization."""
+
     canonical_delimiter: str = field(default='|')
     """The token delimiter used in :obj:`canonical`."""
 
@@ -63,6 +66,7 @@ class EnglishSpanNormalizer(SpanNormalizer):
         if has_punc:
             post_space_skip: Set[str] = self.post_space_skip
             pre_space_skip: Set[str] = self.pre_space_skip
+            keep_space_skip: Set[str] = self.keep_space_skip
             n_pre_space_skip: int = self._longest_pre_space_skip
             sio = StringIO()
             last_avoid = False
@@ -73,16 +77,19 @@ class EnglishSpanNormalizer(SpanNormalizer):
                 if norm is None:
                     raise ParseError(f'Token {tok.text} has no norm')
                 if tix > 0 and tix < tlen:
-                    do_post_space_skip = False
-                    nlen = len(norm)
-                    if nlen == 1:
-                        do_post_space_skip = norm in post_space_skip
-                    if (not tok.is_punctuation or do_post_space_skip) and \
-                       not last_avoid and \
-                       not (nlen <= n_pre_space_skip and
-                            norm in pre_space_skip):
+                    nlen: int = len(norm)
+                    if nlen == 1 and norm in keep_space_skip:
                         sio.write(' ')
-                    last_avoid = do_post_space_skip or tok.norm == '--'
+                    else:
+                        do_post_space_skip: bool = False
+                        if nlen == 1:
+                            do_post_space_skip = norm in post_space_skip
+                        if (not tok.is_punctuation or do_post_space_skip) and \
+                           not last_avoid and \
+                           not (nlen <= n_pre_space_skip and
+                                norm in pre_space_skip):
+                            sio.write(' ')
+                        last_avoid = do_post_space_skip or tok.norm == '--'
                 sio.write(norm)
             nsent = sio.getvalue()
         else:
