@@ -47,7 +47,7 @@ class EnglishSpanNormalizer(SpanNormalizer):
     """Characters before whcih no space is added for span normalization."""
 
     keep_space_skip: Set[str] = field(default=frozenset("""_"""))
-    """Characters after which no space is added for span normalization."""
+    """Characters that retain space on both sides."""
 
     canonical_delimiter: str = field(default='|')
     """The token delimiter used in :obj:`canonical`."""
