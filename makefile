@@ -29,6 +29,10 @@ allmodels:
 modeldeps:
 			$(PIP_BIN) install $(PIP_ARGS) -r $(PY_SRC)/requirements-model.txt
 
+.PHONY:			scoredeps
+scoredeps:
+			$(PIP_BIN) install $(PIP_ARGS) -r $(PY_SRC)/requirements-score.txt
+
 .PHONY:			uninstalldeps
 uninstalldeps:
 			$(PYTHON_BIN) -m pip freeze | grep spacy | sed 's/\([^= ]*\).*/\1/' | xargs pip uninstall -y
