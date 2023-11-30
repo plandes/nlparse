@@ -40,12 +40,8 @@ class TestDocumentDecorate(TestBase):
         self.two_nl: str = 'Dan throws the ball.  \n\n  He throws it quite often.'
 
     def _sent_white_space_count(self, s: FeatureSentence) -> int:
-        text: bool = re.match(r'^\s+', s.text) is not None or \
-            re.match(r'\s+$', s.text) is not None
-        tok: bool = False
-        if len(s) > 0:
-            s[0].is_space or s[-1].is_space
-        return 1 if text or tok else 0
+        return re.match(r'^\s+', s.text) is not None or \
+            re.match(r'.*\s+$', s.text) is not None
 
     def _sent_empty_count(self, doc) -> Tuple[int, int]:
         ws_toks: int = 0
@@ -59,6 +55,11 @@ class TestDocumentDecorate(TestBase):
     def _assert_whitespace(self, sent: str, doc_parser, should_ws: int):
         doc: FeatureDocument = doc_parser(sent)
         ws: int = sum(map(self._sent_white_space_count, doc.sents))
+        if should_ws != ws:
+            print('_' * 80)
+            for s in doc:
+                print(f'<{s.text}>', re.match(r'[\n\r\s]+$', s.text))
+            print('_' * 80)
         self.assertEqual(should_ws, ws)
         return doc
 
@@ -75,25 +76,26 @@ class TestDocumentDecorate(TestBase):
         doc = self._assert_whitespace(
             'Dan throws the ball.  He throws it quite often.', doc_parser, 1)
         self.assertEqual(2, len(doc.sents))
-        self.assertEqual(' He throws it quite often.', doc[1].text)
+        self.assertEqual('Dan throws the ball.  ', doc[0].text)
+        self.assertEqual('He throws it quite often.', doc[1].text)
 
         doc = self._assert_whitespace(
-            ' Dan throws the ball.  He throws it quite often.', doc_parser, 2)
+            ' Dan throws the ball.  He throws it quite often.', doc_parser, 1)
         self.assertEqual(2, len(doc.sents))
 
         doc = self._assert_whitespace(
-            ' Dan throws the ball.  He throws it quite often. ', doc_parser, 2)
-        self.assertEqual(' Dan throws the ball.', doc[0].text)
-        self.assertEqual(' He throws it quite often.', doc[1].text)
+            ' Dan throws the ball.  He throws it quite often. ', doc_parser, 1)
+        self.assertEqual(' Dan throws the ball.  ', doc[0].text)
+        self.assertEqual('He throws it quite often.', doc[1].text)
 
         # test add empty sentences and space
         doc_parser: FeatureDocumentParser = self.fac.instance(
             'default_doc_parser')
 
         doc = self._assert_whitespace(self.two_nl, doc_parser, 1)
-        self.assertEqual('Dan throws the ball.', doc[0].text)
-        self.assertEqual(' \n\n  ', doc[1].text)
-        self.assertEqual('He throws it quite often.', doc[2].text)
+        # starting with spacy 3.6 newlines are kept with the first sentence
+        self.assertEqual('Dan throws the ball.  \n\n  ', doc[0].text)
+        self.assertEqual('He throws it quite often.', doc[1].text)
         self.assertEqual((12, 0), self._sent_empty_count(doc))
 
     def test_empty_sentence_whitespace_stripping(self):
@@ -113,11 +115,12 @@ class TestDocumentDecorate(TestBase):
     def test_empty_sentence_filtering(self):
         doc_parser: FeatureDocumentParser = self.fac.instance('filter_sent_doc_parser')
         doc = self._assert_whitespace(
-            ' Dan throws the ball.  He throws it quite often. ', doc_parser, 2)
+            ' Dan throws the ball.  He throws it quite often. ', doc_parser, 1)
 
-        doc = self._assert_whitespace(self.two_nl, doc_parser, 0)
+        doc = self._assert_whitespace(self.two_nl, doc_parser, 1)
         self.assertEqual(2, len(doc.sents))
-        self.assertEqual('Dan throws the ball.', doc[0].text)
+        # starting with spacy 3.6 newlines are kept with the first sentence
+        self.assertEqual('Dan throws the ball.  \n\n  ', doc[0].text)
         self.assertEqual('He throws it quite often.', doc[1].text)
 
     def test_both_strip_empty_sentence_filtering(self):

@@ -12,7 +12,7 @@ class TestEntity(TestBase):
         self.assertEqual(1, len(doc.sents))
         self.assertEqual(tuple(s[:-1].split() + ['.']),
                          tuple(doc.norm_token_iter()))
-        should = ('GPE', '-<N>-', '-<N>-', 'ORDINAL', '-<N>-', '-<N>-',
+        should = ('PERSON', '-<N>-', '-<N>-', 'ORDINAL', '-<N>-', '-<N>-',
                   'GPE', 'GPE', 'GPE', '-<N>-', 'DATE', 'DATE', '-<N>-')
         self.assertEqual(should, tuple(map(lambda t: t.ent_, doc.token_iter())))
         should = ('Obama', '44th', 'the United States', '8 years')

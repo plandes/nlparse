@@ -43,8 +43,8 @@ class TestToDoc(TestBase):
         for name in self.parsers:
             self._test_norm(self.fac(name))
 
-    def _test_strip(self, should, text):
-        doc_parser = self.fac('doc_parser_default')
+    def _test_strip(self, should, text, parser='doc_parser_default'):
+        doc_parser = self.fac(parser)
         fdoc: FeatureDocument = doc_parser(text)
         if self._test_tokens:
             toks = list(map(lambda t: t.norm, fdoc[0].strip_token_iter()))
@@ -56,14 +56,18 @@ class TestToDoc(TestBase):
     def _test_strip_tests(self):
         self._test_strip('He hit the'.split() + [' '] + 'ball .'.split(),
                          """He hit the  ball.""")
+        # space added to the front starting in spacy 3.6 leads to empty sentence
         self._test_strip('He hit the'.split() + [' '] + 'ball .'.split(),
-                         """ He hit the  ball. """)
+                         """ He hit the  ball. """,
+                         'filter_sent_doc_parser')
         self._test_strip('He hit the'.split() + [' '] + 'ball .'.split(),
-                         """ He hit the  ball.""")
+                         """ He hit the  ball.""",
+                         'filter_sent_doc_parser')
         self._test_strip('He hit the'.split() + 'ball .'.split(),
                          """He hit the ball. """)
         self._test_strip('He hit the'.split() + 'ball .'.split(),
-                         """   He hit the ball.""")
+                         """   He hit the ball.""",
+                         'filter_sent_doc_parser')
         self._test_strip('He hit the'.split() + 'ball .'.split(),
                          """He hit the ball.   """)
 
