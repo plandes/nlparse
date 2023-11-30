@@ -1,18 +1,22 @@
 ## makefile automates the build and deployment for python projects
 
-# type of project
+
+## Build system
+#
 PROJ_TYPE =		python
 PROJ_MODULES =		git python-resources python-doc python-doc-deploy
 PY_DEP_POST_DEPS +=	modeldeps
 SPACY_MODELS +=		sm md lg
-PIP_ARGS +=		--use-deprecated=legacy-resolver
 CLEAN_DEPS +=		pycleancache
 
-#PY_SRC_TEST_PAT ?=	'test_white*.py'
 
+## Includes
+#
 include ./zenbuild/main.mk
 
 
+## Targets
+#
 # https://spacy.io/models/en
 .PHONY:			allmodels
 allmodels:
