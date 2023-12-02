@@ -1,6 +1,6 @@
 spacy~=3.6.1
-msgpack>=1.0.0
-msgpack-numpy>=0.4.7.1
+msgpack>=1.0.7
+msgpack-numpy>=0.4.8
 smart-open>=4.0.1
 nltk~=3.7
 interlap~=0.2.7
