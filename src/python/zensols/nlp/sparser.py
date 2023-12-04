@@ -344,6 +344,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         ft: FeatureToken = tp(tok, norm, *args, **kwargs)
         self._decorate_token(tok, ft)
         if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'created feature token: {ft} ({id(ft)}) ' +
+                         f'for {tok} ({id(tok)})')
             logger.debug(f'detaching using features: {self.token_feature_ids}')
         return ft.detach(self.token_feature_ids)
 
