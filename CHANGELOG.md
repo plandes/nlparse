@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [1.9.0] - 2023-12-05
+Upgrade and Python deprecation release.
+
 ### Changed
 - Upgrade to spaCy version 3.6.
 - Upgrade to [zensols.util] version 1.14.
