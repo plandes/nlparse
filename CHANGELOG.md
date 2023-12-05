@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.9.0] - 2023-12-05
+### Changed
+- Upgrade to spaCy version 3.6.
+- Upgrade to [zensols.util] version 1.14.
+
+### Added
+- Support for Python 3.11.
+- Optional dependencies for scoring methods.
+
+### Removed
+- Support for Python 3.9.
+
+
 ## [1.8.1] - 2023-11-29
 ### Added
 - A simple `FeatureSentenceFactory` that creates sentence instances from
@@ -392,7 +405,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.8.1...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.9.0...HEAD
+[1.9.0]: https://github.com/plandes/nlparse/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/plandes/nlparse/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/plandes/nlparse/compare/v1.7.3...v1.8.0
 [1.7.3]: https://github.com/plandes/nlparse/compare/v1.7.2...v1.7.3
@@ -431,6 +445,7 @@ Data classes are now used so Python 3.7 is now a requirement.
 [0.0.2]: https://github.com/plandes/nlparse/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/plandes/nlparse/compare/v0.0.0...v0.0.1
 
+[spaCy]: https://spacy.io
 [nltk]: https://www.nltk.org
 [zensols.deepnlp]: https://github.com/plandes/deepnlp
 [zenbuild]: https://github.com/plandes/zenbuild

@@ -1,8 +1,8 @@
 # Zensols Natural Language Parsing
 
 [![PyPI][pypi-badge]][pypi-link]
-[![Python 3.9][python39-badge]][python39-link]
 [![Python 3.10][python310-badge]][python310-link]
+[![Python 3.11][python311-badge]][python311-link]
 [![Build Status][build-badge]][build-link]
 
 This framework wraps the [spaCy] framework and creates light weight features in
@@ -102,6 +102,15 @@ are also available.
 See the [feature documents] for more information.
 
 
+## Scoring
+
+Certain scores in the [scoring module] need additional Python packages.  These
+are installed with:
+```bash
+pip install -R src/python/requirements-score.txt
+```
+
+
 ## Attribution
 
 This project, or example code, uses:
@@ -115,14 +124,23 @@ This project, or example code, uses:
 If you use this project in your research please use the following BibTeX entry:
 
 ```bibtex
-@article{Landes_DiEugenio_Caragea_2021,
-  title={DeepZensols: Deep Natural Language Processing Framework},
-  url={http://arxiv.org/abs/2109.03383},
-  note={arXiv: 2109.03383},
-  journal={arXiv:2109.03383 [cs]},
-  author={Landes, Paul and Di Eugenio, Barbara and Caragea, Cornelia},
-  year={2021},
-  month={Sep}
+@inproceedings{landes-etal-2023-deepzensols,
+    title = "{D}eep{Z}ensols: A Deep Learning Natural Language Processing Framework for Experimentation and Reproducibility",
+    author = "Landes, Paul  and
+      Di Eugenio, Barbara  and
+      Caragea, Cornelia",
+    editor = "Tan, Liling  and
+      Milajevs, Dmitrijs  and
+      Chauhan, Geeticka  and
+      Gwinnup, Jeremy  and
+      Rippeth, Elijah",
+    booktitle = "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+    month = dec,
+    year = "2023",
+    address = "Singapore, Singapore",
+    publisher = "Empirical Methods in Natural Language Processing",
+    url = "https://aclanthology.org/2023.nlposs-1.16",
+    pages = "141--146"
 }
 ```
 
@@ -132,21 +150,27 @@ If you use this project in your research please use the following BibTeX entry:
 An extensive changelog is available [here](CHANGELOG.md).
 
 
+## Community
+
+Please star this repository and let me know how and where you use this API.
+Contributions as pull requests, feedback and any input is welcome.
+
+
 ## License
 
 [MIT License](LICENSE.md)
 
-Copyright (c) 2020 - 2021 Paul Landes
+Copyright (c) 2020 - 2023 Paul Landes
 
 
 <!-- links -->
 [pypi]: https://pypi.org/project/zensols.nlp/
 [pypi-link]: https://pypi.python.org/pypi/zensols.nlp
 [pypi-badge]: https://img.shields.io/pypi/v/zensols.nlp.svg
-[python39-badge]: https://img.shields.io/badge/python-3.9-blue.svg
-[python39-link]: https://www.python.org/downloads/release/python-390
 [python310-badge]: https://img.shields.io/badge/python-3.10-blue.svg
-[python310-link]: https://www.python.org/downloads/release/python-310
+[python310-link]: https://www.python.org/downloads/release/python-3100
+[python311-badge]: https://img.shields.io/badge/python-3.11-blue.svg
+[python311-link]: https://www.python.org/downloads/release/python-3110
 [build-badge]: https://github.com/plandes/nlparse/workflows/CI/badge.svg
 [build-link]: https://github.com/plandes/nlparse/actions
 
