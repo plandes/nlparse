@@ -482,8 +482,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 @dataclass
 class WhiteSpaceTokenizerFeatureDocumentParser(SpacyFeatureDocumentParser):
     """This class parses text in to instances of :class:`.FeatureDocument`
-    instances using :meth:`parse`.  This parser does no sentence chunking so
-    documents have one and only one sentence for each parse.
+    instances tokenizing only by whitespace.  This parser does no sentence
+    chunking so documents have one and only one sentence for each parse.
 
     """
     _TOK_REGEX: ClassVar[re.Pattern] = re.compile(r'\S+')
