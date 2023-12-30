@@ -4,11 +4,13 @@
 from __future__ import annotations
 __author__ = 'Paul Landes'
 from typing import (
-    Tuple, Dict, List, Iterable, Any, Sequence, Set, ClassVar, Union
+    Tuple, Dict, List, Iterable, Any, Sequence, Set, ClassVar, Union, Type
 )
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABCMeta, ABC
 import logging
+import itertools as it
+import re
 from io import StringIO
 from spacy.language import Language
 from zensols.util import Hasher
@@ -322,3 +324,31 @@ class FeatureSentenceFactory(object):
     def __call__(self, tokens: Union[str, Iterable[str]]) -> FeatureSentence:
         """See :meth:`.create`."""
         return self.create(tokens)
+
+
+@dataclass
+class WhiteSpaceTokenizerFeatureDocumentParser(FeatureDocumentParser):
+    """This class parses text in to instances of :class:`.FeatureDocument`
+    instances tokenizing only by whitespace.  This parser does no sentence
+    chunking so documents have one and only one sentence for each parse.
+
+    """
+    _TOK_REGEX: ClassVar[re.Pattern] = re.compile(r'\S+')
+    """The whitespace regular expression for splitting tokens."""
+
+    sent_class: Type[FeatureSentence] = field(default=FeatureSentence)
+    """The type of sentence instances to create."""
+
+    doc_class: Type[FeatureDocument] = field(default=FeatureDocument)
+    """The type of document instances to create."""
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        toks: List[FeatureToken] = []
+        m: re.Match
+        for i, m in zip(it.count(), re.finditer(self._TOK_REGEX, text)):
+            tok = FeatureToken(i, m.start(), 0, m.group(0))
+            tok.default_detached_feature_ids = \
+                FeatureToken.REQUIRED_FEATURE_IDS
+            toks.append(tok)
+        sent = self.sent_class(tokens=tuple(toks), text=text)
+        return self.doc_class(sents=(sent,), text=text, *args, **kwargs)

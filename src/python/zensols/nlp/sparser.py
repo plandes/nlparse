@@ -100,7 +100,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         model_name = ${lang}_core_web_sm
 
     """
-    _MODELS = {}
+    _MODELS: ClassVar[Dict[str, Language]] = {}
     """Contains cached models, such as ``en_core_web_sm``."""
 
     config_factory: ConfigFactory = field()
@@ -477,25 +477,3 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             if hasattr(tok, 'ent_') and 'ent' in add_features:
                 params['ents'] = [conv_iob(t) for t in doc.token_iter()]
         return Doc(**params)
-
-
-@dataclass
-class WhiteSpaceTokenizerFeatureDocumentParser(SpacyFeatureDocumentParser):
-    """This class parses text in to instances of :class:`.FeatureDocument`
-    instances tokenizing only by whitespace.  This parser does no sentence
-    chunking so documents have one and only one sentence for each parse.
-
-    """
-    _TOK_REGEX: ClassVar[re.Pattern] = re.compile(r'\S+')
-    """The whitespace regular expression for splitting tokens."""
-
-    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
-        toks: List[FeatureToken] = []
-        m: re.Match
-        for i, m in zip(it.count(), re.finditer(self._TOK_REGEX, text)):
-            tok = FeatureToken(i, m.start(), 0, m.group(0))
-            tok.default_detached_feature_ids = \
-                FeatureToken.REQUIRED_FEATURE_IDS
-            toks.append(tok)
-        sent = self.sent_class(tokens=tuple(toks), text=text)
-        return self.doc_class(sents=(sent,), text=text, *args, **kwargs)
