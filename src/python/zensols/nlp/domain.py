@@ -40,7 +40,8 @@ class LexicalSpan(Dictable):
     """
     _DICTABLE_ATTRIBUTES: ClassVar[Set[str]] = {'begin', 'end'}
 
-    EMPTY_SPAN: ClassVar[LexicalSpan]
+    EMPTY_SPAN: ClassVar[LexicalSpan] = None
+    """The span ``(0, 0)``."""
 
     def __init__(self, begin: int, end: int):
         """Initialize the interval.
