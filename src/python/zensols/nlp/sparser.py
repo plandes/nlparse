@@ -9,7 +9,6 @@ from typing import (
 from dataclasses import dataclass, field
 import logging
 import sys
-import re
 import itertools as it
 from io import TextIOBase
 import spacy
