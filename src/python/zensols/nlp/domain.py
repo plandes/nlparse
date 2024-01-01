@@ -28,7 +28,8 @@ class ParseError(APIError):
 class LexicalSpan(Dictable):
     """A lexical character span of text in a document.  The span has two
     positions: :obj:`begin` and :obj:`end`, which is indexed respectively as an
-    operator as well..
+    operator as well.  The left (:obj:`begin) is inclusive and the right
+    (:obj:`end`) is exclusive to conform to Python array slicing conventions.
 
     One span is less than the other when the beginning position is less.  When
     the beginnign positions are the same, the one with the smaller end position
