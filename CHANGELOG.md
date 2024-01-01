@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Bug fixes to `FeatureDocument` sentence combining.
-
+- White space tokenization parser no longer inherits the spaCy parser, and
+  needs no configuration.
 
 ## [1.9.0] - 2023-12-05
 Upgrade and Python deprecation release.
