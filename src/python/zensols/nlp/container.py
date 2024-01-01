@@ -1023,7 +1023,7 @@ class FeatureDocument(TokenContainer):
             sent_cls = self._sent_class()
             sent = sent_cls(self.tokens)
             doc = dataclasses.replace(self)
-            doc.sents = [sent]
+            doc.sents = (sent,)
             doc._combined = True
             return doc
 
@@ -1039,7 +1039,11 @@ class FeatureDocument(TokenContainer):
         if sents is None:
             return self._combine_all_sentences()
         else:
-            return self.__class__(tuple(sents))
+            sents: Tuple[FeatureSentence] = tuple(sents)
+            cls = type(sents[0]) if len(sents) > 0 else FeatureSentence
+            sent: FeatureSentence = cls(tuple(
+                chain.from_iterable(map(lambda s: s.token_iter(), sents))))
+            return self.__class__((sent,))
 
     def _reconstruct_sents_iter(self) -> Iterable[FeatureSentence]:
         sent: FeatureSentence
@@ -1159,7 +1163,7 @@ class FeatureDocument(TokenContainer):
         """
         if deep:
             sents = tuple(map(lambda s: s.clone(), sents))
-        clone = self.clone(sents=sents)
+        clone = self.clone(sents=tuple(sents,))
         clone.text = ' '.join(map(lambda s: s.text, sents))
         clone.spacy_doc = None
         return clone
