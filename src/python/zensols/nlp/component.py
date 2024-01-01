@@ -13,7 +13,8 @@ from spacy.tokenizer import Tokenizer
 from spacy.language import Language
 from spacy.tokens.doc import Doc
 from spacy.matcher import Matcher
-from spacy.tokens import Span
+from spacy.tokens import Span, Token
+from . import NLPError
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +83,7 @@ class EntityRecognizer(object):
             else:
                 span = Span(doc, start, end, label=label)
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'span ({start}, {end}) for {label}: {span}')
+            logger.debug(f'merge span ({start}, {end}) for {label}: {span}')
         if span is not None:
             # this is a span object or none if match doesn't map to valid token
             # sequence
@@ -98,6 +99,24 @@ class EntityRecognizer(object):
                     # otherwise, it would cause mismatched indices!
                     retokenizer.merge(span)
 
+    def _split_span(self, doc: Doc, span_ix: List[Tuple[int, int]], label: str):
+        if label is not None:
+            raise NLPError('Labels for splitting spans not yet supported')
+        doc_text: str = doc.text
+        toks: Token = tuple(filter(lambda t: t.idx == span_ix[0][0], doc))
+        if len(toks) == 0:
+            stext: str = doc_text[span_ix[0][0]:span_ix[-1][1]]
+            raise NLPError(
+                f'Could not find token {stext} at {span_ix[0][0]} in {doc}')
+        tok: Tuple[Token] = toks[0]
+        orths: Tuple[str] = tuple(map(lambda s: doc_text[s[0]:s[1]], span_ix))
+        heads: List[Token] = [tok] * len(span_ix)
+        #attrs = {'LABEL': [label] * len(span_ix)}
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'orths: {orths}, heads={heads}')
+        with doc.retokenize() as retokenizer:
+            retokenizer.split(tok, orths, heads=heads)
+
 
 @dataclass
 class RegexEntityRecognizer(EntityRecognizer):
@@ -106,7 +125,7 @@ class RegexEntityRecognizer(EntityRecognizer):
     match.
 
     """
-    patterns: List[Tuple[str, Tuple[re.Pattern]]] = field()
+    patterns: List[Tuple[str, List[re.Pattern]]] = field()
     """A list of the regular expressions to find."""
 
     def __call__(self, doc: Doc) -> Doc:
@@ -191,3 +210,44 @@ def create_whitespace_tokenizer_component(nlp: Language, name: str):
     nlp.tokenizer = Tokenizer(nlp.vocab, token_match=re.compile(r'\S+').match)
     # this factory only configures the spaCy model, so return the identity
     return lambda x: x
+
+
+@dataclass
+class RegexSplitter(EntityRecognizer):
+    """Splits on regular expressions."""
+    patterns: List[Tuple[str, List[re.Pattern]]] = field()
+    """A list of the regular expressions to find."""
+
+    def __call__(self, doc: Doc) -> Doc:
+        for label, regex_list in self.patterns:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'label: {label}, regex: {regex_list}')
+            matches = map(lambda r: re.finditer(r, doc.text), regex_list)
+            match: re.Match
+            for match in chain.from_iterable(matches):
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f'match: {match}')
+                spans: List[int, int] = []
+                for i in range(1, len(match.groups()) + 1):
+                    s: Tuple[int, int] = match.span(i)
+                    if logger.isEnabledFor(logging.DEBUG):
+                        logger.debug(f'match: {s} ({match.group(i)})')
+                    spans.append(s)
+                self._split_span(doc, spans, label)
+        return doc
+
+
+@Language.factory(
+    'regexsplit', default_config={'patterns': [], 'path': None})
+def create_regexsplit_component(
+        nlp: Language, name: str,
+        patterns: Sequence[Tuple[Optional[str],
+                                 Sequence[Union[re.Pattern, str]]]],
+        path: str = None):
+    def map_rlist(rlist):
+        rl = map(lambda x: x if isinstance(x, re.Pattern) else re.compile(x),
+                 rlist)
+        return tuple(rl)
+
+    regexes = map(lambda x: (x[0], map_rlist(x[1])), patterns)
+    return RegexSplitter(nlp, name, path, list(regexes))

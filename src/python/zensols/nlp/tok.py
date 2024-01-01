@@ -4,7 +4,8 @@
 from __future__ import annotations
 __author__ = 'Paul Landes'
 from typing import (
-    Tuple, Union, Optional, Any, Set, Iterable, Dict, Sequence, ClassVar, Type
+    List, Tuple, Set, Iterable, Dict, Sequence,
+    Union, Optional, Any, ClassVar, Type,
 )
 from dataclasses import dataclass, field
 from functools import reduce
@@ -208,6 +209,34 @@ class FeatureToken(PersistableContainer, TextContainer):
         if skip_missing:
             feature_ids = filter(lambda fid: hasattr(self, fid), feature_ids)
         return {k: getattr(self, k) for k in feature_ids}
+
+    def split(self, positions: Iterable[int]) -> List[FeatureToken]:
+        """Split on text normal index positions.  This needs and updates the
+        ``idx`` and ``lexspan`` atttributes.
+
+        :param positions: 0-indexes into :obj:`norm` indicating where to split
+
+        :return: new (cloned) tokens along the boundaries of ``positions``
+
+        """
+        splits: List[FeatureToken] = []
+        norms: List[str] = []
+        idx: int = self.idx
+        start: int = 0
+        end: int
+        for end in positions:
+            norms.append((start, self.norm[start:end]))
+            start = end
+        norms.append((start, self.norm[start:]))
+        norm: str
+        for start, norm in norms:
+            offset: int = idx + start
+            split_tok = self.clone()
+            split_tok.norm = norm
+            split_tok.idx = offset
+            split_tok.lexspan = LexicalSpan(offset, offset + len(norm))
+            splits.append(split_tok)
+        return splits
 
     def _from_dictable(self, recurse: bool, readable: bool,
                        class_name_param: str = None) -> Dict[str, Any]:

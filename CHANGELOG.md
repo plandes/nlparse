@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- Added an API, parser components and unit tests to split tokens.
+
+### Changed
+- Bug fixes to `FeatureDocument` sentence combining.
+
+
 ## [1.9.0] - 2023-12-05
 Upgrade and Python deprecation release.
 

@@ -15,7 +15,7 @@ class TestParse(unittest.TestCase):
         return doc_parser(s)
 
     def test_regex(self):
-        text = 'A [**masked**] test with an <angle tok> and {curly tok}.'
+        text: str = 'A [**masked**] test with an <angle tok> and {curly tok}.'
         fd: FeatureDocument = self._parser('regex', text)
         doc: Doc = fd.spacy_doc
         ents = doc.ents
@@ -24,7 +24,7 @@ class TestParse(unittest.TestCase):
         self.assertEqual('MASK', ents[0].label_)
 
     def test_pattern(self):
-        text = 'John <registered> her on [**01-01-2020**] becuase <they> were <in> Chicago.'
+        text: str = 'John <registered> her on [**01-01-2020**] becuase <they> were <in> Chicago.'
         fd: FeatureDocument = self._parser('pat', text)
         doc: Doc = fd.spacy_doc
         self.assertEqual(5, len(doc.ents))
@@ -32,3 +32,12 @@ class TestParse(unittest.TestCase):
                          list(map(lambda e: e.orth_, doc.ents)))
         self.assertEqual('PERSON MASK_VERB MASK_DATE MASK_VERB GPE'.split(),
                          list(map(lambda e: e.label_, doc.ents)))
+
+    def test_split(self):
+        text: str = 'A strange ID number is 123abc.'
+        self.assertEqual(
+            ('A', 'strange', 'ID', 'number', 'is', '123abc', '.'),
+            tuple(self._parser('regex', text).norm_token_iter()))
+        self.assertEqual(
+            ('A', 'strange', 'ID', 'number', 'is', '123', 'abc', '.'),
+            tuple(self._parser('regex-split', text).norm_token_iter()))
