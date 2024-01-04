@@ -17,7 +17,8 @@ class FeatureDataFrameFactory(object):
     feature ID is given a column in the output :class:`pandas.DataFrame`.
 
     """
-    token_feature_ids: Set[str] = field(default=FeatureToken.FEATURE_IDS)
+    token_feature_ids: Set[str] = field(
+        default=(FeatureToken.FEATURE_IDS | {'text'}))
     """The feature IDs to add to the :class:`pandas.DataFrame`."""
 
     priority_feature_ids: Tuple[str, ...] = field(
@@ -35,5 +36,7 @@ class FeatureDataFrameFactory(object):
         for six, sent in enumerate(doc.sents):
             for tok in sent:
                 feats = tok.asdict()
+                if 'text' not in feats:
+                    feats['text'] = feats['norm']
                 rows.append(tuple(map(lambda f: feats.get(f), cols)))
         return pd.DataFrame(rows, columns=cols)
