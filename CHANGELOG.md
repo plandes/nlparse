@@ -8,13 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.9.1] - 2024-01-04
 ### Added
-- Added an API, parser components and unit tests to split tokens.
+- Added an API, parser components, and unit tests to split tokens.
+- Adding missing `text` column on the feature document Pandas dataframe.
 
 ### Changed
 - Bug fixes to `FeatureDocument` sentence combining.
 - White space tokenization parser no longer inherits the spaCy parser, and
   needs no configuration.
+
 
 ## [1.9.0] - 2023-12-05
 Upgrade and Python deprecation release.
@@ -415,7 +418,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.9.1...HEAD
+[1.9.1]: https://github.com/plandes/nlparse/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/plandes/nlparse/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/plandes/nlparse/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/plandes/nlparse/compare/v1.7.3...v1.8.0
