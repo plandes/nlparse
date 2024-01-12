@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.9.2] - 2024-01-11
+### Changed
+- The `CachingFeatureDocumentParser` is now configurable with decorators.
+
+
 ## [1.9.1] - 2024-01-04
 ### Added
 - Added an API, parser components, and unit tests to split tokens.
@@ -418,7 +423,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.9.1...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.9.2...HEAD
+[1.9.2]: https://github.com/plandes/nlparse/compare/v1.9.1...v1.9.2
 [1.9.1]: https://github.com/plandes/nlparse/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/plandes/nlparse/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/plandes/nlparse/compare/v1.8.0...v1.8.1
