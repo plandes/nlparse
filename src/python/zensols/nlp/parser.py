@@ -228,16 +228,13 @@ class DecoratedFeatureDocumentParser(FeatureDocumentParser):
 
 
 @dataclass
-class CachingFeatureDocumentParser(FeatureDocumentParser):
+class CachingFeatureDocumentParser(DecoratedFeatureDocumentParser):
     """A document parser that persists previous parses using the hash of the
     text as a key.  Caching is optional given the value of :obj:`stash`, which
     is useful in cases this class is extended using other use cases other than
     just caching.
 
     """
-    delegate: FeatureDocumentParser = field()
-    """Used to parse in to documents on cache misses."""
-
     stash: Stash = field(default=None)
     """The stash that persists the feature document instances.  If this is not
     provided, no caching will happen.
@@ -274,7 +271,10 @@ class CachingFeatureDocumentParser(FeatureDocumentParser):
         return doc, key, loaded
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
-        return self._load_or_parse(text, True, *args, **kwargs)[0]
+        doc: FeatureDocument = self._load_or_parse(
+            text, True, *args, **kwargs)[0]
+        self.decorate(doc)
+        return doc
 
     def clear(self):
         """Clear the caching stash."""
