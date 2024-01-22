@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- Add token level annotations to `TokenAnnotatedFeatureDocument`.
+
+### Changed
+- Class name typo for `TokenAnnotatedFeatureDocument`.
+
+
 ## [1.9.2] - 2024-01-11
 ### Changed
 - The `CachingFeatureDocumentParser` is now configurable with decorators.
