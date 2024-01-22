@@ -1246,7 +1246,7 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
 
 
 @dataclass(eq=False, repr=False)
-class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
+class TokenAnnotatedFeatureDocument(FeatureDocument):
     """A feature sentence that contains token annotations.  Sentences can be
     modeled with :class:`.TokenAnnotatedFeatureSentence` or just
     :class:`.FeatureSentence` since this sets the `annotations` attribute when
@@ -1283,3 +1283,9 @@ class TokenAnnotatedFeatureDocuemnt(FeatureDocument):
             doc = cls(tuple(sents), text)
             doc.sents[0].annotations = tuple(anns)
             return doc
+
+    @property
+    @persisted('_annotations', transient=True)
+    def annotations(self) -> Tuple[Any, ...]:
+        """A token level annotation, which is one-to-one to tokens."""
+        return tuple(chain.from_iterable(map(lambda s: s.annotations, self)))
