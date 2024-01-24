@@ -1237,6 +1237,9 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
     annotations: Tuple[Any, ...] = field(default=())
     """A token level annotation, which is one-to-one to tokens."""
 
+    def to_document(self) -> FeatureDocument:
+        return TokenAnnotatedFeatureDocument((self.to_sentence(),))
+
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               n_tokens: int = 0):
         super().write(depth, writer, n_tokens=n_tokens)
