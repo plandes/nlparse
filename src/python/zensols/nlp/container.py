@@ -1240,9 +1240,8 @@ class TokenAnnotatedFeatureSentence(FeatureSentence):
     def to_document(self) -> FeatureDocument:
         return TokenAnnotatedFeatureDocument((self.to_sentence(),))
 
-    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
-              n_tokens: int = 0):
-        super().write(depth, writer, n_tokens=n_tokens)
+    def write(self, depth: int = 0, writer: TextIOBase = sys.stdout, **kwargs):
+        super().write(depth, writer, **kwargs)
         n_ann = len(self.annotations)
         self._write_line(f'annotations ({n_ann}): {self.annotations}',
                          depth, writer)
