@@ -462,11 +462,10 @@ class BleuScoreMethod(ScoreMethod):
 
     Citation:
 
-    .. code:: none
+      `Chen and Cherry (2014)`_ A Systematic Comparison of Smoothing Techniques
+      for Sentence-Level BLEU. In WMT14.
 
-      Boxing Chen and Collin Cherry (2014) A Systematic Comparison of Smoothing
-      Techniques for Sentence-Level BLEU. In WMT14.
-      http://acl2014.org/acl2014/W14-33/pdf/W14-3346.pdf
+    .. _Chen and Cherry (2014): http://acl2014.org/acl2014/W14-33/pdf/W14-3346.pdf
 
     """
     weights: Tuple[float, ...] = field(default=(0.25, 0.25, 0.25, 0.25))
