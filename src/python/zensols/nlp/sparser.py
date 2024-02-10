@@ -476,3 +476,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             if hasattr(tok, 'ent_') and 'ent' in add_features:
                 params['ents'] = [conv_iob(t) for t in doc.token_iter()]
         return Doc(**params)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __repr__(self) -> str:
+        return f'{self.name}: lang={self.lang}, model={self.model_name}'
