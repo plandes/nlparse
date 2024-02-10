@@ -58,6 +58,13 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     :see: :obj:`.FeatureToken.default_detached_feature_ids`
 
     """
+    token_feature_ids: Set[str] = field(
+        default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
+    """The features to keep from spaCy tokens.
+
+    :see: :obj:`TOKEN_FEATURE_IDS`
+
+    """
     def _validate_features(self, target_tok: FeatureToken,
                            source_tok: FeatureToken,
                            context_container: TokenContainer):
@@ -166,15 +173,20 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                     del self._source_doc
         return target_doc
 
-    def __getattr__(self, attr, default=None):
-        """Delegate attribute requests such as
-        :obj:`.SpacyFeatureDocumentParser.token_feature_ids`.
+    @property
+    def _token_feature_ids(self) -> Set[str]:
+        """The features to keep from spaCy tokens."""
+        if hasattr(self, '_token_feature_ids_val'):
+            return self._token_feature_ids_val
+        return self.target_parser.token_feature_ids
 
-        """
-        try:
-            return super().__getattribute__(attr)
-        except AttributeError:
-            return self.target_parser.__getattribute__(attr)
+    @_token_feature_ids.setter
+    def _token_feature_ids(self, token_feature_ids: Set[str]):
+        self._token_feature_ids_val = token_feature_ids
+
+
+CombinerFeatureDocumentParser.token_feature_ids = \
+    CombinerFeatureDocumentParser._token_feature_ids
 
 
 @dataclass
