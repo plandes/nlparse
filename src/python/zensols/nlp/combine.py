@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Set, List, Dict
+from typing import Set, List, Dict, Any
 from dataclasses import dataclass, field
 import logging
 from . import (
@@ -41,6 +41,11 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     yield_features: List[str] = field(default_factory=list)
     """A list of features to be copied (in order) if the target token is not
     set.
+
+    """
+    yield_feature_defaults: Any = field(default=None)
+    """A default value to use when no yielded value is found.  If ``None``, do
+    not add the feature if missing.
 
     """
     overwrite_features: List[str] = field(default_factory=list)
@@ -82,6 +87,7 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                       context_container: TokenContainer):
         overwrite_nones: bool = self.overwrite_nones
         include_detached: bool = self.include_detached_features
+        yield_default: Any = self.yield_feature_defaults
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merging tokens: {source_tok} ({type(source_tok)}) '
                          f'-> {target_tok} ({type(target_tok)})')
@@ -95,6 +101,8 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                 src = source_tok.get_value(f)
                 if logger.isEnabledFor(logging.DEBUG):
                     logger.debug(f'yield feature: {f}, src={src}')
+                if src is None and yield_default is not None:
+                    src = yield_default
                 if src is not None:
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'{src} -> {target_tok.text}.{f}')
