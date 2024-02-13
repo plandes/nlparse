@@ -94,11 +94,11 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
         self._validate_features(target_tok, source_tok, context_container)
         f: str
         for f in self.yield_features:
-            targ = target_tok.get_value(f)
+            targ = getattr(target_tok, f) if hasattr(target_tok, f) else None
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'yield feature: {f}, target={targ}')
             if targ is None:
-                src = source_tok.get_value(f)
+                src = getattr(source_tok, f) if hasattr(source_tok, f) else None
                 if logger.isEnabledFor(logging.DEBUG):
                     logger.debug(f'yield feature: {f}, src={src}')
                 if src is None and yield_default is not None:
