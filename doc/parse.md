@@ -45,7 +45,7 @@ A [SpacyFeatureDocumentParser], which will be used to parse text in to
 [spaCy] documents:
 ```ini
 [doc_parser]
-class_name = zensols.nlp.SpacyFeatureDocumentParser
+class_name = zensols.nlp.sparser.SpacyFeatureDocumentParser
 lang = en
 model_name = ${lang}_core_web_sm
 token_normalizer = instance: map_filter_token_normalizer

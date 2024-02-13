@@ -94,7 +94,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     Configuration example::
 
         [doc_parser]
-        class_name = zensols.nlp.SpacyFeatureDocumentParser
+        class_name = zensols.nlp.sparser.SpacyFeatureDocumentParser
         lang = en
         model_name = ${lang}_core_web_sm
 
