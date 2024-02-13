@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Class name typo for `TokenAnnotatedFeatureDocument`.
+- Lexical span gaps end boundary edge case bug fix.
 
 
 ## [1.9.2] - 2024-01-11

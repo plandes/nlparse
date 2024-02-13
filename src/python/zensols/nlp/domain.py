@@ -155,8 +155,8 @@ class LexicalSpan(Dictable):
             return LexicalSpan(begs[0].begin, ends[-1].end)
 
     @staticmethod
-    def gaps(spans: Iterable[LexicalSpan], end: Optional[int] = None,
-             nudge_begin: int = 0, nudge_end: int = 0) -> List[LexicalSpan]:
+    def gaps(spans: Iterable[LexicalSpan], end: Optional[int] = None) -> \
+            List[LexicalSpan]:
         """Return the spans for the "holes" in ``spans``.  For example, if
         ``spans`` is ``((0, 5), (10, 12), (15, 17))``, then return ``((5, 10),
         (12, 15))``.
@@ -181,13 +181,12 @@ class LexicalSpan(Dictable):
         for ns in spiter:
             gap: int = ns.begin - last.end
             if gap > 0:
-                gs = LexicalSpan(last.end + nudge_begin, ns.begin + nudge_end)
+                gs = LexicalSpan(last.end, ns.begin)
                 gaps.append(gs)
             last = ns
         # add ending span if the last didn't cover it
-        if end is not None and last.end != end:
-            gaps.append(LexicalSpan(gaps[-1].end + nudge_begin,
-                                    end + nudge_end))
+        if end is not None and end > last.end:
+            gaps.append(LexicalSpan(last.end, end))
         return gaps
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):

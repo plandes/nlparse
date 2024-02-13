@@ -102,6 +102,18 @@ class TestOverlap(TestCase):
         spans = tuple(LexicalSpan.from_tuples(((0, 5), (10, 12), (15, 17))))
         should = (LexicalSpan(0, 5), LexicalSpan(10, 12), LexicalSpan(15, 17))
         self.assertEqual(should, spans)
+
         spans = LexicalSpan.gaps(should)
-        should = [LexicalSpan(5, 10), LexicalSpan(12, 15)]
-        self.assertEqual(should, spans)
+        self.assertEqual(list(LexicalSpan.from_tuples(((5, 10), (12, 15)))), spans)
+
+        spans = LexicalSpan.gaps(should, end=15)
+        self.assertEqual(list(LexicalSpan.from_tuples(((5, 10), (12, 15)))), spans)
+
+        spans = LexicalSpan.gaps(should, end=16)
+        self.assertEqual(list(LexicalSpan.from_tuples(((5, 10), (12, 15)))), spans)
+
+        spans = LexicalSpan.gaps(should, end=17)
+        self.assertEqual(list(LexicalSpan.from_tuples(((5, 10), (12, 15)))), spans)
+
+        spans = LexicalSpan.gaps(should, end=20)
+        self.assertEqual(list(LexicalSpan.from_tuples(((5, 10), (12, 15), (17, 20)))), spans)
