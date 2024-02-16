@@ -97,11 +97,12 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
             targ = getattr(target_tok, f) if hasattr(target_tok, f) else None
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'yield feature: {f}, target={targ}')
-            if targ is None:
+            if targ is None or targ == FeatureToken.NONE:
                 src = getattr(source_tok, f) if hasattr(source_tok, f) else None
                 if logger.isEnabledFor(logging.DEBUG):
                     logger.debug(f'yield feature: {f}, src={src}')
-                if src is None and yield_default is not None:
+                if (src is None or src == FeatureToken.NONE) and \
+                   yield_default is not None:
                     src = yield_default
                 if src is not None:
                     if logger.isEnabledFor(logging.DEBUG):
