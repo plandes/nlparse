@@ -25,6 +25,12 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     but not the other way around.
 
     """
+    name: str = field()
+    """The name of the parser, which is taken from the section name when created
+    with a :class:`~zensols.config.configfac.ConfigFactory` and used for
+    debugging.
+
+    """
     target_parser: FeatureDocumentParser = field()
     """The parser in to which data and features are merged."""
 

@@ -109,7 +109,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     """
     name: str = field()
     """The name of the parser, which is taken from the section name when created
-    with a :class:`~zensols.config.ConfigFactory`.
+    with a :class:`~zensols.config.configfac.ConfigFactory` and used for
+    debugging.
 
     """
     lang: str = field(default='en')
