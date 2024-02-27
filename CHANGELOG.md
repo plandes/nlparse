@@ -8,12 +8,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.10.0] - 2024-02-27
+A class name typo is the impetuous for this being a new minor release (even if
+the release is mostly for bug fixes).
+
 ### Added
 - Add token level annotations to `TokenAnnotatedFeatureDocument`.
+- Yielded feature defaults in `CombinerFeatureDocumentParser`.
 
 ### Changed
 - Class name typo for `TokenAnnotatedFeatureDocument`.
+- Fixed bug on `CombinerFeatureDocumentParser` where `None`s were not replaced
+  by a source parser.
+- Added `toaken_feature_ids` to `CombinerFeatureDocumentParser` to facilitate
+  token feature passing.
 - Lexical span gaps end boundary edge case bug fix.
+- Minor bug fixes.
 
 
 ## [1.9.2] - 2024-01-11
@@ -431,7 +441,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.9.2...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.10.0...HEAD
+[1.10.0]: https://github.com/plandes/nlparse/compare/v1.9.2...v1.10.0
 [1.9.2]: https://github.com/plandes/nlparse/compare/v1.9.1...v1.9.2
 [1.9.1]: https://github.com/plandes/nlparse/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/plandes/nlparse/compare/v1.8.1...v1.9.0
