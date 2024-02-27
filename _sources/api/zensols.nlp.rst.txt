@@ -1,0 +1,173 @@
+zensols.nlp package
+===================
+
+Submodules
+----------
+
+zensols.nlp.chunker
+-------------------
+.. inheritance-diagram:: zensols.nlp.chunker
+   :parts: 1
+
+.. automodule:: zensols.nlp.chunker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.combine
+-------------------
+.. inheritance-diagram:: zensols.nlp.combine
+   :parts: 1
+
+.. automodule:: zensols.nlp.combine
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.component
+---------------------
+.. inheritance-diagram:: zensols.nlp.component
+   :parts: 1
+
+.. automodule:: zensols.nlp.component
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.container
+---------------------
+.. inheritance-diagram:: zensols.nlp.container
+   :parts: 1
+
+.. automodule:: zensols.nlp.container
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.dataframe
+---------------------
+.. inheritance-diagram:: zensols.nlp.dataframe
+   :parts: 1
+
+.. automodule:: zensols.nlp.dataframe
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.decorate
+--------------------
+.. inheritance-diagram:: zensols.nlp.decorate
+   :parts: 1
+
+.. automodule:: zensols.nlp.decorate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.domain
+------------------
+.. inheritance-diagram:: zensols.nlp.domain
+   :parts: 1
+
+.. automodule:: zensols.nlp.domain
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.nerscore
+--------------------
+.. inheritance-diagram:: zensols.nlp.nerscore
+   :parts: 1
+
+.. automodule:: zensols.nlp.nerscore
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.norm
+----------------
+.. inheritance-diagram:: zensols.nlp.norm
+   :parts: 1
+
+.. automodule:: zensols.nlp.norm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.parser
+------------------
+.. inheritance-diagram:: zensols.nlp.parser
+   :parts: 1
+
+.. automodule:: zensols.nlp.parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.score
+-----------------
+.. inheritance-diagram:: zensols.nlp.score
+   :parts: 1
+
+.. automodule:: zensols.nlp.score
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.serial
+------------------
+.. inheritance-diagram:: zensols.nlp.serial
+   :parts: 1
+
+.. automodule:: zensols.nlp.serial
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.spannorm
+--------------------
+.. inheritance-diagram:: zensols.nlp.spannorm
+   :parts: 1
+
+.. automodule:: zensols.nlp.spannorm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.sparser
+-------------------
+.. inheritance-diagram:: zensols.nlp.sparser
+   :parts: 1
+
+.. automodule:: zensols.nlp.sparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.stemmer
+-------------------
+.. inheritance-diagram:: zensols.nlp.stemmer
+   :parts: 1
+
+.. automodule:: zensols.nlp.stemmer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.tok
+---------------
+.. inheritance-diagram:: zensols.nlp.tok
+   :parts: 1
+
+.. automodule:: zensols.nlp.tok
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: zensols.nlp
+   :members:
+   :undoc-members:
+   :show-inheritance:

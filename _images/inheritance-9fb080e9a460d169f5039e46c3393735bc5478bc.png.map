@@ -1,0 +1,6 @@
+<map id="inheritance0803317158" name="inheritance0803317158">
+<area shape="rect" id="node1" href="#zensols.nlp.component.EntityRecognizer" target="_top" title="Base class regular expression and spaCy match patterns named entity" alt="" coords="271,5,430,36"/>
+<area shape="rect" id="node2" href="#zensols.nlp.component.PatternEntityRecognizer" target="_top" title="Adds entities based on regular epxressions." alt="" coords="5,84,221,115"/>
+<area shape="rect" id="node3" href="#zensols.nlp.component.RegexEntityRecognizer" target="_top" title="Merges regular expression matches as a :class:`~spacy.tokens.Span`." alt="" coords="245,84,456,115"/>
+<area shape="rect" id="node4" href="#zensols.nlp.component.RegexSplitter" target="_top" title="Splits on regular expressions." alt="" coords="480,84,611,115"/>
+</map>

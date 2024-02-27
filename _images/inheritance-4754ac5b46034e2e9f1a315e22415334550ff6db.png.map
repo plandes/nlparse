@@ -1,0 +1,14 @@
+<map id="inheritance780543e571" name="inheritance780543e571">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="428,3,466,19"/>
+<area shape="rect" id="node3" href="#zensols.nlp.norm.TokenMapper" target="_top" title="Abstract class used to transform token tuples generated from" alt="" coords="412,45,482,61"/>
+<area shape="rect" id="node2" href="#zensols.nlp.norm.FilterRegularExpressionMapper" target="_top" title="Filter tokens based on normalized form regular expression." alt="" coords="3,87,151,103"/>
+<area shape="rect" id="node4" href="#zensols.nlp.norm.FilterTokenMapper" target="_top" title="Filter tokens based on token (Spacy) attributes." alt="" coords="163,87,255,103"/>
+<area shape="rect" id="node6" href="#zensols.nlp.norm.LambdaTokenMapper" target="_top" title="Use a lambda expression to map a token tuple." alt="" coords="268,87,375,103"/>
+<area shape="rect" id="node7" href="#zensols.nlp.norm.LemmatizeTokenMapper" target="_top" title="Lemmatize tokens and optional remove entity stop words." alt="" coords="387,87,507,103"/>
+<area shape="rect" id="node10" href="#zensols.nlp.norm.SplitEntityTokenMapper" target="_top" title="Splits embedded entities (or any :class:`~spacy.token.span.Span`) in to" alt="" coords="519,87,633,103"/>
+<area shape="rect" id="node11" href="#zensols.nlp.norm.SplitTokenMapper" target="_top" title="Splits the normalized text on a per token basis with a regular" alt="" coords="646,87,735,103"/>
+<area shape="rect" id="node12" href="#zensols.nlp.norm.SubstituteTokenMapper" target="_top" title="Replace a regular expression in normalized token text." alt="" coords="748,87,861,103"/>
+<area shape="rect" id="node5" href="#zensols.nlp.norm.JoinTokenMapper" target="_top" title="Join tokens based on a regular expression. &#160;It does this by creating" alt="" coords="572,3,660,19"/>
+<area shape="rect" id="node8" href="#zensols.nlp.norm.MapTokenNormalizer" target="_top" title="A normalizer that applies a sequence of :class:`.TokenMapper` instances" alt="" coords="710,45,814,61"/>
+<area shape="rect" id="node9" href="#zensols.nlp.norm.TokenNormalizer" target="_top" title="Base token extractor returns tuples of tokens and their normalized" alt="" coords="720,3,805,19"/>
+</map>

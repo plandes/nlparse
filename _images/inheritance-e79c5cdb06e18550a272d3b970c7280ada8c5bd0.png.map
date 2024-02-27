@@ -1,0 +1,14 @@
+<map id="inheritancea160ac275e" name="inheritancea160ac275e">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="250,5,322,36"/>
+<area shape="rect" id="node2" title="All subclasses have the ability to deallocate any resources. &#160;This is" alt="" coords="142,84,273,115"/>
+<area shape="rect" id="node4" title="An interface for classes that have multi&#45;line debuging capability." alt="" coords="322,84,410,115"/>
+<area shape="rect" id="node9" title="Classes can extend this that want to persist :class:`.PersistedWork`" alt="" coords="93,241,282,272"/>
+<area shape="rect" id="node3" title="A class that that generates a dictionary recursively from data classes" alt="" coords="325,163,412,193"/>
+<area shape="rect" id="node10" href="#zensols.nlp.domain.TextContainer" target="_top" title="A *writable* class that has a ``text`` property or attribute. &#160;All" alt="" coords="306,241,439,272"/>
+<area shape="rect" id="node5" href="#zensols.nlp.container.FeatureDocument" target="_top" title="A container class of tokens that make a document. &#160;This class contains a" alt="" coords="91,399,257,429"/>
+<area shape="rect" id="node11" href="#zensols.nlp.container.TokenAnnotatedFeatureDocument" target="_top" title="A feature sentence that contains token annotations. &#160;Sentences can be" alt="" coords="5,477,303,508"/>
+<area shape="rect" id="node6" href="#zensols.nlp.container.TokenContainer" target="_top" title="A base class for token container classes such as" alt="" coords="205,320,353,351"/>
+<area shape="rect" id="node8" href="#zensols.nlp.container.FeatureSpan" target="_top" title="A span of tokens as a :class:`.TokenContainer`, much like" alt="" coords="323,399,449,429"/>
+<area shape="rect" id="node7" href="#zensols.nlp.container.FeatureSentence" target="_top" title="A container class of tokens that make a sentence. &#160;Instances of this" alt="" coords="327,477,487,508"/>
+<area shape="rect" id="node12" href="#zensols.nlp.container.TokenAnnotatedFeatureSentence" target="_top" title="A feature sentence that contains token annotations." alt="" coords="262,556,553,587"/>
+</map>

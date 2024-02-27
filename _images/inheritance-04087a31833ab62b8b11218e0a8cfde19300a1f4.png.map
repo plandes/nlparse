@@ -1,0 +1,17 @@
+<map id="inheritancee44feaf755" name="inheritancee44feaf755">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="300,4,350,25"/>
+<area shape="rect" id="node5" href="#zensols.nlp.parser.ComponentInitializer" target="_top" title="Called by :class:`.Component` to do post spaCy initialization." alt="" coords="4,59,135,80"/>
+<area shape="rect" id="node6" title="All subclasses have the ability to deallocate any resources. &#160;This is" alt="" coords="151,59,243,80"/>
+<area shape="rect" id="node9" title="An interface for classes that have multi&#45;line debuging capability." alt="" coords="260,59,321,80"/>
+<area shape="rect" id="node10" href="#zensols.nlp.parser.FeatureDocumentDecorator" target="_top" title="Implementations can add, remove or modify features on a document." alt="" coords="339,59,511,80"/>
+<area shape="rect" id="node12" href="#zensols.nlp.parser.FeatureSentenceDecorator" target="_top" title="Implementations can add, remove or modify features on a sentence." alt="" coords="528,59,695,80"/>
+<area shape="rect" id="node14" href="#zensols.nlp.parser.FeatureTokenDecorator" target="_top" title="Implementations can add, remove or modify features on a token." alt="" coords="713,59,860,80"/>
+<area shape="rect" id="node2" href="#zensols.nlp.parser.CachingFeatureDocumentParser" target="_top" title="A document parser that persists previous parses using the hash of the" alt="" coords="71,279,272,301"/>
+<area shape="rect" id="node3" href="#zensols.nlp.parser.DecoratedFeatureDocumentParser" target="_top" title="This class adapts the :class:`.FeatureDocumentParser` adaptors to the" alt="" coords="66,224,278,246"/>
+<area shape="rect" id="node4" href="#zensols.nlp.parser.Component" target="_top" title="A pipeline component to be added to the spaCy model." alt="" coords="505,4,586,25"/>
+<area shape="rect" id="node11" title="Classes can extend this that want to persist :class:`.PersistedWork`" alt="" coords="120,114,253,135"/>
+<area shape="rect" id="node7" href="#zensols.nlp.parser.FeatureDocumentParser" target="_top" title="This class parses text in to instances of :class:`.FeatureDocument`" alt="" coords="167,169,321,191"/>
+<area shape="rect" id="node15" href="#zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser" target="_top" title="This class parses text in to instances of :class:`.FeatureDocument`" alt="" coords="295,224,572,246"/>
+<area shape="rect" id="node8" title="A class that that generates a dictionary recursively from data classes" alt="" coords="270,114,331,135"/>
+<area shape="rect" id="node13" href="#zensols.nlp.parser.FeatureSentenceFactory" target="_top" title="Create a :class:`.FeatureSentence` out of single tokens or split on" alt="" coords="671,4,825,25"/>
+</map>
