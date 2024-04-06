@@ -205,6 +205,8 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         import spacy.util
         import spacy.cli
         if not spacy.util.is_package(model_name):
+            if logger.isEnabledFor(logging.INFO):
+                logger.info(f'model not found: {self.model_name}, loading...')
             spacy.cli.download(model_name)
 
     def _create_model_key(self) -> str:
