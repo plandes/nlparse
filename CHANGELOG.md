@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-## Changed
+### Removed
+- The spaCy and combiner parsers are removed from the default `zensols.nlp`
+  package import.
+
+### Changed
 - Add `TokenContainer` class to decorator hierarchy.
 - Rename classes:
   * `StripSentenceDecorator` to `StripTokenContainerDecorator`
@@ -16,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rename resource library configuration:
   * `strip_sentence_decorator` to `strip_token_container_decorator`
   * `update_document_decorator` to `update_token_container_decorator`
+
 
 ## [1.10.0] - 2024-02-27
 A class name typo is the impetuous for this being a new minor release (even if
