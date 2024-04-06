@@ -98,6 +98,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         lang = en
         model_name = ${lang}_core_web_sm
 
+    Decorators are processed in the same way
+    :class:`.DecoratedFeatureDocumentParser`.
+
     """
     _MODELS: ClassVar[Dict[str, Language]] = {}
     """Contains cached models, such as ``en_core_web_sm``."""

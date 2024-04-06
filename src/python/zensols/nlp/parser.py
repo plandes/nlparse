@@ -17,7 +17,9 @@ from zensols.util import Hasher
 from zensols.config import ImportIniConfig, ImportConfigFactory
 from zensols.persist import PersistableContainer, Stash
 from zensols.config import Dictable
-from . import NLPError, FeatureToken, FeatureSentence, FeatureDocument
+from . import (
+    NLPError, FeatureToken, TokenContainer, FeatureSentence, FeatureDocument
+)
 
 logger = logging.getLogger(__name__)
 
@@ -162,7 +164,16 @@ class FeatureTokenDecorator(ABC):
         pass
 
 
-class FeatureSentenceDecorator(ABC):
+class FeatureTokenContainerDecorator(ABC):
+    """Implementations can add, remove or modify features on a token container.
+
+    """
+    @abstractmethod
+    def decorate(self, container: TokenContainer):
+        pass
+
+
+class FeatureSentenceDecorator(FeatureTokenContainerDecorator):
     """Implementations can add, remove or modify features on a sentence.
 
     """
@@ -171,7 +182,7 @@ class FeatureSentenceDecorator(ABC):
         pass
 
 
-class FeatureDocumentDecorator(ABC):
+class FeatureDocumentDecorator(FeatureTokenContainerDecorator):
     """Implementations can add, remove or modify features on a document.
 
     """
@@ -185,6 +196,11 @@ class DecoratedFeatureDocumentParser(FeatureDocumentParser):
     """This class adapts the :class:`.FeatureDocumentParser` adaptors to the
     general case using a GoF decorator pattern.  This is useful for any post
     processing needed on existing configured document parsers.
+
+    All decorators are processed in the following order:
+      1. Token
+      2. Sentence
+      3. Document
 
     """
     delegate: FeatureDocumentParser = field()

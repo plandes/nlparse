@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## Changed
+- Add `TokenContainer` class to decorator hierarchy.
+- Rename classes:
+  * `StripSentenceDecorator` to `StripTokenContainerDecorator`
+  * `UpdateDocumentDecorator` to `UpdateTokenContainerDecorator`
+- Rename resource library configuration:
+  * `strip_sentence_decorator` to `strip_token_container_decorator`
+  * `update_document_decorator` to `update_token_container_decorator`
+
 ## [1.10.0] - 2024-02-27
 A class name typo is the impetuous for this being a new minor release (even if
 the release is mostly for bug fixes).

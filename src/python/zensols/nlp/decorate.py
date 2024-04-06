@@ -7,7 +7,8 @@ from typing import List, Tuple
 from dataclasses import dataclass, field
 import re
 from . import (
-    LexicalSpan, FeatureToken, FeatureSentence, FeatureDocument,
+    LexicalSpan, FeatureToken, TokenContainer, FeatureSentence, FeatureDocument,
+    FeatureTokenContainerDecorator,
     FeatureSentenceDecorator, FeatureDocumentDecorator
 )
 
@@ -41,14 +42,15 @@ class SplitTokenSentenceDecorator(FeatureSentenceDecorator):
 
 
 @dataclass
-class StripSentenceDecorator(FeatureSentenceDecorator):
-    """A decorator that strips whitespace from sentences.
+class StripTokenContainerDecorator(FeatureTokenContainerDecorator):
+    """A decorator that strips whitespace from sentences (or
+    :class:`.TokenContainer`).
 
     :see: :meth:`.TokenContainer.strip`
 
     """
-    def decorate(self, sent: FeatureSentence):
-        sent.strip()
+    def decorate(self, container: TokenContainer):
+        container.strip()
 
 
 @dataclass
@@ -59,11 +61,22 @@ class FilterTokenSentenceDecorator(FeatureSentenceDecorator):
 
     """
     remove_stop: bool = field(default=False)
+    """Whether to remove stop words."""
+
     remove_space: bool = field(default=False)
+    """Whether to remove white space (i.e. new lines)."""
+
     remove_pronouns: bool = field(default=False)
+    """Whether to remove pronouns (i.e. ``he``)."""
+
     remove_punctuation: bool = field(default=False)
+    """Whether to remove punctuation (i.e. periods)."""
+
     remove_determiners: bool = field(default=False)
+    """Whether to remove determiners (i.e. ``the``)."""
+
     remove_empty: bool = field(default=False)
+    """Whether to 0-length tokens (using normalized text)."""
 
     def decorate(self, sent: FeatureSentence):
         def filter_tok(t: FeatureToken) -> bool:
@@ -103,7 +116,7 @@ class FilterEmptySentenceDocumentDecorator(FeatureDocumentDecorator):
 
 
 @dataclass
-class UpdateDocumentDecorator(FeatureDocumentDecorator):
+class UpdateTokenContainerDecorator(FeatureTokenContainerDecorator):
     """Updates document indexes and spans (see fields).
 
     """
@@ -117,8 +130,13 @@ class UpdateDocumentDecorator(FeatureDocumentDecorator):
     :meth:`.FeatureDocument.update_entity_spans`.
 
     """
-    def decorate(self, doc: FeatureDocument):
+    reindex: bool = field(default=False)
+    """Whether to invoke :meth:`TokenContainer.reindex` after."""
+
+    def decorate(self, container: TokenContainer):
         if self.update_indexes:
-            doc.update_indexes()
+            container.update_indexes()
         if self.update_entity_spans:
-            doc.update_entity_spans()
+            container.update_entity_spans()
+        if self.reindex:
+            container.reindex()
