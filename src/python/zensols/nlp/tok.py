@@ -304,14 +304,18 @@ class FeatureToken(PersistableContainer, TextContainer):
             self._write_empty(writer)
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
-              include_type: bool = True,
-              feature_ids: Iterable[str] = None):
+              include_type: bool = True, feature_ids: Iterable[str] = None,
+              inline: bool = False):
         con = f'norm=<{self.norm}>'
         if self.text != self.norm:
             con += f' org=<{self.text}>'
         self._write_line(f'{self.__class__.__name__}: ' + con, depth, writer)
         self._write_line('attributes:', depth + 1, writer)
-        self.write_attributes(depth + 2, writer, include_type, feature_ids)
+        self.write_attributes(
+            depth + 2, writer,
+            include_type=include_type,
+            feature_ids=feature_ids,
+            inline=inline)
 
     def __eq__(self, other: FeatureToken) -> bool:
         if self is other:
