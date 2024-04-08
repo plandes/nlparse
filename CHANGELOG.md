@@ -8,9 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- A composite parser that combines several parsers, each with their own rules
+  of copying (or clobbering).
+
+
 ### Removed
 - The spaCy and combiner parsers are removed from the default `zensols.nlp`
   package import.
+
 
 ### Changed
 - Add `TokenContainer` class to decorator hierarchy.
@@ -20,6 +26,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rename resource library configuration:
   * `strip_sentence_decorator` to `strip_token_container_decorator`
   * `update_document_decorator` to `update_token_container_decorator`
+- `CombinerFeatureDocumentParser` now extends from
+  `DecoratedFeatureDocumentParser` with `target_parser` becoming `delegate`.
+  Token features now come from the delegate or stored in the
+  `DecoratedFeatureDocumentParser` when they don't exist in the delegate.
 
 
 ## [1.10.0] - 2024-02-27

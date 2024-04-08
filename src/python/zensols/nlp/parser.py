@@ -202,6 +202,15 @@ class DecoratedFeatureDocumentParser(FeatureDocumentParser):
       2. Sentence
       3. Document
 
+    Token features are stored in the delegate for those that have them.
+    Otherwise, they are stored in instances of this class.
+
+    """
+    name: str = field()
+    """The name of the parser, which is taken from the section name when created
+    with a :class:`~zensols.config.configfac.ConfigFactory` and used for
+    debugging.
+
     """
     delegate: FeatureDocumentParser = field()
     """Used to create the feature documents."""
@@ -220,6 +229,13 @@ class DecoratedFeatureDocumentParser(FeatureDocumentParser):
         default=())
     """A list of decorators that can add, remove or modify features on a
     document.
+
+    """
+    token_feature_ids: Set[str] = field(
+        default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
+    """The features to keep from spaCy tokens.  See class documentation.
+
+    :see: :obj:`TOKEN_FEATURE_IDS`
 
     """
     def decorate(self, doc: FeatureDocument):
@@ -258,10 +274,6 @@ class CachingFeatureDocumentParser(DecoratedFeatureDocumentParser):
     """
     hasher: Hasher = field(default_factory=Hasher)
     """Used to hash the natural langauge text in to string keys."""
-
-    @property
-    def token_feature_ids(self) -> Set[str]:
-        return self.delegate.token_feature_ids
 
     def _hash_text(self, text: str) -> str:
         self.hasher.reset()

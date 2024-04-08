@@ -10,12 +10,13 @@ from . import (
     ParseError, TokenContainer, FeatureDocumentParser,
     FeatureDocument, FeatureSentence, FeatureToken,
 )
+from .parser import DecoratedFeatureDocumentParser
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
-class CombinerFeatureDocumentParser(FeatureDocumentParser):
+class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
     """A class that combines features from two :class:`.FeatureDocumentParser`
     instances.  Features parsed using each :obj:`source_parser` are optionally
     copied or overwritten on a token by token basis in the feature document
@@ -25,15 +26,6 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
     but not the other way around.
 
     """
-    name: str = field()
-    """The name of the parser, which is taken from the section name when created
-    with a :class:`~zensols.config.configfac.ConfigFactory` and used for
-    debugging.
-
-    """
-    target_parser: FeatureDocumentParser = field()
-    """The parser in to which data and features are merged."""
-
     source_parsers: List[FeatureDocumentParser] = field(default=None)
     """The language resource used to parse documents and create token
     attributes.
@@ -59,21 +51,17 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
 
     """
     overwrite_nones: bool = field(default=False)
-    """Whether to write ``None`` for missing :obj:`overwrite_features`."""
+    """Whether to write ``None`` for missing :obj:`overwrite_features`.  This
+    always write the *target* feature; if you only to write when the *source* is
+    not set or missing, then use :obj:`yield_features`.
 
+    """
     include_detached_features: bool = field(default=True)
     """Whether to include copied (yielded or overwritten) features as listed
     detected features.  This controls what is compared, cloned and for printed
     in :meth:`~zensols.config.writable.Writable.write`.
 
     :see: :obj:`.FeatureToken.default_detached_feature_ids`
-
-    """
-    token_feature_ids: Set[str] = field(
-        default_factory=lambda: FeatureDocumentParser.TOKEN_FEATURE_IDS)
-    """The features to keep from spaCy tokens.
-
-    :see: :obj:`TOKEN_FEATURE_IDS`
 
     """
     def _validate_features(self, target_tok: FeatureToken,
@@ -124,7 +112,9 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                 src = source_tok.get_value(f)
             src = FeatureToken.NONE if src is None else src
             if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(f'overwrite: {src} -> {target_tok.text}.{f}')
+                prev = target_tok.get_value(f)
+                logger.debug(
+                    f'overwrite: {src} -> {prev} ({target_tok.text}.{f})')
             setattr(target_tok, f, src)
             if include_detached and \
                target_tok._detatched_feature_ids is not None:
@@ -171,37 +161,28 @@ class CombinerFeatureDocumentParser(FeatureDocumentParser):
                 self._complete_merge_doc()
         self._target_doc._combine_update(self._source_doc)
 
+    def _merge_docs(self, target_doc: FeatureDocument,
+                    source_doc: FeatureDocument):
+        self._target_doc = target_doc
+        self._source_doc = source_doc
+        try:
+            self._merge_doc()
+        finally:
+            del self._target_doc
+            del self._source_doc
+
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
-        target_doc = self.target_parser.parse(text, *args, **kwargs)
+        target_doc: FeatureDocument = self.delegate.parse(text, *args, **kwargs)
         if self.source_parsers is None or len(self.source_parsers) == 0:
             logger.warning(f'No source parsers set on {self}, ' +
                            'which disables feature combining')
         else:
             for source_parser in self.source_parsers:
-                source_doc = source_parser.parse(text, *args, **kwargs)
-                self._target_doc = target_doc
-                self._source_doc = source_doc
-                try:
-                    self._merge_doc()
-                finally:
-                    del self._target_doc
-                    del self._source_doc
+                source_doc: FeatureDocument = source_parser.parse(
+                    text, *args, **kwargs)
+                self._merge_docs(target_doc, source_doc)
+        self.decorate(target_doc)
         return target_doc
-
-    @property
-    def _token_feature_ids(self) -> Set[str]:
-        """The features to keep from spaCy tokens."""
-        if hasattr(self, '_token_feature_ids_val'):
-            return self._token_feature_ids_val
-        return self.target_parser.token_feature_ids
-
-    @_token_feature_ids.setter
-    def _token_feature_ids(self, token_feature_ids: Set[str]):
-        self._token_feature_ids_val = token_feature_ids
-
-
-CombinerFeatureDocumentParser.token_feature_ids = \
-    CombinerFeatureDocumentParser._token_feature_ids
 
 
 @dataclass
@@ -292,3 +273,29 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
             source_token_mapping = self._source_doc.tokens_by_idx
             self._merge_token_containers(self._target_doc, source_token_mapping)
             self._target_doc._combine_update(self._source_doc)
+
+
+@dataclass
+class CompositeFeatureDocumentParser(DecoratedFeatureDocumentParser):
+    """A composite of :class:`.CombinerFeatureDocumentParser` parsers.  This
+    first uses :obj:`delegate` for the initial feature document, then uses each
+    parser of :obj:`source_parsers` to merge.  This gives a way to combine
+    features of several parsers into one document with each parser having their
+    own feature ``yield`` and ``overwrite`` rules.
+
+    """
+    source_parsers: CombinerFeatureDocumentParser = field(default=())
+    """The source parsers used to merge with the :obj:`delegate` parser."""
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        target_doc = self.delegate.parse(text, *args, **kwargs)
+        if self.source_parsers is None or len(self.source_parsers) == 0:
+            logger.warning(f'No source parsers set on {self}, ' +
+                           'which disables feature combining')
+        else:
+            for source_parser in self.source_parsers:
+                source_doc: FeatureDocument = source_parser.parse(
+                    text, *args, **kwargs)
+                source_parser._merge_docs(target_doc, source_doc)
+        self.decorate(target_doc)
+        return target_doc
