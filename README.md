@@ -5,13 +5,13 @@
 [![Python 3.11][python311-badge]][python311-link]
 [![Build Status][build-badge]][build-link]
 
-This framework wraps the [spaCy] framework and creates light weight features in
-a class [hierarchy] that reflects the structure of natural language.  The
-motivation is to generate features from the parsed text in an object oriented
-fashion that is fast and easy to pickle.
 
-* See the [full documentation].
-* Paper on [arXiv](http://arxiv.org/abs/2109.03383).
+From the paper [DeepZensols: A Deep Learning Natural Language Processing
+Framework for Experimentation and Reproducibility].  This framework wraps the
+[spaCy] framework and creates light weight features in a class [hierarchy] that
+reflects the structure of natural language.  The motivation is to generate
+features from the parsed text in an object oriented fashion that is fast and
+easy to pickle.
 
 Other features include:
 * [Parse and normalize] a stream of tokens as stop words, punctuation
@@ -174,6 +174,7 @@ Copyright (c) 2020 - 2023 Paul Landes
 [build-badge]: https://github.com/plandes/nlparse/workflows/CI/badge.svg
 [build-link]: https://github.com/plandes/nlparse/actions
 
+[DeepZensols: A Deep Learning Natural Language Processing Framework for Experimentation and Reproducibility]: https://aclanthology.org/2023.nlposs-1.16.pdf
 [examples]: https://github.com/plandes/nlparse/tree/master/example/config
 
 [hierarchy]: https://plandes.github.io/nlparse/api/zensols.nlp.html#zensols.nlp.container.FeatureDocument
@@ -181,7 +182,7 @@ Copyright (c) 2020 - 2023 Paul Landes
 [others]: https://plandes.github.io/nlparse/doc/normalizers.html
 [Detached features]: https://plandes.github.io/nlparse/doc/parse.html#detached-features
 [full documentation]: https://plandes.github.io/nlparse/
-[Framework documentation]: https://plandes.github.io/nlparse/
+[Framework documentation]: https://plandes.github.io/nlparse/api.html
 [Natural Language Parsing]: https://plandes.github.io/nlparse/doc/parse.html
 [List Token Normalizers and Mappers]: https://plandes.github.io/nlparse/doc/normalizers.html
 [resource library]: https://plandes.github.io/util/doc/config.html#resource-libraries
