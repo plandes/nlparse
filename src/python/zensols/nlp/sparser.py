@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 import logging
 import sys
 import itertools as it
+import textwrap as tw
 from io import TextIOBase
 import spacy
 from spacy.language import Language
@@ -309,8 +310,6 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             doc = self.model(text)
         else:
             doc = self.model(text, disable=self.disable_component_names)
-        if logger.isEnabledFor(logging.INFO):
-            logger.info(f'parsed text: <{self._trunc(text)}>')
         if logger.isEnabledFor(logging.DEBUG):
             doc_text = self._trunc(str(doc))
             logger.debug(f'parsed document: <{doc_text}>')
@@ -419,6 +418,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             decorator.decorate(feature_doc)
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        self._log_parse(text, logger)
         if not isinstance(text, str):
             raise ParseError(
                 f'Expecting string text but got: {text} ({type(str)})')

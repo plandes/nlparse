@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - A composite parser that combines several parsers, each with their own rules
   of copying (or clobbering).
+### Changed
+- The combiner parser `CombinerFeatureDocumentParser`, and subclasses, are
+  now optimized to avoid re-parsing for shared parsers.  This is the case with
+  the [zensols.mednlp] parsers that migrate features down to the same parser.
 
 
 ### Removed
@@ -513,3 +517,4 @@ Data classes are now used so Python 3.7 is now a requirement.
 [zensols.deepnlp]: https://github.com/plandes/deepnlp
 [zenbuild]: https://github.com/plandes/zenbuild
 [zensols.util]: https://github.com/plandes/util
+[zensols.mednlp]: https://github.com/plandes/mednlp

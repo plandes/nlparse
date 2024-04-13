@@ -109,6 +109,8 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
     TOKEN_FEATURE_IDS: ClassVar[Set[str]] = FeatureToken.FEATURE_IDS
     """The default value for :obj:`token_feature_ids`."""
 
+    _LOG_FORMAT: ClassVar[str] = 'parse[{name}]: {text}'
+
     def __post_init__(self):
         super().__init__()
 
@@ -123,6 +125,17 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
             'config_file = resource(zensols.nlp): resources/obj.conf')
         factory = ImportConfigFactory(ImportIniConfig(StringIO(config)))
         return factory('doc_parser')
+
+    def _log_parse(self, text: str, logger: logging.Logger):
+        if logger.isEnabledFor(logging.INFO):
+            cls: Type = self.__class__
+            if hasattr(self, 'name'):
+                name = self.name
+            else:
+                name = cls
+            msg: str = self._LOG_FORMAT.format(
+                name=name, text=text, cls=cls, id=id(self))
+            logger.info(self._trunc(msg))
 
     @abstractmethod
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
@@ -139,6 +152,7 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
                        FeatureDocument instance
 
         """
+        pass
 
     def __call__(self, text: str, *args, **kwargs) -> FeatureDocument:
         """Invoke :meth:`parse` with the context arguments.
@@ -153,6 +167,12 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
 
         def __repr__(self):
             return self.__str__()
+
+    def __str__(self) -> str:
+        if hasattr(self, 'name'):
+            return self.name
+        else:
+            return str(self.__class__.__name__)
 
 
 class FeatureTokenDecorator(ABC):
@@ -254,6 +274,7 @@ class DecoratedFeatureDocumentParser(FeatureDocumentParser):
             dd.decorate(doc)
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        self._log_parse(text, logger)
         doc: FeatureDocument = self.delegate.parse(text, *args, **kwargs)
         self.decorate(doc)
         return doc
@@ -371,6 +392,7 @@ class WhiteSpaceTokenizerFeatureDocumentParser(FeatureDocumentParser):
     """The type of document instances to create."""
 
     def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        self._log_parse(text, logger)
         toks: List[FeatureToken] = []
         m: re.Match
         for i, m in zip(it.count(), re.finditer(self._TOK_REGEX, text)):

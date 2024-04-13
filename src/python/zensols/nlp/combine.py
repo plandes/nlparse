@@ -16,6 +16,14 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class _IdentityFeatureDocumentParser(FeatureDocumentParser):
+    parsed: FeatureDocument = field()
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        return self.parsed
+
+
+@dataclass
 class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
     """A class that combines features from two :class:`.FeatureDocumentParser`
     instances.  Features parsed using each :obj:`source_parser` are optionally
@@ -82,25 +90,25 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
         overwrite_nones: bool = self.overwrite_nones
         include_detached: bool = self.include_detached_features
         yield_default: Any = self.yield_feature_defaults
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f'merging tokens: {source_tok} ({type(source_tok)}) '
+        if logger.isEnabledFor(logging.TRACE):
+            logger.trace(f'merging tokens: {source_tok} ({type(source_tok)}) '
                          f'-> {target_tok} ({type(target_tok)})')
         self._validate_features(target_tok, source_tok, context_container)
         f: str
         for f in self.yield_features:
             targ = getattr(target_tok, f) if hasattr(target_tok, f) else None
-            if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(f'yield feature: {f}, target={targ}')
+            if logger.isEnabledFor(logging.TRACE):
+                logger.trace(f'yield feature: {f}, target={targ}')
             if targ is None or targ == FeatureToken.NONE:
                 src = getattr(source_tok, f) if hasattr(source_tok, f) else None
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug(f'yield feature: {f}, src={src}')
+                if logger.isEnabledFor(logging.TRACE):
+                    logger.trace(f'yield feature: {f}, src={src}')
                 if (src is None or src == FeatureToken.NONE) and \
                    yield_default is not None:
                     src = yield_default
                 if src is not None:
-                    if logger.isEnabledFor(logging.DEBUG):
-                        logger.debug(f'{src} -> {target_tok.text}.{f}')
+                    if logger.isEnabledFor(logging.TRACE):
+                        logger.trace(f'{src} -> {target_tok.text}.{f}')
                     setattr(target_tok, f, src)
                     if include_detached and \
                        target_tok._detatched_feature_ids is not None:
@@ -111,9 +119,9 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
             else:
                 src = source_tok.get_value(f)
             src = FeatureToken.NONE if src is None else src
-            if logger.isEnabledFor(logging.DEBUG):
+            if logger.isEnabledFor(logging.TRACE):
                 prev = target_tok.get_value(f)
-                logger.debug(
+                logger.trace(
                     f'overwrite: {src} -> {prev} ({target_tok.text}.{f})')
             setattr(target_tok, f, src)
             if include_detached and \
@@ -121,10 +129,11 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
                 target_tok._detatched_feature_ids.add(f)
 
     def _debug_sentence(self, sent: FeatureSentence, name: str):
-        logger.debug(f'{name}:')
-        for i, tok in enumerate(sent.tokens):
-            logger.debug(f'  {i}: i={tok.i}, pos={tok.pos_}, ' +
-                         f'ent={tok.ent_}: {tok}')
+        if logging.isEnabledFor(logging.DEBUG):
+            logger.debug(f'{name}:')
+            for i, tok in enumerate(sent.tokens):
+                logger.debug(f'  {i}: i={tok.i}, pos={tok.pos_}, ' +
+                             f'ent={tok.ent_}: {tok}')
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):
@@ -171,18 +180,39 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
             del self._target_doc
             del self._source_doc
 
-    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
-        target_doc: FeatureDocument = self.delegate.parse(text, *args, **kwargs)
+    def _parse(self, parsed: Dict[int, FeatureDocument], text: str,
+               *args, **kwargs) -> FeatureDocument:
+        self._log_parse(text, logger)
+        key: int = id(self.delegate)
+        target_doc: FeatureDocument = parsed.get(key)
+        if target_doc is None:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'parsing with {self.delegate}')
+            target_doc = self.delegate.parse(text, *args, **kwargs)
+            parsed[key] = target_doc
+        else:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'resuing parsed doc from {self.delegate}')
         if self.source_parsers is None or len(self.source_parsers) == 0:
             logger.warning(f'No source parsers set on {self}, ' +
                            'which disables feature combining')
         else:
             for source_parser in self.source_parsers:
-                source_doc: FeatureDocument = source_parser.parse(
-                    text, *args, **kwargs)
+                source_doc: FeatureDocument
+                if isinstance(source_parser, CombinerFeatureDocumentParser):
+                    source_doc = source_parser._parse(
+                        parsed, text, *args, **kwargs)
+                else:
+                    source_doc = source_parser.parse(text, *args, **kwargs)
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f'merging {source_parser} -> {self.delegate}')
                 self._merge_docs(target_doc, source_doc)
+            parsed[id(source_parser)] = source_doc
         self.decorate(target_doc)
         return target_doc
+
+    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
+        return self._parse({}, text, *args, **kwargs)
 
 
 @dataclass
@@ -233,8 +263,8 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
         targ_toks: Set[FeatureToken] = set(target_container.token_iter())
         for target_tok in target_container.token_iter():
             source_tok: FeatureToken = rmap.get(target_tok.idx)
-            if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(f'entry: {target_tok.idx}/{target_tok} ' +
+            if logger.isEnabledFor(logging.TRACE):
+                logger.trace(f'entry: {target_tok.idx}/{target_tok} ' +
                              f'-> {source_tok}')
             if source_tok is not None:
                 visited.add(source_tok)
@@ -273,29 +303,3 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
             source_token_mapping = self._source_doc.tokens_by_idx
             self._merge_token_containers(self._target_doc, source_token_mapping)
             self._target_doc._combine_update(self._source_doc)
-
-
-@dataclass
-class CompositeFeatureDocumentParser(DecoratedFeatureDocumentParser):
-    """A composite of :class:`.CombinerFeatureDocumentParser` parsers.  This
-    first uses :obj:`delegate` for the initial feature document, then uses each
-    parser of :obj:`source_parsers` to merge.  This gives a way to combine
-    features of several parsers into one document with each parser having their
-    own feature ``yield`` and ``overwrite`` rules.
-
-    """
-    source_parsers: CombinerFeatureDocumentParser = field(default=())
-    """The source parsers used to merge with the :obj:`delegate` parser."""
-
-    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
-        target_doc = self.delegate.parse(text, *args, **kwargs)
-        if self.source_parsers is None or len(self.source_parsers) == 0:
-            logger.warning(f'No source parsers set on {self}, ' +
-                           'which disables feature combining')
-        else:
-            for source_parser in self.source_parsers:
-                source_doc: FeatureDocument = source_parser.parse(
-                    text, *args, **kwargs)
-                source_parser._merge_docs(target_doc, source_doc)
-        self.decorate(target_doc)
-        return target_doc
