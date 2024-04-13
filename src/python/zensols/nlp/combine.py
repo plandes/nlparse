@@ -230,7 +230,7 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
     """
     merge_sentences: bool = field(default=True)
     """If ``False`` ignore sentences and map everything at the token level.
-    Otherwise, it use the same hierarchy mapping as the super class.  This is
+    Otherwise, the same hierarchy mapping as the super class is used.  This is
     useful when sentence demarcations are not aligned across source document
     parsers and this parser.
 
@@ -259,6 +259,7 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                                 rmap: Dict[int, FeatureToken]):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merge: {target_container}, mapping: {rmap}')
+        include_detached: bool = self.include_detached_features
         visited: Set[FeatureToken] = set()
         targ_toks: Set[FeatureToken] = set(target_container.token_iter())
         for target_tok in target_container.token_iter():
@@ -276,6 +277,9 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
             for fname in self.overwrite_features:
                 if not hasattr(target_tok, fname):
                     setattr(target_tok, fname, FeatureToken.NONE)
+                    if include_detached and \
+                       target_tok._detatched_feature_ids is not None:
+                        target_tok._detatched_feature_ids.add(fname)
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):
