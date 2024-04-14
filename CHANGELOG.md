@@ -8,13 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.11.0] - 2024-04-14
+Feature release with significant modification to feature merging document
+parsers.
+
 ### Added
 - A composite parser that combines several parsers, each with their own rules
   of copying (or clobbering).
+
 ### Changed
 - The combiner parser `CombinerFeatureDocumentParser`, and subclasses, are
   now optimized to avoid re-parsing for shared parsers.  This is the case with
   the [zensols.mednlp] parsers that migrate features down to the same parser.
+- Fixed some features not copied in combiner parsers after a token clone.
 
 
 ### Removed
@@ -469,7 +475,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.10.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.11.0...HEAD
+[1.11.0]: https://github.com/plandes/nlparse/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/plandes/nlparse/compare/v1.9.2...v1.10.0
 [1.9.2]: https://github.com/plandes/nlparse/compare/v1.9.1...v1.9.2
 [1.9.1]: https://github.com/plandes/nlparse/compare/v1.9.0...v1.9.1
