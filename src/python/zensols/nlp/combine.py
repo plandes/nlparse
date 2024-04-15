@@ -16,14 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class _IdentityFeatureDocumentParser(FeatureDocumentParser):
-    parsed: FeatureDocument = field()
-
-    def parse(self, text: str, *args, **kwargs) -> FeatureDocument:
-        return self.parsed
-
-
-@dataclass
 class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
     """A class that combines features from two :class:`.FeatureDocumentParser`
     instances.  Features parsed using each :obj:`source_parser` are optionally
