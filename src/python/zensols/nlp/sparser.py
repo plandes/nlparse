@@ -10,7 +10,6 @@ from dataclasses import dataclass, field
 import logging
 import sys
 import itertools as it
-import textwrap as tw
 from io import TextIOBase
 import spacy
 from spacy.language import Language
