@@ -185,6 +185,8 @@ class FeatureToken(PersistableContainer, TextContainer):
     def get_value(self, attr: str) -> Optional[Any]:
         """Get a value by attribute.
 
+        :param attr: the feature ID
+
         :return: ``None`` when the value is not set
 
         """
@@ -194,6 +196,18 @@ class FeatureToken(PersistableContainer, TextContainer):
             if not self._is_none(targ):
                 val = targ
         return val
+
+    def set_value(self, attr: str, val: Any):
+        """Set a value by attribute.
+
+        :param attr: the feature ID
+
+        :param val: the value of the feature to set
+
+        """
+        setattr(self, attr, val)
+        if self._detatched_feature_ids is not None:
+            self._detatched_feature_ids.add(attr)
 
     def get_features(self, feature_ids: Iterable[str] = None,
                      skip_missing: bool = False) -> Dict[str, Any]:

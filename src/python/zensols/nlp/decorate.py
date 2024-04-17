@@ -3,12 +3,12 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple
+from typing import List, Tuple, Any
 from dataclasses import dataclass, field
 import re
 from . import (
-    LexicalSpan, FeatureToken, TokenContainer, FeatureSentence, FeatureDocument,
-    FeatureTokenContainerDecorator,
+    NLPError, LexicalSpan, FeatureToken, TokenContainer,
+    FeatureSentence, FeatureDocument, FeatureTokenContainerDecorator,
     FeatureSentenceDecorator, FeatureDocumentDecorator
 )
 
@@ -140,3 +140,27 @@ class UpdateTokenContainerDecorator(FeatureTokenContainerDecorator):
             container.update_entity_spans()
         if self.reindex:
             container.reindex()
+
+
+@dataclass
+class CopyFeatureTokenContainerDecorator(FeatureTokenContainerDecorator):
+    """Copies feature(s) for each token in the container.  For each token, each
+    source / target tuple pair in :obj:`feature_ids` is copied.  If the feature
+    is missing (does not include for existing :obj:`.FeatureToken.NONE` values)
+    an exception is raised.
+
+    """
+    feature_ids: Tuple[Tuple[str, str], ...] = field()
+    """The features to copy in the form ((`<source>`, `<target>`), ...)."""
+
+    def decorate(self, container: TokenContainer):
+        fids: Tuple[Tuple[str, str], ...] = self.feature_ids
+        tok: FeatureToken
+        for tok in container.token_iter():
+            source: str
+            target: str
+            for source, target in fids:
+                if not hasattr(tok, source):
+                    raise NLPError(
+                        f"Missing feature ID '{source}' for token {tok}")
+                tok.set_value(target, getattr(tok, source))
