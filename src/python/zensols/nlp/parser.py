@@ -134,7 +134,7 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
             else:
                 name = cls
             msg: str = self._LOG_FORMAT.format(
-                name=name, text=text, cls=cls, id=id(self))
+                name=name, text=text.replace('\n', ' '), cls=cls, id=id(self))
             logger.info(self._trunc(msg))
 
     @abstractmethod
