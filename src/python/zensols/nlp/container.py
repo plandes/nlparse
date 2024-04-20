@@ -558,7 +558,8 @@ class FeatureSpan(TokenContainer):
     def to_document(self) -> FeatureDocument:
         return FeatureDocument((self.to_sentence(),))
 
-    def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
+    def clone(self, cls: Type[TokenContainer] = None, **kwargs) -> \
+            TokenContainer:
         params = dict(kwargs)
         if 'tokens' not in params:
             params['tokens'] = tuple(
