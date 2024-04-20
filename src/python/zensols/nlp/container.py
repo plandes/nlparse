@@ -819,7 +819,8 @@ class FeatureDocument(TokenContainer):
             sent.strip()
         self.text = self.text.strip()
 
-    def clone(self, cls: Type = None, **kwargs) -> TokenContainer:
+    def clone(self, cls: Type[TokenContainer] = None, **kwargs) -> \
+            TokenContainer:
         """
         :param kwargs: if `copy_spacy` is ``True``, the spacy document is
                        copied to the clone in addition parameters passed to new
