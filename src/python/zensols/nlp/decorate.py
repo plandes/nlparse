@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Any
+from typing import List, Tuple
 from dataclasses import dataclass, field
 import re
 from . import (
