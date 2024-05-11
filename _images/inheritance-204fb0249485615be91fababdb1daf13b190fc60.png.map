@@ -1,0 +1,12 @@
+<map id="inheritance06df1689ee" name="inheritance06df1689ee">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="419,3,461,21"/>
+<area shape="rect" id="node3" href="#zensols.nlp.parser.FeatureTokenContainerDecorator" target="_top" title="Implementations can add, remove or modify features on a token container." alt="" coords="355,49,525,67"/>
+<area shape="rect" id="node2" href="#zensols.nlp.decorate.CopyFeatureTokenContainerDecorator" target="_top" title="Copies feature(s) for each token in the container. &#160;For each token, each" alt="" coords="3,95,197,113"/>
+<area shape="rect" id="node4" href="#zensols.nlp.parser.FeatureDocumentDecorator" target="_top" title="Implementations can add, remove or modify features on a document." alt="" coords="212,95,356,113"/>
+<area shape="rect" id="node5" href="#zensols.nlp.parser.FeatureSentenceDecorator" target="_top" title="Implementations can add, remove or modify features on a sentence." alt="" coords="370,95,510,113"/>
+<area shape="rect" id="node9" href="#zensols.nlp.decorate.StripTokenContainerDecorator" target="_top" title="A decorator that strips whitespace from sentences (or" alt="" coords="525,95,679,113"/>
+<area shape="rect" id="node10" href="#zensols.nlp.decorate.UpdateTokenContainerDecorator" target="_top" title="Updates document indexes and spans (see fields)." alt="" coords="694,95,861,113"/>
+<area shape="rect" id="node6" href="#zensols.nlp.decorate.FilterEmptySentenceDocumentDecorator" target="_top" title="Filter zero length sentences." alt="" coords="142,142,348,160"/>
+<area shape="rect" id="node7" href="#zensols.nlp.decorate.FilterTokenSentenceDecorator" target="_top" title="A decorator that strips whitespace from sentences." alt="" coords="362,142,518,160"/>
+<area shape="rect" id="node8" href="#zensols.nlp.decorate.SplitTokenSentenceDecorator" target="_top" title="A decorator that splits feature tokens by white space." alt="" coords="532,142,685,160"/>
+</map>

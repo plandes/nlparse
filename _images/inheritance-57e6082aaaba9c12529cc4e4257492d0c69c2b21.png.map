@@ -1,0 +1,5 @@
+<map id="inheritance86e9b73038" name="inheritance86e9b73038">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="97,5,169,36"/>
+<area shape="rect" id="node3" href="#zensols.nlp.norm.TokenMapper" target="_top" title="Abstract class used to transform token tuples generated from" alt="" coords="67,84,199,115"/>
+<area shape="rect" id="node2" href="#zensols.nlp.stemmer.PorterStemmerTokenMapper" target="_top" title="Use the Porter Stemmer from the NTLK to stem as normalized tokens." alt="" coords="5,163,261,193"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="inheritancef527b0e0fe" name="inheritancef527b0e0fe">
+<area shape="rect" id="node1" href="#zensols.nlp.chunker.Chunker" target="_top" title="Splits :class:`~zensols.nlp.container.TokenContainer` instances using" alt="" coords="132,5,223,36"/>
+<area shape="rect" id="node2" href="#zensols.nlp.chunker.ListItemChunker" target="_top" title="A :class:`.Chunker` that splits list item and enumerated lists into" alt="" coords="5,84,160,115"/>
+<area shape="rect" id="node3" href="#zensols.nlp.chunker.ParagraphChunker" target="_top" title="A :class:`.Chunker` that splits list item and enumerated lists into" alt="" coords="185,84,359,115"/>
+</map>

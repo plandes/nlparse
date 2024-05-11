@@ -1,0 +1,21 @@
+<map id="inheritance5a1036076f" name="inheritance5a1036076f">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="493,4,545,26"/>
+<area shape="rect" id="node4" href="#zensols.nlp.score.ScoreMethod" target="_top" title="An abstract base class for scoring methods (bleu, rouge, etc)." alt="" coords="379,60,473,82"/>
+<area shape="rect" id="node6" title="An interface for classes that have multi&#45;line debuging capability." alt="" coords="580,60,643,82"/>
+<area shape="rect" id="node2" title="Base exception from which almost all library raised errors extend." alt="" coords="724,4,789,26"/>
+<area shape="rect" id="node13" href="#zensols.nlp.domain.NLPError" target="_top" title="Raised for any errors for this library." alt="" coords="750,60,820,82"/>
+<area shape="rect" id="node3" href="#zensols.nlp.score.BleuScoreMethod" target="_top" title="The BLEU scoring method using the :mod:`nltk` package. &#160;The first" alt="" coords="4,117,123,139"/>
+<area shape="rect" id="node9" href="#zensols.nlp.score.ExactMatchScoreMethod" target="_top" title="A scoring method that return 1 for exact matches and 0 otherwise." alt="" coords="141,117,302,139"/>
+<area shape="rect" id="node12" href="#zensols.nlp.score.LevenshteinDistanceScoreMethod" target="_top" title="A scoring method that computes the Levenshtein distance." alt="" coords="319,117,533,139"/>
+<area shape="rect" id="node14" href="#zensols.nlp.score.RougeScoreMethod" target="_top" title="The ROUGE scoring method using the :mod:`rouge_score` package." alt="" coords="550,117,681,139"/>
+<area shape="rect" id="node5" title="A class that that generates a dictionary recursively from data classes" alt="" coords="698,117,760,139"/>
+<area shape="rect" id="node8" href="#zensols.nlp.score.Score" target="_top" title="Individual scores returned from :class:`.ScoreMethod`." alt="" coords="507,173,559,195"/>
+<area shape="rect" id="node15" href="#zensols.nlp.score.ScoreContext" target="_top" title="Input needed to create score(s) using :class:`.Scorer`." alt="" coords="576,173,670,195"/>
+<area shape="rect" id="node16" href="#zensols.nlp.score.ScoreResult" target="_top" title="A result of scores created by a :class:`.ScoreMethod`." alt="" coords="687,173,773,195"/>
+<area shape="rect" id="node17" href="#zensols.nlp.score.ScoreSet" target="_top" title="All scores returned from :class:`.Scorer&#39;." alt="" coords="790,173,859,195"/>
+<area shape="rect" id="node7" href="#zensols.nlp.score.ErrorScore" target="_top" title="A replacement instance when scoring fails from a raised exception." alt="" coords="398,230,477,252"/>
+<area shape="rect" id="node10" href="#zensols.nlp.score.FloatScore" target="_top" title="Float container. &#160;This is needed to create the flat result container" alt="" coords="494,230,572,252"/>
+<area shape="rect" id="node11" href="#zensols.nlp.score.HarmonicMeanScore" target="_top" title="A score having a precision, recall and the harmonic mean of the two," alt="" coords="590,230,729,252"/>
+<area shape="rect" id="node19" href="#zensols.nlp.score.ScorerError" target="_top" title="Raised for any scoring errors (this module)." alt="" coords="778,117,860,139"/>
+<area shape="rect" id="node18" href="#zensols.nlp.score.Scorer" target="_top" title="A class that scores sentences using a set of registered methods" alt="" coords="807,4,860,26"/>
+</map>

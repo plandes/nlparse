@@ -1,0 +1,11 @@
+<map id="inheritance7a6b110ed7" name="inheritance7a6b110ed7">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="199,5,271,36"/>
+<area shape="rect" id="node3" title="An interface for classes that have multi&#45;line debuging capability." alt="" coords="191,84,279,115"/>
+<area shape="rect" id="node2" title="A class that that generates a dictionary recursively from data classes" alt="" coords="192,163,279,193"/>
+<area shape="rect" id="node6" href="#zensols.nlp.serial.Serialized" target="_top" title="A base strategy class that can serialize :class:`.TokenContainer`" alt="" coords="114,241,215,272"/>
+<area shape="rect" id="node9" href="#zensols.nlp.serial.SerializedTokenContainerFactory" target="_top" title="Creates instances of :class:`.Serialized` from instances of" alt="" coords="240,241,527,272"/>
+<area shape="rect" id="node4" title="Create a collection of name/value pairs." alt="" coords="593,5,665,36"/>
+<area shape="rect" id="node5" href="#zensols.nlp.serial.Include" target="_top" title="Indicates what to include at each level." alt="" coords="589,84,669,115"/>
+<area shape="rect" id="node7" href="#zensols.nlp.serial.SerializedFeatureDocument" target="_top" title="A serializer for feature documents. &#160;The :obj:`container` has to be an" alt="" coords="5,320,252,351"/>
+<area shape="rect" id="node8" href="#zensols.nlp.serial.SerializedTokenContainer" target="_top" title="Serializes instance of :class:`.TokenContainer`. &#160;This is used to" alt="" coords="277,320,503,351"/>
+</map>

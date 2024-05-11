@@ -1,0 +1,10 @@
+<map id="inheritancecf7928b046" name="inheritancecf7928b046">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="89,5,161,36"/>
+<area shape="rect" id="node4" title="An interface for classes that have multi&#45;line debuging capability." alt="" coords="81,84,169,115"/>
+<area shape="rect" id="node2" title="Base exception from which almost all library raised errors extend." alt="" coords="503,5,593,36"/>
+<area shape="rect" id="node6" href="#zensols.nlp.domain.NLPError" target="_top" title="Raised for any errors for this library." alt="" coords="435,84,533,115"/>
+<area shape="rect" id="node7" href="#zensols.nlp.domain.ParseError" target="_top" title="Raised for any parsing errors." alt="" coords="557,84,667,115"/>
+<area shape="rect" id="node3" title="A class that that generates a dictionary recursively from data classes" alt="" coords="82,163,169,193"/>
+<area shape="rect" id="node5" href="#zensols.nlp.domain.LexicalSpan" target="_top" title="A lexical character span of text in a document. &#160;The span has two" alt="" coords="5,241,125,272"/>
+<area shape="rect" id="node8" href="#zensols.nlp.domain.TextContainer" target="_top" title="A *writable* class that has a ``text`` property or attribute. &#160;All" alt="" coords="149,241,283,272"/>
+</map>
