@@ -107,7 +107,16 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
     @persisted('_norm')
     def norm(self) -> str:
         """The normalized version of the sentence."""
-        return self._token_norm.get_norm(self.token_iter())
+        return self._token_norm.get_norm(self.token_iter(), True)
+
+    @property
+    @persisted('_norm_orth')
+    def norm_orth(self) -> str:
+        """The normalized version of the sentence using the orignal rather than
+        the token normalized text.
+
+        """
+        return self._token_norm.get_norm(self.token_iter(), False)
 
     @property
     @persisted('_canonical', transient=True)
@@ -395,7 +404,8 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout,
               include_original: bool = False, include_normalized: bool = True,
-              n_tokens: int = sys.maxsize, inline: bool = False):
+              n_tokens: int = sys.maxsize, inline: bool = False,
+              feature_ids: Iterable[str] = None):
         """Write the text container.
 
         :param include_original: whether to include the original text
@@ -414,8 +424,9 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
             self._write_line('tokens:', depth, writer)
             for t in it.islice(self.token_iter(), n_tokens):
                 if inline:
-                    t.write_attributes(depth + 1, writer,
-                                       inline=True, include_type=False)
+                    t.write_attributes(depth + 1, writer, inline=True,
+                                       include_type=False,
+                                       feature_ids=feature_ids)
                 else:
                     t.write(depth + 1, writer)
 
@@ -1185,10 +1196,15 @@ class FeatureDocument(TokenContainer):
         :param include_normalized: whether to include the normalized text
 
         """
-        TextContainer.write(self, depth, writer,
-                            include_original=include_original,
-                            include_normalized=include_normalized)
-        self._write_line('sentences:', depth, writer)
+        if n_sents == 1 or len(self.sents) == 1:
+            self._write_line('sentence:', depth, writer)
+        else:
+            # only give the document text if the joined sentence text is
+            # meaningful; otherwise it is just a repeat of the sentence text
+            TextContainer.write(self, depth, writer,
+                                include_original=include_original,
+                                include_normalized=include_normalized)
+            self._write_line('sentences:', depth, writer)
         s: FeatureSentence
         for s in it.islice(self.sents, n_sents):
             s.write(depth + 1, writer, n_tokens=n_tokens,

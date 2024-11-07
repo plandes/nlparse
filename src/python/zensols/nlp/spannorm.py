@@ -12,6 +12,7 @@ __author__ = 'Paul Landes'
 from typing import Set, Iterable, Tuple
 from dataclasses import dataclass, field
 from abc import ABCMeta, abstractmethod
+import re
 from io import StringIO
 from . import ParseError, FeatureToken
 
@@ -22,8 +23,15 @@ class SpanNormalizer(metaclass=ABCMeta):
 
     """
     @abstractmethod
-    def get_norm(self) -> str:
-        """Create a string that follows the langauge spacing rules."""
+    def get_norm(self, tokens: Iterable[FeatureToken], use_norm: bool) -> str:
+        """Create a string that follows the langauge spacing rules.
+
+        :param tokens: the tokens to normalize
+
+        :param use_norm: whether to use the token normalized or orthographic
+                         text
+
+        """
         pass
 
     @abstractmethod
@@ -57,10 +65,11 @@ class EnglishSpanNormalizer(SpanNormalizer):
         self.__dict__['_longest_pre_space_skip'] = \
             max(map(len, self.pre_space_skip))
 
-    def get_norm(self, tokens: Iterable[FeatureToken]) -> str:
+    def get_norm(self, tokens: Iterable[FeatureToken], use_norm: bool) -> str:
         nsent: str
+        ws_re: re.Pattern = re.compile(r'\s*\n\s*')
         toks: Tuple[FeatureToken] = tuple(
-            filter(lambda t: t.text != '\n', tokens))
+            filter(lambda t: ws_re.match(t.text) is None, tokens))
         tlen: int = len(toks)
         has_punc = tlen > 0 and hasattr(toks[0], 'is_punctuation')
         if has_punc:
@@ -73,24 +82,24 @@ class EnglishSpanNormalizer(SpanNormalizer):
             tix: int
             tok: FeatureToken
             for tix, tok in enumerate(toks):
-                norm: str = tok.norm
-                if norm is None:
+                ttext: str = tok.norm if use_norm else tok.text
+                if ttext is None:
                     raise ParseError(f'Token {tok.text} has no norm')
                 if tix > 0 and tix < tlen:
-                    nlen: int = len(norm)
-                    if nlen == 1 and norm in keep_space_skip:
+                    nlen: int = len(ttext)
+                    if nlen == 1 and ttext in keep_space_skip:
                         sio.write(' ')
                     else:
                         do_post_space_skip: bool = False
                         if nlen == 1:
-                            do_post_space_skip = norm in post_space_skip
+                            do_post_space_skip = ttext in post_space_skip
                         if (not tok.is_punctuation or do_post_space_skip) and \
                            not last_avoid and \
                            not (nlen <= n_pre_space_skip and
-                                norm in pre_space_skip):
+                                ttext in pre_space_skip):
                             sio.write(' ')
-                        last_avoid = do_post_space_skip or tok.norm == '--'
-                sio.write(norm)
+                        last_avoid = do_post_space_skip or ttext == '--'
+                sio.write(ttext)
             nsent = sio.getvalue()
         else:
             nsent = ' '.join(map(lambda t: t.norm, toks))
