@@ -405,6 +405,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         text = doc.text if text is None else text
         sents: List[FeatureSentence] = self._create_sents(doc)
         try:
+            if logger.isEnabledFor(logging.DEBUG):
+                name: str = self._get_parser_name()
+                logger.debug(f'{name}: creating doc class: {self.doc_class}')
             return self.doc_class(tuple(sents), text, doc, *args, **kwargs)
         except Exception as e:
             raise ParseError(

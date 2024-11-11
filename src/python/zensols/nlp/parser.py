@@ -126,13 +126,18 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
         factory = ImportConfigFactory(ImportIniConfig(StringIO(config)))
         return factory('doc_parser')
 
+    def _get_parser_name(self) -> str:
+        cls: Type = self.__class__
+        if hasattr(self, 'name'):
+            name = self.name
+        else:
+            name = cls
+        return name
+
     def _log_parse(self, text: str, logger: logging.Logger):
         if logger.isEnabledFor(logging.INFO):
             cls: Type = self.__class__
-            if hasattr(self, 'name'):
-                name = self.name
-            else:
-                name = cls
+            name: str = self._get_parser_name()
             msg: str = self._LOG_FORMAT.format(
                 name=name, text=text.replace('\n', ' '), cls=cls, id=id(self))
             logger.info(self._trunc(msg))
