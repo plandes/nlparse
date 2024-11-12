@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Set, List, Dict, Any
+from typing import Set, List, Tuple, Dict, Any
 from dataclasses import dataclass, field
 import logging
 from . import (
@@ -36,7 +36,7 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
     the given features don't match, an mismatch token error is raised.
 
     """
-    yield_features: List[str] = field(default_factory=list)
+    yield_features: Set[str] = field(default_factory=list)
     """A list of features to be copied (in order) if the target token is not
     set.
 
@@ -54,6 +54,13 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
     """Whether to write ``None`` for missing :obj:`overwrite_features`.  This
     always write the *target* feature; if you only to write when the *source* is
     not set or missing, then use :obj:`yield_features`.
+
+    """
+    map_features: List[Tuple[str, str]] = field(default_factory=list)
+    """Like :obj:`yield_features` but the feature ID can be different from the
+    source to the target.  Each tuple has the form:
+
+        ``(<source feature ID>, <target feature ID>)``
 
     """
     include_detached_features: bool = field(default=True)
@@ -87,6 +94,23 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
                          f'-> {target_tok} ({type(target_tok)})')
         self._validate_features(target_tok, source_tok, context_container)
         f: str
+        dstf: str
+        for f, dstf in self.map_features:
+            targ = getattr(target_tok, dstf) \
+                if hasattr(target_tok, dstf) else None
+            src = getattr(source_tok, f) if hasattr(source_tok, f) else None
+            if logger.isEnabledFor(logging.TRACE):
+                logger.trace(f'matp feature: {f} ({src}) -> {dstf} ({targ})')
+            if (src is None or src == FeatureToken.NONE) and \
+               yield_default is not None:
+                src = yield_default
+            if src is not None:
+                if logger.isEnabledFor(logging.TRACE):
+                    logger.trace(f'{src} -> {target_tok.text}.{dstf}')
+                setattr(target_tok, dstf, src)
+                if include_detached and \
+                   target_tok._detatched_feature_ids is not None:
+                    target_tok._detatched_feature_ids.add(f)
         for f in self.yield_features:
             targ = getattr(target_tok, f) if hasattr(target_tok, f) else None
             if logger.isEnabledFor(logging.TRACE):

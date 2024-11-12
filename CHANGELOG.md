@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- A text indexing and search class which find feature spans in text with
+  mangled white space.
+- Feature ID mapping in the aggregating parser `CombinerFeatureDocumentParser`
+  class.
+
+
 ## [1.11.1] - 2024-05-11
 ### Added
 - A method `FeatureToken.set_value` that sets a value by attribute.
