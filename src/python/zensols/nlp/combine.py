@@ -65,8 +65,8 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
     """
     include_detached_features: bool = field(default=True)
     """Whether to include copied (yielded or overwritten) features as listed
-    detected features.  This controls what is compared, cloned and for printed
-    in :meth:`~zensols.config.writable.Writable.write`.
+    detached features.  This controls what is compared, cloned and printed in
+    :meth:`~zensols.config.writable.Writable.write`.
 
     :see: :obj:`.FeatureToken.default_detached_feature_ids`
 
@@ -109,8 +109,8 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
                     logger.trace(f'{src} -> {target_tok.text}.{dstf}')
                 setattr(target_tok, dstf, src)
                 if include_detached and \
-                   target_tok._detatched_feature_ids is not None:
-                    target_tok._detatched_feature_ids.add(f)
+                   target_tok._detached_feature_ids is not None:
+                    target_tok._detached_feature_ids.add(f)
         for f in self.yield_features:
             targ = getattr(target_tok, f) if hasattr(target_tok, f) else None
             if logger.isEnabledFor(logging.TRACE):
@@ -127,8 +127,8 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
                         logger.trace(f'{src} -> {target_tok.text}.{f}')
                     setattr(target_tok, f, src)
                     if include_detached and \
-                       target_tok._detatched_feature_ids is not None:
-                        target_tok._detatched_feature_ids.add(f)
+                       target_tok._detached_feature_ids is not None:
+                        target_tok._detached_feature_ids.add(f)
         for f in self.overwrite_features:
             if overwrite_nones:
                 src = getattr(source_tok, f)
@@ -141,8 +141,8 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
                     f'overwrite: {src} -> {prev} ({target_tok.text}.{f})')
             setattr(target_tok, f, src)
             if include_detached and \
-               target_tok._detatched_feature_ids is not None:
-                target_tok._detatched_feature_ids.add(f)
+               target_tok._detached_feature_ids is not None:
+                target_tok._detached_feature_ids.add(f)
 
     def _debug_sentence(self, sent: FeatureSentence, name: str):
         if logging.isEnabledFor(logging.DEBUG):
@@ -294,8 +294,8 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                 if not hasattr(target_tok, fname):
                     setattr(target_tok, fname, FeatureToken.NONE)
                     if include_detached and \
-                       target_tok._detatched_feature_ids is not None:
-                        target_tok._detatched_feature_ids.add(fname)
+                       target_tok._detached_feature_ids is not None:
+                        target_tok._detached_feature_ids.add(fname)
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):

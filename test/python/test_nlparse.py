@@ -142,7 +142,7 @@ the ball.'''
         self.assertEqual(('an', 'identifier', ':', 'id-1234',), res)
 
     def test_detached_features(self):
-        json_path = 'test-resources/detatch.json'
+        json_path = 'test-resources/detach.json'
         dp = self.fac(
             'default_doc_parser',
             token_normalizer=self.fac('feature_no_filter_token_normalizer'))

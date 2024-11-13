@@ -96,7 +96,7 @@ class FeatureToken(PersistableContainer, TextContainer):
     """
     def __post_init__(self):
         super().__init__()
-        self._detatched_feature_ids = None
+        self._detached_feature_ids = None
 
     def detach(self, feature_ids: Set[str] = None,
                skip_missing: bool = False,
@@ -123,24 +123,24 @@ class FeatureToken(PersistableContainer, TextContainer):
         if hasattr(self, '_text'):
             clone.text = self._text
         if feature_ids is not None:
-            clone._detatched_feature_ids = feature_ids
+            clone._detached_feature_ids = feature_ids
         return clone
 
     @property
     def default_detached_feature_ids(self) -> Optional[Set[str]]:
         """The default set of feature IDs used when cloning or detaching
-        with :meth:`clone` or :meth:`detatch`.
+        with :meth:`clone` or :meth:`detach`.
 
         """
-        return self._detatched_feature_ids
+        return self._detached_feature_ids
 
     @default_detached_feature_ids.setter
     def default_detached_feature_ids(self, feature_ids: Set[str]):
         """The default set of feature IDs used when cloning or detaching
-        with :meth:`clone` or :meth:`detatch`.
+        with :meth:`clone` or :meth:`detach`.
 
         """
-        self._detatched_feature_ids = feature_ids
+        self._detached_feature_ids = feature_ids
 
     def clone(self, cls: Type = None, **kwargs) -> FeatureToken:
         """Clone an instance of this token.
@@ -152,7 +152,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         :return: the cloned instance of this instance
 
         """
-        clone = self.detach(self._detatched_feature_ids, cls=cls)
+        clone = self.detach(self._detached_feature_ids, cls=cls)
         clone.__dict__.update(kwargs)
         return clone
 
@@ -206,8 +206,8 @@ class FeatureToken(PersistableContainer, TextContainer):
 
         """
         setattr(self, attr, val)
-        if self._detatched_feature_ids is not None:
-            self._detatched_feature_ids.add(attr)
+        if self._detached_feature_ids is not None:
+            self._detached_feature_ids.add(attr)
 
     def get_features(self, feature_ids: Iterable[str] = None,
                      skip_missing: bool = False) -> Dict[str, Any]:
@@ -266,7 +266,7 @@ class FeatureToken(PersistableContainer, TextContainer):
         """
         if feature_ids is None:
             feature_ids = set(self.__dict__.keys()) - \
-                {'_detatched_feature_ids'}
+                {'_detached_feature_ids'}
         return map(lambda a: getattr(self, a), sorted(feature_ids))
 
     def write_attributes(self, depth: int = 0, writer: TextIOBase = sys.stdout,
@@ -289,7 +289,7 @@ class FeatureToken(PersistableContainer, TextContainer):
 
         """
         if feature_ids is None:
-            feature_ids = self._detatched_feature_ids
+            feature_ids = self._detached_feature_ids
         if feature_ids is None:
             feature_ids = self.WRITABLE_FEATURE_IDS
         dct = self.get_features(feature_ids, True)
@@ -337,8 +337,8 @@ class FeatureToken(PersistableContainer, TextContainer):
         if self.i == other.i and self.idx == other.idx:
             a = dict(self.__dict__)
             b = dict(other.__dict__)
-            del a['_detatched_feature_ids']
-            del b['_detatched_feature_ids']
+            del a['_detached_feature_ids']
+            del b['_detached_feature_ids']
             for attr in self.SKIP_COMPARE_FEATURE_IDS:
                 a.pop(attr, None)
                 b.pop(attr, None)
