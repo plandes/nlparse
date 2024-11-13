@@ -17,14 +17,17 @@ from spacy.tokens.token import Token
 from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
 from zensols.persist import PersistableContainer
-from . import NLPError, TextContainer, LexicalSpan
+from . import NLPError, MissingFeatureError, TextContainer, LexicalSpan
 
 
 @dataclass
 class FeatureToken(PersistableContainer, TextContainer):
     """A container class for features about a token.  Subclasses such as
     :class:`.SpacyFeatureToken` extracts only a subset of features from the
-    heavy Spacy C data structures and is hard/expensive to pickle.
+    heavy Spacy C data structures and is hard/expensive to pickle.  Instances of
+    this token class are almost always *detached*, meaning the underlying in
+    memory data structures have been copied as pure Python types to facilitate
+    serialization of spaCy tokens.
 
     **Feature note**: features :obj:`i`, :obj:`idx` and :obj:`i_sent` are always
     added to features tokens to be able to reconstruct sentences (see
@@ -127,6 +130,11 @@ class FeatureToken(PersistableContainer, TextContainer):
         return clone
 
     @property
+    def is_detached(self) -> bool:
+        """Whether this token has been detached."""
+        return self._detached_feature_ids is not None
+
+    @property
     def default_detached_feature_ids(self) -> Optional[Set[str]]:
         """The default set of feature IDs used when cloning or detaching
         with :meth:`clone` or :meth:`detach`.
@@ -182,32 +190,49 @@ class FeatureToken(PersistableContainer, TextContainer):
     def _is_none(cls, targ: Any) -> bool:
         return targ is None or targ == cls.NONE or targ == 0
 
-    def get_value(self, attr: str) -> Optional[Any]:
-        """Get a value by attribute.
+    def get_feature(self, feature_id: str, expect: bool = True,
+                    check_none: bool = False, message: str = None) -> \
+            Optional[Any]:
+        """Return a feature by the feature ID.
 
-        :param attr: the feature ID
+        :param feature_id: the ID of the feature to retrieve
 
-        :return: ``None`` when the value is not set
+        :param expect: whether to raise an error
+
+        :param message: additional context to append to the error message
+
+        :param check_none: whether to return the value even if it has an unset
+                           value such as :obj:`NONE` as determined by
+                           :meth:`is_none`, in which case ``None`` is returned
+
+        :raises MissingFeatureError: if ``expect`` is ``True`` and the feature
+                                     does not exist
 
         """
-        val = None
-        if hasattr(self, attr):
-            targ = getattr(self, attr)
-            if not self._is_none(targ):
-                val = targ
+        val: Any = None
+        has_attr: bool = hasattr(self, feature_id)
+        if not has_attr:
+            if expect:
+                raise MissingFeatureError(self, feature_id, message)
+        else:
+            val = getattr(self, feature_id)
+            if check_none and self._is_none(val):
+                val = None
         return val
 
-    def set_value(self, attr: str, val: Any):
-        """Set a value by attribute.
+    def set_feature(self, feature_id: str, value: Any):
+        """Set, or add if non-existant, a feature to this token instance.  If
+        the token has been detached, it will be added to the
+        :obj:`default_detached_feature_ids`.
 
-        :param attr: the feature ID
+        :param feature_id: the ID of the feature to set
 
-        :param val: the value of the feature to set
+        :param value: the new or replaced value of the feature
 
         """
-        setattr(self, attr, val)
+        setattr(self, feature_id, value)
         if self._detached_feature_ids is not None:
-            self._detached_feature_ids.add(attr)
+            self._detached_feature_ids.add(feature_id)
 
     def get_features(self, feature_ids: Iterable[str] = None,
                      skip_missing: bool = False) -> Dict[str, Any]:

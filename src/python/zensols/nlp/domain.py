@@ -3,7 +3,11 @@
 """
 from __future__ import annotations
 __author__ = 'Paul Landes'
-from typing import Tuple, Union, Optional, ClassVar, Set, Iterable, List, Type
+from typing import (
+    Tuple, Union, Optional, ClassVar, Set, Iterable, List, Type, TYPE_CHECKING
+)
+if TYPE_CHECKING:
+    from .tok import FeatureToken
 from abc import ABCMeta
 import sys
 from io import TextIOBase
@@ -23,6 +27,27 @@ class NLPError(APIError):
 class ParseError(APIError):
     """Raised for any parsing errors."""
     pass
+
+
+class MissingFeatureError(NLPError):
+    """Raised on attempting to access a non-existant feature in
+    :class:`.FeatureToken`.
+
+    """
+    def __init__(self, token: FeatureToken, feature_id: str, msg: str = None):
+        """Initialize.
+
+        :param token: the token for which access was attempted
+
+        :param feature_id: the feature_id that is missing in ``token``
+
+        """
+        s = f"Missing feature '{feature_id}' in token {token}"
+        if msg is not None:
+            s = f'{s} {msg}'
+        super().__init__(s)
+        self.token = token
+        self.feature_id = feature_id
 
 
 class LexicalSpan(Dictable):

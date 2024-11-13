@@ -8,11 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Removed
+- `CombinerFeatureDocumentParser.include_detached_features` to default using
+  `FeatureToken.{get,set}_feature` semantics.
+
 ### Added
 - A text indexing and search class which find feature spans in text with
   mangled white space.
 - Feature ID mapping in the aggregating parser `CombinerFeatureDocumentParser`
   class.
+
+### Changed
+- Replaced `FeatureToken.{get,set}_value` with a more robust
+  `{get,set}_feature`.
 
 
 ## [1.11.1] - 2024-05-11

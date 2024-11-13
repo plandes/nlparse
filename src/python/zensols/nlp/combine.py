@@ -63,20 +63,12 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
         ``(<source feature ID>, <target feature ID>)``
 
     """
-    include_detached_features: bool = field(default=True)
-    """Whether to include copied (yielded or overwritten) features as listed
-    detached features.  This controls what is compared, cloned and printed in
-    :meth:`~zensols.config.writable.Writable.write`.
-
-    :see: :obj:`.FeatureToken.default_detached_feature_ids`
-
-    """
     def _validate_features(self, target_tok: FeatureToken,
                            source_tok: FeatureToken,
                            context_container: TokenContainer):
         for f in self.validate_features:
-            prim = getattr(target_tok, f)
-            rep = getattr(source_tok, f)
+            prim = target_tok.get_feature(f, False)
+            rep = source_tok.get_feature(f, False)
             if prim != rep:
                 raise ParseError(
                     f'Mismatch tokens: {target_tok.text}({f}={prim}) ' +
@@ -87,7 +79,6 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
                       source_tok: FeatureToken,
                       context_container: TokenContainer):
         overwrite_nones: bool = self.overwrite_nones
-        include_detached: bool = self.include_detached_features
         yield_default: Any = self.yield_feature_defaults
         if logger.isEnabledFor(logging.TRACE):
             logger.trace(f'merging tokens: {source_tok} ({type(source_tok)}) '
@@ -96,27 +87,23 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
         f: str
         dstf: str
         for f, dstf in self.map_features:
-            targ = getattr(target_tok, dstf) \
-                if hasattr(target_tok, dstf) else None
-            src = getattr(source_tok, f) if hasattr(source_tok, f) else None
+            targ = target_tok.get_feature(dstf, False)
+            src = source_tok.get_feature(f, False)
             if logger.isEnabledFor(logging.TRACE):
-                logger.trace(f'matp feature: {f} ({src}) -> {dstf} ({targ})')
+                logger.trace(f'map feature: {f} ({src}) -> {dstf} ({targ})')
             if (src is None or src == FeatureToken.NONE) and \
                yield_default is not None:
                 src = yield_default
             if src is not None:
                 if logger.isEnabledFor(logging.TRACE):
                     logger.trace(f'{src} -> {target_tok.text}.{dstf}')
-                setattr(target_tok, dstf, src)
-                if include_detached and \
-                   target_tok._detached_feature_ids is not None:
-                    target_tok._detached_feature_ids.add(f)
+                target_tok.set_feature(dstf, src)
         for f in self.yield_features:
-            targ = getattr(target_tok, f) if hasattr(target_tok, f) else None
+            targ = target_tok.get_feature(f, False)
             if logger.isEnabledFor(logging.TRACE):
                 logger.trace(f'yield feature: {f}, target={targ}')
             if targ is None or targ == FeatureToken.NONE:
-                src = getattr(source_tok, f) if hasattr(source_tok, f) else None
+                src = source_tok.get_feature(f, False)
                 if logger.isEnabledFor(logging.TRACE):
                     logger.trace(f'yield feature: {f}, src={src}')
                 if (src is None or src == FeatureToken.NONE) and \
@@ -125,24 +112,15 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
                 if src is not None:
                     if logger.isEnabledFor(logging.TRACE):
                         logger.trace(f'{src} -> {target_tok.text}.{f}')
-                    setattr(target_tok, f, src)
-                    if include_detached and \
-                       target_tok._detached_feature_ids is not None:
-                        target_tok._detached_feature_ids.add(f)
+                    target_tok.set_feature(f, src)
         for f in self.overwrite_features:
-            if overwrite_nones:
-                src = getattr(source_tok, f)
-            else:
-                src = source_tok.get_value(f)
+            src = source_tok.get_feature(f, False, not overwrite_nones)
             src = FeatureToken.NONE if src is None else src
             if logger.isEnabledFor(logging.TRACE):
-                prev = target_tok.get_value(f)
+                prev = target_tok.get_feature(f, False, True)
                 logger.trace(
                     f'overwrite: {src} -> {prev} ({target_tok.text}.{f})')
-            setattr(target_tok, f, src)
-            if include_detached and \
-               target_tok._detached_feature_ids is not None:
-                target_tok._detached_feature_ids.add(f)
+            target_tok.set_feature(f, src)
 
     def _debug_sentence(self, sent: FeatureSentence, name: str):
         if logging.isEnabledFor(logging.DEBUG):
@@ -275,27 +253,32 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
                                 rmap: Dict[int, FeatureToken]):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'merge: {target_container}, mapping: {rmap}')
-        include_detached: bool = self.include_detached_features
-        visited: Set[FeatureToken] = set()
-        targ_toks: Set[FeatureToken] = set(target_container.token_iter())
+        targ2idx: Dict[int, FeatureToken] = target_container.tokens_by_idx
+        visited: Set[int] = set()
         for target_tok in target_container.token_iter():
             source_tok: FeatureToken = rmap.get(target_tok.idx)
             if logger.isEnabledFor(logging.TRACE):
                 logger.trace(f'entry: {target_tok.idx}/{target_tok} ' +
                              f'-> {source_tok}')
             if source_tok is not None:
-                visited.add(source_tok)
+                visited.add(source_tok.idx)
                 self._merge_tokens(target_tok, source_tok, target_container)
                 if source_tok.ent_ != FeatureToken.NONE:
                     self._merge_entities_by_token(target_tok, source_tok)
-        for target_tok in (targ_toks - visited):
-            fname: str
-            for fname in self.overwrite_features:
-                if not hasattr(target_tok, fname):
-                    setattr(target_tok, fname, FeatureToken.NONE)
-                    if include_detached and \
-                       target_tok._detached_feature_ids is not None:
-                        target_tok._detached_feature_ids.add(fname)
+        targ_toks: Set[int] = set(map(
+            lambda t: t.idx, target_container.token_iter()))
+        not_visited: Tuple[FeatureToken, ] = tuple(map(
+            lambda idx: targ2idx[idx], (targ_toks - visited)))
+        if logger.isEnabledFor(logging.TRACE):
+            logger.trace(f'not visited: {not_visited}')
+        for target_tok in not_visited:
+            targ_fid: str
+            for _, targ_fid in self.map_features:
+                if not hasattr(target_tok, targ_fid):
+                    target_tok.set_feature(targ_fid, FeatureToken.NONE)
+            for targ_fid in self.overwrite_features:
+                if not hasattr(target_tok, targ_fid):
+                    target_tok.set_feature(targ_fid, FeatureToken.NONE)
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):
