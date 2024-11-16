@@ -126,8 +126,7 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
         if logging.isEnabledFor(logging.DEBUG):
             logger.debug(f'{name}:')
             for i, tok in enumerate(sent.tokens):
-                logger.debug(f'  {i}: i={tok.i}, pos={tok.pos_}, ' +
-                             f'ent={tok.ent_}: {tok}')
+                logger.debug(f'  {i}: i={tok.i}, {tok}')
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):
@@ -263,22 +262,26 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
             if source_tok is not None:
                 visited.add(source_tok.idx)
                 self._merge_tokens(target_tok, source_tok, target_container)
-                if source_tok.ent_ != FeatureToken.NONE:
-                    self._merge_entities_by_token(target_tok, source_tok)
+                self._merge_entities_by_token(target_tok, source_tok)
         targ_toks: Set[int] = set(map(
             lambda t: t.idx, target_container.token_iter()))
         not_visited: Tuple[FeatureToken, ] = tuple(map(
             lambda idx: targ2idx[idx], (targ_toks - visited)))
         if logger.isEnabledFor(logging.TRACE):
             logger.trace(f'not visited: {not_visited}')
-        for target_tok in not_visited:
-            targ_fid: str
-            for _, targ_fid in self.map_features:
-                if not hasattr(target_tok, targ_fid):
-                    target_tok.set_feature(targ_fid, FeatureToken.NONE)
-            for targ_fid in self.overwrite_features:
-                if not hasattr(target_tok, targ_fid):
-                    target_tok.set_feature(targ_fid, FeatureToken.NONE)
+        if len(self.map_features) > 0 or len(self.yield_features) > 0 or \
+           len(self.overwrite_features) > 0:
+            for target_tok in not_visited:
+                targ_fid: str
+                for _, targ_fid in self.map_features:
+                    if not hasattr(target_tok, targ_fid):
+                        target_tok.set_feature(targ_fid, FeatureToken.NONE)
+                for targ_fid in self.yield_features:
+                    if not hasattr(target_tok, targ_fid):
+                        target_tok.set_feature(targ_fid, FeatureToken.NONE)
+                for targ_fid in self.overwrite_features:
+                    if not hasattr(target_tok, targ_fid):
+                        target_tok.set_feature(targ_fid, FeatureToken.NONE)
 
     def _merge_sentence(self):
         if logger.isEnabledFor(logging.DEBUG):
