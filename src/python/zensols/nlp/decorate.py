@@ -163,4 +163,4 @@ class CopyFeatureTokenContainerDecorator(FeatureTokenContainerDecorator):
                 if not hasattr(tok, source):
                     raise NLPError(
                         f"Missing feature ID '{source}' for token {tok}")
-                tok.set_value(target, getattr(tok, source))
+                tok.set_feature(target, getattr(tok, source))
