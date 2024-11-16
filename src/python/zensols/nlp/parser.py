@@ -14,6 +14,7 @@ import re
 from io import StringIO
 from spacy.language import Language
 from zensols.util import Hasher
+from zensols.util.warn import WarningSilencer
 from zensols.config import ImportIniConfig, ImportConfigFactory
 from zensols.persist import PersistableContainer, Stash
 from zensols.config import Dictable
@@ -110,6 +111,7 @@ class FeatureDocumentParser(PersistableContainer, Dictable, metaclass=ABCMeta):
     """The default value for :obj:`token_feature_ids`."""
 
     _LOG_FORMAT: ClassVar[str] = 'parse[{name}]: {text}'
+    """The format used for debugging messages with :meth:`_log_parse`."""
 
     def __post_init__(self):
         super().__init__()
@@ -263,6 +265,14 @@ class DecoratedFeatureDocumentParser(FeatureDocumentParser):
     :see: :obj:`TOKEN_FEATURE_IDS`
 
     """
+    silencer: WarningSilencer = field(default=None)
+    """Optinally suppress warnings the parser generates."""
+
+    def __post_init__(self):
+        super().__post_init__()
+        if self.silencer is not None:
+            self.silencer()
+
     def decorate(self, doc: FeatureDocument):
         td: FeatureTokenDecorator
         for td in self.token_decorators:
