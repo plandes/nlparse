@@ -38,7 +38,7 @@ class FeatureToken(PersistableContainer, TextContainer):
     """Use write method."""
 
     REQUIRED_FEATURE_IDS: ClassVar[Set[str]] = frozenset(
-        'i idx i_sent norm'.split())
+        'i idx i_sent norm lexspan'.split())
     """Features retained regardless of configuration for basic functionality.
 
     """
