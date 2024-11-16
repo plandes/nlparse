@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple
+from typing import List, Tuple, Set, Dict, Any
 from dataclasses import dataclass, field
 import re
 from . import (
@@ -164,3 +164,21 @@ class CopyFeatureTokenContainerDecorator(FeatureTokenContainerDecorator):
                     raise NLPError(
                         f"Missing feature ID '{source}' for token {tok}")
                 tok.set_feature(target, getattr(tok, source))
+
+
+@dataclass
+class RemoveFeatureTokenContainerDecorator(FeatureTokenContainerDecorator):
+    """Removes features each token in the container.
+
+    """
+    exclude_feature_ids: Set[str] = field()
+    """The features to remove from the tokens."""
+
+    def decorate(self, container: TokenContainer):
+        rm_fids: Tuple[Tuple[str, str], ...] = self.exclude_feature_ids
+        tok: FeatureToken
+        for tok in container.token_iter():
+            td: Dict[str, Any] = tok.__dict__
+            fid: str
+            for fid in rm_fids:
+                del td[fid]
