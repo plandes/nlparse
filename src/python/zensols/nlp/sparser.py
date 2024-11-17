@@ -225,8 +225,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             self._assert_model(self.model_name)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'loading model: {self.model_name}')
-        nlp = spacy.load(self.model_name)
-        return nlp
+        return spacy.load(self.model_name)
 
     def _add_components(self, nlp: Language):
         """Add components to the pipeline that was just created."""
@@ -247,11 +246,9 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'removed {name} ({id(comp)})')
 
-    @property
-    @persisted('_model')
-    def model(self) -> Language:
-        """The spaCy model.  On first access, this creates a new instance using
-        ``model_name``.
+    def _get_model(self) -> Language:
+        """Load the model if it isn't already cached, otherwise, return the
+        cached version if it is.
 
         """
         mkey: str = self._create_model_key()
@@ -292,6 +289,15 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 logger.debug(f'adding special token: {stok} with rule: {rule}')
             nlp.tokenizer.add_special_case(stok, rule)
         return nlp
+
+    @property
+    @persisted('_model')
+    def model(self) -> Language:
+        """The spaCy model.  On first access, this creates a new instance using
+        ``model_name``.
+
+        """
+        return self._get_model()
 
     @classmethod
     def clear_models(self):

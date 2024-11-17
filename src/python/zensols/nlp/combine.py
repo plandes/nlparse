@@ -56,11 +56,11 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
     not set or missing, then use :obj:`yield_features`.
 
     """
-    map_features: List[Tuple[str, str]] = field(default_factory=list)
+    map_features: List[Tuple[str, str, Any]] = field(default_factory=list)
     """Like :obj:`yield_features` but the feature ID can be different from the
     source to the target.  Each tuple has the form:
 
-        ``(<source feature ID>, <target feature ID>)``
+        ``(<source feature ID>, <target feature ID>, <default for missing>)``
 
     """
     def _validate_features(self, target_tok: FeatureToken,
@@ -86,7 +86,7 @@ class CombinerFeatureDocumentParser(DecoratedFeatureDocumentParser):
         self._validate_features(target_tok, source_tok, context_container)
         f: str
         dstf: str
-        for f, dstf in self.map_features:
+        for f, dstf, _ in self.map_features:
             targ = target_tok.get_feature(dstf, False)
             src = source_tok.get_feature(f, False)
             if logger.isEnabledFor(logging.TRACE):
@@ -273,9 +273,11 @@ class MappingCombinerFeatureDocumentParser(CombinerFeatureDocumentParser):
            len(self.overwrite_features) > 0:
             for target_tok in not_visited:
                 targ_fid: str
-                for _, targ_fid in self.map_features:
+                for _, targ_fid, default in self.map_features:
                     if not hasattr(target_tok, targ_fid):
-                        target_tok.set_feature(targ_fid, FeatureToken.NONE)
+                        if default is None:
+                            default = FeatureToken.NONE
+                        target_tok.set_feature(targ_fid, default)
                 for targ_fid in self.yield_features:
                     if not hasattr(target_tok, targ_fid):
                         target_tok.set_feature(targ_fid, FeatureToken.NONE)
