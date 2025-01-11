@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.12.0] - 2025-01-11
 ### Removed
 - `CombinerFeatureDocumentParser.include_detached_features` to default using
   `FeatureToken.{get,set}_feature` semantics.
+- Dropped support for Python 3.10.
 
 ### Added
 - A text indexing and search class which find feature spans in text with
@@ -21,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Replaced `FeatureToken.{get,set}_value` with a more robust
   `{get,set}_feature`.
+- Upgraded to [zensols.util] version 1.15.
 
 
 ## [1.11.1] - 2024-05-11
@@ -392,7 +395,7 @@ copy/move functionality, but speeds things up.
 
 ## [0.0.14] - 2021-04-29
 ## Changes
-- Upgrade to [zensols.util]==1.4.1.
+- Upgrade to [zensols.util] version 1.4.1.
 - Upgrade documentation API generation.
 - Nail dependencies to spacy 2.3.5 until pip deps are fixed.
 - Added sentence index features to reconstruct sentences from documents.
@@ -496,7 +499,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.11.1...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/plandes/nlparse/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/plandes/nlparse/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/plandes/nlparse/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/plandes/nlparse/compare/v1.9.2...v1.10.0

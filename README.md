@@ -1,7 +1,6 @@
 # Zensols Natural Language Parsing
 
 [![PyPI][pypi-badge]][pypi-link]
-[![Python 3.10][python310-badge]][python310-link]
 [![Python 3.11][python311-badge]][python311-link]
 [![Build Status][build-badge]][build-link]
 
@@ -160,15 +159,13 @@ Contributions as pull requests, feedback and any input is welcome.
 
 [MIT License](LICENSE.md)
 
-Copyright (c) 2020 - 2023 Paul Landes
+Copyright (c) 2020 - 2025 Paul Landes
 
 
 <!-- links -->
 [pypi]: https://pypi.org/project/zensols.nlp/
 [pypi-link]: https://pypi.python.org/pypi/zensols.nlp
 [pypi-badge]: https://img.shields.io/pypi/v/zensols.nlp.svg
-[python310-badge]: https://img.shields.io/badge/python-3.10-blue.svg
-[python310-link]: https://www.python.org/downloads/release/python-3100
 [python311-badge]: https://img.shields.io/badge/python-3.11-blue.svg
 [python311-link]: https://www.python.org/downloads/release/python-3110
 [build-badge]: https://github.com/plandes/nlparse/workflows/CI/badge.svg
