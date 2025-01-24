@@ -37,6 +37,9 @@ class FeatureToken(PersistableContainer, TextContainer):
     _DICTABLE_WRITABLE_DESCENDANTS: ClassVar[bool] = True
     """Use write method."""
 
+    _PERSITABLE_PROPERTIES: ClassVar[Set[str]] = {'lexspan'}
+    """Cache lexspan in pickled files."""
+
     REQUIRED_FEATURE_IDS: ClassVar[Set[str]] = frozenset(
         'i idx i_sent norm lexspan'.split())
     """Features retained regardless of configuration for basic functionality.
@@ -97,9 +100,17 @@ class FeatureToken(PersistableContainer, TextContainer):
     a named entity.
 
     """
+    lexspan: LexicalSpan = field()
+    """The character offset beginning and end of the token.  This is set as
+    (``start``, ``end``) as (:obj:`idx`, :obj:`idx` + ``len(text)``).  The
+    ``begin`` is usually the same as :obj:`idx` but can be updated when updated
+    for normalized text or when the text moves/reindexed in the document.
+
+    """
     def __post_init__(self):
         super().__init__()
         self._detached_feature_ids = None
+        #self._lexspan = LexicalSpan(self.idx, self.idx + len(self.text))
 
     def detach(self, feature_ids: Set[str] = None,
                skip_missing: bool = False,
@@ -422,11 +433,13 @@ class SpacyFeatureToken(FeatureToken):
         self.spacy_token = spacy_token
         self.is_ent: bool = not isinstance(self.spacy_token, Token)
         self._doc: Doc = self.spacy_token.doc
-        i = self.token.i
-        idx = self.token.idx
-        i_sent = self.token.i - self.token.sent.start
         self._text = spacy_token.orth_
-        super().__init__(i, idx, i_sent, norm)
+        super().__init__(
+            i=self.token.i,
+            idx=self.token.idx,
+            i_sent=self.token.i - self.token.sent.start,
+            norm=norm,
+            lexspan=LexicalSpan.from_token(self.spacy_token))
 
     def __getstate__(self):
         raise NLPError('Not persistable')
@@ -571,13 +584,6 @@ class SpacyFeatureToken(FeatureToken):
             for tok in sent:
                 if tok.i == targ:
                     return six
-
-    @property
-    def lexspan(self) -> LexicalSpan:
-        """The document indexed lexical span using :obj:`idx`.
-
-        """
-        return LexicalSpan.from_token(self.spacy_token)
 
     @property
     def tag(self) -> int:

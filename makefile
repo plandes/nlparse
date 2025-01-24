@@ -9,6 +9,8 @@ PY_DEP_POST_DEPS +=	modeldeps
 SPACY_MODELS +=		sm md lg
 CLEAN_DEPS +=		pycleancache
 
+#PY_SRC_TEST_PAT ?=	'test_token.py'
+
 
 ## Includes
 #

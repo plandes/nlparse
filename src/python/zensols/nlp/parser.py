@@ -19,7 +19,8 @@ from zensols.config import ImportIniConfig, ImportConfigFactory
 from zensols.persist import PersistableContainer, Stash
 from zensols.config import Dictable
 from . import (
-    NLPError, FeatureToken, TokenContainer, FeatureSentence, FeatureDocument
+    NLPError, LexicalSpan, FeatureToken, TokenContainer,
+    FeatureSentence, FeatureDocument
 )
 
 logger = logging.getLogger(__name__)
@@ -411,7 +412,10 @@ class WhiteSpaceTokenizerFeatureDocumentParser(FeatureDocumentParser):
         toks: List[FeatureToken] = []
         m: re.Match
         for i, m in zip(it.count(), re.finditer(self._TOK_REGEX, text)):
-            tok = FeatureToken(i, m.start(), 0, m.group(0))
+            start: int = m.start()
+            tok_text: str = m.group(0)
+            lexspan = LexicalSpan(start, start + len(tok_text))
+            tok = FeatureToken(i, start, 0, tok_text, lexspan)
             tok.default_detached_feature_ids = \
                 FeatureToken.REQUIRED_FEATURE_IDS
             toks.append(tok)

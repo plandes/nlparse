@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.12.1] - 2025-01-23
+### Changed
+- Fix bug when cloning `FeatureToken`.
+
+
 ## [1.12.0] - 2025-01-11
 ### Removed
 - `CombinerFeatureDocumentParser.include_detached_features` to default using
@@ -499,7 +504,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.1...HEAD
+[1.12.1]: https://github.com/plandes/nlparse/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/plandes/nlparse/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/plandes/nlparse/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/plandes/nlparse/compare/v1.10.0...v1.11.0
