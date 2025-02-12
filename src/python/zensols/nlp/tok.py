@@ -110,7 +110,6 @@ class FeatureToken(PersistableContainer, TextContainer):
     def __post_init__(self):
         super().__init__()
         self._detached_feature_ids = None
-        #self._lexspan = LexicalSpan(self.idx, self.idx + len(self.text))
 
     def detach(self, feature_ids: Set[str] = None,
                skip_missing: bool = False,
