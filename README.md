@@ -4,7 +4,6 @@
 [![Python 3.11][python311-badge]][python311-link]
 [![Build Status][build-badge]][build-link]
 
-
 From the paper [DeepZensols: A Deep Learning Natural Language Processing
 Framework for Experimentation and Reproducibility].  This framework wraps the
 [spaCy] framework and creates light weight features in a class [hierarchy] that

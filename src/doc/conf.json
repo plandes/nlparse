@@ -1,3 +1,0 @@
-{"includes": {"named": ["zensols.util"],
-	      "mapped": [["spacy", "https://spacy.readthedocs.io/en/latest/"],
-			 ["zensols.deepnlp", "{url}/deepnlp/"]]}}
