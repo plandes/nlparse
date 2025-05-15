@@ -49,6 +49,7 @@ nlp_ner_scorer_methods:
 #
 nlp_scorer:
   class_name: zensols.nlp.score.Scorer
+  package_manager: 'object: zensols.util.PackageManager'
   methods: >-
     instance: dict: {
       ${nlp_scorer_methods:exact_match}

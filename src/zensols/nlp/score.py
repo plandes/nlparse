@@ -13,6 +13,7 @@ import sys
 from io import TextIOBase
 import nltk.translate.bleu_score as bleu
 import numpy as np
+from zensols.util import PackageRequirement, PackageManager, PackageError
 from zensols.introspect import ClassImporter
 from zensols.config import Dictable
 from zensols.persist import persisted
@@ -281,7 +282,7 @@ class ScoreMethod(ABC):
     """Whether to reverse the order of the sentences."""
 
     @classmethod
-    def _get_external_modules(cls: Type) -> Tuple[str, ...]:
+    def _get_external_modules(cls: Type) -> Tuple[PackageRequirement, ...]:
         """Return a list of external module names needed by this method."""
         return ()
 
@@ -289,10 +290,10 @@ class ScoreMethod(ABC):
     def missing_modules(cls: Type) -> Tuple[str]:
         """Return a list of missing modules neede by this score method."""
         missing: List[str] = []
-        mod: str
+        mod: PackageRequirement
         for mod in cls._get_external_modules():
             try:
-                ClassImporter.get_module(mod)
+                ClassImporter.get_module(mod.name)
             except ModuleNotFoundError:
                 missing.append(mod)
         return missing
@@ -418,7 +419,7 @@ class LevenshteinDistanceScoreMethod(ScoreMethod):
     """
     @classmethod
     def _get_external_modules(cls: Type) -> Tuple[str, ...]:
-        return ('editdistance',)
+        return (PackageRequirement.from_spec('editdistance~=0.8.1'),)
 
     def _score(self, meth: str, context: ScoreContext) -> Iterable[FloatScore]:
         import editdistance
@@ -510,7 +511,7 @@ class RougeScoreMethod(ScoreMethod):
     """
     @classmethod
     def _get_external_modules(cls: Type) -> Tuple[str, ...]:
-        return ('rouge_score',)
+        return (PackageRequirement.from_spec('rouge_score~=0.1.2'),)
 
     def _score(self, meth: str, context: ScoreContext) -> \
             Iterable[HarmonicMeanScore]:
@@ -544,6 +545,12 @@ class Scorer(object):
     (:obj:`methods`).
 
     """
+    package_manager: PackageManager = field(default=None)
+    """The package manager used to install scoring methods.  If this is
+    ``None``, then packages are not installed and scoring methods are not made
+    available.
+
+    """
     methods: Dict[str, ScoreMethod] = field(default=None)
     """The registered scoring methods availale, which are accessed from
     :obj:`.ScoreContext.meth`.
@@ -554,22 +561,40 @@ class Scorer(object):
     :obj:`.ScoreContext.meth` in the call to :meth:`score`.
 
     """
+    def _install_all(self, reqs: Tuple[PackageRequirement, ...]) -> bool:
+        if self.package_manager is None:
+            return False
+        else:
+            req: PackageRequirement
+            for req in reqs:
+                try:
+                    output: str = self.package_manager.install(req)
+                    if logger.isEnabledFor(logging.INFO):
+                        logger.info(f'installed: {req}')
+                    if logger.isEnabledFor(logging.DEBUG):
+                        logger.debug(f'install output: <<{output}>>')
+                except PackageError as e:
+                    logger.warning(
+                        f"could not install scoring requirement '{req}': {e}")
+                    return False
+            return True
+
     @persisted('_get_missing_modules_pw', cache_global=True)
-    def _get_missing_modules(self) -> Tuple[str]:
-        missing: List[str] = []
+    def _get_missing_modules(self) -> Tuple[PackageRequirement, ...]:
+        missing: List[PackageRequirement] = []
         not_avail: List[str] = []
         name: str
         meth: ScoreMethod
         for name, meth in self.methods.items():
-            missing_mods: Tuple[str] = meth.missing_modules()
-            if len(missing_mods) > 0:
+            missing: Tuple[PackageRequirement, ...] = meth.missing_modules()
+            if len(missing) > 0 and not self._install_all(missing):
                 logger.warning(f'method {meth} is not available: ' +
-                               f'missing {missing_mods}')
+                               f'missing {missing}')
                 not_avail.append(name)
-                missing.extend(missing_mods)
+                missing.extend(missing)
         for name in not_avail:
             del self.methods[name]
-        return tuple(missing_mods)
+        return tuple(missing)
 
     def score(self, context: ScoreContext) -> ScoreSet:
         """Score the sentences in ``context``.

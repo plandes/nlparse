@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Switch from setuptools to [Pixi].
+
 
 ## [1.12.1] - 2025-01-23
 ### Changed
@@ -557,3 +560,4 @@ Data classes are now used so Python 3.7 is now a requirement.
 [zenbuild]: https://github.com/plandes/zenbuild
 [zensols.util]: https://github.com/plandes/util
 [zensols.mednlp]: https://github.com/plandes/mednlp
+[Pixi]: https://pixi.sh
