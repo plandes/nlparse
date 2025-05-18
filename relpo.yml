@@ -47,9 +47,6 @@ project:
       - en_core_web_md @ https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.7.1/en_core_web_md-3.7.1-py3-none-any.whl
       # core framework
       - zensols.util~=1.15.8
-      # score
-      #rouge-score~=0.1.2
-      #- editdistance
 # pypi config
 build:
   pyproject_template_files:

@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+
+## [1.12.2] - 2025-05-18
 ### Changed
 - Switch from setuptools to [Pixi].
+- Add scoring method module install.
 
 
 ## [1.12.1] - 2025-01-23
@@ -507,7 +510,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.1...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.2...HEAD
+[1.12.2]: https://github.com/plandes/nlparse/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/plandes/nlparse/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/plandes/nlparse/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/plandes/nlparse/compare/v1.11.0...v1.11.1
