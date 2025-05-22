@@ -7,7 +7,7 @@ from typing import (
     Tuple, Set, Dict, Iterable, List, ClassVar, Union, Optional, Type
 )
 from dataclasses import dataclass, field
-from abc import ABCMeta, ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 import logging
 import sys
 from io import TextIOBase
@@ -274,7 +274,7 @@ class ScoreContext(Dictable):
 
 
 @dataclass
-class ScoreMethod(ABC):
+class ScoreMethod(metaclass=ABCMeta):
     """An abstract base class for scoring methods (bleu, rouge, etc).
 
     """
