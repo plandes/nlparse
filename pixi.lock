@@ -4281,7 +4281,7 @@ packages:
 - pypi: .
   name: zensols-nlparse
   version: 1.12.2
-  sha256: b172b1405441a4a98f767f80c9b8ebc343ec7fdf50bac239eed617361a98eef4
+  sha256: a7a1aa324b72250a47b97d76d26d71e482d8eb18119a16c5a30ad3121f6242ce
   requires_dist:
   - numpy~=1.26.4
   - msgpack~=1.1.0
