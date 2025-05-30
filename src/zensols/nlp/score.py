@@ -108,7 +108,7 @@ class ScoreResult(Dictable):
     """A result of scores created by a :class:`.ScoreMethod`.
 
     """
-    scores: Dict[str, Tuple[Score]] = field()
+    scores: Dict[str, Tuple[Score, ...]] = field()
     """The scores by method name."""
 
     correlation_id: Optional[str] = field(default=None)
@@ -117,7 +117,7 @@ class ScoreResult(Dictable):
     def __len__(self) -> int:
         return len(self.scores)
 
-    def __getitem__(self, k: str) -> Dict[str, Tuple[Score]]:
+    def __getitem__(self, k: str) -> Dict[str, Tuple[Score, ...]]:
         return self.scores[k]
 
     def write(self, depth: int = 0, writer: TextIOBase = sys.stdout):
@@ -136,7 +136,7 @@ class ScoreSet(Dictable):
     """All scores returned from :class:`.Scorer'.
 
     """
-    results: Tuple[ScoreResult] = field()
+    results: Tuple[ScoreResult, ...] = field()
     """A tuple with each element having the results of the respective sentence
     pair in :obj:`.ScoreContext.sents`.  Each elemnt is a dictionary with the
     method are the keys with results as the values as output of the
@@ -152,10 +152,10 @@ class ScoreSet(Dictable):
     def __len__(self) -> int:
         return len(self.results)
 
-    def __iter__(self) -> Iterable[Dict[str, Tuple[Score]]]:
+    def __iter__(self) -> Iterable[Dict[str, Tuple[Score, ...]]]:
         return iter(self.results)
 
-    def __getitem__(self, i: int) -> Dict[str, Tuple[Score]]:
+    def __getitem__(self, i: int) -> Dict[str, Tuple[Score, ...]]:
         return self.results[i]
 
     @property
@@ -287,7 +287,7 @@ class ScoreMethod(metaclass=ABCMeta):
         return ()
 
     @classmethod
-    def missing_modules(cls: Type) -> Tuple[str]:
+    def missing_modules(cls: Type) -> Tuple[str, ...]:
         """Return a list of missing modules neede by this score method."""
         missing: List[str] = []
         mod: PackageRequirement
@@ -348,12 +348,12 @@ class ScoreMethod(metaclass=ABCMeta):
         return scores
 
     def _tokenize(self, context: ScoreContext) -> \
-            Iterable[Tuple[Tuple[str], Tuple[str]]]:
+            Iterable[Tuple[Tuple[str, ...], Tuple[str, ...]]]:
         s1: TokenContainer
         s2: TokenContainer
         for s1, s2 in context.pairs:
-            s1t: Tuple[str]
-            s2t: Tuple[str]
+            s1t: Tuple[str, ...]
+            s2t: Tuple[str, ...]
             if context.norm:
                 s1t = tuple(map(lambda t: t.norm, s1.token_iter()))
                 s2t = tuple(map(lambda t: t.norm, s2.token_iter()))
@@ -519,7 +519,7 @@ class RougeScoreMethod(ScoreMethod):
 
         class Tokenizer(object):
             @staticmethod
-            def tokenize(sent: TokenContainer) -> Tuple[str]:
+            def tokenize(sent: TokenContainer) -> Tuple[str, ...]:
                 return sents[id(sent)]
 
         s1: TokenContainer
@@ -604,7 +604,7 @@ class Scorer(object):
         :return: the results for each method indicated in ``context``
 
         """
-        by_meth: Dict[str, Tuple[Score]] = {}
+        by_meth: Dict[str, Tuple[Score, ...]] = {}
         by_res: List[ScoreResult] = []
         meths: Iterable[str] = context.methods
         if meths is None:
@@ -625,7 +625,7 @@ class Scorer(object):
             meth: str
             if context.correlation_ids is not None:
                 corr_id = context.correlation_ids[i]
-            res_tup: Tuple[Score]
+            res_tup: Tuple[Score, ...]
             # for each scored pair
             for meth, res_tup in by_meth.items():
                 item_res[meth] = res_tup[i]
