@@ -1,4 +1,0 @@
-
-[tool.hatch.metadata]
-# allow direct references (spacy model dependencies in `relpo.yml`)
-allow-direct-references = true

@@ -1,6 +1,7 @@
 #@meta {author: "Paul Landes"}
 #@meta {desc: "Python build configuration", date: "2025-05-15"}
 
+
 # primary author
 author:
   name: Paul Landes
@@ -42,15 +43,16 @@ project:
       - nltk~=3.7
       - interlap~=0.2.7
       - spacy~=3.7.5
-      # models
-      - en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
-      - en_core_web_md @ https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.7.1/en_core_web_md-3.7.1-py3-none-any.whl
       # core framework
       - zensols.util~=1.15.8
-# pypi config
 build:
-  pyproject_template_files:
-    - dep.toml
+  table_appends:
+    tool.pixi.pypi-dependencies:
+      # models
+      en_core_web_sm:
+        url: "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"
+      en_core_web_md:
+        url: "https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.7.1/en_core_web_md-3.7.1-py3-none-any.whl"
 doc:
   api_config:
     intersphinx_mapping:
