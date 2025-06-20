@@ -12,7 +12,7 @@ github:
 # other 'project' section metadata
 project:
   domain: zensols
-  name: nlparse
+  name: nlp
   short_description: A utility library to assist in parsing natural language text.
   long_description: >-
     This framework wraps the spaCy framework and creates light weight features
@@ -35,16 +35,16 @@ project:
     # pypi dependencies added to 'project'
     dependencies:
       # scientific
-      - numpy~=1.26.4
-      - msgpack~=1.1.0
-      - msgpack_numpy~=0.4.8
-      - smart-open>=4.0.1
+      - 'numpy~=1.26.4'
+      - 'msgpack~=1.1.0'
+      - 'msgpack_numpy~=0.4.8'
+      - 'smart-open>=4.0.1'
       # nlp
-      - nltk~=3.7
-      - interlap~=0.2.7
-      - spacy~=3.7.5
+      - 'nltk~=3.7'
+      - 'interlap~=0.2.7'
+      - 'spacy~=3.7.5'
       # core framework
-      - zensols.util~=1.15.8
+      - 'zensols.util~=1.15.8'
 build:
   table_appends:
     tool.pixi.pypi-dependencies:
