@@ -2,6 +2,7 @@
 
 [![PyPI][pypi-badge]][pypi-link]
 [![Python 3.11][python311-badge]][python311-link]
+[![Python 3.12][python312-badge]][python312-link]
 [![Build Status][build-badge]][build-link]
 
 From the paper [DeepZensols: A Deep Learning Natural Language Processing
@@ -167,6 +168,8 @@ Copyright (c) 2020 - 2025 Paul Landes
 [pypi-badge]: https://img.shields.io/pypi/v/zensols.nlp.svg
 [python311-badge]: https://img.shields.io/badge/python-3.11-blue.svg
 [python311-link]: https://www.python.org/downloads/release/python-3110
+[python312-badge]: https://img.shields.io/badge/python-3.12-blue.svg
+[python312-link]: https://www.python.org/downloads/release/python-3120
 [build-badge]: https://github.com/plandes/nlparse/workflows/CI/badge.svg
 [build-link]: https://github.com/plandes/nlparse/actions
 

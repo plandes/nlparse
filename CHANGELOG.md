@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-## [1.12.2] - 2025-05-18
+## [1.12.2] - 2025-06-19
 ### Changed
 - Switch from setuptools to [Pixi].
 - Add scoring method module install.
