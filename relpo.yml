@@ -44,7 +44,7 @@ project:
       - 'interlap~=0.2.7'
       - 'spacy~=3.7.5'
       # core framework
-      - 'zensols.util~=1.15.8'
+      - 'zensols.util~=1.15.10'
 build:
   table_appends:
     tool.pixi.pypi-dependencies:

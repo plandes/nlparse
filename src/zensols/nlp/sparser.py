@@ -4,7 +4,7 @@
 __author__ = 'Paul Landes'
 
 from typing import (
-    Type, Iterable, Sequence, Set, Dict, Any, List, Tuple, ClassVar
+    Type, Iterable, Sequence, Set, Dict, Any, List, Tuple, Union, ClassVar
 )
 from dataclasses import dataclass, field
 import logging
@@ -15,6 +15,8 @@ import spacy
 from spacy.language import Language
 from spacy.symbols import ORTH
 from spacy.tokens import Doc, Span, Token
+from zensols.util import APIError
+from zensols.util.package import PackageManager, PackageRequirement
 from zensols.config import Dictable, ConfigFactory
 from zensols.persist import persisted, PersistedWork
 from . import (
@@ -185,12 +187,17 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
     and not the new ones created with a new configuration factory.
 
     """
-    auto_install_model: bool = field(default=False)
+    auto_install_model: Union[bool, str, Iterable[str]] = field(default=False)
     """Whether to install models not already available.  Note that this uses the
     pip command to download model requirements, which might have an adverse
-    effect of replacing currently installed Python packages.
+    effect of replacing currently installed Python packages.  This value is
+    interpreted as a pip requirement(s) to install if a string or iterable of
+    strings.
 
     """
+    package_manager: PackageManager = field(default_factory=PackageManager)
+    """The package manager used to install :obj:`auto_install_model`."""
+
     def __post_init__(self):
         super().__post_init__()
         self._model = PersistedWork('_model', self)
@@ -201,13 +208,17 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 'FilterSentenceFeatureDocumentDecorator instead',
                 DeprecationWarning)
 
-    def _assert_model(self, model_name: str):
+    def _assert_model(self, model_name: str, is_dep: bool):
         import spacy.util
         import spacy.cli
         if not spacy.util.is_package(model_name):
             if logger.isEnabledFor(logging.INFO):
-                logger.info(f'model not found: {self.model_name}, loading...')
-            spacy.cli.download(model_name)
+                logger.info(f'downloading model: {self.model_name}...')
+            if is_dep:
+                req = PackageRequirement.from_spec(model_name)
+                self.package_manager.install(req)
+            else:
+                spacy.cli.download(model_name)
 
     def _create_model_key(self) -> str:
         """Create a unique key used for storing expensive-to-create spaCy
@@ -221,8 +232,19 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     def _create_model(self) -> Language:
         """Load, configure and return a new spaCy model instance."""
-        if self.auto_install_model:
-            self._assert_model(self.model_name)
+        if self.auto_install_model is not False:
+            if isinstance(self.auto_install_model, str):
+                self._assert_model(self.auto_install_model, True)
+            elif isinstance(self.auto_install_model, Iterable):
+                dep: str
+                for dep in self.auto_install_model:
+                    self._assert_model(dep, True)
+            elif self.auto_install_model is True:
+                self._assert_model(self.model_name, False)
+            else:
+                raise APIError(
+                    'Wrong auto_install_model value: ' +
+                    f'{self.auto_install_model} in {self.name}')
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'loading model: {self.model_name}')
         return spacy.load(self.model_name)

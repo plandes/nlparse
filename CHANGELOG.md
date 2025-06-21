@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.12.4] - 2025-06-21
+### Added
+- Added feature to optionally auto load spaCy models as pip dependencies.
+
+
+## [1.12.3] - 2025-06-19
+### Changed
+- Fixed pypi package name.
+
+
 ## [1.12.2] - 2025-06-19
 ### Changed
 - Switch from setuptools to [Pixi].
@@ -510,7 +520,9 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.2...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.4...HEAD
+[1.12.4]: https://github.com/plandes/nlparse/compare/v1.12.3...v1.12.4
+[1.12.3]: https://github.com/plandes/nlparse/compare/v1.12.2...v1.12.3
 [1.12.2]: https://github.com/plandes/nlparse/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/plandes/nlparse/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/plandes/nlparse/compare/v1.11.1...v1.12.0
