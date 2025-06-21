@@ -5,6 +5,7 @@
 #
 PROJ_TYPE =		python
 PROJ_MODULES =		python/doc python/deploy
+PY_DOC_DIST_NAME =	nlparse
 
 
 ## Includes
