@@ -35,15 +35,17 @@ Other features include:
 
 ## Obtaining / Installing
 
-The easiest way to install the command line program is via the `pip`
-installer.  Since the package needs at least one spaCy module, the second
-command downloads the smallest model.
+The library can be installed with pip from the [pypi] repository:
 ```bash
-pip3 install --use-deprecated=legacy-resolver zensols.nlp
-python -m spacy download en_core_web_sm
+pip3 install zensols.nlp
 ```
-
-Binaries are also available on [pypi].
+The smallest base spaCy model will automatically be downloaded on the first
+use.  You can download other models, such as the medium base model using the
+following command:
+```bash
+pip3 install zensols.nlp
+python -m spacy download en_core_web_md
+```
 
 
 ## Usage
