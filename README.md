@@ -43,7 +43,6 @@ The smallest base spaCy model will automatically be downloaded on the first
 use.  You can download other models, such as the medium base model using the
 following command:
 ```bash
-pip3 install zensols.nlp
 python -m spacy download en_core_web_md
 ```
 
