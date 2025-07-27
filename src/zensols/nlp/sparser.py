@@ -105,6 +105,12 @@ class SpacyComponent(Component):
         parser._assert_model_installed(self.auto_install_model)
         super().init(model, parser)
 
+    def __hash__(self) -> int:
+        x: int = super().__hash__()
+        if self.auto_install_model is not None:
+            x += 13 * hash(self.auto_install_model)
+        return x
+
 
 @dataclass
 class SpacyFeatureDocumentParser(FeatureDocumentParser):
