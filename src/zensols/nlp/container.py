@@ -282,6 +282,14 @@ class TokenContainer(PersistableContainer, TextContainer, metaclass=ABCMeta):
         """
         return self._get_entities()
 
+    def set_entity_offsets(self, offsets: Tuple[Tuple[int, int], ...]):
+        """Set entities as a sequence of non-inclusive character offsets of
+        ``(<begin> , <end>)``.
+
+        """
+        self._ents = list(offsets)
+        self._entities.clear()
+
     @abstractmethod
     def _get_entities(self) -> Tuple[FeatureSpan, ...]:
         pass
