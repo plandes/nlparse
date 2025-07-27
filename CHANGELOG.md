@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- `TokenContainer.set_entity_offsets`
+- A `SpacyComponent` that offers spaCy model and pip dependency installation.
+
+
 ## [1.12.5] - 2025-06-22
 ### Changed
 - Set auto install models default to `true`.

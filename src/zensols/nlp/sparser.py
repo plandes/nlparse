@@ -87,6 +87,26 @@ class _DictableDoc(Dictable):
 
 
 @dataclass
+class SpacyComponent(Component):
+    """A utilty base class that supports installing pip dependencies and spaCy
+    models.
+
+    """
+    auto_install_model: Union[bool, str, Iterable[str]] = field(default=False)
+    """Whether to install models not already available.  Note that this uses the
+    pip command to download model requirements, which might have an adverse
+    effect of replacing currently installed Python packages.  This value is
+    interpreted as a pip requirement(s) to install if a string or iterable of
+    strings.
+
+    """
+    def init(self, model: Language, parser: FeatureDocumentParser):
+        assert isinstance(parser, SpacyFeatureDocumentParser)
+        parser._assert_model_installed(self.auto_install_model)
+        super().init(model, parser)
+
+
+@dataclass
 class SpacyFeatureDocumentParser(FeatureDocumentParser):
     """This langauge resource parses text in to Spacy documents.  Loaded spaCy
     models have attribute ``doc_parser`` set enable creation of factory
@@ -213,12 +233,27 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
         import spacy.cli
         if not spacy.util.is_package(model_name):
             if logger.isEnabledFor(logging.INFO):
-                logger.info(f'downloading model: {self.model_name}...')
+                logger.info(f'downloading model: {model_name}...')
             if is_dep:
                 req = PackageRequirement.from_spec(model_name)
                 self.package_manager.install(req)
             else:
                 spacy.cli.download(model_name)
+
+    def _assert_model_installed(self, model: Union[bool, str, Iterable[str]]):
+        if model is not False:
+            if isinstance(model, str):
+                self._assert_model(model, True)
+            elif isinstance(model, Iterable):
+                dep: str
+                for dep in model:
+                    self._assert_model(dep, True)
+            elif model is True:
+                self._assert_model(self.model_name, False)
+            else:
+                raise APIError(
+                    'Wrong auto_install_model value: ' +
+                    f'{model} in {self.name}')
 
     def _create_model_key(self) -> str:
         """Create a unique key used for storing expensive-to-create spaCy
@@ -232,19 +267,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
 
     def _create_model(self) -> Language:
         """Load, configure and return a new spaCy model instance."""
-        if self.auto_install_model is not False:
-            if isinstance(self.auto_install_model, str):
-                self._assert_model(self.auto_install_model, True)
-            elif isinstance(self.auto_install_model, Iterable):
-                dep: str
-                for dep in self.auto_install_model:
-                    self._assert_model(dep, True)
-            elif self.auto_install_model is True:
-                self._assert_model(self.model_name, False)
-            else:
-                raise APIError(
-                    'Wrong auto_install_model value: ' +
-                    f'{self.auto_install_model} in {self.name}')
+        self._assert_model_installed(self.auto_install_model)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'loading model: {self.model_name}')
         return spacy.load(self.model_name)
@@ -260,7 +283,7 @@ class SpacyFeatureDocumentParser(FeatureDocumentParser):
                 else:
                     if logger.isEnabledFor(logging.DEBUG):
                         logger.debug(f'adding {comp} ({id(comp)}) to pipeline')
-                    comp.init(nlp)
+                    comp.init(nlp, self)
 
     def _remove_components(self, nlp: Language):
         for comp in self.components:

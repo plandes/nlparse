@@ -79,13 +79,15 @@ class Component(object):
             x += 13 * hash(str(self.pipe_config.values()))
         return x
 
-    def init(self, model: Language):
+    def init(self, model: Language, parser: FeatureDocumentParser):
         """Initialize the component and add it to the NLP pipe line.  This base
         class implementation loads the :obj:`module`, then calls
         :meth:`.Language.add_pipe`.
 
         :param model: the model to add the spaCy model (``nlp`` in their
                       parlance)
+
+        :param parser: the owning parser of this component instance
 
         """
         for mod in self.modules:
