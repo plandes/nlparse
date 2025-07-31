@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.12.8] - 2025-07-31
+### Changed
+- Removed unused dependencies: `msgpack` and `smartopen`.
+
+
 ## [1.12.7] - 2025-07-27
 ### Changed
 - Fixed `SpacyComponent` hash bug.
@@ -536,7 +541,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.7...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.8...HEAD
+[1.12.8]: https://github.com/plandes/nlparse/compare/v1.12.7...v1.12.8
 [1.12.7]: https://github.com/plandes/nlparse/compare/v1.12.6...v1.12.7
 [1.12.6]: https://github.com/plandes/nlparse/compare/v1.12.5...v1.12.6
 [1.12.5]: https://github.com/plandes/nlparse/compare/v1.12.4...v1.12.5

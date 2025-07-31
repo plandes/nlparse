@@ -36,9 +36,6 @@ project:
     dependencies:
       # scientific
       - 'numpy~=1.26.4'
-      - 'msgpack~=1.1.0'
-      - 'msgpack_numpy~=0.4.8'
-      - 'smart-open>=4.0.1'
       # nlp
       - 'nltk~=3.7'
       - 'interlap~=0.2.7'
