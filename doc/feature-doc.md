@@ -108,3 +108,4 @@ FeatureToken: org=<was>, norm=<was>
 [configuration API]: https://plandes.github.io/util/doc/config.html#import-ini-configuration
 [examples]: https://github.com/plandes/nlparse/tree/master/example
 [simple.py]: https://github.com/plandes/nlparse/blob/master/example/simple.py
+[feature documents]: feature-doc.md
