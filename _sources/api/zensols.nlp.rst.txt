@@ -1,0 +1,149 @@
+zensols.nlp package
+===================
+
+Submodules
+----------
+
+zensols.nlp.chunker module
+--------------------------
+
+.. automodule:: zensols.nlp.chunker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.combine module
+--------------------------
+
+.. automodule:: zensols.nlp.combine
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.component module
+----------------------------
+
+.. automodule:: zensols.nlp.component
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.container module
+----------------------------
+
+.. automodule:: zensols.nlp.container
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.dataframe module
+----------------------------
+
+.. automodule:: zensols.nlp.dataframe
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.decorate module
+---------------------------
+
+.. automodule:: zensols.nlp.decorate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.domain module
+-------------------------
+
+.. automodule:: zensols.nlp.domain
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.index module
+------------------------
+
+.. automodule:: zensols.nlp.index
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.nerscore module
+---------------------------
+
+.. automodule:: zensols.nlp.nerscore
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.norm module
+-----------------------
+
+.. automodule:: zensols.nlp.norm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.parser module
+-------------------------
+
+.. automodule:: zensols.nlp.parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.score module
+------------------------
+
+.. automodule:: zensols.nlp.score
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.serial module
+-------------------------
+
+.. automodule:: zensols.nlp.serial
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.spannorm module
+---------------------------
+
+.. automodule:: zensols.nlp.spannorm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.sparser module
+--------------------------
+
+.. automodule:: zensols.nlp.sparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.stemmer module
+--------------------------
+
+.. automodule:: zensols.nlp.stemmer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.nlp.tok module
+----------------------
+
+.. automodule:: zensols.nlp.tok
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: zensols.nlp
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html class="no-js" data-content_root="../" lang="en">
+<head><meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="light dark" name="color-scheme"/><meta content="width=device-width, initial-scale=1" name="viewport">
+<link href="../genindex.html" rel="index" title="Index"/><link href="../search.html" rel="search" title="Search"/><link href="../api.html" rel="next" title="API Reference"/><link href="normalizers.html" rel="prev" title="Token Normalizers and Mappers List"/>
+<!-- Generated with Sphinx 7.4.7 and Furo 2025.09.25 -->
+<title>Natural Language Parsing - A utility library to assist in parsing natural language text. 1.12.8 documentation</title>
+<link href="../_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css">
+<link href="../_static/styles/furo.css?v=580074bf" rel="stylesheet" type="text/css">
+<link href="../_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css">
+<link href="../_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css">
+<link href="../_static/graphviz.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/styles/furo-extensions.css?v=8dab3a3b" rel="stylesheet" type="text/css"/>
+<link href="../_static/codeautolink.css?v=57550ae3" rel="stylesheet" type="text/css"/>
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></link></link></link></link></meta></head>
+<body>
+<script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+<svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+<symbol id="svg-toc" viewbox="0 0 24 24">
+<title>Contents</title>
+<svg fill="currentColor" stroke="currentColor" stroke-width="0" viewbox="0 0 1024 1024">
+<path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"></path>
+</svg>
+</symbol>
+<symbol id="svg-menu" viewbox="0 0 24 24">
+<title>Menu</title>
+<svg class="feather-menu" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<line x1="3" x2="21" y1="12" y2="12"></line>
+<line x1="3" x2="21" y1="6" y2="6"></line>
+<line x1="3" x2="21" y1="18" y2="18"></line>
+</svg>
+</symbol>
+<symbol id="svg-arrow-right" viewbox="0 0 24 24">
+<title>Expand</title>
+<svg class="feather-chevron-right" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</symbol>
+<symbol id="svg-sun" viewbox="0 0 24 24">
+<title>Light mode</title>
+<svg class="feather-sun" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="5"></circle>
+<line x1="12" x2="12" y1="1" y2="3"></line>
+<line x1="12" x2="12" y1="21" y2="23"></line>
+<line x1="4.22" x2="5.64" y1="4.22" y2="5.64"></line>
+<line x1="18.36" x2="19.78" y1="18.36" y2="19.78"></line>
+<line x1="1" x2="3" y1="12" y2="12"></line>
+<line x1="21" x2="23" y1="12" y2="12"></line>
+<line x1="4.22" x2="5.64" y1="19.78" y2="18.36"></line>
+<line x1="18.36" x2="19.78" y1="5.64" y2="4.22"></line>
+</svg>
+</symbol>
+<symbol id="svg-moon" viewbox="0 0 24 24">
+<title>Dark mode</title>
+<svg class="icon-tabler-moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 0h24v24H0z" fill="none" stroke="none"></path>
+<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+</svg>
+</symbol>
+<symbol id="svg-sun-with-moon" viewbox="0 0 24 24">
+<title>Auto light/dark, in light mode</title>
+<svg class="icon-custom-derived-from-feather-sun-and-tabler-moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z" style="opacity: 50%"></path>
+<line x1="14.5" x2="14.5" y1="3.25" y2="1.25"></line>
+<line x1="14.5" x2="14.5" y1="15.85" y2="17.85"></line>
+<line x1="10.044" x2="8.63" y1="5.094" y2="3.68"></line>
+<line x1="19" x2="20.414" y1="14.05" y2="15.464"></line>
+<line x1="8.2" x2="6.2" y1="9.55" y2="9.55"></line>
+<line x1="20.8" x2="22.8" y1="9.55" y2="9.55"></line>
+<line x1="10.044" x2="8.63" y1="14.006" y2="15.42"></line>
+<line x1="19" x2="20.414" y1="5.05" y2="3.636"></line>
+<circle cx="14.5" cy="9.55" r="3.6"></circle>
+</svg>
+</symbol>
+<symbol id="svg-moon-with-sun" viewbox="0 0 24 24">
+<title>Auto light/dark, in dark mode</title>
+<svg class="icon-custom-derived-from-feather-sun-and-tabler-moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"></path>
+<line style="opacity: 50%" x1="18" x2="18" y1="3.705" y2="2.5"></line>
+<line style="opacity: 50%" x1="18" x2="18" y1="11.295" y2="12.5"></line>
+<line style="opacity: 50%" x1="15.316" x2="14.464" y1="4.816" y2="3.964"></line>
+<line style="opacity: 50%" x1="20.711" x2="21.563" y1="10.212" y2="11.063"></line>
+<line style="opacity: 50%" x1="14.205" x2="13.001" y1="7.5" y2="7.5"></line>
+<line style="opacity: 50%" x1="21.795" x2="23" y1="7.5" y2="7.5"></line>
+<line style="opacity: 50%" x1="15.316" x2="14.464" y1="10.184" y2="11.036"></line>
+<line style="opacity: 50%" x1="20.711" x2="21.563" y1="4.789" y2="3.937"></line>
+<circle cx="18" cy="7.5" r="2.169" style="opacity: 50%"></circle>
+</svg>
+</symbol>
+<symbol id="svg-pencil" viewbox="0 0 24 24">
+<svg class="icon-tabler-pencil-code" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
+<path d="M13.5 6.5l4 4"></path>
+<path d="M20 21l2 -2l-2 -2"></path>
+<path d="M17 17l-2 2l2 2"></path>
+</svg>
+</symbol>
+<symbol id="svg-eye" viewbox="0 0 24 24">
+<svg class="icon-tabler-eye-code" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 0h24v24H0z" fill="none" stroke="none"></path>
+<path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+<path d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008"></path>
+<path d="M20 21l2 -2l-2 -2"></path>
+<path d="M17 17l-2 2l2 2"></path>
+</svg>
+</symbol>
+</svg>
+<input aria-label="Toggle site navigation sidebar" class="sidebar-toggle" id="__navigation" name="__navigation" type="checkbox"/>
+<input aria-label="Toggle table of contents sidebar" class="sidebar-toggle" id="__toc" name="__toc" type="checkbox"/>
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+<div class="page">
+<header class="mobile-header">
+<div class="header-left">
+<label class="nav-overlay-icon" for="__navigation">
+<span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+</label>
+</div>
+<div class="header-center">
+<a href="../top.html"><div class="brand">A utility library to assist in parsing natural language text. 1.12.8 documentation</div></a>
+</div>
+<div class="header-right">
+<div class="theme-toggle-container theme-toggle-header">
+<button aria-label="Toggle Light / Dark / Auto color theme" class="theme-toggle">
+<svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+<svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+<svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+<svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+</button>
+</div>
+<label class="toc-overlay-icon toc-header-icon" for="__toc">
+<span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+</label>
+</div>
+</header>
+<aside class="sidebar-drawer">
+<div class="sidebar-container">
+<div class="sidebar-sticky"><a class="sidebar-brand" href="../top.html">
+<span class="sidebar-brand-text">A utility library to assist in parsing natural language text. 1.12.8 documentation</span>
+</a><form action="../search.html" class="sidebar-search-container" method="get" role="search">
+<input aria-label="Search" class="sidebar-search" name="q" placeholder="Search"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature-doc.html">Feature Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="normalizers.html">Token Normalizers and Mappers List</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Natural Language Parsing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/zensols.nlp.html">zensols.nlp package</a></li>
+</ul>
+</input></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<div class="main">
+<div class="content">
+<div class="article-container">
+<a class="back-to-top muted-link" href="#">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+</svg>
+<span>Back to top</span>
+</a>
+<div class="content-icon-container">
+<div class="view-this-page">
+<a class="muted-link" href="../_sources/doc/parse.md.txt" title="View this page">
+<svg><use href="#svg-eye"></use></svg>
+<span class="visually-hidden">View this page</span>
+</a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+<button aria-label="Toggle Light / Dark / Auto color theme" class="theme-toggle">
+<svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+<svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+<svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+<svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+</button>
+</div>
+<label class="toc-overlay-icon toc-content-icon" for="__toc">
+<span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+</label>
+</div>
+<article id="furo-main-content" role="main">
+<section id="natural-language-parsing">
+<h1>Natural Language Parsing<a class="headerlink" href="#natural-language-parsing" title="Link to this heading">¶</a></h1>
+<p>Before reading this, please read about <a class="reference internal" href="feature-doc.html"><span class="doc">feature documents</span></a>.  If you want to
+jump right in, its recommended to at least pursue the simple CLI example.</p>
+<p>This framework wraps the <a class="reference external" href="https://spacy.io">spaCy</a> framework and creates features.  The
+motivation is to generate features from the parsed text in an object oriented
+fashion that is fast and easy to pickle as many spaCy objects are C data
+structures.</p>
+<p>A secondary use of this package provides a simple, yet robust way to generate a
+string stream of tokens using a <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer">TokenNormalizer</a>.  This allows for
+configuration driven way of generating tokens used for downstream feature
+vectorization such as word vectors, text classification, information
+retrieval/search, latent semantic indexing or any task that uses a single
+string token.</p>
+<p>Token streams can be transformed using <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.TokenMapper">TokenMapper</a> instances.  These take the
+output of a tokenizer, and then modify them in various ways.  Finally, the
+<a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.MapTokenNormalizer">MapTokenNormalizer</a> is a normalizer that uses a list of <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.TokenMapper">TokenMapper</a>s to
+first create the token stream and then transform them.  See the <a class="reference external" href="../api/zensols.nlp.html#module-zensols.nlp.norm">norm package</a>
+for token normalizers and mappers.</p>
+<section id="resource-library">
+<h2>Resource Library<a class="headerlink" href="#resource-library" title="Link to this heading">¶</a></h2>
+<p>The <a class="reference external" href="https://github.com/plandes/nlparse/tree/master/resources">NLP resource library</a> contains configuration for a language parser that
+works for most use cases.  However, like any <a class="reference external" href="https://plandes.github.io/util/doc/config.html#resource-libraries">resource library</a>, importing and
+overriding is straight forward.</p>
+<p>A <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer">TokenNormalizer</a> is defined in [obj.conf]:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[filter_token_mapper]</span>
+<span class="na">class_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">zensols.nlp.FilterTokenMapper</span>
+<span class="c1">#remove_stop = True</span>
+<span class="c1">#remove_punctuation = True</span>
+<span class="c1">#remove_space = True</span>
+
+<span class="k">[map_filter_token_normalizer]</span>
+<span class="na">class_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">zensols.nlp.MapTokenNormalizer</span>
+<span class="na">mapper_class_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">list: filter_token_mapper</span>
+</pre></div>
+</div>
+<p>A <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.parser.SpacyFeatureDocumentParser">SpacyFeatureDocumentParser</a>, which will be used to parse text in to
+<a class="reference external" href="https://spacy.io">spaCy</a> documents:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[doc_parser]</span>
+<span class="na">class_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">zensols.nlp.sparser.SpacyFeatureDocumentParser</span>
+<span class="na">lang</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">en</span>
+<span class="na">model_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${lang}_core_web_sm</span>
+<span class="na">token_normalizer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">instance: map_filter_token_normalizer</span>
+</pre></div>
+</div>
+<p>which defines a language resource for English that uses our previously defined
+token normalizer.  Note that the API provides for these two tasks (parsing and
+token normalization) separately.</p>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
+<p>The <a class="reference external" href="https://github.com/plandes/nlparse/tree/master/example/config">application example</a> consists of a full CLI application that configures
+and uses a document parser.  In the example the <code class="docutils literal notranslate"><span class="pre">app.conf</span></code> imports the <a class="reference external" href="https://github.com/plandes/nlparse/tree/master/resources">NLP
+resource libraries</a>.  By default, the using the <code class="docutils literal notranslate"><span class="pre">parse</span></code> action shows all
+features for all tokens.  However, when adding <code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">terse.conf</span></code> stop
+words, punctuation and white space tokens are removed.  Similarly, adding
+<code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">lemma.conf</span></code> configures the parser to use <code class="docutils literal notranslate"><span class="pre">lemma_token_mapper</span></code>, which
+uses the lemmas as normalized tokens.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">detailed</span></code> action/method in the <code class="docutils literal notranslate"><span class="pre">app.py</span></code> Python source code file
+illustrates basic usage of the parser.  To get a <a class="reference internal" href="feature-doc.html"><span class="doc">feature document</span></a>, which has
+all the configured parsed artifacts typically needed to use in machine learning
+models, use the <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser">FeatureDocumentParser</a>, which is the base class of
+<a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.parser.SpacyFeatureDocumentParser">SpacyFeatureDocumentParser</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">doc</span><span class="p">:</span> <span class="n">FeatureDocument</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc_parser</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you only want a <a class="reference external" href="https://spacy.io">spaCy</a> <code class="docutils literal notranslate"><span class="pre">Doc</span></code> instance use the <a class="reference external" href="../api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser">FeatureDocumentParser</a>’s
+<code class="docutils literal notranslate"><span class="pre">parse_spacy_doc</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">doc</span><span class="p">:</span> <span class="n">Doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc_parser</span><span class="o">.</span><span class="n">parse_spacy_doc</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See the inline documentation/comments in the <code class="docutils literal notranslate"><span class="pre">app.py</span></code> Python file that explains
+how to use the API and the <code class="docutils literal notranslate"><span class="pre">makefile</span></code> to run each example.</p>
+<!-- links --></section>
+</section>
+</article>
+</div>
+<footer>
+<div class="related-pages">
+<a class="next-page" href="../api.html">
+<div class="page-info">
+<div class="context">
+<span>Next</span>
+</div>
+<div class="title">API Reference</div>
+</div>
+<svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+</a>
+<a class="prev-page" href="normalizers.html">
+<svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+<div class="page-info">
+<div class="context">
+<span>Previous</span>
+</div>
+<div class="title">Token Normalizers and Mappers List</div>
+</div>
+</a>
+</div>
+<div class="bottom-of-page">
+<div class="left-details">
+<div class="copyright">
+                Copyright © 2025 Paul Landes
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+</div>
+<div class="right-details">
+</div>
+</div>
+</footer>
+</div>
+<aside class="toc-drawer">
+<div class="toc-sticky toc-scroll">
+<div class="toc-title-container">
+<span class="toc-title">
+            On this page
+          </span>
+</div>
+<div class="toc-tree-container">
+<div class="toc-tree">
+<ul>
+<li><a class="reference internal" href="#">Natural Language Parsing</a><ul>
+<li><a class="reference internal" href="#resource-library">Resource Library</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div><script src="../_static/documentation_options.js?v=dd1d1664"></script>
+<script src="../_static/doctools.js?v=9a2dae69"></script>
+<script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+<script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+<script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+<script src="../_static/copybutton.js?v=f281be69"></script>
+</body>
+</html>

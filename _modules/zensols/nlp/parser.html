@@ -1,0 +1,777 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2025.09.25 -->
+        <title>zensols.nlp.parser - A utility library to assist in parsing natural language text. 1.12.8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-codeautolink.css?v=b2176991" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/codeautolink.css?v=57550ae3" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../top.html"><div class="brand">A utility library to assist in parsing natural language text. 1.12.8 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../top.html">
+  
+  <span class="sidebar-brand-text">A utility library to assist in parsing natural language text. 1.12.8 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/feature-doc.html">Feature Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/normalizers.html">Token Normalizers and Mappers List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/parse.html">Natural Language Parsing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/zensols.nlp.html">zensols.nlp package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for zensols.nlp.parser</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Parse documents and generate features in an organized taxonomy.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Paul Landes&#39;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">ABC</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">it</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spacy.language</span><span class="w"> </span><span class="kn">import</span> <span class="n">Language</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zensols.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hasher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zensols.util.warn</span><span class="w"> </span><span class="kn">import</span> <span class="n">WarningSilencer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zensols.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportIniConfig</span><span class="p">,</span> <span class="n">ImportConfigFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zensols.persist</span><span class="w"> </span><span class="kn">import</span> <span class="n">PersistableContainer</span><span class="p">,</span> <span class="n">Stash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zensols.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dictable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">NLPError</span><span class="p">,</span> <span class="n">LexicalSpan</span><span class="p">,</span> <span class="n">FeatureToken</span><span class="p">,</span> <span class="n">TokenContainer</span><span class="p">,</span>
+    <span class="n">FeatureSentence</span><span class="p">,</span> <span class="n">FeatureDocument</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ComponentInitializer">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.ComponentInitializer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComponentInitializer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Called by :class:`.Component` to do post spaCy initialization.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ComponentInitializer.init_nlp_model">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.ComponentInitializer.init_nlp_model">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_nlp_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Language</span><span class="p">,</span> <span class="n">component</span><span class="p">:</span> <span class="n">Component</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do any post spaCy initialization on the the referred framework.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Component">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.Component">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Component</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A pipeline component to be added to the spaCy model.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The section name.&quot;&quot;&quot;</span>
+
+    <span class="n">pipe_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The pipeline component name to add to the pipeline.  If ``None``, use</span>
+<span class="sd">    :obj:`name`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pipe_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The configuration to add with the ``config`` kwarg in the</span>
+<span class="sd">    :meth:`.Language.add_pipe` call to the spaCy model.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pipe_add_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Arguments to add along with the call to</span>
+<span class="sd">    :meth:`~spacy.language.Language.add_pipe`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">modules</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">())</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The module to import before adding component pipelines.  This will</span>
+<span class="sd">    register components mentioned in :obj:`components` when the resepctive</span>
+<span class="sd">    module is loaded.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">initializers</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ComponentInitializer</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">())</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Instances to initialize upon this object&#39;s initialization.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipe_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">+=</span> <span class="mi">13</span> <span class="o">*</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe_config</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="mi">13</span> <span class="o">*</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_config</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<div class="viewcode-block" id="Component.init">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.Component.init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Language</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">FeatureDocumentParser</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the component and add it to the NLP pipe line.  This base</span>
+<span class="sd">        class implementation loads the :obj:`module`, then calls</span>
+<span class="sd">        :meth:`.Language.add_pipe`.</span>
+
+<span class="sd">        :param model: the model to add the spaCy model (``nlp`` in their</span>
+<span class="sd">                      parlance)</span>
+
+<span class="sd">        :param parser: the owning parser of this component instance</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+            <span class="nb">__import__</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;creating pipe </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_name</span><span class="si">}</span><span class="s1"> with args: &#39;</span> <span class="o">+</span>
+                         <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_add_kwargs</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">add_pipe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_name</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_add_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">add_pipe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_name</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_config</span><span class="p">,</span>
+                           <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_add_kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">to_init</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initializers</span><span class="p">:</span>
+            <span class="n">to_init</span><span class="o">.</span><span class="n">init_nlp_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FeatureDocumentParser">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureDocumentParser</span><span class="p">(</span><span class="n">PersistableContainer</span><span class="p">,</span> <span class="n">Dictable</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class parses text in to instances of :class:`.FeatureDocument`</span>
+<span class="sd">    instances using :meth:`parse`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TOKEN_FEATURE_IDS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">FeatureToken</span><span class="o">.</span><span class="n">FEATURE_IDS</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The default value for :obj:`token_feature_ids`.&quot;&quot;&quot;</span>
+
+    <span class="n">_LOG_FORMAT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;parse[</span><span class="si">{name}</span><span class="s1">]: </span><span class="si">{text}</span><span class="s1">&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The format used for debugging messages with :meth:`_log_parse`.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="FeatureDocumentParser.default_instance">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser.default_instance">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_instance</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">FeatureDocumentParser</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the parser as configured in the resource library of the</span>
+<span class="sd">        package.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;[import]</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;config_file = resource(zensols.nlp): resources/obj.conf&#39;</span><span class="p">)</span>
+        <span class="n">factory</span> <span class="o">=</span> <span class="n">ImportConfigFactory</span><span class="p">(</span><span class="n">ImportIniConfig</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">config</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">factory</span><span class="p">(</span><span class="s1">&#39;doc_parser&#39;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_parser_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">cls</span>
+        <span class="k">return</span> <span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+            <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_parser_name</span><span class="p">()</span>
+            <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LOG_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="bp">cls</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trunc</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+
+<div class="viewcode-block" id="FeatureDocumentParser.parse">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser.parse">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeatureDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse text or a text as a list of sentences.</span>
+
+<span class="sd">        :param text: either a string or a list of strings; if the former a</span>
+<span class="sd">                     document with one sentence will be created, otherwise a</span>
+<span class="sd">                     document is returned with a sentence for each string in</span>
+<span class="sd">                     the list</span>
+
+<span class="sd">        :param args: the arguments used to create the FeatureDocument instance</span>
+
+<span class="sd">        :param kwargs: the key word arguments used to create the</span>
+<span class="sd">                       FeatureDocument instance</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeatureDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Invoke :meth:`parse` with the context arguments.</span>
+
+<span class="sd">        :see: :meth:`parse`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;model_name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s1">, lang: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lang</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="FeatureTokenDecorator">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureTokenDecorator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureTokenDecorator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementations can add, remove or modify features on a token.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FeatureTokenDecorator.decorate">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureTokenDecorator.decorate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="n">FeatureToken</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FeatureTokenContainerDecorator">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureTokenContainerDecorator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureTokenContainerDecorator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementations can add, remove or modify features on a token container.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FeatureTokenContainerDecorator.decorate">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureTokenContainerDecorator.decorate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container</span><span class="p">:</span> <span class="n">TokenContainer</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FeatureSentenceDecorator">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceDecorator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureSentenceDecorator</span><span class="p">(</span><span class="n">FeatureTokenContainerDecorator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementations can add, remove or modify features on a sentence.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FeatureSentenceDecorator.decorate">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceDecorator.decorate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sent</span><span class="p">:</span> <span class="n">FeatureSentence</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FeatureDocumentDecorator">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentDecorator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureDocumentDecorator</span><span class="p">(</span><span class="n">FeatureTokenContainerDecorator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementations can add, remove or modify features on a document.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FeatureDocumentDecorator.decorate">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentDecorator.decorate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">FeatureDocument</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DecoratedFeatureDocumentParser">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DecoratedFeatureDocumentParser</span><span class="p">(</span><span class="n">FeatureDocumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class adapts the :class:`.FeatureDocumentParser` adaptors to the</span>
+<span class="sd">    general case using a GoF decorator pattern.  This is useful for any post</span>
+<span class="sd">    processing needed on existing configured document parsers.</span>
+
+<span class="sd">    All decorators are processed in the following order:</span>
+<span class="sd">      1. Token</span>
+<span class="sd">      2. Sentence</span>
+<span class="sd">      3. Document</span>
+
+<span class="sd">    Token features are stored in the delegate for those that have them.</span>
+<span class="sd">    Otherwise, they are stored in instances of this class.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the parser, which is taken from the section name when created</span>
+<span class="sd">    with a :class:`~zensols.config.configfac.ConfigFactory` and used for</span>
+<span class="sd">    debugging.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">delegate</span><span class="p">:</span> <span class="n">FeatureDocumentParser</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to create the feature documents.&quot;&quot;&quot;</span>
+
+    <span class="n">token_decorators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FeatureTokenDecorator</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">())</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of decorators that can add, remove or modify features on a token.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sentence_decorators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FeatureSentenceDecorator</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">())</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of decorators that can add, remove or modify features on a</span>
+<span class="sd">    sentence.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">document_decorators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FeatureDocumentDecorator</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">())</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of decorators that can add, remove or modify features on a</span>
+<span class="sd">    document.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">token_feature_ids</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">FeatureDocumentParser</span><span class="o">.</span><span class="n">TOKEN_FEATURE_IDS</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The features to keep from spaCy tokens.  See class documentation.</span>
+
+<span class="sd">    :see: :obj:`TOKEN_FEATURE_IDS`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">silencer</span><span class="p">:</span> <span class="n">WarningSilencer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optinally suppress warnings the parser generates.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">silencer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">silencer</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DecoratedFeatureDocumentParser.decorate">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.decorate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">FeatureDocument</span><span class="p">):</span>
+        <span class="n">td</span><span class="p">:</span> <span class="n">FeatureTokenDecorator</span>
+        <span class="k">for</span> <span class="n">td</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_decorators</span><span class="p">:</span>
+            <span class="n">tok</span><span class="p">:</span> <span class="n">FeatureToken</span>
+            <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">token_iter</span><span class="p">():</span>
+                <span class="n">td</span><span class="o">.</span><span class="n">decorate</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span>
+        <span class="n">sd</span><span class="p">:</span> <span class="n">FeatureSentenceDecorator</span>
+        <span class="k">for</span> <span class="n">sd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentence_decorators</span><span class="p">:</span>
+            <span class="n">sent</span><span class="p">:</span> <span class="n">FeatureSentence</span>
+            <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">:</span>
+                <span class="n">sd</span><span class="o">.</span><span class="n">decorate</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span>
+        <span class="n">dd</span><span class="p">:</span> <span class="n">FeatureDocumentDecorator</span>
+        <span class="k">for</span> <span class="n">dd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_decorators</span><span class="p">:</span>
+            <span class="n">dd</span><span class="o">.</span><span class="n">decorate</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DecoratedFeatureDocumentParser.parse">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.parse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeatureDocument</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_parse</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="n">doc</span><span class="p">:</span> <span class="n">FeatureDocument</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delegate</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decorate</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doc</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CachingFeatureDocumentParser">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CachingFeatureDocumentParser</span><span class="p">(</span><span class="n">DecoratedFeatureDocumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A document parser that persists previous parses using the hash of the</span>
+<span class="sd">    text as a key.  Caching is optional given the value of :obj:`stash`, which</span>
+<span class="sd">    is useful in cases this class is extended using other use cases other than</span>
+<span class="sd">    just caching.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stash</span><span class="p">:</span> <span class="n">Stash</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The stash that persists the feature document instances.  If this is not</span>
+<span class="sd">    provided, no caching will happen.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hasher</span><span class="p">:</span> <span class="n">Hasher</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">Hasher</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to hash the natural langauge text in to string keys.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_hash_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hasher</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasher</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_or_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dump</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> \
+            <span class="n">Tuple</span><span class="p">[</span><span class="n">FeatureDocument</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">doc</span><span class="p">:</span> <span class="n">FeatureDocument</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">loaded</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stash</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delegate</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dump</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stash</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span> <span class="o">!=</span> <span class="n">text</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NLPError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Document text does not match: &lt;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&gt; != &gt;</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s1">&gt;&#39;</span><span class="p">)</span>
+            <span class="n">loaded</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">doc</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">loaded</span>
+
+<div class="viewcode-block" id="CachingFeatureDocumentParser.parse">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser.parse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeatureDocument</span><span class="p">:</span>
+        <span class="n">doc</span><span class="p">:</span> <span class="n">FeatureDocument</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_or_parse</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decorate</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doc</span></div>
+
+
+<div class="viewcode-block" id="CachingFeatureDocumentParser.clear">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser.clear">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the caching stash.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stash</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FeatureSentenceFactory">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceFactory">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureSentenceFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :class:`.FeatureSentence` out of single tokens or split on</span>
+<span class="sd">    whitespace.  This is a utility class to create data structures when only</span>
+<span class="sd">    single tokens are the source data.</span>
+
+<span class="sd">    For example, if you only have tokens that need to be scored with Unigram</span>
+<span class="sd">    Rouge-1, use this class to create sentences, which is a subclass of</span>
+<span class="sd">    :class:`.TokenContainer`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">token_decorators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FeatureTokenDecorator</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">())</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of decorators that can add, remove or modify features on a token.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decorate_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_token</span><span class="p">:</span> <span class="n">FeatureToken</span><span class="p">):</span>
+        <span class="n">decorator</span><span class="p">:</span> <span class="n">FeatureTokenDecorator</span>
+        <span class="k">for</span> <span class="n">decorator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_decorators</span><span class="p">:</span>
+            <span class="n">decorator</span><span class="o">.</span><span class="n">decorate</span><span class="p">(</span><span class="n">feature_token</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FeatureSentenceFactory.create">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceFactory.create">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">FeatureSentence</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a sentence from tokens.</span>
+
+<span class="sd">        :param tokens: if a string, then split on white space</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">toks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FeatureToken</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">slen</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">has_tok_decorators</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">token_decorators</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokens</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">tokens</span>
+        <span class="n">tok</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tok</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
+            <span class="n">ftok</span> <span class="o">=</span> <span class="n">FeatureToken</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">slen</span><span class="p">,</span> <span class="n">i_sent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">tok</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">has_tok_decorators</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_decorate_token</span><span class="p">(</span><span class="n">ftok</span><span class="p">)</span>
+            <span class="n">toks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ftok</span><span class="p">)</span>
+            <span class="n">slen</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">FeatureSentence</span><span class="p">(</span><span class="n">tokens</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">toks</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">FeatureSentence</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;See :meth:`.create`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WhiteSpaceTokenizerFeatureDocumentParser">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WhiteSpaceTokenizerFeatureDocumentParser</span><span class="p">(</span><span class="n">FeatureDocumentParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class parses text in to instances of :class:`.FeatureDocument`</span>
+<span class="sd">    instances tokenizing only by whitespace.  This parser does no sentence</span>
+<span class="sd">    chunking so documents have one and only one sentence for each parse.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_TOK_REGEX</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">Pattern</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\S+&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The whitespace regular expression for splitting tokens.&quot;&quot;&quot;</span>
+
+    <span class="n">sent_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">FeatureSentence</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">FeatureSentence</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The type of sentence instances to create.&quot;&quot;&quot;</span>
+
+    <span class="n">doc_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">FeatureDocument</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">FeatureDocument</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The type of document instances to create.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WhiteSpaceTokenizerFeatureDocumentParser.parse">
+<a class="viewcode-back" href="../../../api/zensols.nlp.html#zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser.parse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeatureDocument</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_parse</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="n">toks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FeatureToken</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">m</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Match</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">it</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TOK_REGEX</span><span class="p">,</span> <span class="n">text</span><span class="p">)):</span>
+            <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">tok_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">lexspan</span> <span class="o">=</span> <span class="n">LexicalSpan</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">tok_text</span><span class="p">))</span>
+            <span class="n">tok</span> <span class="o">=</span> <span class="n">FeatureToken</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tok_text</span><span class="p">,</span> <span class="n">lexspan</span><span class="p">)</span>
+            <span class="n">tok</span><span class="o">.</span><span class="n">default_detached_feature_ids</span> <span class="o">=</span> \
+                <span class="n">FeatureToken</span><span class="o">.</span><span class="n">REQUIRED_FEATURE_IDS</span>
+            <span class="n">toks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span>
+        <span class="n">sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent_class</span><span class="p">(</span><span class="n">tokens</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">toks</span><span class="p">),</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc_class</span><span class="p">(</span><span class="n">sents</span><span class="o">=</span><span class="p">(</span><span class="n">sent</span><span class="p">,),</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025 Paul Landes
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=dd1d1664"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

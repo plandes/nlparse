@@ -1,0 +1,1824 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#"><link rel="search" title="Search" href="search.html">
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2025.09.25 --><title>Index - A utility library to assist in parsing natural language text. 1.12.8 documentation</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-codeautolink.css?v=b2176991" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="_static/codeautolink.css?v=57550ae3" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="top.html"><div class="brand">A utility library to assist in parsing natural language text. 1.12.8 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="top.html">
+  
+  <span class="sidebar-brand-text">A utility library to assist in parsing natural language text. 1.12.8 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc/feature-doc.html">Feature Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc/normalizers.html">Token Normalizers and Mappers List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc/parse.html">Natural Language Parsing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/zensols.nlp.html">zensols.nlp package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          
+<section class="genindex-section">
+  <h1 id="index">Index</h1>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#Y"><strong>Y</strong></a> | <a href="#Z"><strong>Z</strong></a></div>
+</section>
+<section id="_" class="genindex-section">
+  <h2>_</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.NLPError.__annotations__">__annotations__ (zensols.nlp.domain.NLPError attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.domain.ParseError.__annotations__">(zensols.nlp.domain.ParseError attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScorerError.__annotations__">(zensols.nlp.score.ScorerError attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.Chunker.__init__">__init__() (zensols.nlp.chunker.Chunker method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ListItemChunker.__init__">(zensols.nlp.chunker.ListItemChunker method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ParagraphChunker.__init__">(zensols.nlp.chunker.ParagraphChunker method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.__init__">(zensols.nlp.combine.CombinerFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.combine.MappingCombinerFeatureDocumentParser.__init__">(zensols.nlp.combine.MappingCombinerFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.component.EntityRecognizer.__init__">(zensols.nlp.component.EntityRecognizer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.component.PatternEntityRecognizer.__init__">(zensols.nlp.component.PatternEntityRecognizer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.component.RegexEntityRecognizer.__init__">(zensols.nlp.component.RegexEntityRecognizer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.component.RegexSplitter.__init__">(zensols.nlp.component.RegexSplitter method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.__init__">(zensols.nlp.container.FeatureDocument method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSentence.__init__">(zensols.nlp.container.FeatureSentence method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.__init__">(zensols.nlp.container.FeatureSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureDocument.__init__">(zensols.nlp.container.TokenAnnotatedFeatureDocument method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureSentence.__init__">(zensols.nlp.container.TokenAnnotatedFeatureSentence method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.CopyFeatureTokenContainerDecorator.__init__">(zensols.nlp.decorate.CopyFeatureTokenContainerDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterEmptySentenceDocumentDecorator.__init__">(zensols.nlp.decorate.FilterEmptySentenceDocumentDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator.__init__">(zensols.nlp.decorate.FilterTokenSentenceDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.RemoveFeatureTokenContainerDecorator.__init__">(zensols.nlp.decorate.RemoveFeatureTokenContainerDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.SplitTokenSentenceDecorator.__init__">(zensols.nlp.decorate.SplitTokenSentenceDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.StripTokenContainerDecorator.__init__">(zensols.nlp.decorate.StripTokenContainerDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.UpdateTokenContainerDecorator.__init__">(zensols.nlp.decorate.UpdateTokenContainerDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.__init__">(zensols.nlp.domain.LexicalSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.domain.MissingFeatureError.__init__">(zensols.nlp.domain.MissingFeatureError method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.index.FeatureDocumentIndexer.__init__">(zensols.nlp.index.FeatureDocumentIndexer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.__init__">(zensols.nlp.nerscore.SemEvalHarmonicMeanScore method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScore.__init__">(zensols.nlp.nerscore.SemEvalScore method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScoreMethod.__init__">(zensols.nlp.nerscore.SemEvalScoreMethod method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterRegularExpressionMapper.__init__">(zensols.nlp.norm.FilterRegularExpressionMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper.__init__">(zensols.nlp.norm.FilterTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.JoinTokenMapper.__init__">(zensols.nlp.norm.JoinTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LambdaTokenMapper.__init__">(zensols.nlp.norm.LambdaTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LemmatizeTokenMapper.__init__">(zensols.nlp.norm.LemmatizeTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.MapTokenNormalizer.__init__">(zensols.nlp.norm.MapTokenNormalizer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitEntityTokenMapper.__init__">(zensols.nlp.norm.SplitEntityTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitTokenMapper.__init__">(zensols.nlp.norm.SplitTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SubstituteTokenMapper.__init__">(zensols.nlp.norm.SubstituteTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.TokenMapper.__init__">(zensols.nlp.norm.TokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer.__init__">(zensols.nlp.norm.TokenNormalizer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser.__init__">(zensols.nlp.parser.CachingFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component.__init__">(zensols.nlp.parser.Component method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.__init__">(zensols.nlp.parser.DecoratedFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser.__init__">(zensols.nlp.parser.FeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceFactory.__init__">(zensols.nlp.parser.FeatureSentenceFactory method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser.__init__">(zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.BleuScoreMethod.__init__">(zensols.nlp.score.BleuScoreMethod method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ErrorScore.__init__">(zensols.nlp.score.ErrorScore method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ExactMatchScoreMethod.__init__">(zensols.nlp.score.ExactMatchScoreMethod method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.FloatScore.__init__">(zensols.nlp.score.FloatScore method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.HarmonicMeanScore.__init__">(zensols.nlp.score.HarmonicMeanScore method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.LevenshteinDistanceScoreMethod.__init__">(zensols.nlp.score.LevenshteinDistanceScoreMethod method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.RougeScoreMethod.__init__">(zensols.nlp.score.RougeScoreMethod method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.Score.__init__">(zensols.nlp.score.Score method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreContext.__init__">(zensols.nlp.score.ScoreContext method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreMethod.__init__">(zensols.nlp.score.ScoreMethod method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.Scorer.__init__">(zensols.nlp.score.Scorer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreResult.__init__">(zensols.nlp.score.ScoreResult method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreSet.__init__">(zensols.nlp.score.ScoreSet method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Serialized.__init__">(zensols.nlp.serial.Serialized method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedFeatureDocument.__init__">(zensols.nlp.serial.SerializedFeatureDocument method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedTokenContainer.__init__">(zensols.nlp.serial.SerializedTokenContainer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedTokenContainerFactory.__init__">(zensols.nlp.serial.SerializedTokenContainerFactory method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.EnglishSpanNormalizer.__init__">(zensols.nlp.spannorm.EnglishSpanNormalizer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyComponent.__init__">(zensols.nlp.sparser.SpacyComponent method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.__init__">(zensols.nlp.sparser.SpacyFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.stemmer.PorterStemmerTokenMapper.__init__">(zensols.nlp.stemmer.PorterStemmerTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.__init__">(zensols.nlp.tok.FeatureToken method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.__init__">(zensols.nlp.tok.SpacyFeatureToken method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.MissingFeatureError.__module__">__module__ (zensols.nlp.domain.MissingFeatureError attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.domain.NLPError.__module__">(zensols.nlp.domain.NLPError attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.domain.ParseError.__module__">(zensols.nlp.domain.ParseError attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScorerError.__module__">(zensols.nlp.score.ScorerError attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument._combine_documents">_combine_documents() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.actual">actual (zensols.nlp.nerscore.SemEvalHarmonicMeanScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LambdaTokenMapper.add_lambda">add_lambda (zensols.nlp.norm.LambdaTokenMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureDocument.annotations">annotations (zensols.nlp.container.TokenAnnotatedFeatureDocument property)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureSentence.annotations">(zensols.nlp.container.TokenAnnotatedFeatureSentence attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreSet.as_dataframe">as_dataframe() (zensols.nlp.score.ScoreSet method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreSet.as_numpy">as_numpy() (zensols.nlp.score.ScoreSet method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScore.asrow">asrow() (zensols.nlp.nerscore.SemEvalScore method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ErrorScore.asrow">(zensols.nlp.score.ErrorScore method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.FloatScore.asrow">(zensols.nlp.score.FloatScore method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.Score.asrow">(zensols.nlp.score.Score method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.astuple">astuple (zensols.nlp.domain.LexicalSpan property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyComponent.auto_install_model">auto_install_model (zensols.nlp.sparser.SpacyComponent attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.auto_install_model">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.BleuScoreMethod">BleuScoreMethod (class in zensols.nlp.score)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser">CachingFeatureDocumentParser (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.canonical">canonical (zensols.nlp.container.TokenContainer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.EnglishSpanNormalizer.canonical_delimiter">canonical_delimiter (zensols.nlp.spannorm.EnglishSpanNormalizer attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.Chunker.char_offset">char_offset (zensols.nlp.chunker.Chunker attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.children">children (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.Chunker">Chunker (class in zensols.nlp.chunker)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.clear">clear() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.clear">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser.clear">(zensols.nlp.parser.CachingFeatureDocumentParser method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.clear_models">clear_models() (zensols.nlp.sparser.SpacyFeatureDocumentParser class method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.clone">clone() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.clone">(zensols.nlp.container.FeatureSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.clone">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.clone">(zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.combine_documents">combine_documents() (zensols.nlp.container.FeatureDocument class method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.combine_sentences">combine_sentences() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureDocument.combine_sentences">(zensols.nlp.container.TokenAnnotatedFeatureDocument method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser">CombinerFeatureDocumentParser (class in zensols.nlp.combine)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component">Component (class in zensols.nlp.parser)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.ComponentInitializer">ComponentInitializer (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.components">components (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.MapTokenNormalizer.config_factory">config_factory (zensols.nlp.norm.MapTokenNormalizer attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.config_factory">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.conll_iob_">conll_iob_() (zensols.nlp.tok.SpacyFeatureToken method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Serialized.container">container (zensols.nlp.serial.Serialized attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitEntityTokenMapper.copy_attributes">copy_attributes (zensols.nlp.norm.SplitEntityTokenMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.CopyFeatureTokenContainerDecorator">CopyFeatureTokenContainerDecorator (class in zensols.nlp.decorate)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.correct">correct (zensols.nlp.nerscore.SemEvalHarmonicMeanScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreResult.correlation_id">correlation_id (zensols.nlp.score.ScoreResult attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreSet.correlation_id_col">correlation_id_col (zensols.nlp.score.ScoreSet attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreContext.correlation_ids">correlation_ids (zensols.nlp.score.ScoreContext attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceFactory.create">create() (zensols.nlp.parser.FeatureSentenceFactory method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedTokenContainerFactory.create">(zensols.nlp.serial.SerializedTokenContainerFactory method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.create_patner_component">create_patner_component() (in module zensols.nlp.component)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.create_regexner_component">create_regexner_component() (in module zensols.nlp.component)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.create_regexsplit_component">create_regexsplit_component() (in module zensols.nlp.component)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.create_remove_sent_boundaries_component">create_remove_sent_boundaries_component() (in module zensols.nlp.component)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.create_whitespace_tokenizer_component">create_whitespace_tokenizer_component() (in module zensols.nlp.component)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.CopyFeatureTokenContainerDecorator.decorate">decorate() (zensols.nlp.decorate.CopyFeatureTokenContainerDecorator method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterEmptySentenceDocumentDecorator.decorate">(zensols.nlp.decorate.FilterEmptySentenceDocumentDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator.decorate">(zensols.nlp.decorate.FilterTokenSentenceDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.RemoveFeatureTokenContainerDecorator.decorate">(zensols.nlp.decorate.RemoveFeatureTokenContainerDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.SplitTokenSentenceDecorator.decorate">(zensols.nlp.decorate.SplitTokenSentenceDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.StripTokenContainerDecorator.decorate">(zensols.nlp.decorate.StripTokenContainerDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.UpdateTokenContainerDecorator.decorate">(zensols.nlp.decorate.UpdateTokenContainerDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.decorate">(zensols.nlp.parser.DecoratedFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentDecorator.decorate">(zensols.nlp.parser.FeatureDocumentDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceDecorator.decorate">(zensols.nlp.parser.FeatureSentenceDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureTokenContainerDecorator.decorate">(zensols.nlp.parser.FeatureTokenContainerDecorator method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureTokenDecorator.decorate">(zensols.nlp.parser.FeatureTokenDecorator method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser">DecoratedFeatureDocumentParser (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.default_detached_feature_ids">default_detached_feature_ids (zensols.nlp.tok.FeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser.default_instance">default_instance() (zensols.nlp.parser.FeatureDocumentParser static method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.Scorer.default_methods">default_methods (zensols.nlp.score.Scorer attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ListItemChunker.DEFAULT_SPAN_PATTERN">DEFAULT_SPAN_PATTERN (zensols.nlp.chunker.ListItemChunker attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ParagraphChunker.DEFAULT_SPAN_PATTERN">(zensols.nlp.chunker.ParagraphChunker attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.delegate">delegate (zensols.nlp.parser.DecoratedFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.dep">dep (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.dep_">dep_ (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.dependency_tree">dependency_tree (zensols.nlp.container.FeatureSpan property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.detach">detach() (zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.disable_component_names">disable_component_names (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.Chunker.doc">doc (zensols.nlp.chunker.Chunker attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.index.FeatureDocumentIndexer.doc">(zensols.nlp.index.FeatureDocumentIndexer attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser.doc_class">doc_class (zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.doc_class">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.index.FeatureDocumentIndexer.doc_tok_orths">doc_tok_orths (zensols.nlp.index.FeatureDocumentIndexer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.document_decorators">document_decorators (zensols.nlp.parser.DecoratedFeatureDocumentParser attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.document_decorators">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedTokenContainerFactory.document_includes">document_includes (zensols.nlp.serial.SerializedTokenContainerFactory attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer.embed_entities">embed_entities (zensols.nlp.norm.TokenNormalizer attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.EMPTY_DOCUMENT">EMPTY_DOCUMENT (zensols.nlp.container.FeatureDocument attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSentence.EMPTY_SENTENCE">EMPTY_SENTENCE (zensols.nlp.container.FeatureSentence attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.EMPTY_SPAN">EMPTY_SPAN (zensols.nlp.domain.LexicalSpan attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.EnglishSpanNormalizer">EnglishSpanNormalizer (class in zensols.nlp.spannorm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.ent">ent (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.ent_">ent_ (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.ent_iob">ent_iob (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.ent_iob_">ent_iob_ (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScore.ent_type">ent_type (zensols.nlp.nerscore.SemEvalScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.entities">entities (zensols.nlp.container.TokenContainer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.EntityRecognizer">EntityRecognizer (class in zensols.nlp.component)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ExactMatchScoreMethod.equality_measure">equality_measure (zensols.nlp.score.ExactMatchScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ErrorScore">ErrorScore (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScore.exact">exact (zensols.nlp.nerscore.SemEvalScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ExactMatchScoreMethod">ExactMatchScoreMethod (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ErrorScore.exception">exception (zensols.nlp.score.ErrorScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.RemoveFeatureTokenContainerDecorator.exclude_feature_ids">exclude_feature_ids (zensols.nlp.decorate.RemoveFeatureTokenContainerDecorator attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.HarmonicMeanScore.f_score">f_score (zensols.nlp.score.HarmonicMeanScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.CopyFeatureTokenContainerDecorator.feature_ids">feature_ids (zensols.nlp.decorate.CopyFeatureTokenContainerDecorator attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Serialized.feature_ids">(zensols.nlp.serial.Serialized attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedTokenContainerFactory.feature_ids">(zensols.nlp.serial.SerializedTokenContainerFactory attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.FEATURE_IDS">FEATURE_IDS (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.FEATURE_IDS_BY_TYPE">FEATURE_IDS_BY_TYPE (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.RougeScoreMethod.feature_tokenizer">feature_tokenizer (zensols.nlp.score.RougeScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument">FeatureDocument (class in zensols.nlp.container)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentDecorator">FeatureDocumentDecorator (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.index.FeatureDocumentIndexer">FeatureDocumentIndexer (class in zensols.nlp.index)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser">FeatureDocumentParser (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSentence">FeatureSentence (class in zensols.nlp.container)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceDecorator">FeatureSentenceDecorator (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceFactory">FeatureSentenceFactory (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan">FeatureSpan (class in zensols.nlp.container)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken">FeatureToken (class in zensols.nlp.tok)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureTokenContainerDecorator">FeatureTokenContainerDecorator (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureTokenDecorator">FeatureTokenDecorator (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterEmptySentenceDocumentDecorator.filter_space">filter_space (zensols.nlp.decorate.FilterEmptySentenceDocumentDecorator attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterEmptySentenceDocumentDecorator">FilterEmptySentenceDocumentDecorator (class in zensols.nlp.decorate)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterRegularExpressionMapper">FilterRegularExpressionMapper (class in zensols.nlp.norm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper">FilterTokenMapper (class in zensols.nlp.norm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator">FilterTokenSentenceDecorator (class in zensols.nlp.decorate)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.index.FeatureDocumentIndexer.find">find() (zensols.nlp.index.FeatureDocumentIndexer method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.FloatScore">FloatScore (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.LevenshteinDistanceScoreMethod.form">form (zensols.nlp.score.LevenshteinDistanceScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.from_sentences">from_sentences() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.from_spacy_doc">from_spacy_doc() (zensols.nlp.sparser.SpacyFeatureDocumentParser method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.from_token">from_token() (zensols.nlp.domain.LexicalSpan class method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.from_tuples">from_tuples() (zensols.nlp.domain.LexicalSpan class method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="G" class="genindex-section">
+  <h2>G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.gaps">gaps() (zensols.nlp.domain.LexicalSpan static method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.EnglishSpanNormalizer.get_canonical">get_canonical() (zensols.nlp.spannorm.EnglishSpanNormalizer method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.SpanNormalizer.get_canonical">(zensols.nlp.spannorm.SpanNormalizer method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.get_dictable">get_dictable() (zensols.nlp.sparser.SpacyFeatureDocumentParser method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.get_feature">get_feature() (zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.get_features">get_features() (zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.EnglishSpanNormalizer.get_norm">get_norm() (zensols.nlp.spannorm.EnglishSpanNormalizer method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.SpanNormalizer.get_norm">(zensols.nlp.spannorm.SpanNormalizer method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.get_overlapping_document">get_overlapping_document() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.get_overlapping_sentences">get_overlapping_sentences() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.get_overlapping_span">get_overlapping_span() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSentence.get_overlapping_span">(zensols.nlp.container.FeatureSentence method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.get_overlapping_span">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.get_overlapping_tokens">get_overlapping_tokens() (zensols.nlp.container.TokenContainer method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="H" class="genindex-section">
+  <h2>H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.HarmonicMeanScore">HarmonicMeanScore (class in zensols.nlp.score)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreSet.has_correlation_id">has_correlation_id (zensols.nlp.score.ScoreSet property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser.hasher">hasher (zensols.nlp.parser.CachingFeatureDocumentParser attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.i">i (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.i_sent">i_sent (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.idx">idx (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.EntityRecognizer.import_file">import_file (zensols.nlp.component.EntityRecognizer attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Include">Include (class in zensols.nlp.serial)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Serialized.includes">includes (zensols.nlp.serial.Serialized attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.incorrect">incorrect (zensols.nlp.nerscore.SemEvalHarmonicMeanScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component.init">init() (zensols.nlp.parser.Component method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyComponent.init">(zensols.nlp.sparser.SpacyComponent method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.ComponentInitializer.init_nlp_model">init_nlp_model() (zensols.nlp.parser.ComponentInitializer method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component.initializers">initializers (zensols.nlp.parser.Component attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterRegularExpressionMapper.invert">invert (zensols.nlp.norm.FilterRegularExpressionMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreMethod.is_available">is_available() (zensols.nlp.score.ScoreMethod class method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.is_contraction">is_contraction (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.is_detached">is_detached (zensols.nlp.tok.FeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.is_none">is_none (zensols.nlp.tok.FeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.is_pronoun">is_pronoun (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.is_punctuation">is_punctuation (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.is_space">is_space (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.is_stop">is_stop (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.is_superlative">is_superlative (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.is_wh">is_wh (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="J" class="genindex-section">
+  <h2>J</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.JoinTokenMapper">JoinTokenMapper (class in zensols.nlp.norm)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="K" class="genindex-section">
+  <h2>K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.EnglishSpanNormalizer.keep_space_skip">keep_space_skip (zensols.nlp.spannorm.EnglishSpanNormalizer attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScoreMethod.labels">labels (zensols.nlp.nerscore.SemEvalScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LambdaTokenMapper">LambdaTokenMapper (class in zensols.nlp.norm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.lang">lang (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.lemma_">lemma_ (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LemmatizeTokenMapper.lemmatize">lemmatize (zensols.nlp.norm.LemmatizeTokenMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LemmatizeTokenMapper">LemmatizeTokenMapper (class in zensols.nlp.norm)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.LevenshteinDistanceScoreMethod">LevenshteinDistanceScoreMethod (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan">LexicalSpan (class in zensols.nlp.domain)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.lexspan">lexspan (zensols.nlp.container.TokenContainer property)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.lexspan">(zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ListItemChunker">ListItemChunker (class in zensols.nlp.chunker)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.long_repr">long_repr() (zensols.nlp.tok.FeatureToken method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.map_features">map_features (zensols.nlp.combine.CombinerFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LambdaTokenMapper.map_lambda">map_lambda (zensols.nlp.norm.LambdaTokenMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.map_overlapping_tokens">map_overlapping_tokens() (zensols.nlp.container.TokenContainer method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterRegularExpressionMapper.map_tokens">map_tokens() (zensols.nlp.norm.FilterRegularExpressionMapper method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper.map_tokens">(zensols.nlp.norm.FilterTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.JoinTokenMapper.map_tokens">(zensols.nlp.norm.JoinTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LambdaTokenMapper.map_tokens">(zensols.nlp.norm.LambdaTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LemmatizeTokenMapper.map_tokens">(zensols.nlp.norm.LemmatizeTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitEntityTokenMapper.map_tokens">(zensols.nlp.norm.SplitEntityTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitTokenMapper.map_tokens">(zensols.nlp.norm.SplitTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SubstituteTokenMapper.map_tokens">(zensols.nlp.norm.SubstituteTokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.TokenMapper.map_tokens">(zensols.nlp.norm.TokenMapper method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.stemmer.PorterStemmerTokenMapper.map_tokens">(zensols.nlp.stemmer.PorterStemmerTokenMapper method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.MapTokenNormalizer.mapper_class_list">mapper_class_list (zensols.nlp.norm.MapTokenNormalizer attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.MappingCombinerFeatureDocumentParser">MappingCombinerFeatureDocumentParser (class in zensols.nlp.combine)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.MapTokenNormalizer">MapTokenNormalizer (class in zensols.nlp.norm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.max_sentence_len">max_sentence_len (zensols.nlp.container.FeatureDocument property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.MappingCombinerFeatureDocumentParser.merge_sentences">merge_sentences (zensols.nlp.combine.MappingCombinerFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ErrorScore.method">method (zensols.nlp.score.ErrorScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreContext.methods">methods (zensols.nlp.score.ScoreContext attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.Scorer.methods">(zensols.nlp.score.Scorer attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.missed">missed (zensols.nlp.nerscore.SemEvalHarmonicMeanScore attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreMethod.missing_modules">missing_modules() (zensols.nlp.score.ScoreMethod class method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.MissingFeatureError">MissingFeatureError</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.model">model (zensols.nlp.sparser.SpacyFeatureDocumentParser property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.model_name">model_name (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp">zensols.nlp</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.chunker">zensols.nlp.chunker</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.combine">zensols.nlp.combine</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.component">zensols.nlp.component</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.container">zensols.nlp.container</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.decorate">zensols.nlp.decorate</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.domain">zensols.nlp.domain</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.index">zensols.nlp.index</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.nerscore">zensols.nlp.nerscore</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.norm">zensols.nlp.norm</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.parser">zensols.nlp.parser</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.score">zensols.nlp.score</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.serial">zensols.nlp.serial</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.spannorm">zensols.nlp.spannorm</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.sparser">zensols.nlp.sparser</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.stemmer">zensols.nlp.stemmer</a>
+</li>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.tok">zensols.nlp.tok</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component.modules">modules (zensols.nlp.parser.Component attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.EntityRecognizer.name">name (zensols.nlp.component.EntityRecognizer attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component.name">(zensols.nlp.parser.Component attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.name">(zensols.nlp.parser.DecoratedFeatureDocumentParser attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.name">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.NAN_INSTANCE">NAN_INSTANCE (zensols.nlp.nerscore.SemEvalHarmonicMeanScore attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScore.NAN_INSTANCE">(zensols.nlp.nerscore.SemEvalScore attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.FloatScore.NAN_INSTANCE">(zensols.nlp.score.FloatScore attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.HarmonicMeanScore.NAN_INSTANCE">(zensols.nlp.score.HarmonicMeanScore attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.narrow">narrow() (zensols.nlp.domain.LexicalSpan method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.EntityRecognizer.nlp">nlp (zensols.nlp.component.EntityRecognizer attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.NLPError">NLPError</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.NONE">NONE (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.norm">norm (zensols.nlp.container.TokenContainer property)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreContext.norm">(zensols.nlp.score.ScoreContext attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.norm">(zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.norm_len">norm_len (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.norm_orth">norm_orth (zensols.nlp.container.TokenContainer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.norm_token_iter">norm_token_iter() (zensols.nlp.container.TokenContainer method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Include.normal">normal (zensols.nlp.serial.Include attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.LevenshteinDistanceScoreMethod.normalize">normalize (zensols.nlp.score.LevenshteinDistanceScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer.normalize">normalize() (zensols.nlp.norm.TokenNormalizer method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="O" class="genindex-section">
+  <h2>O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Include.original">original (zensols.nlp.serial.Include attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.overlaps">overlaps() (zensols.nlp.domain.LexicalSpan static method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.overlaps_with">overlaps_with() (zensols.nlp.domain.LexicalSpan method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.overwrite_features">overwrite_features (zensols.nlp.combine.CombinerFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.overwrite_nones">overwrite_nones (zensols.nlp.combine.CombinerFeatureDocumentParser attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.index.FeatureDocumentIndexer.pack2ix">pack2ix (zensols.nlp.index.FeatureDocumentIndexer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.Scorer.package_manager">package_manager (zensols.nlp.score.Scorer attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.package_manager">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.index.FeatureDocumentIndexer.packed_doc_text">packed_doc_text (zensols.nlp.index.FeatureDocumentIndexer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreContext.pairs">pairs (zensols.nlp.score.ScoreContext attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ParagraphChunker">ParagraphChunker (class in zensols.nlp.chunker)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.parse">parse() (zensols.nlp.combine.CombinerFeatureDocumentParser method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser.parse">(zensols.nlp.parser.CachingFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.parse">(zensols.nlp.parser.DecoratedFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser.parse">(zensols.nlp.parser.FeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser.parse">(zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.parse">(zensols.nlp.sparser.SpacyFeatureDocumentParser method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.parse_spacy_doc">parse_spacy_doc() (zensols.nlp.sparser.SpacyFeatureDocumentParser method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.ParseError">ParseError</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.partial">partial (zensols.nlp.nerscore.SemEvalHarmonicMeanScore attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScore.partial">(zensols.nlp.nerscore.SemEvalScore attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.Chunker.pattern">pattern (zensols.nlp.chunker.Chunker attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ListItemChunker.pattern">(zensols.nlp.chunker.ListItemChunker attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ParagraphChunker.pattern">(zensols.nlp.chunker.ParagraphChunker attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.PatternEntityRecognizer">PatternEntityRecognizer (class in zensols.nlp.component)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.EntityRecognizer.patterns">patterns (zensols.nlp.component.EntityRecognizer attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.component.PatternEntityRecognizer.patterns">(zensols.nlp.component.PatternEntityRecognizer attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.component.RegexEntityRecognizer.patterns">(zensols.nlp.component.RegexEntityRecognizer attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.component.RegexSplitter.patterns">(zensols.nlp.component.RegexSplitter attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component.pipe_add_kwargs">pipe_add_kwargs (zensols.nlp.parser.Component attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component.pipe_config">pipe_config (zensols.nlp.parser.Component attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.Component.pipe_name">pipe_name (zensols.nlp.parser.Component attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.stemmer.PorterStemmerTokenMapper">PorterStemmerTokenMapper (class in zensols.nlp.stemmer)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.pos">pos (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.pos_">pos_ (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.possible">possible (zensols.nlp.nerscore.SemEvalHarmonicMeanScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.EnglishSpanNormalizer.post_space_skip">post_space_skip (zensols.nlp.spannorm.EnglishSpanNormalizer attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.EnglishSpanNormalizer.pre_space_skip">pre_space_skip (zensols.nlp.spannorm.EnglishSpanNormalizer attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.HarmonicMeanScore.precision">precision (zensols.nlp.score.HarmonicMeanScore attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.HarmonicMeanScore.recall">recall (zensols.nlp.score.HarmonicMeanScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterRegularExpressionMapper.regex">regex (zensols.nlp.norm.FilterRegularExpressionMapper attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.JoinTokenMapper.regex">(zensols.nlp.norm.JoinTokenMapper attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitTokenMapper.regex">(zensols.nlp.norm.SplitTokenMapper attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SubstituteTokenMapper.regex">(zensols.nlp.norm.SubstituteTokenMapper attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.RegexEntityRecognizer">RegexEntityRecognizer (class in zensols.nlp.component)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.component.RegexSplitter">RegexSplitter (class in zensols.nlp.component)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.UpdateTokenContainerDecorator.reindex">reindex (zensols.nlp.decorate.UpdateTokenContainerDecorator attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.reindex">reindex() (zensols.nlp.container.TokenContainer method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.reload_components">reload_components (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator.remove_determiners">remove_determiners (zensols.nlp.decorate.FilterTokenSentenceDecorator attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper.remove_determiners">(zensols.nlp.norm.FilterTokenMapper attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator.remove_empty">remove_empty (zensols.nlp.decorate.FilterTokenSentenceDecorator attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.remove_empty_sentences">remove_empty_sentences (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.LemmatizeTokenMapper.remove_first_stop">remove_first_stop (zensols.nlp.norm.LemmatizeTokenMapper attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator.remove_pronouns">remove_pronouns (zensols.nlp.decorate.FilterTokenSentenceDecorator attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper.remove_pronouns">(zensols.nlp.norm.FilterTokenMapper attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator.remove_punctuation">remove_punctuation (zensols.nlp.decorate.FilterTokenSentenceDecorator attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper.remove_punctuation">(zensols.nlp.norm.FilterTokenMapper attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator.remove_space">remove_space (zensols.nlp.decorate.FilterTokenSentenceDecorator attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper.remove_space">(zensols.nlp.norm.FilterTokenMapper attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.FilterTokenSentenceDecorator.remove_stop">remove_stop (zensols.nlp.decorate.FilterTokenSentenceDecorator attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.norm.FilterTokenMapper.remove_stop">(zensols.nlp.norm.FilterTokenMapper attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.RemoveFeatureTokenContainerDecorator">RemoveFeatureTokenContainerDecorator (class in zensols.nlp.decorate)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SubstituteTokenMapper.replace_char">replace_char (zensols.nlp.norm.SubstituteTokenMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ErrorScore.replace_score">replace_score (zensols.nlp.score.ErrorScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.REQUIRED_FEATURE_IDS">REQUIRED_FEATURE_IDS (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreSet.results">results (zensols.nlp.score.ScoreSet attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreMethod.reverse_sents">reverse_sents (zensols.nlp.score.ScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.RougeScoreMethod">RougeScoreMethod (class in zensols.nlp.score)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.Score">Score (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreMethod.score">score() (zensols.nlp.score.ScoreMethod method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.Scorer.score">(zensols.nlp.score.Scorer method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreContext">ScoreContext (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreMethod">ScoreMethod (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.Scorer">Scorer (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScorerError">ScorerError</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreResult">ScoreResult (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreResult.scores">scores (zensols.nlp.score.ScoreResult attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreSet">ScoreSet (class in zensols.nlp.score)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore">SemEvalHarmonicMeanScore (class in zensols.nlp.nerscore)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScore">SemEvalScore (class in zensols.nlp.nerscore)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScoreMethod">SemEvalScoreMethod (class in zensols.nlp.nerscore)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser.sent_class">sent_class (zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.sent_class">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.sent_i">sent_i (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.sent_iter">sent_iter() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.sentence_decorators">sentence_decorators (zensols.nlp.parser.DecoratedFeatureDocumentParser attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.sentence_decorators">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.sentence_for_token">sentence_for_token() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedFeatureDocument.sentence_includes">sentence_includes (zensols.nlp.serial.SerializedFeatureDocument attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedTokenContainerFactory.sentence_includes">(zensols.nlp.serial.SerializedTokenContainerFactory attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.sentence_index_for_token">sentence_index_for_token() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Include.sentences">sentences (zensols.nlp.serial.Include attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.sentences_for_tokens">sentences_for_tokens() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.sents">sents (zensols.nlp.container.FeatureDocument attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.JoinTokenMapper.separator">separator (zensols.nlp.norm.JoinTokenMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Serialized">Serialized (class in zensols.nlp.serial)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedFeatureDocument">SerializedFeatureDocument (class in zensols.nlp.serial)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedTokenContainer">SerializedTokenContainer (class in zensols.nlp.serial)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.serial.SerializedTokenContainerFactory">SerializedTokenContainerFactory (class in zensols.nlp.serial)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.set_entity_offsets">set_entity_offsets() (zensols.nlp.container.TokenContainer method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.set_feature">set_feature() (zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.set_spacy_doc">set_spacy_doc() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.shape">shape (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.shape_">shape_ (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.BleuScoreMethod.silence_warnings">silence_warnings (zensols.nlp.score.BleuScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.silencer">silencer (zensols.nlp.parser.DecoratedFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.SKIP_COMPARE_FEATURE_IDS">SKIP_COMPARE_FEATURE_IDS (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.BleuScoreMethod.smoothing_function">smoothing_function (zensols.nlp.score.BleuScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.source_parsers">source_parsers (zensols.nlp.combine.CombinerFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.spacy_doc">spacy_doc (zensols.nlp.container.FeatureDocument attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.spacy_span">spacy_span (zensols.nlp.container.FeatureSpan attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.spacy_token">spacy_token (zensols.nlp.tok.SpacyFeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyComponent">SpacyComponent (class in zensols.nlp.sparser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser">SpacyFeatureDocumentParser (class in zensols.nlp.sparser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken">SpacyFeatureToken (class in zensols.nlp.tok)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.spannorm.SpanNormalizer">SpanNormalizer (class in zensols.nlp.spannorm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.special_case_tokens">special_case_tokens (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.split">split() (zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitEntityTokenMapper">SplitEntityTokenMapper (class in zensols.nlp.norm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitTokenMapper">SplitTokenMapper (class in zensols.nlp.norm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.SplitTokenSentenceDecorator">SplitTokenSentenceDecorator (class in zensols.nlp.decorate)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalHarmonicMeanScore.spurious">spurious (zensols.nlp.nerscore.SemEvalHarmonicMeanScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.CachingFeatureDocumentParser.stash">stash (zensols.nlp.parser.CachingFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.stemmer.PorterStemmerTokenMapper.stemmer">stemmer (zensols.nlp.stemmer.PorterStemmerTokenMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.nerscore.SemEvalScore.strict">strict (zensols.nlp.nerscore.SemEvalScore attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.strip">strip() (zensols.nlp.container.TokenContainer method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.strip_token_iter">strip_token_iter() (zensols.nlp.container.TokenContainer method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.strip_tokens">strip_tokens() (zensols.nlp.container.TokenContainer static method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.StripTokenContainerDecorator">StripTokenContainerDecorator (class in zensols.nlp.decorate)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.Chunker.sub_doc">sub_doc (zensols.nlp.chunker.Chunker attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SubstituteTokenMapper">SubstituteTokenMapper (class in zensols.nlp.norm)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.tag">tag (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.tag_">tag_ (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.text">text (zensols.nlp.container.FeatureDocument attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.text">(zensols.nlp.container.FeatureSpan attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.text">(zensols.nlp.tok.FeatureToken property)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.index.FeatureDocumentIndexer.text2sent">text2sent (zensols.nlp.index.FeatureDocumentIndexer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.TextContainer">TextContainer (class in zensols.nlp.domain)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.Chunker.to_document">to_document() (zensols.nlp.chunker.Chunker method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ListItemChunker.to_document">(zensols.nlp.chunker.ListItemChunker method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.chunker.ParagraphChunker.to_document">(zensols.nlp.chunker.ParagraphChunker method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.to_document">(zensols.nlp.container.FeatureDocument method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSentence.to_document">(zensols.nlp.container.FeatureSentence method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.to_document">(zensols.nlp.container.FeatureSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureSentence.to_document">(zensols.nlp.container.TokenAnnotatedFeatureSentence method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.to_document">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.to_sentence">to_sentence() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSentence.to_sentence">(zensols.nlp.container.FeatureSentence method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.to_sentence">(zensols.nlp.container.FeatureSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.to_sentence">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.to_spacy_doc">to_spacy_doc() (zensols.nlp.sparser.SpacyFeatureDocumentParser method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.to_vector">to_vector() (zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.SpacyFeatureToken.token">token (zensols.nlp.tok.SpacyFeatureToken property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.token_class">token_class (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.token_decorators">token_decorators (zensols.nlp.parser.DecoratedFeatureDocumentParser attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureSentenceFactory.token_decorators">(zensols.nlp.parser.FeatureSentenceFactory attribute)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.token_decorators">(zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.DecoratedFeatureDocumentParser.token_feature_ids">token_feature_ids (zensols.nlp.parser.DecoratedFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.FeatureDocumentParser.TOKEN_FEATURE_IDS">TOKEN_FEATURE_IDS (zensols.nlp.parser.FeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.token_feature_ids">token_feature_ids (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.token_iter">token_iter() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.token_iter">(zensols.nlp.container.FeatureSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.token_iter">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.token_len">token_len (zensols.nlp.container.FeatureSpan property)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.token_len">(zensols.nlp.container.TokenContainer property)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.sparser.SpacyFeatureDocumentParser.token_normalizer">token_normalizer (zensols.nlp.sparser.SpacyFeatureDocumentParser attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.SplitEntityTokenMapper.token_unit_type">token_unit_type (zensols.nlp.norm.SplitEntityTokenMapper attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureDocument">TokenAnnotatedFeatureDocument (class in zensols.nlp.container)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureSentence">TokenAnnotatedFeatureSentence (class in zensols.nlp.container)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer">TokenContainer (class in zensols.nlp.container)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.TokenMapper">TokenMapper (class in zensols.nlp.norm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer">TokenNormalizer (class in zensols.nlp.norm)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.tokens">tokens (zensols.nlp.container.FeatureSpan property)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.tokens">(zensols.nlp.container.TokenContainer property)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.serial.Include.tokens">(zensols.nlp.serial.Include attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.tokens_by_i">tokens_by_i (zensols.nlp.container.TokenContainer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.tokens_by_i_sent">tokens_by_i_sent (zensols.nlp.container.FeatureSpan property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.tokens_by_idx">tokens_by_idx (zensols.nlp.container.TokenContainer property)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.TYPES_BY_FEATURE_ID">TYPES_BY_FEATURE_ID (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.uncombine_sentences">uncombine_sentences() (zensols.nlp.container.FeatureDocument method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.UpdateTokenContainerDecorator.update_entity_spans">update_entity_spans (zensols.nlp.decorate.UpdateTokenContainerDecorator attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.update_entity_spans">update_entity_spans() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.update_entity_spans">(zensols.nlp.container.FeatureSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.update_entity_spans">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.UpdateTokenContainerDecorator.update_indexes">update_indexes (zensols.nlp.decorate.UpdateTokenContainerDecorator attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.update_indexes">update_indexes() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureSpan.update_indexes">(zensols.nlp.container.FeatureSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.update_indexes">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.decorate.UpdateTokenContainerDecorator">UpdateTokenContainerDecorator (class in zensols.nlp.decorate)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreContext.validate">validate() (zensols.nlp.score.ScoreContext method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.validate_features">validate_features (zensols.nlp.combine.CombinerFeatureDocumentParser attribute)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.combine.MappingCombinerFeatureDocumentParser.validate_features">(zensols.nlp.combine.MappingCombinerFeatureDocumentParser attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.FloatScore.value">value (zensols.nlp.score.FloatScore attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="W" class="genindex-section">
+  <h2>W</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.score.BleuScoreMethod.weights">weights (zensols.nlp.score.BleuScoreMethod attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.parser.WhiteSpaceTokenizerFeatureDocumentParser">WhiteSpaceTokenizerFeatureDocumentParser (class in zensols.nlp.parser)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.widen">widen() (zensols.nlp.domain.LexicalSpan static method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.WRITABLE_FEATURE_IDS">WRITABLE_FEATURE_IDS (zensols.nlp.tok.FeatureToken attribute)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.FeatureDocument.write">write() (zensols.nlp.container.FeatureDocument method)</a>
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenAnnotatedFeatureSentence.write">(zensols.nlp.container.TokenAnnotatedFeatureSentence method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.write">(zensols.nlp.container.TokenContainer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.domain.LexicalSpan.write">(zensols.nlp.domain.LexicalSpan method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.domain.TextContainer.write">(zensols.nlp.domain.TextContainer method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreResult.write">(zensols.nlp.score.ScoreResult method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.score.ScoreSet.write">(zensols.nlp.score.ScoreSet method)</a>
+</li>
+          <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.write">(zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.tok.FeatureToken.write_attributes">write_attributes() (zensols.nlp.tok.FeatureToken method)</a>
+</li>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.container.TokenContainer.write_text">write_text() (zensols.nlp.container.TokenContainer method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="Y" class="genindex-section">
+  <h2>Y</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.yield_feature_defaults">yield_feature_defaults (zensols.nlp.combine.CombinerFeatureDocumentParser attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/zensols.nlp.html#zensols.nlp.combine.CombinerFeatureDocumentParser.yield_features">yield_features (zensols.nlp.combine.CombinerFeatureDocumentParser attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="Z" class="genindex-section">
+  <h2>Z</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    zensols.nlp
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.chunker
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.chunker">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.combine
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.combine">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.component
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.component">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.container
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.container">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.decorate
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.decorate">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.domain
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.domain">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.index
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.index">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.nerscore
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.nerscore">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    zensols.nlp.norm
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.norm">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.parser
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.parser">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.score
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.score">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.serial
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.serial">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.spannorm
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.spannorm">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.sparser
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.sparser">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.stemmer
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.stemmer">module</a>
+</li>
+        </ul></li>
+        <li>
+    zensols.nlp.tok
+
+        <ul>
+          <li><a href="api/zensols.nlp.html#module-zensols.nlp.tok">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025 Paul Landes
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=dd1d1664"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>
