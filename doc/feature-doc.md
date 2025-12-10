@@ -67,8 +67,7 @@ doc_parser: FeatureDocumentParser = fac('doc_parser')
 ```
 
 To [parse natural language text] into a [FeatureDocument] with the hierarchy
-detailed in the [feature documents](feature-documents) section, we call the
-parser instance:
+detailed in the [feature documents] section, we call the parser instance:
 ```python
 sent = 'He was George Washington and first president of the United States.'
 doc: FeatureDocument = doc_parser(sent)
