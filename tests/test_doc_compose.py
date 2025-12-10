@@ -96,3 +96,17 @@ class TestDocCompose(TestBase):
         self.assertEqual(2, len(recomb.sents))
         self.assertEqual(2, len(recomb))
         self.assertEqual((7, 5), tuple(map(len, recomb)))
+
+    def test_token_contains(self):
+        n: str = FeatureToken.NONE
+        should_ents = ((n, n, n, n, n, 'GPE', n), (n, n, n, 'PERSON', n))
+        parser = self.fac('doc_parser')
+        doc = parser.parse(self.sent_text2)
+        for i, sent in enumerate(doc.sents):
+            ents = tuple(map(lambda t: t.ent_, sent))
+            should = should_ents[i]
+            self.assertEqual(should, ents)
+            should = tuple(map(lambda s: s != n, should))
+            self.assertEqual(should, tuple(map(lambda t: 'ent_' in t, sent)))
+            self.assertEqual(tuple([True] * len(sent)),
+                             tuple(map(lambda t: 'norm' in t, sent)))

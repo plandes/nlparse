@@ -407,6 +407,10 @@ class FeatureToken(PersistableContainer, TextContainer):
             state['norm'] = self.NONE
         super().__setstate__(state)
 
+    def __contains__(self, feature_id: str) -> bool:
+        val: Any = self.get_feature(feature_id, expect=False, check_none=True)
+        return val is not None
+
     def long_repr(self) -> str:
         attrs = []
         for s in 'norm lemma_ tag_ ent_'.split():

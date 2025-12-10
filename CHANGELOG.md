@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Added
+- Feature ID membership in `FeatureToken`.
+
+
 ## [1.12.8] - 2025-07-31
 ### Changed
 - Removed unused dependencies: `msgpack` and `smartopen`.
