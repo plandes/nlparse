@@ -8,6 +8,9 @@ PROJ_MODULES =		python/doc python/package python/deploy
 PY_DOC_DIST_NAME =	nlparse
 
 
+PY_TEST_GLOB =		test_doc_compose.py
+
+
 ## Includes
 #
 include ./zenbuild/main.mk
