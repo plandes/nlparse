@@ -133,7 +133,7 @@ class ScoreResult(Dictable):
 
 @dataclass
 class ScoreSet(Dictable):
-    """All scores returned from :class:`.Scorer'.
+    """All scores returned from :class:`.Scorer`.
 
     """
     results: Tuple[ScoreResult, ...] = field()

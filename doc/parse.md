@@ -1,7 +1,7 @@
 # Natural Language Parsing
 
-Before reading this, please read [feature documents].  If you want to jump
-right in, its recommended to at least pursue the simple CLI example.
+Before reading this, please read about [feature documents].  If you want to
+jump right in, its recommended to at least pursue the simple CLI example.
 
 This framework wraps the [spaCy] framework and creates features.  The
 motivation is to generate features from the parsed text in an object oriented
@@ -97,6 +97,6 @@ how to use the API and the `makefile` to run each example.
 [TokenNormalizer]: ../api/zensols.nlp.html#zensols.nlp.norm.TokenNormalizer
 [TokenMapper]: ../api/zensols.nlp.html#zensols.nlp.norm.TokenMapper
 [MapTokenNormalizer]: ../api/zensols.nlp.html#zensols.nlp.norm.MapTokenNormalizer
-[feature documents]: feature-doc.html
-[feature document]: feature-doc.html
+[feature documents]: feature-doc.md
+[feature document]: feature-doc.md
 [application example]: https://github.com/plandes/nlparse/tree/master/example/config

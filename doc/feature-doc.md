@@ -66,7 +66,7 @@ entry:
 doc_parser: FeatureDocumentParser = fac('doc_parser')
 ```
 
-To parse natural language text in the to a [FeatureDocument] with the hierarchy
+To [parse natural language text] into a [FeatureDocument] with the hierarchy
 detailed in the [feature documents](feature-documents) section, we call the
 parser instance:
 ```python
@@ -102,7 +102,7 @@ FeatureToken: org=<was>, norm=<was>
 [FeatureToken]: ../api/zensols.nlp.html#zensols.nlp.container.FeatureToken
 [FeatureDocumentParser]: ../api/zensols.nlp.html#zensols.nlp.container.FeatureDocumentParser
 
-[natural language parsing]: parse.html
+[parse natural language text]: parse.md
 [spaCy]: https://spacy.io
 [resource library]: https://plandes.github.io/util/doc/config.html#resource-libraries
 [configuration]: https://plandes.github.io/util/doc/config.html

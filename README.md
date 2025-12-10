@@ -28,7 +28,7 @@ Other features include:
 
 ## Documentation
 
-* [Framework documentation]
+* [Full documentation]
 * [Natural Language Parsing]
 * [List Token Normalizers and Mappers]
 
@@ -57,8 +57,9 @@ doc = parser('Obama was the 44th president of the United States.')
 for tok in doc.tokens:
     print(tok.norm, tok.pos_, tok.tag_)
 print(doc.entities)
-
->>>
+```
+output:
+```
 Obama PROPN NNP
 was AUX VBD
 the DET DT
@@ -182,7 +183,7 @@ Copyright (c) 2020 - 2025 Paul Landes
 [others]: https://plandes.github.io/nlparse/doc/normalizers.html
 [Detached features]: https://plandes.github.io/nlparse/doc/parse.html#detached-features
 [full documentation]: https://plandes.github.io/nlparse/
-[Framework documentation]: https://plandes.github.io/nlparse/api.html
+[Full documentation]: https://plandes.github.io/nlparse/api.html
 [Natural Language Parsing]: https://plandes.github.io/nlparse/doc/parse.html
 [List Token Normalizers and Mappers]: https://plandes.github.io/nlparse/doc/normalizers.html
 [resource library]: https://plandes.github.io/util/doc/config.html#resource-libraries
