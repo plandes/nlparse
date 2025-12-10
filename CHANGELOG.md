@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.12.9] - 2025-12-10
 ### Added
 - Feature ID membership in `FeatureToken`.
 
@@ -545,7 +546,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.8...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.9...HEAD
+[1.12.9]: https://github.com/plandes/nlparse/compare/v1.12.8...v1.12.9
 [1.12.8]: https://github.com/plandes/nlparse/compare/v1.12.7...v1.12.8
 [1.12.7]: https://github.com/plandes/nlparse/compare/v1.12.6...v1.12.7
 [1.12.6]: https://github.com/plandes/nlparse/compare/v1.12.5...v1.12.6
