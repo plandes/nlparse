@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Removed
+- Python 3.11 support.
+
+### Added
+- Python 3.13 support.
+
+### Changed
+- Upgrade [zensols.util] to v1.16.2.
+
 
 ## [1.12.9] - 2025-12-10
 ### Added

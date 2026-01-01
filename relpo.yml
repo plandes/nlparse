@@ -25,23 +25,23 @@ project:
     # Python interpreter versions
     version:
       # constraint on install eligibility
-      required: '>=3.11,<3.13'
+      required: '>=3.11,<3.15'
       # last supported version of Python supported for the project
-      previous: '3.11.12'
+      previous: '3.12.10'
       # Python version supported for current development
-      current: '3.12.10'
+      current: '3.13.11'
       # version of Python used to build/link specific to the host
-      package_host: '3.11.6'
+      package_host: '3.12.10'
     # pypi dependencies added to 'project'
     dependencies:
       # scientific
-      - 'numpy~=1.26.4'
+      - 'numpy~=2.4.0'
       # nlp
       - 'nltk~=3.7'
       - 'interlap~=0.2.7'
-      - 'spacy~=3.7.5'
+      - 'spacy~=3.8.11'
       # core framework
-      - 'zensols.util~=1.15.10'
+      - 'zensols.util~=1.16.2'
 build:
   table_appends:
     tool.pixi.pypi-dependencies:
