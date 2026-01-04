@@ -25,13 +25,13 @@ project:
     # Python interpreter versions
     version:
       # constraint on install eligibility
-      required: '>=3.12,<3.15'
+      required: '>=3.11,<3.15'
       # last supported version of Python supported for the project
       previous: '3.12.10'
       # Python version supported for current development
       current: '3.13.11'
       # version of Python used to build/link specific to the host
-      package_host: '3.12.10'
+      package_host: '3.13.10'
     # pypi dependencies added to 'project'
     dependencies:
       # scientific

@@ -7,14 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Removed
-- Python 3.11 support.
 
+## [1.13.0] - 2026-01-04
 ### Added
 - Python 3.13 support.
 
 ### Changed
-- Upgrade [zensols.util] to v1.16.2.
+- Upgraded dependencies:
+  - [spaCy] to 3.8.11
+  - [zensols.util] to 1.16.3
 
 
 ## [1.12.9] - 2025-12-10
@@ -555,7 +556,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.12.9...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/plandes/nlparse/compare/v1.12.9...v1.13.0
 [1.12.9]: https://github.com/plandes/nlparse/compare/v1.12.8...v1.12.9
 [1.12.8]: https://github.com/plandes/nlparse/compare/v1.12.7...v1.12.8
 [1.12.7]: https://github.com/plandes/nlparse/compare/v1.12.6...v1.12.7
