@@ -25,7 +25,7 @@ project:
     # Python interpreter versions
     version:
       # constraint on install eligibility
-      required: '>=3.11,<3.15'
+      required: '>=3.12,<3.15'
       # last supported version of Python supported for the project
       previous: '3.12.10'
       # Python version supported for current development
@@ -35,21 +35,21 @@ project:
     # pypi dependencies added to 'project'
     dependencies:
       # scientific
-      - 'numpy~=2.4.0'
+      - 'numpy~=1.26.4'
       # nlp
       - 'nltk~=3.7'
       - 'interlap~=0.2.7'
       - 'spacy~=3.8.11'
       # core framework
-      - 'zensols.util~=1.16.2'
+      - 'zensols.util~=1.16.3'
 build:
   table_appends:
     tool.pixi.pypi-dependencies:
       # models
       en_core_web_sm:
-        url: "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"
+        url: "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl"
       en_core_web_md:
-        url: "https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.7.1/en_core_web_md-3.7.1-py3-none-any.whl"
+        url: "https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0-py3-none-any.whl"
 doc:
   api_config:
     intersphinx_mapping:
