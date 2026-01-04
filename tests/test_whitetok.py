@@ -7,6 +7,7 @@ from zensols.nlp import FeatureDocumentParser, FeatureDocument, FeatureToken
 
 
 class TestWhitespaceTokenizer(unittest.TestCase):
+    DEBUG = False
     RESET_GOLD = False
 
     def setUp(self):
@@ -25,6 +26,10 @@ class TestWhitespaceTokenizer(unittest.TestCase):
         attrs: List[str] = FeatureToken.FEATURE_IDS - avoids
         parser = self.doc_parser
         doc: FeatureDocument = parser(sent)
+        if self.DEBUG:
+            for s in doc:
+                ents = tuple(map(lambda t: f'{t}: {t.ent_}', s))
+                print(f'{s} {ents}')
         if self.RESET_GOLD:
             gold = {}
             for attr in attrs:

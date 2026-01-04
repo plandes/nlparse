@@ -29,7 +29,7 @@ class TestDocStash(unittest.TestCase):
 
         self.assertEqual(1, len(stash.keys()))
         self.assertEqual(1, len(stash))
-        self.assertEqual(64, len(next(iter(stash.keys()))))
+        self.assertEqual(86, len(next(iter(stash.keys()))))
 
         doc2: FeatureDocument = parser(self.sent)
         self.assertEqual(id(doc), id(doc2))
