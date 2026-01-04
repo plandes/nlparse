@@ -35,7 +35,7 @@ project:
     # pypi dependencies added to 'project'
     dependencies:
       # scientific
-      - 'numpy~=1.26.4'
+      - 'numpy~=2.4.0'
       # nlp
       - 'nltk~=3.7'
       - 'interlap~=0.2.7'

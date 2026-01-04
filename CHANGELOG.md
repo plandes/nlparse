@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.13.1] - 2026-01-04
+### Changed
+- Upgraded dependencies:
+  - numpy to 2.4.0
+
+
 ## [1.13.0] - 2026-01-04
 ### Added
 - Python 3.13 support.
@@ -556,7 +562,8 @@ Data classes are now used so Python 3.7 is now a requirement.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/nlparse/compare/v1.13.0...HEAD
+[Unreleased]: https://github.com/plandes/nlparse/compare/v1.13.1...HEAD
+[1.13.1]: https://github.com/plandes/nlparse/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/plandes/nlparse/compare/v1.12.9...v1.13.0
 [1.12.9]: https://github.com/plandes/nlparse/compare/v1.12.8...v1.12.9
 [1.12.8]: https://github.com/plandes/nlparse/compare/v1.12.7...v1.12.8
