@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changed
+- Fixed JSON validation on language component factory annotations.
+
+
 ## [1.13.1] - 2026-01-04
 ### Changed
 - Upgraded dependencies:

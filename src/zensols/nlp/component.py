@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import List, Tuple, Dict, Any, Union, Sequence, Optional
+from typing import List, Tuple, Dict, Any, Sequence, Optional
 from dataclasses import dataclass, field
 import logging
 import re
@@ -142,9 +142,9 @@ class RegexEntityRecognizer(EntityRecognizer):
 @Language.factory(
     'regexner', default_config={'patterns': [], 'path': None})
 def create_regexner_component(
-        nlp: Language, name: str,
-        patterns: Sequence[Tuple[Optional[str],
-                                 Sequence[Union[re.Pattern, str]]]],
+        nlp: Language,
+        name: str,
+        patterns: Sequence[Sequence[Any]],
         path: str = None):
     def map_rlist(rlist):
         rl = map(lambda x: x if isinstance(x, re.Pattern) else re.compile(x),
@@ -197,12 +197,14 @@ class PatternEntityRecognizer(EntityRecognizer):
 
 
 @Language.factory(
-    'patner', default_config={'patterns': [], 'path': None})
+    "patner", default_config={"patterns": [], "path": None})
 def create_patner_component(
-        nlp: Language, name: str,
-        patterns: List[Tuple[Optional[str], List[List[Dict[str, Any]]]]],
-        path: str = None):
-    return PatternEntityRecognizer(nlp, name, path, list(patterns))
+        nlp: Language,
+        name: str,
+        patterns: List[List[Any]],
+        path: Optional[str] = None):
+    norm_patterns = [(p[0], p[1]) for p in patterns]
+    return PatternEntityRecognizer(nlp, name, path, norm_patterns)
 
 
 @Language.factory('whitespace_tokenizer')
@@ -214,7 +216,9 @@ def create_whitespace_tokenizer_component(nlp: Language, name: str):
 
 @dataclass
 class RegexSplitter(EntityRecognizer):
-    """Splits on regular expressions."""
+    """Splits on regular expressions.
+
+    """
     patterns: List[Tuple[str, List[re.Pattern]]] = field()
     """A list of the regular expressions to find."""
 
@@ -240,11 +244,11 @@ class RegexSplitter(EntityRecognizer):
 @Language.factory(
     'regexsplit', default_config={'patterns': [], 'path': None})
 def create_regexsplit_component(
-        nlp: Language, name: str,
-        patterns: Sequence[Tuple[Optional[str],
-                                 Sequence[Union[re.Pattern, str]]]],
-        path: str = None):
-    def map_rlist(rlist):
+        nlp: Language,
+        name: str,
+        patterns: Sequence[Sequence[Any]],
+        path: Optional[str] = None):
+    def map_rlist(rlist) -> Tuple[re.Pattern, ...]:
         rl = map(lambda x: x if isinstance(x, re.Pattern) else re.compile(x),
                  rlist)
         return tuple(rl)
